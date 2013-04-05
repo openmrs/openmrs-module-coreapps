@@ -1,8 +1,0 @@
-[
-    {
-        "id": "patientApp",
-		"url" : "coreapps/patient/index.page",
-		"label" : "coreapps.patients.label",
-        "description": "coreapps.patients.description"
-    }
-]
