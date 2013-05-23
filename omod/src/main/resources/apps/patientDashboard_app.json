@@ -4,11 +4,11 @@
         "description": "coreapps.patient.dashboard.description",
         "extensionPoints": [
             {
-                "id": "activeVisitActions",
+                "id": "patient.visits.active.actions",
                 "description": "coreapps.patient.dashboard.extenstion.visits.description"
             },
             {
-                "id": "patientActions",
+                "id": "patient.globalActions",
                 "description" : "coreapps.patient.dashboard.extenstion.actions.description"
             }
         ],
