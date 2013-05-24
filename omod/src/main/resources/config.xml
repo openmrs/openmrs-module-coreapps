@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//OpenMRS//DTD OpenMRS Config 1.0//EN"
+        "http://resources.openmrs.org/doctype/config-1.4.dtd">
 
-<module configVersion="1.2">
+<module configVersion="1.4">
 
 	<!-- Module Properties -->
 	<id>${project.parent.artifactId}</id>
@@ -12,7 +14,7 @@
 		${project.parent.description}
 	</description>
 	<updateURL>https://dev.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
-	<require_version>${openMRSVersion}</require_version>
+	<require_version>1.9.3</require_version>
 	<!-- / Module Properties -->
 
 	
@@ -22,10 +24,32 @@
 		<require_module version="${appframeworkVersion}">
 			org.openmrs.module.appframework
 		</require_module>
+
+        <require_module version="${uiframeworkVersion}">
+            org.openmrs.module.uiframework
+        </require_module>
+
+        <require_module version="${emrapiVersion}">
+            org.openmrs.module.emrapi
+        </require_module>
+
+        <require_module version="${appuiVersion}">
+            org.openmrs.module.appui
+        </require_module>
+
+        <require_module version="${idgenVersion}">
+            org.openmrs.module.idgen
+        </require_module>
 			
 	</require_modules>
 	<!-- / Required Modules -->
-	
+
+    <aware_of_modules>
+        <aware_of_module version="${addresshierarchyVersion}">
+            org.openmrs.module.addresshierarchy
+        </aware_of_module>
+    </aware_of_modules>
+
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.CoreAppsActivator</activator>
 	

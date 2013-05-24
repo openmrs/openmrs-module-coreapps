@@ -1,0 +1,17 @@
+[
+    {
+        "id": "${project.parent.artifactId}.patientDashboardApp",
+        "description": "${project.parent.artifactId}.patientDashboard.description",
+        "extensionPoints": [
+            {
+                "id": "patientDashboard.visitActions",
+                "description": "${project.parent.artifactId}.patientDashboard.extension.visits.description"
+            },
+            {
+                "id": "patientDashboard.overallActions",
+                "description" : "${project.parent.artifactId}.patientDashboard.extension.actions.description"
+            }
+        ],
+        "contextModel": [ "patientId", "activeVisitId" ]
+    }
+]
