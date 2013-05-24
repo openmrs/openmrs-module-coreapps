@@ -1,0 +1,12 @@
+[
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.edConsult",
+        "extensionPointId": "patientDashboard.visitActions",
+        "type": "link",
+        "label": "emr.ed.consult.title",
+        "url": "coreapps/consult/consult.page?config=emr.ed.consult.note",
+        "icon": "icon-stethoscope",
+        "order": 31,
+        "requiredPrivilege": "Task: only.sysadmin.can.see.this.now"
+    }
+]

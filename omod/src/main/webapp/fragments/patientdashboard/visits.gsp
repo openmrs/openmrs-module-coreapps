@@ -8,7 +8,7 @@
 %>
 
 <script type="text/javascript">
-    breadcrumbs.push({ label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("emr", "patient", [patientId: patient.id])}'});
+    breadcrumbs.push({ label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("coreapps", "patientDashboard", [patientId: patient.id])}'});
 
     jq(".collapse").collapse();
 </script>
@@ -49,19 +49,17 @@
             
         </div>
         <div class="visit-actions">
-            <% activeVisitTasks.each{task -> def url = task.getUrl(emrContext)
-                if (!url.startsWith("javascript:")) {
+            <% visitActions.each{task -> def url = task.url
+                if (task.type != "script") {
                     url = "/" + contextPath + "/" + url
+                } else{
+                    url = "javascript:"+task.script
                 }
-                // toggle surgical operative note
-                if (featureToggles.isFeatureEnabled("surgicalOperativeNote")
-                    || task.id != "mirebalais.surgicalOperativeNote") {
             %>
                 <a href="${ url }" class="button task">
-                    <i class="${task.getIconUrl(emrContext)}"></i> ${ task.getLabel(emrContext) }
+                    <i class="${task.icon}"></i> ${ task.label }
                 </a>
-            <%  }
-              }%>
+            <% } %>
         </div>
    {{  } }}
 

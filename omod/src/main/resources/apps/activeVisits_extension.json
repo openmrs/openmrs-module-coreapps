@@ -1,0 +1,11 @@
+[
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.activeVisits",
+        "extensionPointId": "patientDashboard.visitActions",
+        "type": "link",
+        "label": "emr.app.activeVisits.label",
+        "url": "coreapps/activeVisits.page",
+        "icon": "icon-calendar",
+        "requiredPrivilege": "App: ${project.parent.groupId}.${project.parent.artifactId}.activeVisits"
+    }
+]

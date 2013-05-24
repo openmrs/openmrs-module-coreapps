@@ -31,7 +31,6 @@ import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
-import org.openmrs.util.LocationUtility;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class PatientDashboardPageController {
@@ -49,23 +48,20 @@ public class PatientDashboardPageController {
 		patientDomainWrapper.setPatient(patient);
 		model.addAttribute("patient", patientDomainWrapper);
 		model.addAttribute("orders", orderService.getOrdersByPatient(patient));
-		model.addAttribute("availableTasks", new ArrayList());
-		model.addAttribute("activeVisitTasks", new ArrayList());
 		model.addAttribute("addressHierarchyLevels", getAddressHierarchyLevels());
 		model.addAttribute("selectedTab", selectedTab);
 		
-		//TODO This needs to be fixed in the app UI to set the session location
-		Location sessionLocation = sessionContext.getSessionLocation();
-		if (sessionLocation == null)
-			sessionLocation = LocationUtility.getDefaultLocation();
-		
-		Location visitLocation = sessionLocation;// adtService.getLocationThatSupportsVisits(sessionLocation);
+		Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
 		VisitDomainWrapper activeVisit = adtService.getActiveVisit((Patient) patient, visitLocation);
 		model.addAttribute("activeVisit", activeVisit);
 		
 		List<Extension> encounterTemplateExtensions = appFrameworkService
 		        .getExtensionsForCurrentUser(ENCOUNTER_TEMPLATE_EXTENSION);
 		model.addAttribute("encounterTemplateExtensions", encounterTemplateExtensions);
+		
+		model.addAttribute("overallActions",
+		    appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions"));
+		model.addAttribute("visitActions", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions"));
 	}
 	
 	private static List<String> getAddressHierarchyLevels() {
@@ -87,11 +83,13 @@ public class PatientDashboardPageController {
 				Collections.reverse(l);
 			}
 		}
+		catch (ClassNotFoundException cnfe) {
+			//ignore, the module isn't installed
+		}
 		catch (Exception e) {
 			throw new APIException("Error obtaining address hierarchy levels", e);
 		}
 		
 		return l;
 	}
-	
 }

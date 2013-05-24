@@ -1,15 +1,15 @@
 [
     {
-        "id": "patientDashboardApp",
-        "description": "coreapps.patient.dashboard.description",
+        "id": "${project.parent.artifactId}.patientDashboardApp",
+        "description": "${project.parent.artifactId}.patientDashboard.description",
         "extensionPoints": [
             {
-                "id": "patient.visits.active.actions",
-                "description": "coreapps.patient.dashboard.extenstion.visits.description"
+                "id": "patientDashboard.visitActions",
+                "description": "${project.parent.artifactId}.patientDashboard.extension.visits.description"
             },
             {
-                "id": "patient.globalActions",
-                "description" : "coreapps.patient.dashboard.extenstion.actions.description"
+                "id": "patientDashboard.overallActions",
+                "description" : "${project.parent.artifactId}.patientDashboard.extension.actions.description"
             }
         ],
         "contextModel": [ "patientId", "activeVisitId" ]

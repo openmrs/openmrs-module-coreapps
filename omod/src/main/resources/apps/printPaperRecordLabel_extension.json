@@ -1,0 +1,12 @@
+[
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.printPaperRecordLabel",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "script",
+        "label": "emr.task.printPaperRecordLabel.label",
+        "script": "printPaperRecordLabel()",
+        "icon": "icon-print",
+        "order": -10,
+        "requiredPrivilege": "Task: emr.printLabels"
+    }
+]

@@ -1,0 +1,12 @@
+[
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.consult",
+        "extensionPointId": "patientDashboard.visitActions",
+        "type": "link",
+        "label": "emr.clinic.consult.title",
+        "url": "coreapps/consult/consult.page?config=emr.clinic.consult.note",
+        "icon": "icon-stethoscope",
+        "order": 30,
+        "requiredPrivilege": "Task: emr.enterClinicalForms"
+    }
+]

@@ -31,7 +31,6 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
-import org.openmrs.util.LocationUtility;
 
 /**
  * Ideally you pass in a PatientDomainWrapper as the "patient" config parameter. But if you pass in
@@ -51,15 +50,10 @@ public class PatientHeaderFragmentController {
 		
 		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");
 		if (activeVisit == null) {
-			//TODO This needs to be fixed in the app UI to set the session location
-			Location sessionLocation = sessionContext.getSessionLocation();
-			if (sessionLocation == null)
-				sessionLocation = LocationUtility.getDefaultLocation();
-			
-			Location visitLocation = sessionLocation;//adtService.getLocationThatSupportsVisits(sessionLocation);
+			Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
 			activeVisit = adtService.getActiveVisit((Patient) patient, visitLocation);
 		}
-		
+
 		if (activeVisit != null)
 			config.addAttribute("activeVisit", activeVisit);
 		

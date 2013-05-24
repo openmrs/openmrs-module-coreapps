@@ -17,7 +17,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" , link: '${ui.pageLink("emr", "patient", [patientId: patient.patient.id])}'}
+        { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" , link: '${ui.pageLink("coreapps", "patientDashboard", [patientId: patient.patient.id])}'}
     ];
 
     jq(function(){
@@ -40,13 +40,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 <div><a href="javascript:visit.showQuickVisitCreationDialog()"><i class="icon-check-in"></i>${ ui.message("emr.task.startVisit.label") }</a></div>
             <% } %>
 
-            <% availableTasks.each {
-                def url = it.getUrl(sessionContext)
-                if (!url.startsWith("javascript:")) {
+            <% overallActions.each {
+                def url = it.url
+                if (it.type != "script") {
                     url = "/" + contextPath + "/" + url
+                } else{
+                    url = "javascript:"+it.script
                 }
             %>
-            <div><a href="${ url }"><i class="${ it.getIconUrl(sessionContext) }"></i>${ it.getLabel(sessionContext) }</a></div>
+            <div><a href="${ url }"><i class="${ it.icon }"></i>${ it.label }</a></div>
             <% } %>
         </div>
         <ul>
@@ -54,15 +56,6 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 <li>
                     <a href="#${ it.id }">
                         ${ it.label }
-                    </a>
-                </li>
-            <% } %>
-
-            <% if (featureToggles.isFeatureEnabled("radiologyTab")) { %>
-            <!-- hack to include radiology tab until we move to new dashboard -->
-                <li>
-                    <a href="#radiologyTab">
-                        Radiology
                     </a>
                 </li>
             <% } %>
