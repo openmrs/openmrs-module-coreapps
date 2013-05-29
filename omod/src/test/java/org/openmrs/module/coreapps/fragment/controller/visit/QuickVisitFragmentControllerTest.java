@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
-import org.openmrs.module.emrapi.EmrApiConstants;
+import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapperFactory;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapperRepository;
@@ -79,8 +79,8 @@ public class QuickVisitFragmentControllerTest {
 		    uiUtils, request);
 		
 		verify(visitWrapperRepository).persist(visitWrapper);
-		verify(session).setAttribute(EmrApiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
-		verify(session).setAttribute(EmrApiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 		assertThat(result, is(CoreMatchers.any(FragmentActionResult.class)));
 	}
 }

@@ -31,8 +31,6 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
-import org.openmrs.module.emrapi.visit.ParsedObs;
-import org.openmrs.module.emrapi.visit.ParserEncounterIntoSimpleObjects;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;

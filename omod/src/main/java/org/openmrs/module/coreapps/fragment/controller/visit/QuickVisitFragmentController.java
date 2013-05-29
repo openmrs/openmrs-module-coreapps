@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
-import org.openmrs.module.emrapi.EmrApiConstants;
+import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapperFactory;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapperRepository;
@@ -33,8 +33,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class QuickVisitFragmentController {
 	
 	@Transactional
-	public FragmentActionResult create(@SpringBean("visitDomainWrapperFactory") VisitDomainWrapperFactory visitWrapperFactory,
-	                                   @SpringBean("visitDomainWrapperRepository") VisitDomainWrapperRepository visitWrapperRepository,
+	public FragmentActionResult create(@SpringBean("emrapiVisitDomainWrapperFactory") VisitDomainWrapperFactory visitWrapperFactory,
+	                                   @SpringBean("emrapiVisitDomainWrapperRepository") VisitDomainWrapperRepository visitWrapperRepository,
 	                                   @RequestParam("patientId") Patient patient,
 	                                   @RequestParam("locationId") Location location, UiUtils uiUtils,
 	                                   HttpServletRequest request) {
@@ -42,9 +42,9 @@ public class QuickVisitFragmentController {
 		VisitDomainWrapper visitWrapper = visitWrapperFactory.createNewVisit(patient, location, new Date());
 		visitWrapperRepository.persist(visitWrapper);
 		
-		request.getSession().setAttribute(EmrApiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
+		request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
 		    uiUtils.message("emr.visit.createQuickVisit.successMessage", uiUtils.format(patient)));
-		request.getSession().setAttribute(EmrApiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+		request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 		
 		return new SuccessResult();
 	}
