@@ -3,6 +3,7 @@
 
     def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy hh:mm a")
 
+    ui.includeCss("coreapps", "patientHeader.css")
     ui.includeJavascript("coreapps", "patient.js")
 %>
 
@@ -47,7 +48,7 @@
 
         jq(".demographics .name").click(function () {
             emr.navigateTo({
-                provider: 'emr',
+                provider: 'coreapps',
                 page: 'patient',
                 query: { patientId: ${patient.patient.id} }
             });
@@ -119,7 +120,7 @@
     <div class="unknown-patient" style= <%=(!patient.unknownPatient) ? "display:none" : ""%>>
         ${ui.message("emr.patient.temporaryRecord")} <br/>
 
-        <form action="/${contextPath}/emr/mergePatients.page" method="get">
+        <form action="/${contextPath}/coreapps/mergePatients.page" method="get">
             <input type="hidden" name="isUnknownPatient" value="true"/>
             <input type="hidden" name="patient1" value="${patient.patient.id}"/>
             <input type="submit" id="merge-button"

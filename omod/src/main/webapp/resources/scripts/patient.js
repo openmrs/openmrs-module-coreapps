@@ -66,7 +66,7 @@ function createEditPatientIdentifierDialog(patientId) {
         selector: '#edit-patient-identifier-dialog',
         actions: {
             confirm: function() {
-                emr.getFragmentActionWithCallback('emr', 'editPatientIdentifier', 'editPatientIdentifier'
+                emr.getFragmentActionWithCallback('coreapps', 'editPatientIdentifier', 'editPatientIdentifier'
                     , { patientId: patientId,
                         identifierTypeId: jq("#hiddenIdentifierTypeId").val(),
                         identifierValue: jq("#patientIdentifierValue").val()
@@ -102,7 +102,7 @@ function createDeleteEncounterDialog(encounterId, deleteElement) {
         selector: '#delete-encounter-dialog',
         actions: {
             confirm: function() {
-                emr.getFragmentActionWithCallback('emr', 'visit/visitDetails', 'deleteEncounter'
+                emr.getFragmentActionWithCallback('coreapps', 'visit/visitDetails', 'deleteEncounter'
                     , { encounterId: encounterId}
                     , function(data) {
                         emr.successMessage(data.message);
