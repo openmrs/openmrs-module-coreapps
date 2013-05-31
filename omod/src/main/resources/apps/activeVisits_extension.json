@@ -1,7 +1,7 @@
 [
     {
         "id": "${project.parent.groupId}.${project.parent.artifactId}.activeVisits",
-        "extensionPointId": "patientDashboard.visitActions",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
         "label": "emr.app.activeVisits.label",
         "url": "coreapps/activeVisits.page",

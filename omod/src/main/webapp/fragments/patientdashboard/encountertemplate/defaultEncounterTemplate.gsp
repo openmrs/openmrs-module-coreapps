@@ -1,5 +1,5 @@
 <%	
-	ui.includeJavascript("emr", "fragments/patientdashboard/encountertemplate/defaultEncounterTemplate.js")
+	ui.includeJavascript("coreapps", "fragments/patientdashboard/encountertemplate/defaultEncounterTemplate.js")
 %>
 
 <script type="text/template" id="defaultEncounterTemplate">
