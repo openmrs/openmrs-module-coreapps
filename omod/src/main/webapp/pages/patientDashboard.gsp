@@ -9,9 +9,12 @@
     ui.includeJavascript("uicommons", "bootstrap-transition.js")
 
     def tabs = [
-        [ id: "visits", label: ui.message("emr.patientDashBoard.visits") ],
-        [ id: "contactInfo", label: ui.message("emr.patientDashBoard.contactinfo") ]
-    ]
+        [ id: "visits", label: ui.message("emr.patientDashBoard.visits"), provider: "coreapps", fragment: "patientdashboard/visits" ],
+        patientTabs.collect{
+            [id: it.id, label: ui.message(it.label), provider: it.extensionParams.provider, fragment: it.extensionParams.fragment]
+        },
+        [ id: "contactInfo", label: ui.message("emr.patientDashBoard.contactinfo"), provider: "coreapps", fragment: "patientdashboard/contactInfo" ]
+    ].flatten()
 
 %>
 <script type="text/javascript">
@@ -64,7 +67,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 
         <% tabs.each { %>
         <div id="${it.id}">
-            ${ ui.includeFragment("coreapps", "patientdashboard/" + it.id) }
+            ${ ui.includeFragment(it.provider, it.fragment) }
         </div>
         <% } %>
 

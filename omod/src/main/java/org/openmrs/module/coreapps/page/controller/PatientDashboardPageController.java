@@ -13,10 +13,6 @@
  */
 package org.openmrs.module.coreapps.page.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
@@ -32,6 +28,10 @@ import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PatientDashboardPageController {
 	
@@ -62,6 +62,7 @@ public class PatientDashboardPageController {
 		model.addAttribute("overallActions",
 		    appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions"));
 		model.addAttribute("visitActions", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions"));
+		model.addAttribute("patientTabs", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.tabs"));
 	}
 	
 	private static List<String> getAddressHierarchyLevels() {

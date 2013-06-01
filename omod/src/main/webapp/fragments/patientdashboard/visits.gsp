@@ -4,6 +4,9 @@
     def formatDiagnoses = {
         it.collect{ ui.escapeHtml(it.diagnosis.formatWithoutSpecificAnswer(context.locale)) } .join(", ")
     }
+    def applyContextModel = { url ->
+        url.replace("{{patientId}}", "" + patient.id)
+    }
     ui.includeJavascript("coreapps", "fragments/visitDetails.js")
 %>
 
@@ -51,7 +54,7 @@
         <div class="visit-actions">
             <% visitActions.each{task -> def url = task.url
                 if (task.type != "script") {
-                    url = "/" + contextPath + "/" + url
+                    url = "/" + contextPath + "/" + applyContextModel(url)
                 } else{
                     url = "javascript:"+task.script
                 }

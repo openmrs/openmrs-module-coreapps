@@ -10,6 +10,10 @@
             {
                 "id": "patientDashboard.overallActions",
                 "description" : "${project.parent.artifactId}.patientDashboard.extension.actions.description"
+            },
+            {
+                "id": "patientDashboard.tabs",
+                "description" : "${project.parent.artifactId}.patientDashboard.extension.tabs.description"
             }
         ],
         "contextModel": [ "patientId", "activeVisitId" ]
