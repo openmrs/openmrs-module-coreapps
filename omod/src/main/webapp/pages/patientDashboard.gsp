@@ -36,31 +36,42 @@
 
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, activeVisit: activeVisit ]) }
+<div class="actions dropdown">
+    <span class="dropdown-name"><i class="icon-cog"></i>${ ui.message("emr.actions") }<i class="icon-sort-down"></i></span>
+    <ul>
+        <% if (!activeVisit) { %>>
+        <li>
+            <a href="javascript:visit.showQuickVisitCreationDialog()">
+                <i class="icon-check-in"></i>${ ui.message("emr.task.startVisit.label") }
+            </a>
+        </li>
+        <% } %>
+
+        <% overallActions.each {
+            def url = it.url
+            if (it.type != "script") {
+                url = "/" + contextPath + "/" + url
+            } else{
+                url = "javascript:"+it.script
+            }
+        %>
+        <li>
+            <a href="${ url }"><i class="${ it.icon }"></i>${ it.label }</a>
+        </li>
+        <% } %>
+    </ul>
+</div>
+
 <div class="tabs" xmlns="http://www.w3.org/1999/html">
     <div class="dashboard-container">
-        <div class="actions">
-            <% if (!activeVisit) { %>
-                <div><a href="javascript:visit.showQuickVisitCreationDialog()"><i class="icon-check-in"></i>${ ui.message("emr.task.startVisit.label") }</a></div>
-            <% } %>
 
-            <% overallActions.each {
-                def url = it.url
-                if (it.type != "script") {
-                    url = "/" + contextPath + "/" + url
-                } else{
-                    url = "javascript:"+it.script
-                }
-            %>
-            <div><a href="${ url }"><i class="${ it.icon }"></i>${ it.label }</a></div>
-            <% } %>
-        </div>
         <ul>
             <% tabs.each { %>
-                <li>
-                    <a href="#${ it.id }">
-                        ${ it.label }
-                    </a>
-                </li>
+            <li>
+                <a href="#${ it.id }">
+                    ${ it.label }
+                </a>
+            </li>
             <% } %>
 
         </ul>
