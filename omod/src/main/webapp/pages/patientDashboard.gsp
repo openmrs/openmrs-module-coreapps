@@ -39,7 +39,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 <div class="actions dropdown">
     <span class="dropdown-name"><i class="icon-cog"></i>${ ui.message("emr.actions") }<i class="icon-sort-down"></i></span>
     <ul>
-        <% if (!activeVisit) { %>>
+        <% if (!activeVisit) { %>
         <li>
             <a href="javascript:visit.showQuickVisitCreationDialog()">
                 <i class="icon-check-in"></i>${ ui.message("emr.task.startVisit.label") }
