@@ -13,6 +13,10 @@
  */
 package org.openmrs.module.coreapps.page.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
@@ -28,10 +32,6 @@ import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class PatientDashboardPageController {
 	
@@ -59,9 +59,13 @@ public class PatientDashboardPageController {
 		        .getExtensionsForCurrentUser(ENCOUNTER_TEMPLATE_EXTENSION);
 		model.addAttribute("encounterTemplateExtensions", encounterTemplateExtensions);
 		
-		model.addAttribute("overallActions",
-		    appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions"));
-		model.addAttribute("visitActions", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions"));
+		List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions");
+		Collections.sort(overallActions);
+		model.addAttribute("overallActions", overallActions);
+		
+		List<Extension> visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions");
+		Collections.sort(visitActions);
+		model.addAttribute("visitActions", visitActions);
 		model.addAttribute("patientTabs", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.tabs"));
 	}
 	
