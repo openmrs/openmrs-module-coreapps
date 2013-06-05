@@ -3,7 +3,7 @@
 
     def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy hh:mm a")
 
-    ui.includeCss("coreapps", "patientdashboard/patientHeader.css")
+    ui.includeCss("coreapps", "patientHeader.css")
     ui.includeJavascript("coreapps", "patientdashboard/patient.js")
 %>
 
