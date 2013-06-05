@@ -1,0 +1,7 @@
+[
+    {
+        "id": "coreapps.findPatient",
+        "description": "Basic patient search, by ID or Name (using OpenMRS's standard patient search)",
+        "order": 2
+    }
+]
