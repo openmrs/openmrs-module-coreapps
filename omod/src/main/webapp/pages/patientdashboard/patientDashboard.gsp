@@ -1,9 +1,9 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
 
-	ui.includeCss("coreapps", "patientDashboard.css")
+	ui.includeCss("coreapps", "patientdashboard/patientDashboard.css")
 
-    ui.includeJavascript("coreapps", "patient.js")
+    ui.includeJavascript("coreapps", "patientdashboard/patient.js")
     ui.includeJavascript("coreapps", "custom/visits.js")
     ui.includeJavascript("uicommons", "bootstrap-collapse.js")
     ui.includeJavascript("uicommons", "bootstrap-transition.js")
@@ -20,7 +20,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" , link: '${ui.pageLink("coreapps", "patientDashboard", [patientId: patient.patient.id])}'}
+        { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" , link: '${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id])}'}
     ];
 
     jq(function(){

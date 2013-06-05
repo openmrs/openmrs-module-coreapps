@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.coreapps.page.controller;
+package org.openmrs.module.coreapps.page.controller.patientdashboard;
 
 import java.util.ArrayList;
 import java.util.Collections;

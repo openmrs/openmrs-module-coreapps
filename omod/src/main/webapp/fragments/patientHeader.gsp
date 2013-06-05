@@ -3,8 +3,8 @@
 
     def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy hh:mm a")
 
-    ui.includeCss("coreapps", "patientHeader.css")
-    ui.includeJavascript("coreapps", "patient.js")
+    ui.includeCss("coreapps", "patientdashboard/patientHeader.css")
+    ui.includeJavascript("coreapps", "patientdashboard/patient.js")
 %>
 
 
@@ -49,7 +49,7 @@
         jq(".demographics .name").click(function () {
             emr.navigateTo({
                 provider: 'coreapps',
-                page: 'patient',
+                page: 'patientdashboard/patientDashboard',
                 query: { patientId: ${patient.patient.id} }
             });
         })

@@ -11,7 +11,7 @@
 %>
 
 <script type="text/javascript">
-    breadcrumbs.push({ label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("coreapps", "patientDashboard", [patientId: patient.id])}'});
+    breadcrumbs.push({ label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.id])}'});
 
     jq(".collapse").collapse();
 </script>
