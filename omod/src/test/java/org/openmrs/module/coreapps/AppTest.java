@@ -1,4 +1,4 @@
-package org.openmrs.module.coreapps.fragment.controller.visit;
+package org.openmrs.module.coreapps;
 
 import org.junit.Test;
 import org.openmrs.module.appframework.AppTestUtil;
