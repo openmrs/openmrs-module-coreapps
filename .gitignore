@@ -4,9 +4,13 @@
 .settings
 .project
 .classpath
+*.sass-cache
 target
 
 # Package Files #
 *.jar
 *.war
 *.ear
+
+*.css
+omod/src/main/compass/sass-external/*

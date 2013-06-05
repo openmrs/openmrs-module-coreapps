@@ -41,6 +41,8 @@
         <appuiVersion>1.0-SNAPSHOT</appuiVersion>
         <idgenVersion>2.6-SNAPSHOT</idgenVersion>
         <addresshierarchyVersion>2.2.9</addresshierarchyVersion>
+        <webservicesRestVersion>2.1</webservicesRestVersion>
+        <uicommonsVersion>1.0-SNAPSHOT</uicommonsVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -156,6 +158,21 @@
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>idgen-api</artifactId>
                 <version>${idgenVersion}</version>
+                <type>jar</type>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>webservices.rest-api</artifactId>
+                <version>${webservicesRestVersion}</version>
+                <type>jar</type>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>webservices.rest-omod</artifactId>
+                <version>${webservicesRestVersion}</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
