@@ -13,10 +13,6 @@
  */
 package org.openmrs.module.coreapps.page.controller.patientdashboard;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
@@ -31,13 +27,18 @@ import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.openmrs.ui.framework.page.Redirect;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PatientDashboardPageController {
 	
 	private static final String ENCOUNTER_TEMPLATE_EXTENSION = "org.openmrs.referenceapplication.encounterTemplate";
 	
-	public void controller(@RequestParam("patientId") Patient patient,
+	public Object controller(@RequestParam("patientId") Patient patient,
 	                       @RequestParam(value = "tab", defaultValue = "visits") String selectedTab, PageModel model,
 	                       @InjectBeans PatientDomainWrapper patientDomainWrapper,
 	                       @SpringBean("orderService") OrderService orderService,
@@ -45,6 +46,10 @@ public class PatientDashboardPageController {
 	                       @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
 	                       UiSessionContext sessionContext) {
 		
+        if (patient.isVoided() || patient.isPersonVoided()) {
+            return new Redirect("coreapps", "patientdashboard/deletedPatient", "patientId=" + patient.getId());
+        }
+
 		patientDomainWrapper.setPatient(patient);
 		model.addAttribute("patient", patientDomainWrapper);
 		model.addAttribute("orders", orderService.getOrdersByPatient(patient));
@@ -67,6 +72,7 @@ public class PatientDashboardPageController {
 		Collections.sort(visitActions);
 		model.addAttribute("visitActions", visitActions);
 		model.addAttribute("patientTabs", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.tabs"));
+        return null;
 	}
 	
 	private static List<String> getAddressHierarchyLevels() {
