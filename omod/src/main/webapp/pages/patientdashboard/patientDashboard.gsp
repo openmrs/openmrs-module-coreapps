@@ -56,7 +56,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
             }
         %>
         <li>
-            <a href="${ url }"><i class="${ it.icon }"></i>${ it.label }</a>
+            <a href="${ url }"><i class="${ it.icon }"></i>${ ui.message(it.label) }</a>
         </li>
         <% } %>
     </ul>
