@@ -1,0 +1,83 @@
+@import "variables";
+@import "reference";
+
+.patient-header {
+  position: relative;
+  overflow: hidden;
+  background: #F9F9F9;
+  z-index: 0;
+  border-bottom: 2px solid #EEE;
+  margin: -9px -9px 10px -9px;
+  padding: 5px 10px;
+
+  .demographics {
+    display: inline-block;
+    position: relative;
+    float: left;
+    vertical-align: top;
+
+    .name {
+      cursor: pointer;
+    }
+
+    h1 {
+      margin: 0;
+      span {
+         display: inline-block;
+         em {
+           font-size: 0.4em;
+           color: #888;
+           border-top: 1px solid #DDD;
+           display: block;
+         }
+       }
+    }
+    .gender-age {
+      @include horizontal-list;
+    }
+  }
+  .identifiers {
+    max-width: 520px;
+    display: inline-block;
+    float: right;
+    text-align: right;
+    margin-left: 20px;
+    em {
+      max-width: 170px;
+      min-width: 120px;
+      display: inline-block;
+      color: #888;
+      font-style: normal;
+      font-size: 0.9em;
+      border-bottom: 1px solid #DDD;
+    }
+    span {
+      background: #666;
+      color: white;
+      letter-spacing: 1px;
+      margin: 5px;
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 0.8em;
+      @include border-radius(50px);
+      a, a:link, a:visited {
+        color: #FFF;
+      }
+      &.add-id {
+        background: none;
+        a, a:link, a:visited {
+          color: $link;
+        }
+      }
+    }
+
+  }
+}
+
+.unknown-patient{
+  color: red;
+}
+
+.unknown-patient {
+  @include status-container;
+}
