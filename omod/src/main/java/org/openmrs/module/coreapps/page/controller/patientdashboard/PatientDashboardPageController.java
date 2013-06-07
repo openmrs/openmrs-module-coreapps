@@ -57,7 +57,7 @@ public class PatientDashboardPageController {
 		model.addAttribute("selectedTab", selectedTab);
 		
 		Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-		VisitDomainWrapper activeVisit = adtService.getActiveVisit((Patient) patient, visitLocation);
+		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
 		model.addAttribute("activeVisit", activeVisit);
 		
 		List<Extension> encounterTemplateExtensions = appFrameworkService
