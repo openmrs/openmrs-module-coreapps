@@ -1,0 +1,14 @@
+[
+    {
+        "id": "coreapps.template.findPatient",
+        "description": "Basic patient search by ID or Name (using OpenMRS's standard patient search)",
+        "contextModel": [ "patientId" ],
+        "configOptions": [
+            {
+                "name": "afterSelectedUrl",
+                "description": "URL to go to after the user selects a patient. Supports {{patientId}}",
+                "defaultValue": "/coreapps/patientdashboard/patientDashboard.page?patientId={{ patientId }}"
+            }
+        ]
+    }
+]

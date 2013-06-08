@@ -1,7 +1,8 @@
 [
     {
         "id": "coreapps.findPatient",
-        "description": "Basic patient search, by ID or Name (using OpenMRS's standard patient search)",
+        "instanceOf": "coreapps.template.findPatient",
+        "description": "Basic patient search that goes to the patient dashboard",
         "order": 2,
         "extensions": [
             {
@@ -9,7 +10,7 @@
                 "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
                 "type": "link",
                 "label": "coreapps.findPatient.app.label",
-                "url": "coreapps/findpatient/findPatient.page",
+                "url": "coreapps/findpatient/findPatient.page?app=coreapps.findPatient",
                 "icon": "icon-search",
                 "requiredPrivilege": "App: coreapps.findPatient"
             }

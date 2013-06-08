@@ -19,7 +19,8 @@
                 var resultTarget = jq('#patient-search-results');
                 resultTarget.html('');
                 _.each(data.results, function(patient) {
-                    resultTarget.append(resultTemplate({ patient: patient }));
+                    var url = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel('${ ui.escapeJs(afterSelectedUrl) }', { patientId: patient.uuid });
+                    resultTarget.append(resultTemplate({ patient: patient, url: url }));
                 });
             });
             return false;
@@ -54,6 +55,6 @@
         </span>
         <span class="age">{{- patient.person.age }}</span>
         <span class="gender">{{- patient.person.gender }}</span>
-        <a class="button" href="{{= '/' + OPENMRS_CONTEXT_PATH + '/coreapps/patientdashboard/patientDashboard.page?patientId=' + patient.uuid }}">${ ui.message("coreapps.findPatient.result.view") }</a>
+        <a class="button" href="{{= url }}">${ ui.message("coreapps.findPatient.result.view") }</a>
     </li>
 </script>
