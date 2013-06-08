@@ -14,9 +14,6 @@
 
 package org.openmrs.module.coreapps.fragment.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
@@ -31,6 +28,9 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ideally you pass in a PatientDomainWrapper as the "patient" config parameter. But if you pass in
@@ -50,8 +50,12 @@ public class PatientHeaderFragmentController {
 		
 		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");
 		if (activeVisit == null) {
-			Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-			activeVisit = adtService.getActiveVisit((Patient) patient, visitLocation);
+            try {
+                Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+                activeVisit = adtService.getActiveVisit((Patient) patient, visitLocation);
+            } catch (IllegalArgumentException ex) {
+                // location does not support visits
+            }
 		}
 
 		if (activeVisit != null)

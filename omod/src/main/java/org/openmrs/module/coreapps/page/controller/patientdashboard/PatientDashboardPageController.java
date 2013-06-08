@@ -55,11 +55,20 @@ public class PatientDashboardPageController {
 		model.addAttribute("orders", orderService.getOrdersByPatient(patient));
 		model.addAttribute("addressHierarchyLevels", getAddressHierarchyLevels());
 		model.addAttribute("selectedTab", selectedTab);
-		
-		Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
-		model.addAttribute("activeVisit", activeVisit);
-		
+
+        Location visitLocation = null;
+        try {
+            visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+        } catch (IllegalArgumentException ex) {
+            // location does not support visits
+        }
+        if (visitLocation != null) {
+            VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
+            model.addAttribute("activeVisit", activeVisit);
+        } else {
+            model.addAttribute("activeVisit", null);
+        }
+
 		List<Extension> encounterTemplateExtensions = appFrameworkService
 		        .getExtensionsForCurrentUser(ENCOUNTER_TEMPLATE_EXTENSION);
 		model.addAttribute("encounterTemplateExtensions", encounterTemplateExtensions);
