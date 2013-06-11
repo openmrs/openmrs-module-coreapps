@@ -24,7 +24,7 @@ public class EditPatientIdentifierFragmentController {
 	                                                  @RequestParam(value = "identifierValue", required = false) String identifierValue,
 	                                                  @RequestParam(value = "locationId", required = false) Location location,
 	                                                  @SpringBean("patientService") PatientService patientService,
-                                                      @SpringBean("coreAppProperties") CoreAppsProperties coreAppsProperties) {
+                                                      @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties) {
 		
 		if (patient != null && identifierType != null) {
 			PatientIdentifier patientIdentifier = patient.getPatientIdentifier(identifierType);
