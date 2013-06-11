@@ -50,7 +50,7 @@ public class EditPatientIdentifierFragmentController {
 
             // assure that a location has been set if required
             if (patientIdentifier.getLocation() == null
-                    && !patientIdentifier.getIdentifierType().getLocationBehavior().equals(PatientIdentifierType.LocationBehavior.NOT_USED)) {
+                    && !PatientIdentifierType.LocationBehavior.NOT_USED.equals(patientIdentifier.getIdentifierType().getLocationBehavior())) {
                 patientIdentifier.setLocation(coreAppsProperties.getDefaultPatientIdentifierLocation());
             }
 
