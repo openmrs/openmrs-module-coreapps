@@ -7,6 +7,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.coreapps.CoreAppsProperties;
+import org.openmrs.patient.IdentifierValidator;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
@@ -54,6 +55,19 @@ public class EditPatientIdentifierFragmentController {
                 patientIdentifier.setLocation(coreAppsProperties.getDefaultPatientIdentifierLocation());
             }
 
+            // make sure that the identifier is not already in use
+            if (patientService.isIdentifierInUseByAnotherPatient(patientIdentifier)) {
+                return new FailureResult(ui.message("coreapps.patientDashBoard.editPatientIdentifier.duplicateMessage"));
+            }
+
+            // run any validator that might exist for this identifier
+            // TODO: test this better
+            IdentifierValidator validator = patientService.getIdentifierValidator(identifierType.getValidator());
+            if (validator != null && !validator.isValid(patientIdentifier.getIdentifier())) {
+                return new FailureResult(ui.message("coreapps.patientDashBoard.editPatientIdentifier.invalid"));
+            }
+
+            // now go ahead and try to save
 			patient.addIdentifier(patientIdentifier);
 			try {
 				patientService.savePatient(patient);
