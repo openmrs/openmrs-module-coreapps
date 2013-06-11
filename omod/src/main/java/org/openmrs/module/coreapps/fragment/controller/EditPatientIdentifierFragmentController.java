@@ -57,14 +57,16 @@ public class EditPatientIdentifierFragmentController {
 
             // make sure that the identifier is not already in use
             if (patientService.isIdentifierInUseByAnotherPatient(patientIdentifier)) {
-                return new FailureResult(ui.message("coreapps.patientDashBoard.editPatientIdentifier.duplicateMessage"));
+                return new FailureResult(ui.format(identifierType) + " "
+                        + ui.message("coreapps.patientDashBoard.editPatientIdentifier.duplicateMessage"));
             }
 
             // run any validator that might exist for this identifier
             // TODO: test this better
             IdentifierValidator validator = patientService.getIdentifierValidator(identifierType.getValidator());
             if (validator != null && !validator.isValid(patientIdentifier.getIdentifier())) {
-                return new FailureResult(ui.message("coreapps.patientDashBoard.editPatientIdentifier.invalid"));
+                return new FailureResult(ui.format(identifierType) + " "
+                        + ui.message("coreapps.patientDashBoard.editPatientIdentifier.invalidMessage"));
             }
 
             // now go ahead and try to save
@@ -73,9 +75,11 @@ public class EditPatientIdentifierFragmentController {
 				patientService.savePatient(patient);
 			}
 			catch (Exception e) {
-				return new FailureResult(ui.message("emr.patientDashBoard.editPatientIdentifier.failureMessage"));
+				return new FailureResult(ui.message("coreapps.patientDashBoard.editPatientIdentifier.failureMessage" + " "
+                        + ui.format(identifierType)));
 			}
 		}
-		return new SuccessResult(ui.message("emr.patientDashBoard.editPatientIdentifier.successMessage"));
+		return new SuccessResult(ui.format(identifierType) + " "
+                + ui.message("coreapps.patientDashBoard.editPatientIdentifier.successMessage"));
 	}
 }
