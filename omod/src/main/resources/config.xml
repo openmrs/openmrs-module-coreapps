@@ -67,5 +67,14 @@
 	</messages>
 	<!-- /Internationalization -->
 
+    <!-- Global Properties -->
+    <globalProperty>
+        <property>coreapps.defaultPatientIdentifierLocation</property>
+        <defaultValue></defaultValue>
+        <description>
+            When adding a new patient identifier via the patient dashboard, the location to use if not specified (and the identifier type requires a location)
+        </description>
+    </globalProperty>
+
 </module>
 
