@@ -18,7 +18,11 @@ function loadTemplates (activeVisit) {
         }
     }
 
-    var visitDetailsTemplate = _.template($('#visitDetailsTemplate').html());
+    var visitDetailsTemplate = _.template($('#visitDetailsTemplate').html(), null, {
+        interpolate : /\[\[=(.+?)\]\]/g ,
+        escape : /\[\[-(.+?)\]\]/g ,
+        evaluate : /\[\[(.+?)\]\]/g
+    });
     var visitsSection = $("#visits-list");
 
     var visitDetailsSection = $("#visit-details");

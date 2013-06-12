@@ -4,9 +4,6 @@
     def formatDiagnoses = {
         it.collect{ ui.escapeHtml(it.diagnosis.formatWithoutSpecificAnswer(context.locale)) } .join(", ")
     }
-    def applyContextModel = { url ->
-        url.replace("{{patientId}}", "" + patient.id)
-    }
     ui.includeJavascript("coreapps", "fragments/visitDetails.js")
 %>
 
@@ -39,40 +36,52 @@
 <!-- End of encounter templates -->
 
 <script type="text/template" id="visitDetailsTemplate">
-    {{ if (stopDatetime) { }}
     <div class="status-container">
-        <i class="icon-time small"></i> ${ ui.message("emr.visitDetails", '{{- startDatetime }}', '{{- stopDatetime }}')}
+        [[ if (stopDatetime) { ]]
+            <i class="icon-time small"></i> ${ ui.message("emr.visitDetails", '[[- startDatetime ]]', '[[- stopDatetime ]]') }
+        [[ } else { ]]
+            <span class="status active"></span> ${ ui.message("emr.activeVisit") }
+            <i class="icon-time small"></i>
+            ${ ui.message("emr.activeVisit.time", '[[- startDatetime ]]') }
+        [[ } ]]
     </div>
-    {{ } else { }}
 
-    <div class="status-container">
-        <span class="status active"></span> ${ui.message("emr.activeVisit")}
-        <i class="icon-time small"></i>
-        ${ ui.message("emr.activeVisit.time", '{{- startDatetime }}')}
-
-    </div>
-    <div class="visit-actions">
-        <% visitActions.each{task -> def url = task.url
+    <div class="visit-actions [[- stopDatetime ? 'past-visit' : 'active-visit' ]]">
+        [[ if (stopDatetime) { ]]
+            <p class="label"><i class="icon-warning-sign small"></i> ${ ui.message("coreapps.patientDashboard.actionsForInactiveVisit") }</p>
+        [[ } ]]
+        <% visitActions.each { task ->
+            def url = task.url
             if (task.type != "script") {
-                url = "/" + contextPath + "/" + applyContextModel(url)
-            } else{
+                url = "/" + contextPath + "/" + url
+        %>
+            <% if (task.require) { %>
+                [[ if ((function() { var patientId = ${ patient.id }; var visit = { id: id, active: stopDatetime == null }; return (${ task.require }); })()) { ]]
+            <% } %>
+            <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { patientId: ${ patient.id }, 'visit.id': id, 'visit.active': stopDatetime == null }) ]]" class="button task">
+        <%
+            } else { // script
                 url = "javascript:" + task.script
+        %>
+            <a href="${ url }" class="button task">
+        <%
             }
         %>
-        <a href="${ url }" class="button task">
-            <i class="${task.icon}"></i> ${ ui.message(task.label) }
-        </a>
+                <i class="${task.icon}"></i> ${ ui.message(task.label) }
+            </a>
+            <% if (task.require) { %>
+                [[ } ]]
+            <% } %>
         <% } %>
     </div>
-    {{  } }}
 
     <h4>${ ui.message("emr.patientDashBoard.encounters")} </h4>
     <ul id="encountersList">
-        {{ _.each(encounters, function(encounter) { }}
-            {{ if (!encounter.voided) { }}
-                {{= encounterTemplates.displayEncounter(encounter, patient) }}
-            {{  } }}
-        {{ }); }}
+        [[ _.each(encounters, function(encounter) { ]]
+            [[ if (!encounter.voided) { ]]
+                [[= encounterTemplates.displayEncounter(encounter, patient) ]]
+            [[  } ]]
+        [[ }); ]]
     </ul>
 </script>
 
