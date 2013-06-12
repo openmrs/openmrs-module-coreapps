@@ -5,14 +5,17 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.IdentifierNotUniqueException;
+import org.openmrs.api.InvalidCheckDigitException;
+import org.openmrs.api.InvalidIdentifierFormatException;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.coreapps.CoreAppsProperties;
-import org.openmrs.patient.IdentifierValidator;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
+import org.openmrs.validator.PatientIdentifierValidator;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -55,28 +58,36 @@ public class EditPatientIdentifierFragmentController {
                 patientIdentifier.setLocation(coreAppsProperties.getDefaultPatientIdentifierLocation());
             }
 
-            // make sure that the identifier is not already in use
-            if (patientService.isIdentifierInUseByAnotherPatient(patientIdentifier)) {
+            // validate the identifier
+            try {
+                PatientIdentifierValidator.validateIdentifier(patientIdentifier);
+            }
+            catch (IdentifierNotUniqueException e) {
                 return new FailureResult(ui.format(identifierType) + " "
                         + ui.message("coreapps.patientDashBoard.editPatientIdentifier.duplicateMessage"));
             }
-
-            // run any validator that might exist for this identifier
-            // TODO: test this better
-            IdentifierValidator validator = patientService.getIdentifierValidator(identifierType.getValidator());
-            if (validator != null && !validator.isValid(patientIdentifier.getIdentifier())) {
+            catch (InvalidCheckDigitException e) {
                 return new FailureResult(ui.format(identifierType) + " "
                         + ui.message("coreapps.patientDashBoard.editPatientIdentifier.invalidMessage"));
             }
+            catch (InvalidIdentifierFormatException e) {
+                return new FailureResult(ui.format(identifierType) + " "
+                        + ui.message("coreapps.patientDashBoard.editPatientIdentifier.invalidFormatMessage")
+                        + " \"" + identifierType.getFormatDescription() + "\"");
+            }
+            catch (Exception e) {
+                return new FailureResult(ui.message("coreapps.patientDashBoard.editPatientIdentifier.failureMessage") + " "
+                        + ui.format(identifierType));
+            }
 
-            // now go ahead and try to save
+            // now go ahead and save
 			patient.addIdentifier(patientIdentifier);
 			try {
-				patientService.savePatient(patient);
+                patientService.savePatient(patient);
 			}
 			catch (Exception e) {
-				return new FailureResult(ui.message("coreapps.patientDashBoard.editPatientIdentifier.failureMessage" + " "
-                        + ui.format(identifierType)));
+				return new FailureResult(ui.message("coreapps.patientDashBoard.editPatientIdentifier.failureMessage") + " "
+                        + ui.format(identifierType));
 			}
 		}
 		return new SuccessResult(ui.format(identifierType) + " "
