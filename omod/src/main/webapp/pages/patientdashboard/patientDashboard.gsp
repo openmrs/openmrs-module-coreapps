@@ -111,7 +111,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 <div id="quick-visit-creation-dialog" class="dialog">
     <div class="dialog-header">
         <h3>
-            <i class="icon-folder-open"></i>
+            <i class="icon-check-in"></i>
             ${ ui.message("emr.visit.createQuickVisit.title") }</h3>
     </div>
     <div class="dialog-content">
