@@ -1,0 +1,12 @@
+[
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.createRetrospectiveVisit",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "script",
+        "label": "coreapps.task.createRetrospectiveVisit.label",
+        "script": "visit.showRetrospectiveVisitCreationDialog()",
+        "icon": "icon-folder-open",
+        "order": -12,
+        "requiredPrivilege": "Task: coreapps.createRetrospectiveVisit"
+    }
+]

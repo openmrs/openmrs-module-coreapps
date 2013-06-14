@@ -28,6 +28,9 @@
 			}
 		} %>
         encounterTemplates.setDefaultTemplate('defaultEncounterTemplate');
+
+        // initialize the dialog to create a retrospective visit
+        visit.createRetrospectiveVisitDialog(${patient.id});
     });
 </script>
 <% encounterTemplateExtensions.each { extension -> %>
@@ -148,5 +151,42 @@
 
         <button class="confirm right">${ ui.message("emr.yes") }</button>
         <button class="cancel">${ ui.message("emr.no") }</button>
+    </div>
+</div>
+
+<div id="retrospective-visit-creation-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("coreapps.task.createRetrospectiveVisit.label") }</h3>
+    </div>
+    <div class="dialog-content">
+
+        <p>
+            <label for="startDate" class="required">
+                ${ ui.message("coreapps.retrospectiveVisit.startDate.label") }
+            </label>
+
+            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                    id: "retrospectiveVisitStartDate",
+                    formFieldName: "retrospectiveVisitStartDate",
+                    label:"",
+                    useTime: false,
+            ])}
+        </p>
+
+        <p>
+            <label for="stopDate" class="required">
+                ${ ui.message("coreapps.retrospectiveVisit.stopDate.label") }
+            </label>
+
+            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                    id: "retrospectiveVisitStopDate",
+                    formFieldName: "retrospectiveVisitStopDate",
+                    label:"",
+                    useTime: false,
+            ])}
+        </p>
+
+        <button class="confirm right">${ ui.message("emr.confirm") }</button>
+        <button class="cancel">${ ui.message("emr.cancel") }</button>
     </div>
 </div>
