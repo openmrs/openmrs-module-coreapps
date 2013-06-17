@@ -43,8 +43,22 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
                             window.location.reload();
                         }
                         else {
+                           // display the past visits within the existing visits dialog (which we open below)
+                           jq('#past-visit-dates').empty();
 
-                            // TODO: display the dates; use angular???
+                            // TODO: this all seems a little hacky/confusing/non-sustainable to me
+                            // TODO: I trigger a certain visit by triggering a click on property visit details item
+                            // TODO: might be something we want to do with angularJS going forward?
+                            data.forEach(function (v) {
+                                var listItem = jq("<li class=\"menu-item past-visit-date-item\" visitId=\"visit.id\">" + v.startDate + " - " + v.stopDate + "</li>");
+
+                                listItem.click(function() {
+                                    visit.retrospectiveVisitExistingVisitsDialog.close();
+                                    jq('.viewVisitDetails').filter('[visitId=' + v.id + ']').click();
+                                });
+
+                                jq('#past-visit-dates').append(listItem);
+                            })
 
                             visit.retrospectiveVisitCreationDialog.close();
                             visit.retrospectiveVisitExistingVisitsDialog.show();
@@ -83,4 +97,5 @@ visit.createRetrospectiveVisitExistingVisitsDialog = function() {
 
     });
 }
+
 

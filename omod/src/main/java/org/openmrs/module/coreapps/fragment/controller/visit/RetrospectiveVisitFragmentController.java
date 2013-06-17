@@ -52,7 +52,9 @@ public class RetrospectiveVisitFragmentController {
 
             if (visits != null) {
                 for (VisitDomainWrapper visit : visits) {
-                    simpleVisits.add(SimpleObject.fromObject(visit, ui, "visit.startDatetime", "visit.stopDatetime"));
+                    simpleVisits.add(SimpleObject.create("startDate", ui.format(new DateTime(visit.getVisit().getStartDatetime()).toDateMidnight().toDate()),
+                            "stopDate", ui.format(new DateTime(visit.getVisit().getStopDatetime()).toDateMidnight().toDate()),
+                            "id", visit.getVisit().getId()));
                 }
             }
 

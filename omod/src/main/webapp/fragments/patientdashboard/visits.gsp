@@ -220,7 +220,7 @@
             </li>
         </ul>
 
-        <ul id="past-visit-dates">
+        <ul class="select" id="past-visit-dates">
 
         </ul>
 
