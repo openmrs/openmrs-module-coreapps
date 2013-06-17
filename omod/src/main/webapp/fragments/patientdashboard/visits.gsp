@@ -224,7 +224,7 @@
 
         </ul>
 
-        <button class="confirm right">${ ui.message("coreapps.retrospectiveVisit.changeDate.label") }</button>
+        <button class="right">${ ui.message("coreapps.retrospectiveVisit.changeDate.label") }</button>
         <button class="cancel">${ ui.message("emr.cancel") }</button>
 
     </div>
