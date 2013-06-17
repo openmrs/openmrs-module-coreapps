@@ -125,7 +125,7 @@ public class RetrospectiveVisitFragmentControllerTest {
         List<SimpleObject> result = (List<SimpleObject>) controller.create(adtService, patient, location, startDate, null, request, ui);
 
         assertThat(result.size(), is(1));
-        assertThat(result.get(0).toJson(), is("{\"visit\":{\"startDatetime\":\"someDate\",\"stopDatetime\":\"someDate\"}}"));
+        assertThat(result.get(0).toJson(), is("{\"startDate\":\"someDate\",\"stopDate\":\"someDate\",\"id\":null}"));
     }
 
 
