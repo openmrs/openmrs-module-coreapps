@@ -37,10 +37,12 @@
     }
 
     .death-message {
-      color: white;
-      background: red;
-      border-color: $alert;
       @include horizontal-list;
+
+      color: white;
+      background: $error;
+      padding: 5px 10px;
+      border-radius: 2px;
     }
   }
   .identifiers {
