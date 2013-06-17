@@ -35,6 +35,13 @@
     .gender-age {
       @include horizontal-list;
     }
+
+    .death-message {
+      color: white;
+      background: red;
+      border-color: $alert;
+      @include horizontal-list;
+    }
   }
   .identifiers {
     max-width: 520px;

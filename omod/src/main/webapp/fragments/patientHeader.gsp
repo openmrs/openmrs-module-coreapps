@@ -78,6 +78,13 @@
             <span>${ui.message("emr.unknownAge")}</span>
             <% } %>
         </div>
+        <% if (patient.patient.dead) { %>
+        <br>
+        <br>
+        <div class="death-message">
+            ${ui.message("emr.deadPatient")} : ${ ui.format (patient.patient.deathDate) }
+        </div>
+        <% } %>
         <% if (config.activeVisit) { %>
         <div class="status-container">
             <% def visit = config.activeVisit.visit %>
@@ -86,6 +93,7 @@
         </div>
         <% } %>
     </div>
+
 
 
     <div class="identifiers">

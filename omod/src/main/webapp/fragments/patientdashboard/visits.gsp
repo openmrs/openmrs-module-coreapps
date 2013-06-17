@@ -95,6 +95,7 @@
 </script>
 
 <ul id="visits-list" class="left-menu">
+
     <% patient.allVisitsUsingWrappers.each { wrapper ->
         def primaryDiagnoses = wrapper.primaryDiagnoses
     %>
@@ -126,7 +127,10 @@
 </ul>
 
 <div id="visit-details" class="main-content">
-    <% if (!activeVisit) { %>
+    <% if (patient.patient.dead) { %>
+        <h4>${ ui.message('emr.noActiveVisit') }</h4>
+        <p class="spaced">${ ui.message('emr.deadPatient.description') }</p>
+    <% } else if (!activeVisit) { %>
         <h4>${ ui.message('emr.noActiveVisit') }</h4>
         <p class="spaced">${ ui.message('emr.noActiveVisit.description') }</p>
         <p class="spaced">
