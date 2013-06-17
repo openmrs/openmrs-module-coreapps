@@ -29,8 +29,19 @@
 		} %>
         encounterTemplates.setDefaultTemplate('defaultEncounterTemplate');
 
-        // initialize the dialog to create a retrospective visit
+        // initialize the dialogs used when creating a retrospective visit
         visit.createRetrospectiveVisitDialog(${patient.id});
+        visit.createRetrospectiveVisitExistingVisitsDialog();
+
+        jq(function(){
+            // hack to set the end date when selecting a start date
+            // TODO: make this datepicker independent?
+            jq('#retrospectiveVisitStartDate').change(function() {
+                jq('#retrospectiveVisitStopDate-display').val(jq('#retrospectiveVisitStartDate-display').val());
+                jq('#retrospectiveVisitStopDate-field').val(jq('#retrospectiveVisitStartDate-field').val());
+            });
+        });
+
     });
 </script>
 <% encounterTemplateExtensions.each { extension -> %>
@@ -192,5 +203,29 @@
 
         <button class="confirm right">${ ui.message("emr.confirm") }</button>
         <button class="cancel">${ ui.message("emr.cancel") }</button>
+    </div>
+</div>
+
+<div id="retrospective-visit-existing-visits-dialog" class="dialog" style="display: none">
+
+    <div class="dialog-header">
+        <h3>${ ui.message("coreapps.task.createRetrospectiveVisit.label") }</h3>
+    </div>
+
+    <div class="dialog-content">
+
+        <ul>
+            <li class="error">
+                <span>${ ui.message("coreapps.retrospectiveVisit.conflictingVisitMessage") }</span>
+            </li>
+        </ul>
+
+        <ul id="past-visit-dates">
+
+        </ul>
+
+        <button class="confirm right">${ ui.message("coreapps.retrospectiveVisit.changeDate.label") }</button>
+        <button class="cancel">${ ui.message("emr.cancel") }</button>
+
     </div>
 </div>

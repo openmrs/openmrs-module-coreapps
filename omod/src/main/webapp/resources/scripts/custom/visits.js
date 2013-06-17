@@ -38,8 +38,17 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
                         startDate: jq('[name=retrospectiveVisitStartDate]').val(),
                         stopDate: jq('[name=retrospectiveVisitStopDate]').val() },
                     function(data) {
-                        visit.retrospectiveVisitCreationDialog.close();
-                        window.location.reload();
+                        if (data.success == "true") {
+                            visit.retrospectiveVisitCreationDialog.close();
+                            window.location.reload();
+                        }
+                        else {
+
+                            // TODO: display the dates; use angular???
+
+                            visit.retrospectiveVisitCreationDialog.close();
+                            visit.retrospectiveVisitExistingVisitsDialog.show();
+                        }
                     });
             },
             cancel: function() {
@@ -47,8 +56,31 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
             }
         }
     });
+
 }
 
 visit.showRetrospectiveVisitCreationDialog = function() {
     visit.retrospectiveVisitCreationDialog.show();
 };
+
+visit.retrospectiveVisitExistingVisitsDialog = null;
+
+visit.createRetrospectiveVisitExistingVisitsDialog = function() {
+
+    visit.retrospectiveVisitExistingVisitsDialog = emr.setupConfirmationDialog({
+        selector: '#retrospective-visit-existing-visits-dialog',
+        actions: {
+
+            confirm: function() {
+                visit.retrospectiveVisitExistingVisitsDialog.close();
+                visit.retrospectiveVisitCreationDialog.show();
+            },
+
+            cancel: function() {
+                visit.retrospectiveVisitExistingVisitsDialog.close();
+            }
+        }
+
+    });
+}
+

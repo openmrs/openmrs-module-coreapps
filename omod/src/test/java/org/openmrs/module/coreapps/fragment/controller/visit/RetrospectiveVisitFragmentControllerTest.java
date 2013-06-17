@@ -5,20 +5,29 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.adt.exception.ExistingVisitDuringTimePeriodException;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
-import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+import static org.hamcrest.CoreMatchers.is;
+
 
 public class RetrospectiveVisitFragmentControllerTest {
 
@@ -44,22 +53,80 @@ public class RetrospectiveVisitFragmentControllerTest {
     }
 
     @Test
-    public void test_shouldCreateNewRetrospectiveVisit() {
+    public void test_shouldCreateNewRetrospectiveVisit() throws Exception {
 
         when(ui.message("coreapps.retrospectiveVisit.addedVisitMessage")).thenReturn("success message");
 
         Patient patient = new Patient();
         Location location = new Location();
-        Date startDate = new DateTime(2012, 1, 1, 0, 0, 0).toDate();
-        Date stopDate = new DateTime(2012, 1, 2, 0, 0, 0).toDate();
+        Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
+        Date stopDate = new DateTime(2012, 1, 2, 13,13, 13).toDate();
 
-        FragmentActionResult result = controller.create(adtService, patient, location, startDate, stopDate, request, ui);
+        // should round to the time components to the start and end of the days, respectively
+        Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0).toDate();
+        Date expectedStopDate = new DateTime(2012, 1, 2, 23, 59, 59).toDate();
 
-        verify(adtService).createRetrospectiveVisit(patient, location, startDate, stopDate);
+        Object result = controller.create(adtService, patient, location, startDate, stopDate, request, ui);
+
+        verify(adtService).createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate);
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                 ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         assertTrue(result instanceof SuccessResult);
     }
+
+    @Test
+    public void test_shouldCreateNewRetrospectiveVisit_whenNoStopDateSpecified() throws Exception {
+
+        when(ui.message("coreapps.retrospectiveVisit.addedVisitMessage")).thenReturn("success message");
+
+        Patient patient = new Patient();
+        Location location = new Location();
+        Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
+
+        // should round to the time components to the start and end of the days, respectively
+        Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0).toDate();
+        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59).toDate();
+
+        Object result = controller.create(adtService, patient, location, startDate, null, request, ui);
+
+        verify(adtService).createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate);
+        verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
+                ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
+        verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+
+        assertTrue(result instanceof SuccessResult);
+    }
+
+    @Test
+    public void test_shouldReturnConflictingVisits() throws Exception {
+
+        Patient patient = new Patient();
+        Location location = new Location();
+        Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
+
+        // should round to the time components to the start and end of the days, respectively
+        Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0).toDate();
+        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59).toDate();
+
+        Visit conflictingVisit = new Visit();
+        conflictingVisit.setStartDatetime(new DateTime(2012, 1, 1, 0, 0, 0).toDate());
+        conflictingVisit.setStopDatetime(new DateTime(2012, 1, 3, 0, 0, 0).toDate());
+
+        when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate))
+                .thenThrow(ExistingVisitDuringTimePeriodException.class);
+
+        when(adtService.getVisits(patient, location, expectedStartDate, expectedStopDate))
+                .thenReturn(Collections.singletonList(new VisitDomainWrapper(conflictingVisit)));
+
+        when(ui.format(any())).thenReturn("someDate");
+
+        List<SimpleObject> result = (List<SimpleObject>) controller.create(adtService, patient, location, startDate, null, request, ui);
+
+        assertThat(result.size(), is(1));
+        assertThat(result.get(0).toJson(), is("{\"visit\":{\"startDatetime\":\"someDate\",\"stopDatetime\":\"someDate\"}}"));
+    }
+
+
 }
