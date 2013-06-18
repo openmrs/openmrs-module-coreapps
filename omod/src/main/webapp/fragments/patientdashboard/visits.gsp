@@ -101,7 +101,13 @@
 
 <script type="text/javascript">
     jq(function(){
-        loadTemplates(${ activeVisit != null });
+        var visitId;
+        <% if (param.visitId != null) { %>
+            visitId = ${ param.visitId };
+        <% } else if (activeVisit != null) { %>
+            visitId = ${ activeVisit.visit.id };
+        <% } %>
+        loadTemplates(visitId);
     });
 </script>
 
