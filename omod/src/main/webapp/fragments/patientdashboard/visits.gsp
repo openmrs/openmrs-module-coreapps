@@ -1,6 +1,8 @@
 <%
     def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy")
     def timeFormat = new java.text.SimpleDateFormat("hh:mm a")
+    def editDateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
+
     def formatDiagnoses = {
         it.collect{ ui.escapeHtml(it.diagnosis.formatWithoutSpecificAnswer(context.locale)) } .join(", ")
     }
@@ -190,6 +192,7 @@
                     id: "retrospectiveVisitStartDate",
                     formFieldName: "retrospectiveVisitStartDate",
                     label:"",
+                    endDate: editDateFormat.format(new Date()),
                     useTime: false,
             ])}
         </p>
@@ -203,14 +206,15 @@
                     id: "retrospectiveVisitStopDate",
                     formFieldName: "retrospectiveVisitStopDate",
                     label:"",
+                    endDate: editDateFormat.format(new Date()),
                     useTime: false,
             ])}
         </p>
 
         <br><br>
 
-        <button class="confirm right">${ ui.message("emr.confirm") }</button>
         <button class="cancel">${ ui.message("emr.cancel") }</button>
+        <button class="confirm right">${ ui.message("emr.confirm") }</button>
     </div>
 </div>
 
@@ -235,7 +239,7 @@
 
         <br><br>
 
-        <button class="confirm right">${ ui.message("coreapps.retrospectiveVisit.changeDate.label") }</button>
         <button class="cancel">${ ui.message("emr.cancel") }</button>
+        <button class="confirm no-color">${ ui.message("coreapps.retrospectiveVisit.changeDate.label") }</button>
     </div>
 </div>
