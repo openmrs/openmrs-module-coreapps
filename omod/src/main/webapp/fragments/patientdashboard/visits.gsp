@@ -177,10 +177,10 @@
 
 <div id="retrospective-visit-creation-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
+        <i class="icon-plus"></i>
         <h3>${ ui.message("coreapps.task.createRetrospectiveVisit.label") }</h3>
     </div>
-    <div class="dialog-content">
-
+    <div class="dialog-content form">
         <p>
             <label for="startDate" class="required">
                 ${ ui.message("coreapps.retrospectiveVisit.startDate.label") }
@@ -207,6 +207,8 @@
             ])}
         </p>
 
+        <br><br>
+
         <button class="confirm right">${ ui.message("emr.confirm") }</button>
         <button class="cancel">${ ui.message("emr.cancel") }</button>
     </div>
@@ -215,10 +217,11 @@
 <div id="retrospective-visit-existing-visits-dialog" class="dialog" style="display: none">
 
     <div class="dialog-header">
+        <i class="icon-plus"></i>
         <h3>${ ui.message("coreapps.task.createRetrospectiveVisit.label") }</h3>
     </div>
 
-    <div class="dialog-content">
+    <div class="dialog-content form">
 
         <ul>
             <li class="error">
@@ -229,6 +232,8 @@
         <ul class="select" id="past-visit-dates">
 
         </ul>
+
+        <br><br>
 
         <button class="right">${ ui.message("coreapps.retrospectiveVisit.changeDate.label") }</button>
         <button class="cancel">${ ui.message("emr.cancel") }</button>
