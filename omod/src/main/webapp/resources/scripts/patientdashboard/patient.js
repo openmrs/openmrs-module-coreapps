@@ -87,7 +87,6 @@ function createEditPatientIdentifierDialog(patientId) {
                         }
                     },function(err){
                         emr.handleError(err);
-                        editPatientIdentifierDialog.close();
                     });
 
             },
