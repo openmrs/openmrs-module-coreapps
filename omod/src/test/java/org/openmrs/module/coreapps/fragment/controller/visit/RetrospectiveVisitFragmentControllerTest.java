@@ -12,7 +12,6 @@ import org.openmrs.module.emrapi.adt.exception.ExistingVisitDuringTimePeriodExce
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
-import org.openmrs.ui.framework.fragment.action.SuccessResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,13 +19,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.hamcrest.CoreMatchers.is;
 
 
 public class RetrospectiveVisitFragmentControllerTest {
@@ -57,7 +57,8 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         when(ui.message("coreapps.retrospectiveVisit.addedVisitMessage")).thenReturn("success message");
 
-        Patient patient = new Patient();
+        Patient patient = createPatient();
+
         Location location = new Location();
         Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
         Date stopDate = new DateTime(2012, 1, 2, 13,13, 13).toDate();
@@ -66,14 +67,18 @@ public class RetrospectiveVisitFragmentControllerTest {
         Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0).toDate();
         Date expectedStopDate = new DateTime(2012, 1, 2, 23, 59, 59).toDate();
 
-        Object result = controller.create(adtService, patient, location, startDate, stopDate, request, ui);
+        Visit visit = createVisit();
 
-        verify(adtService).createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate);
+        when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate)).thenReturn(new VisitDomainWrapper(visit));
+
+        SimpleObject result = (SimpleObject) controller.create(adtService, patient, location, startDate, stopDate, request, ui);
+
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                 ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+        verify(ui).pageLink(eq("coreapps"), eq("patientdashboard/patientDashboard"), any(SimpleObject.class));
 
-        assertTrue(result instanceof SuccessResult);
+        assertTrue((Boolean) result.get("success"));
     }
 
     @Test
@@ -81,7 +86,7 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         when(ui.message("coreapps.retrospectiveVisit.addedVisitMessage")).thenReturn("success message");
 
-        Patient patient = new Patient();
+        Patient patient = createPatient();
         Location location = new Location();
         Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
 
@@ -89,14 +94,18 @@ public class RetrospectiveVisitFragmentControllerTest {
         Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0).toDate();
         Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59).toDate();
 
-        Object result = controller.create(adtService, patient, location, startDate, null, request, ui);
+        Visit visit = createVisit();
 
-        verify(adtService).createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate);
+        when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate)).thenReturn(new VisitDomainWrapper(visit));
+
+        SimpleObject result = (SimpleObject) controller.create(adtService, patient, location, startDate, null, request, ui);
+
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                 ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+        verify(ui).pageLink(eq("coreapps"), eq("patientdashboard/patientDashboard"), any(SimpleObject.class));
 
-        assertTrue(result instanceof SuccessResult);
+        assertTrue((Boolean) result.get("success"));
     }
 
     @Test
@@ -128,5 +137,15 @@ public class RetrospectiveVisitFragmentControllerTest {
         assertThat(result.get(0).toJson(), is("{\"startDate\":\"someDate\",\"stopDate\":\"someDate\",\"id\":null}"));
     }
 
+    private Visit createVisit() {
+        Visit visit = new Visit();
+        visit.setId(1);
+        return visit;
+    }
 
+    private Patient createPatient() {
+        Patient patient = new Patient();
+        patient.setId(1);
+        return patient;
+    }
 }

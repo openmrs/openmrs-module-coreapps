@@ -38,9 +38,9 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
                         startDate: jq('[name=retrospectiveVisitStartDate]').val(),
                         stopDate: jq('[name=retrospectiveVisitStopDate]').val() },
                     function(data) {
-                        if (data.success == "true") {
+                        if (data.success) {
                             visit.retrospectiveVisitCreationDialog.close();
-                            window.location.reload();
+                            window.location = data.url;
                         }
                         else {
                            // display the past visits within the existing visits dialog (which we open below)

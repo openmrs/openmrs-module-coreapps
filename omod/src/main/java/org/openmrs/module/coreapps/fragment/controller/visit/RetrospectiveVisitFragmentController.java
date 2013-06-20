@@ -42,7 +42,14 @@ public class RetrospectiveVisitFragmentController {
         stopDate = new DateTime(stopDate).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).toDate();
 
         try {
-            adtService.createRetrospectiveVisit(patient, location, startDate, stopDate);
+            VisitDomainWrapper createdVisit = adtService.createRetrospectiveVisit(patient, location, startDate, stopDate);
+
+            request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
+                    ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
+            request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+
+            return SimpleObject.create("success", true, "url", ui.pageLink("coreapps", "patientdashboard/patientDashboard",
+                    SimpleObject.create("patientId", patient.getId().toString(), "visitId", createdVisit.getVisit().getId().toString())));
         }
         catch (ExistingVisitDuringTimePeriodException e) {
 
@@ -64,13 +71,6 @@ public class RetrospectiveVisitFragmentController {
             log.error("Unable to add retrospective visit", e);
             return new FailureResult(ui.message(e.getMessage()));
         }
-
-        request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
-                ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
-        request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
-
-        return new SuccessResult();
-
     }
 
 }
