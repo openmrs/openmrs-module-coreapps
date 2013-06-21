@@ -3,7 +3,7 @@ function loadTemplates (visitId) {
         var localVisitId = visitElement.attr('visitId');
         visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
         $.getJSON(
-            emr.fragmentActionLink("emr", "visit/visitDetails", "getVisitDetails", {
+            emr.fragmentActionLink("coreapps", "visit/visitDetails", "getVisitDetails", {
                 visitId: localVisitId
             })
         ).success(function(data) {

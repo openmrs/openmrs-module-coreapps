@@ -18,7 +18,7 @@ jq(function() {
         var encounterId = jq(event.target).attr("data-encounter-id");
         var patientId = jq(event.target).attr("data-patient-id");
         emr.navigateTo({
-            provider: "coreapps",
+            provider: "htmlformentryui",
             page: "htmlform/editHtmlFormWithStandardUi",
             query: { patientId: patientId, encounterId: encounterId }
         });
@@ -38,7 +38,7 @@ jq(function() {
 	    if (isHtmlForm) {
 	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
 	        jq.getJSON(
-	        		emr.fragmentActionLink("coreapps", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
+	        		emr.fragmentActionLink("htmlformentryui", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
 	        ).success(function(data){
 	            encounterDetailsSection.html(data.html);
 	        }).error(function(err){
