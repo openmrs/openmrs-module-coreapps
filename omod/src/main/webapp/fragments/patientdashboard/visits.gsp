@@ -36,8 +36,8 @@
         visit.createRetrospectiveVisitExistingVisitsDialog();
 
         jq(function(){
-            // hack to set the end date when selecting a start date
-            // TODO: make this datepicker independent?
+            // TODO: for retrospective visits dialog, hack to set the end date when selecting a start date
+            // TODO: move this!
             jq('#retrospectiveVisitStartDate').change(function() {
                 jq('#retrospectiveVisitStopDate-display').val(jq('#retrospectiveVisitStartDate-display').val());
                 jq('#retrospectiveVisitStopDate-field').val(jq('#retrospectiveVisitStartDate-field').val());

@@ -11,7 +11,6 @@ import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
-import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,8 +37,8 @@ public class RetrospectiveVisitFragmentController {
         }
 
         // set the startDate and stopDate time components to the start and end of the day, respectively
-        startDate = new DateTime(startDate).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).toDate();
-        stopDate = new DateTime(stopDate).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).toDate();
+        startDate = new DateTime(startDate).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDate();
+        stopDate = new DateTime(stopDate).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).withMillisOfSecond(999).toDate();
 
         try {
             VisitDomainWrapper createdVisit = adtService.createRetrospectiveVisit(patient, location, startDate, stopDate);
