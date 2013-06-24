@@ -13,12 +13,6 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Order;
@@ -28,6 +22,12 @@ import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 public class ParserEncounterIntoSimpleObjects {
 	
@@ -47,7 +47,8 @@ public class ParserEncounterIntoSimpleObjects {
 		List<SimpleObject> orders = new ArrayList<SimpleObject>();
 		
 		for (Order order : encounter.getOrders()) {
-			orders.add(SimpleObject.create("concept", uiUtils.format(order.getConcept())));
+			orders.add(SimpleObject.create("concept", uiUtils.format(order.getConcept()),
+                    "accessionNumber", uiUtils.format(order.getAccessionNumber())));
 		}
 		return orders;
 	}
