@@ -42,6 +42,9 @@
 	</ul>
 	{{ if ( encounter.canDelete ) { }}
 	<span>
+        {{ if ( config.editable ) { }}
+        <i class="editEncounter delete-item icon-pencil" data-patient-id="{{- patient.patientId }}" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.edit") }"></i>
+        {{ } }}
 	    <i class="deleteEncounterId delete-item icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
 	</span>
 	{{  } }}
