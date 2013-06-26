@@ -3,6 +3,7 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -22,6 +23,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -137,6 +139,28 @@ public class RetrospectiveVisitFragmentControllerTest {
         assertThat(result.get(0).toJson(), is("{\"startDate\":\"someDate\",\"stopDate\":\"someDate\",\"id\":null}"));
     }
 
+
+    @Test
+    public void test_shouldSetEndDateToCurrentTimeIfEndDateIsCurrentDay() throws Exception {
+
+        when(ui.message("coreapps.retrospectiveVisit.addedVisitMessage")).thenReturn("success message");
+
+        Patient patient = createPatient();
+        Location location = new Location();
+
+        Date startDate = new DateTime().withTime(0,0,0,0).toDate();
+        Date endDate = startDate;
+
+        Date expectedMinDateValue = new Date();
+        controller.create(adtService, patient, location, startDate, endDate, request, ui);
+        Date expectedMaxDateValue = new Date();
+
+        verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), argThat(new IsWithinDateRange(expectedMinDateValue, expectedMaxDateValue)));
+
+    }
+
+
+
     private Visit createVisit() {
         Visit visit = new Visit();
         visit.setId(1);
@@ -148,4 +172,25 @@ public class RetrospectiveVisitFragmentControllerTest {
         patient.setId(1);
         return patient;
     }
+
+    private class IsWithinDateRange extends ArgumentMatcher<Date> {
+
+        private Date expectedMinDateValue;
+
+        private Date expectedMaxDateValue;
+
+        public IsWithinDateRange(Date expectedMinDateValue, Date expectedMaxDateValue) {
+            this.expectedMinDateValue = expectedMinDateValue;
+            this.expectedMaxDateValue = expectedMaxDateValue;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            Date date = (Date) o;
+            return (date.after(expectedMinDateValue) || date.equals(expectedMinDateValue))
+                    && (date.before(expectedMaxDateValue) || date.equals(expectedMaxDateValue));
+        }
+
+    }
+
 }

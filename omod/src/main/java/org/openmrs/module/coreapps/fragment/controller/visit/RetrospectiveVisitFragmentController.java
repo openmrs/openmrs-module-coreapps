@@ -36,9 +36,16 @@ public class RetrospectiveVisitFragmentController {
             stopDate = startDate;
         }
 
-        // set the startDate and stopDate time components to the start and end of the day, respectively
-        startDate = new DateTime(startDate).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDate();
-        stopDate = new DateTime(stopDate).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).withMillisOfSecond(999).toDate();
+        // set the startDate time component to the start of day
+        startDate = new DateTime(startDate).withTime(0,0,0,0).toDate();
+
+        // if stopDate is today, set stopDate to current datetime, otherwise set time component to end of date
+        if (new DateTime().withTime(0,0,0,0).equals(new DateTime(stopDate).withTime(0,0,0,0))) {
+            stopDate = new Date();
+        }
+        else {
+            stopDate = new DateTime(stopDate).withTime(23, 59, 59, 999).toDate();
+        }
 
         try {
             VisitDomainWrapper createdVisit = adtService.createRetrospectiveVisit(patient, location, startDate, stopDate);
