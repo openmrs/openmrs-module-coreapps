@@ -52,53 +52,7 @@
 <!-- End of encounter templates -->
 
 <script type="text/template" id="visitDetailsTemplate">
-    <div class="status-container">
-        [[ if (stopDatetime) { ]]
-            <i class="icon-time small"></i> ${ ui.message("emr.visitDetails", '[[- startDatetime ]]', '[[- stopDatetime ]]') }
-        [[ } else { ]]
-            <span class="status active"></span> ${ ui.message("emr.activeVisit") }
-            <i class="icon-time small"></i>
-            ${ ui.message("emr.activeVisit.time", '[[- startDatetime ]]') }
-        [[ } ]]
-    </div>
-
-    <div class="visit-actions [[- stopDatetime ? 'past-visit' : 'active-visit' ]]">
-        [[ if (stopDatetime) { ]]
-            <p class="label"><i class="icon-warning-sign small"></i> ${ ui.message("coreapps.patientDashboard.actionsForInactiveVisit") }</p>
-        [[ } ]]
-        <% visitActions.each { task ->
-            def url = task.url
-            if (task.type != "script") {
-                url = "/" + contextPath + "/" + url
-        %>
-            <% if (task.require) { %>
-                [[ if ((function() { var patientId = ${ patient.id }; var visit = { id: id, active: stopDatetime == null }; return (${ task.require }); })()) { ]]
-            <% } %>
-            <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { patientId: ${ patient.id }, 'visit.id': id, 'visit.active': stopDatetime == null }) ]]" class="button task">
-        <%
-            } else { // script
-                url = "javascript:" + task.script
-        %>
-            <a href="${ url }" class="button task">
-        <%
-            }
-        %>
-                <i class="${task.icon}"></i> ${ ui.message(task.label) }
-            </a>
-            <% if (task.require) { %>
-                [[ } ]]
-            <% } %>
-        <% } %>
-    </div>
-
-    <h4>${ ui.message("emr.patientDashBoard.encounters")} </h4>
-    <ul id="encountersList">
-        [[ _.each(encounters, function(encounter) { ]]
-            [[ if (!encounter.voided) { ]]
-                [[= encounterTemplates.displayEncounter(encounter, patient) ]]
-            [[  } ]]
-        [[ }); ]]
-    </ul>
+    ${ ui.includeFragment("coreapps", "patientdashboard/visitDetailsTemplate") }
 </script>
 
 <script type="text/javascript">
@@ -115,31 +69,44 @@
 
 <ul id="visits-list" class="left-menu">
 
-    <% patient.allVisitsUsingWrappers.each { wrapper ->
-        def primaryDiagnoses = wrapper.primaryDiagnoses
+    <%  def visits = patient.allVisitsUsingWrappers
+        visits.eachWithIndex { wrapper, idx ->
+            def primaryDiagnoses = wrapper.primaryDiagnoses
     %>
-    <li class="menu-item viewVisitDetails" visitId="${wrapper.visit.visitId}">
+    <li class="menu-item viewVisitDetails" data-visit-id="${wrapper.visit.visitId}">
         <span class="menu-date">
             <i class="icon-time"></i>
             ${dateFormat.format(wrapper.visit.startDatetime)}
             <% if(wrapper.visit.stopDatetime != null) { %>
-            - ${dateFormat.format(wrapper.visit.stopDatetime)}
+                - ${dateFormat.format(wrapper.visit.stopDatetime)}
             <% } else { %>
-            (${ ui.message("emr.patientDashBoard.activeSince")} ${timeFormat.format(wrapper.visit.startDatetime)})
+                (${ ui.message("emr.patientDashBoard.activeSince")} ${timeFormat.format(wrapper.visit.startDatetime)})
             <% } %>
         </span>
         <span class="menu-title">
             <i class="icon-stethoscope"></i>
             <% if (primaryDiagnoses) { %>
-            ${ formatDiagnoses(primaryDiagnoses) }
+                ${ formatDiagnoses(primaryDiagnoses) }
             <% } else { %>
-            ${ ui.message("emr.patientDashBoard.noDiagnosis")}
+                ${ ui.message("emr.patientDashBoard.noDiagnosis")}
             <% } %>
         </span>
         <span class="arrow-border"></span>
         <span class="arrow"></span>
     </li>
+
+
+    ${ ui.includeFragment("coreapps", "patientdashboard/editVisitDatesDialog", [
+            visitId: wrapper.visit.visitId,
+            endDateUpperLimit: idx == 0 ? null : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx - 1].startDatetime, -1)),
+            endDateLowerLimit: editDateFormat.format(wrapper.lastEncounter == null ? wrapper.startDatetime : wrapper.lastEncounter.encounterDatetime),
+            startDateLowerLimit: idx + 1 == visits.size ? null : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx + 1].stopDatetime, 1)),
+            startDateUpperLimit: editDateFormat.format(wrapper.oldestEncounter == null ? wrapper.stopDatetime : wrapper.oldestEncounter.encounterDatetime),
+            defaultStartDate: wrapper.startDatetime,
+            defaultEndDate: wrapper.stopDatetime
+    ]) }
     <% } %>
+
     <% if(patient.allVisitsUsingWrappers.size == 0) { %>
         ${ ui.message("emr.patientDashBoard.noVisits")}
     <% } %>

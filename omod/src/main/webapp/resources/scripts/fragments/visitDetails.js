@@ -1,6 +1,6 @@
 function loadTemplates (visitId) {
     function loadVisit(visitElement) {
-        var localVisitId = visitElement.attr('visitId');
+        var localVisitId = visitElement.data('visit-id');
         visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
         $.getJSON(
             emr.fragmentActionLink("coreapps", "visit/visitDetails", "getVisitDetails", {
@@ -11,6 +11,11 @@ function loadTemplates (visitId) {
             visitElement.addClass('selected');
             visitDetailsSection.html(visitDetailsTemplate(data));
             visitDetailsSection.show();
+
+            $('.status-container a').click(function() {
+                showEditVisitDateDialog($(this).data('visit-id'));
+                return false;
+            });
         }).error(function(err) {
             emr.errorMessage(err);
         });
@@ -26,7 +31,7 @@ function loadTemplates (visitId) {
     var visitDetailsSection = $("#visit-details");
 
     if (visitId || !emr.isFeatureEnabled('noActiveVisitView')) {
-        visitElement = $('.viewVisitDetails[visitId=' + visitId + ']');
+        visitElement = $('.viewVisitDetails[data-visit-id=' + visitId + ']');
         //load provided visit
         loadVisit(visitElement);
     }

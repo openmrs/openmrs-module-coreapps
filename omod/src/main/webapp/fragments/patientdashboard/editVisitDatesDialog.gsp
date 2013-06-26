@@ -1,0 +1,47 @@
+<div id="edit-visit-dates-dialog-${ config.visitId }" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <i class="icon-check-in"></i>
+        <h3>${ ui.message("coreapps.task.editVisitDate.label") }</h3>
+    </div>
+    <div class="dialog-content form">
+        <form id="edit-visit-dates-dialog-form-${ config.visitId }">
+            <input type="hidden" name="visitId" value="${ config.visitId }"/>
+            <p>
+                <label for="startDate" class="required">
+                    ${ ui.message("coreapps.startDate.label") }
+                </label>
+
+                ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                        id: "startDate" + config.visitId,
+                        formFieldName: "startDate",
+                        label:"",
+                        useTime: false,
+                        startDate: config.startDateLowerLimit,
+                        endDate: config.startDateUpperLimit,
+                        defaultDate: config.defaultStartDate
+                ])}
+            </p>
+
+            <p>
+                <label for="stopDate" class="required">
+                    ${ ui.message("coreapps.stopDate.label") }
+                </label>
+
+                ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                        id: "stopDate" + config.visitId,
+                        formFieldName: "stopDate",
+                        label:"",
+                        useTime: false,
+                        startDate: config.endDateLowerLimit,
+                        endDate: config.endDateUpperLimit,
+                        defaultDate: config.defaultEndDate
+                ])}
+            </p>
+
+            <br><br>
+
+            <button class="cancel">${ ui.message("emr.cancel") }</button>
+            <button class="confirm right">${ ui.message("emr.confirm") }</button>
+        </form>
+    </div>
+</div>

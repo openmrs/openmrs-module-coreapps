@@ -72,49 +72,33 @@ public class VisitDetailsFragmentController {
 		String[] datePatterns = { administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT) };
 		for (Encounter encounter : visit.getEncounters()) {
 			if (!encounter.getVoided()) {
-				SimpleObject simpleEncounter = SimpleObject.fromObject(encounter, uiUtils, "encounterId", "location",
-				    "encounterDatetime", "encounterProviders.provider", "voided", "form");
-				
-				// manually set the date and time components so we can control how we format them
-				simpleEncounter.put("encounterDate",
-				    DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy", Context.getLocale()));
-				simpleEncounter.put("encounterTime",
-				    DateFormatUtils.format(encounter.getEncounterDatetime(), "hh:mm a", Context.getLocale()));
-				
-				EncounterType encounterType = encounter.getEncounterType();
-				simpleEncounter.put("encounterType",
-				    SimpleObject.create("uuid", encounterType.getUuid(), "name", uiUtils.format(encounterType)));
-				
-				if (verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete, deleteEncounter)) {
-					simpleEncounter.put("canDelete", true);
-				}
-				encounters.add(simpleEncounter);
+                encounters.add(createEncounterJSON(uiUtils, authenticatedUser, deleteEncounter, canDelete, encounter));
 			}
 		}
 		
 		return simpleObject;
 	}
-	
-	public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
+
+    public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
 	                                        @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
 	                                        UiUtils uiUtils) {
-		
+
 		ParserEncounterIntoSimpleObjects parserEncounter = new ParserEncounterIntoSimpleObjects(encounter, uiUtils,
 		        emrApiProperties);
-		
+
 		ParsedObs parsedObs = parserEncounter.parseObservations(uiUtils.getLocale());
 		List<SimpleObject> orders = parserEncounter.parseOrders();
-		
+
 		return SimpleObject.create("observations", parsedObs.getObs(), "orders", orders, "diagnoses",
 		    parsedObs.getDiagnoses(), "dispositions", parsedObs.getDispositions());
 	}
-	
+
 	public FragmentActionResult deleteEncounter(UiUtils ui,
 	                                            @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
 	                                            @RequestParam("encounterId") Encounter encounter,
 	                                            @SpringBean("encounterService") EncounterService encounterService,
 	                                            UiSessionContext sessionContext) {
-		
+
 		if (encounter != null) {
 			User authenticatedUser = sessionContext.getCurrentUser();
 			boolean deleteEncounter = featureToggleProperties.isFeatureEnabled("deleteEncounter");
@@ -128,6 +112,26 @@ public class VisitDetailsFragmentController {
 		}
 		return new SuccessResult(ui.message("emr.patientDashBoard.deleteEncounter.successMessage"));
 	}
+	
+    private SimpleObject createEncounterJSON(UiUtils uiUtils, User authenticatedUser, boolean deleteEncounter, boolean canDelete, Encounter encounter) {
+        SimpleObject simpleEncounter = SimpleObject.fromObject(encounter, uiUtils, "encounterId", "location",
+            "encounterDatetime", "encounterProviders.provider", "voided", "form");
+
+        // manually set the date and time components so we can control how we format them
+        simpleEncounter.put("encounterDate",
+            DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy", Context.getLocale()));
+        simpleEncounter.put("encounterTime",
+            DateFormatUtils.format(encounter.getEncounterDatetime(), "hh:mm a", Context.getLocale()));
+
+        EncounterType encounterType = encounter.getEncounterType();
+        simpleEncounter.put("encounterType",
+            SimpleObject.create("uuid", encounterType.getUuid(), "name", uiUtils.format(encounterType)));
+
+        if (verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete, deleteEncounter)) {
+            simpleEncounter.put("canDelete", true);
+        }
+        return simpleEncounter;
+    }
 	
 	private boolean verifyIfUserHasPermissionToDeleteAnEncounter(Encounter encounter, User authenticatedUser,
 	                                                             boolean canDelete, boolean deleteEncounter) {

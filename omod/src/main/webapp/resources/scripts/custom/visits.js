@@ -39,7 +39,6 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
                         stopDate: jq('[name=retrospectiveVisitStopDate]').val() },
                     function(data) {
                         if (data.success) {
-                            visit.retrospectiveVisitCreationDialog.close();
                             window.location = data.url;
                         }
                         else {
@@ -98,4 +97,23 @@ visit.createRetrospectiveVisitExistingVisitsDialog = function() {
     });
 }
 
+var editVisitDialogs = [];
+function showEditVisitDateDialog(visitId) {
+    if (!editVisitDialogs[visitId]) {
+        editVisitDialogs[visitId] = emr.setupConfirmationDialog({
+            selector: '#edit-visit-dates-dialog-' + visitId,
+            actions: {
+                confirm: function() {
+                    var url = emr.fragmentActionLink("coreapps", "visit/visitDates", "setDuration");
+                    $.getJSON(url, $('#edit-visit-dates-dialog-form-' + visitId).serialize()).success(function() {
+                            window.location.reload();
+                        }
+                    );
+                    return false;
+                }
+            }
 
+        });
+    }
+    editVisitDialogs[visitId].show();
+}
