@@ -101,7 +101,7 @@
             endDateUpperLimit: idx == 0 ? null : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx - 1].startDatetime, -1)),
             endDateLowerLimit: editDateFormat.format(wrapper.lastEncounter == null ? wrapper.startDatetime : wrapper.lastEncounter.encounterDatetime),
             startDateLowerLimit: idx + 1 == visits.size ? null : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx + 1].stopDatetime, 1)),
-            startDateUpperLimit: editDateFormat.format(wrapper.oldestEncounter == null ? wrapper.stopDatetime : wrapper.oldestEncounter.encounterDatetime),
+            startDateUpperLimit: wrapper.oldestEncounter == null && wrapper.stopDatetime == null ? null : editDateFormat.format(wrapper.oldestEncounter == null ? wrapper.stopDatetime : wrapper.oldestEncounter.encounterDatetime),
             defaultStartDate: wrapper.startDatetime,
             defaultEndDate: wrapper.stopDatetime
     ]) }
