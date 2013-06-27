@@ -98,7 +98,7 @@
 
     ${ ui.includeFragment("coreapps", "patientdashboard/editVisitDatesDialog", [
             visitId: wrapper.visit.visitId,
-            endDateUpperLimit: idx == 0 ? null : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx - 1].startDatetime, -1)),
+            endDateUpperLimit: idx == 0 ? editDateFormat.format(new Date()) : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx - 1].startDatetime, -1)),
             endDateLowerLimit: editDateFormat.format(wrapper.lastEncounter == null ? wrapper.startDatetime : wrapper.lastEncounter.encounterDatetime),
             startDateLowerLimit: idx + 1 == visits.size ? null : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx + 1].stopDatetime, 1)),
             startDateUpperLimit: wrapper.oldestEncounter == null && wrapper.stopDatetime == null ? null : editDateFormat.format(wrapper.oldestEncounter == null ? wrapper.stopDatetime : wrapper.oldestEncounter.encounterDatetime),
