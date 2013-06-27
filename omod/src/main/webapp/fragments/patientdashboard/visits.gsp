@@ -152,7 +152,7 @@
     <div class="dialog-content form">
         <p>
             <label for="startDate" class="required">
-                ${ ui.message("coreapps.retrospectiveVisit.startDate.label") }
+                ${ ui.message("coreapps.startDate.label") }
             </label>
 
             ${ ui.includeFragment("uicommons", "field/datetimepicker", [
@@ -166,7 +166,7 @@
 
         <p>
             <label for="stopDate" class="required">
-                ${ ui.message("coreapps.retrospectiveVisit.stopDate.label") }
+                ${ ui.message("coreapps.stopDate.label") }
             </label>
 
             ${ ui.includeFragment("uicommons", "field/datetimepicker", [
