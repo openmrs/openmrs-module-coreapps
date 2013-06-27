@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.openmrs.Visit;
 import org.openmrs.api.VisitService;
@@ -38,13 +39,18 @@ public class VisitDatesFragmentController {
                                             HttpServletRequest request, UiUtils ui) {
 
 
-        visit.setStartDatetime(new DateTime(startDate).toDateMidnight().toDate());
-        visit.setStopDatetime(new DateTime(stopDate)
-                .withHourOfDay(23)
-                .withMinuteOfHour(59)
-                .withSecondOfMinute(59)
-                .withMillisOfSecond(999)
-                .toDate());
+        if (!DateUtils.isSameDay(startDate, visit.getStartDatetime())) {
+            visit.setStartDatetime(new DateTime(startDate).toDateMidnight().toDate());
+        }
+
+        if (!DateUtils.isSameDay(stopDate, visit.getStopDatetime())) {
+            visit.setStopDatetime(new DateTime(stopDate)
+                    .withHourOfDay(23)
+                    .withMinuteOfHour(59)
+                    .withSecondOfMinute(59)
+                    .withMillisOfSecond(999)
+                    .toDate());
+        }
 
         visitService.saveVisit(visit);
 

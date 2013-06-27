@@ -105,6 +105,7 @@
             defaultStartDate: wrapper.startDatetime,
             defaultEndDate: wrapper.stopDatetime
     ]) }
+
     <% } %>
 
     <% if(patient.allVisitsUsingWrappers.size == 0) { %>

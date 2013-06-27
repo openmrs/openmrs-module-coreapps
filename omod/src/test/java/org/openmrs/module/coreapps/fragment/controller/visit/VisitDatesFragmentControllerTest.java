@@ -29,7 +29,10 @@ public class VisitDatesFragmentControllerTest {
         UiUtils ui = mock(UiUtils.class);
         when(ui.message("coreapps.editVisitDate.visitSavedMessage")).thenReturn("message");
 
-        controller.setDuration(mock(VisitService.class), new Visit(), new Date(), new Date(), request, ui);
+        Visit visit = new Visit();
+        visit.setStartDatetime(new Date());
+        visit.setStopDatetime(new Date());
+        controller.setDuration(mock(VisitService.class), visit, new Date(), new Date(), request, ui);
 
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                 "message");
@@ -52,7 +55,10 @@ public class VisitDatesFragmentControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
 
-        controller.setDuration(visitService, new Visit(), startDate, stopDate, request, mock(UiUtils.class));
+        Visit visit = new Visit();
+        visit.setStartDatetime(new Date());
+        visit.setStopDatetime(new Date());
+        controller.setDuration(visitService, visit, startDate, stopDate, request, mock(UiUtils.class));
 
         verify(visitService).saveVisit(argThat(new ArgumentMatcher<Visit>() {
             @Override
@@ -60,6 +66,35 @@ public class VisitDatesFragmentControllerTest {
                 Visit actual = (Visit) o;
                 return actual.getStartDatetime().equals(expectedStartDate) &&
                         actual.getStopDatetime().equals(expectedStopDate);
+            }
+        }));
+    }
+
+    @Test
+    public void shouldNotChangeStartOrStopDatetimeIfSettingToSameDay() throws Exception {
+        VisitDatesFragmentController controller = new VisitDatesFragmentController();
+
+        VisitService visitService = mock(VisitService.class);
+
+        Visit visit = new Visit();
+        final Date startDate = (new DateTime(2013, 6, 24, 13, 1, 7)).toDate();
+        visit.setStartDatetime(startDate);
+
+        final Date stopDate = (new DateTime(2013, 6, 26, 17, 12, 32)).toDate();
+        visit.setStopDatetime(stopDate);
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpSession session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+
+        controller.setDuration(visitService, visit, (new DateTime(2013, 6, 24, 0, 0, 0)).toDate(), (new DateTime(2013, 6, 26, 0, 0, 0)).toDate(), request, mock(UiUtils.class));
+
+        verify(visitService).saveVisit(argThat(new ArgumentMatcher<Visit>() {
+            @Override
+            public boolean matches(Object o) {
+                Visit actual = (Visit) o;
+                return actual.getStartDatetime().equals(startDate) &&
+                        actual.getStopDatetime().equals(stopDate);
             }
         }));
     }
