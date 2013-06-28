@@ -62,6 +62,7 @@
         <h1 class="name">
             <span>${ui.format(patient.patient.familyName)},<em>${ui.message("emr.patientHeader.surname")}</em></span>
             <span>${ui.format(patient.patient.givenName)}<em>${ui.message("emr.patientHeader.name")}</em></span>
+
         </h1>
 
         <div class="gender-age">
@@ -78,6 +79,11 @@
             <span>${ui.message("emr.unknownAge")}</span>
             <% } %>
         </div>
+
+        <span>
+            <a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}">${ui.message("registrationapp.patientHeader.editDemographics")}</a>
+        </span>
+
         <% if (patient.patient.dead) { %>
         <br>
         <br>
