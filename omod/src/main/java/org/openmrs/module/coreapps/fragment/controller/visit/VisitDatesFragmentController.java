@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.openmrs.Visit;
 import org.openmrs.api.VisitService;
@@ -26,8 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Date;
+
+import static org.apache.commons.lang.time.DateUtils.isSameDay;
 
 @Transactional
 public class VisitDatesFragmentController {
@@ -39,17 +39,22 @@ public class VisitDatesFragmentController {
                                             HttpServletRequest request, UiUtils ui) {
 
 
-        if (!DateUtils.isSameDay(startDate, visit.getStartDatetime())) {
+        if (!isSameDay(startDate, visit.getStartDatetime())) {
             visit.setStartDatetime(new DateTime(startDate).toDateMidnight().toDate());
         }
 
-        if (!DateUtils.isSameDay(stopDate, visit.getStopDatetime())) {
-            visit.setStopDatetime(new DateTime(stopDate)
-                    .withHourOfDay(23)
-                    .withMinuteOfHour(59)
-                    .withSecondOfMinute(59)
-                    .withMillisOfSecond(999)
-                    .toDate());
+        if (!isSameDay(stopDate, visit.getStopDatetime())) {
+            Date now = new DateTime().toDate();
+            if (isSameDay(stopDate, now)) {
+                visit.setStopDatetime(now);
+            } else {
+                visit.setStopDatetime(new DateTime(stopDate)
+                        .withHourOfDay(23)
+                        .withMinuteOfHour(59)
+                        .withSecondOfMinute(59)
+                        .withMillisOfSecond(999)
+                        .toDate());
+            }
         }
 
         visitService.saveVisit(visit);
