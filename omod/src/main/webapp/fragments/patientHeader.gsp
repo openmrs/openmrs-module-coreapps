@@ -81,7 +81,7 @@
         </div>
 
         <span>
-            <a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}">${ui.message("registrationapp.patientHeader.editDemographics")}</a>
+            <input type="button" value="${ui.message("general.edit")}" onclick='javascript:emr.navigateTo({url:"/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}"})' />
         </span>
 
         <% if (patient.patient.dead) { %>
