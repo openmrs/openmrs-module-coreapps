@@ -62,11 +62,11 @@
     {{ }); }}
 
     {{ _.each(orders, function(order) { }}
-         <p>
-            <small>${ ui.message("emr.patientDashBoard.order")}</small><span>{{- order.concept }}</span>
-         </p>
-         <p>
+        <p>
             <small>${ ui.message("emr.patientDashBoard.accessionNumber")}</small><span>{{- order.accessionNumber }}</span>
+        </p>
+        <p>
+            <small>${ ui.message("emr.patientDashBoard.order")}</small><span>{{- order.concept }}</span>
         </p>
     {{ }); }}
 </script>
