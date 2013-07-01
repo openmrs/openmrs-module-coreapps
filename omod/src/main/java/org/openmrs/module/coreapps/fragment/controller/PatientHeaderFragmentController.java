@@ -17,6 +17,7 @@ package org.openmrs.module.coreapps.fragment.controller;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -41,7 +42,8 @@ public class PatientHeaderFragmentController {
 	public void controller(FragmentConfiguration config, @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
 	                       @SpringBean("baseIdentifierSourceService") IdentifierSourceService identifierSourceService,
 	                       @FragmentParam("patient") Object patient, @InjectBeans PatientDomainWrapper wrapper,
-	                       @SpringBean("adtService") AdtService adtService, UiSessionContext sessionContext) {
+	                       @SpringBean("adtService") AdtService adtService, UiSessionContext sessionContext,
+                           @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties) {
 		
 		if (patient instanceof Patient) {
 			wrapper.setPatient((Patient) patient);
@@ -70,6 +72,7 @@ public class PatientHeaderFragmentController {
 		}
 		
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
+        config.addAttribute("hideEditDemographicsButton", featureToggleProperties.isFeatureEnabled("hideEditPatientDemographicsButton"));
 	}
 	
 	public class ExtraPatientIdentifierType {

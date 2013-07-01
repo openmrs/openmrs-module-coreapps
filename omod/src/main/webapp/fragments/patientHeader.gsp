@@ -80,9 +80,11 @@
             <% } %>
         </div>
 
+        <% if(!config.hideEditDemographicsButton){ %>
         <span>
             <input type="button" value="${ui.message("general.edit")}" onclick='javascript:emr.navigateTo({url:"/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}"})' />
         </span>
+        <% } %>
 
         <% if (patient.patient.dead) { %>
         <br>
