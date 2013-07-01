@@ -14,13 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.co.it.modular.hamcrest.date.DateMatchers.within;
+import static uk.co.it.modular.hamcrest.date.DateMatchers.sameInstant;
 
 public class VisitDatesFragmentControllerTest {
     private VisitDatesFragmentController controller;
@@ -30,6 +29,9 @@ public class VisitDatesFragmentControllerTest {
 
     @Before
     public void setUp() throws Exception {
+        //stop time so tests don't fail running overnight
+        DateTimeUtils.setCurrentMillisFixed(new DateTime(2013, 6, 26, 13, 1, 7).getMillis());
+
         controller = new VisitDatesFragmentController();
         visitService = mock(VisitService.class);
 
@@ -55,10 +57,10 @@ public class VisitDatesFragmentControllerTest {
     @Test
     public void shouldSetVisitStartAndStopDates() throws Exception {
         Date startDate = (new DateTime(2013, 6, 24, 13, 1, 7)).toDate();
-        Date stopDate = (new DateTime(2013, 6, 26, 17, 12, 32)).toDate();
+        Date stopDate = (new DateTime(2013, 6, 25, 17, 12, 32)).toDate();
 
         Date expectedStartDate = (new DateTime(2013, 6, 24, 0, 0, 0)).toDate();
-        Date expectedStopDate = (new DateTime(2013, 6, 26, 23, 59, 59, 999)).toDate();
+        Date expectedStopDate = (new DateTime(2013, 6, 25, 23, 59, 59, 999)).toDate();
 
         Visit visit = new Visit();
         visit.setStartDatetime(new Date());
@@ -93,19 +95,17 @@ public class VisitDatesFragmentControllerTest {
         Date startDate = (new DateTime(2013, 6, 24, 13, 1, 7)).toDate();
         visit.setStartDatetime(startDate);
 
-        Date stopDate = (new DateTime(2013, 6, 26, 17, 12, 32)).toDate();
+        Date stopDate = (new DateTime(2013, 6, 25, 17, 12, 32)).toDate();
         visit.setStopDatetime(stopDate);
 
-        Date today = new Date();
+        Date today = new DateTime().toDate();
         controller.setDuration(visitService, visit, startDate, today, request, mock(UiUtils.class));
 
-        assertThat(savedVisit().getStopDatetime(), within(1, SECONDS, today));
+        assertThat(savedVisit().getStopDatetime(), sameInstant(today));
     }
 
     @Test
     public void shouldNotChangeStopDatetimeIfSettingToSameDayAndToday() throws Exception {
-        DateTimeUtils.setCurrentMillisFixed(new DateTime(2013, 6, 26, 13, 1, 7).getMillis());
-
         Visit visit = new Visit();
         Date startDate = (new DateTime(2013, 6, 24, 13, 1, 7)).toDate();
         visit.setStartDatetime(startDate);
