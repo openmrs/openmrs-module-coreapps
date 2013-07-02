@@ -88,7 +88,6 @@
 
         <% if (patient.patient.dead) { %>
         <br>
-        <br>
         <div class="death-message">
             ${ui.message("emr.deadPatient")} ${ ui.format(patient.patient.deathDate) }
         </div>
