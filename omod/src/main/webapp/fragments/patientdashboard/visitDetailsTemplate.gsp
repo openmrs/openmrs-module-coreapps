@@ -40,8 +40,6 @@
 <h4>${ ui.message("emr.patientDashBoard.encounters")} </h4>
 <ul id="encountersList">
     [[ _.each(encounters, function(encounter) { ]]
-        [[ if (!encounter.voided) { ]]
-            [[= encounterTemplates.displayEncounter(encounter, patient) ]]
-        [[  } ]]
+        [[= encounterTemplates.displayEncounter(encounter, patient) ]]
     [[ }); ]]
 </ul>

@@ -13,18 +13,6 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.text.ParseException;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -44,6 +32,18 @@ import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.util.OpenmrsUtil;
+
+import java.text.ParseException;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class VisitDetailsFragmentControllerTest {
 	
@@ -91,7 +91,7 @@ public class VisitDetailsFragmentControllerTest {
 		UiUtils uiUtils = new TestUiUtils(administrationService);
 		VisitDetailsFragmentController controller = new VisitDetailsFragmentController();
 		
-		SimpleObject response = controller.getVisitDetails(featureToggleProperties, administrationService, visit, uiUtils,
+		SimpleObject response = controller.getVisitDetails(featureToggleProperties, visit, uiUtils,
 		    sessionContext);
 		List<SimpleObject> actualEncounters = (List<SimpleObject>) response.get("encounters");
 		SimpleObject actualEncounter = actualEncounters.get(0);
