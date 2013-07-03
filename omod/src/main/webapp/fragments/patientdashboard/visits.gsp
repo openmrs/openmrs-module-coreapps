@@ -155,12 +155,18 @@
             <label for="startDate" class="required">
                 ${ ui.message("coreapps.startDate.label") }
             </label>
+            <%  def visitEndTime = new Date()
+                if (patient.patient.dead) {
+                  visitEndTime = patient.patient.deathDate
+                }
+            %>
 
             ${ ui.includeFragment("uicommons", "field/datetimepicker", [
                     id: "retrospectiveVisitStartDate",
                     formFieldName: "retrospectiveVisitStartDate",
                     label:"",
-                    endDate: editDateFormat.format(new Date()),
+                    defaultDate: visitEndTime,
+                    endDate: editDateFormat.format(visitEndTime),
                     useTime: false,
             ])}
         </p>
@@ -174,7 +180,8 @@
                     id: "retrospectiveVisitStopDate",
                     formFieldName: "retrospectiveVisitStopDate",
                     label:"",
-                    endDate: editDateFormat.format(new Date()),
+                    defaultDate: visitEndTime,
+                    endDate: editDateFormat.format(visitEndTime),
                     useTime: false,
             ])}
         </p>
