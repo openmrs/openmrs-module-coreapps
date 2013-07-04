@@ -67,7 +67,7 @@ public class VisitDetailsFragmentController {
         List<SimpleObject> encounters = new ArrayList<SimpleObject>();
         simpleObject.put("encounters", encounters);
 
-        for (Encounter encounter : new VisitDomainWrapper(visit).getNonVoidedSortedEncounters()) {
+        for (Encounter encounter : new VisitDomainWrapper(visit).getSortedEncounters()) {
             encounters.add(createEncounterJSON(uiUtils, authenticatedUser, deleteEncounter, canDelete, encounter));
         }
 
