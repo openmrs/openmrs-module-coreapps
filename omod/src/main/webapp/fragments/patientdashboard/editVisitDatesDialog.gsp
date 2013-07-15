@@ -21,22 +21,23 @@
                         defaultDate: config.defaultStartDate
                 ])}
             </p>
+            <% if(config.defaultEndDate != null) { %>
+                <p>
+                    <label for="stopDate" class="required">
+                        ${ ui.message("coreapps.stopDate.label") }
+                    </label>
 
-            <p>
-                <label for="stopDate" class="required">
-                    ${ ui.message("coreapps.stopDate.label") }
-                </label>
-
-                ${ ui.includeFragment("uicommons", "field/datetimepicker", [
-                        id: "stopDate" + config.visitId,
-                        formFieldName: "stopDate",
-                        label:"",
-                        useTime: false,
-                        startDate: config.endDateLowerLimit,
-                        endDate: config.endDateUpperLimit,
-                        defaultDate: config.defaultEndDate
-                ])}
-            </p>
+                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                            id: "stopDate" + config.visitId,
+                            formFieldName: "stopDate",
+                            label:"",
+                            useTime: false,
+                            startDate: config.endDateLowerLimit,
+                            endDate: config.endDateUpperLimit,
+                            defaultDate: config.defaultEndDate
+                    ])}
+                </p>
+            <% } %>
 
             <br><br>
 

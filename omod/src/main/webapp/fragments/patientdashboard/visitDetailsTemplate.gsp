@@ -6,7 +6,7 @@
         <i class="icon-time small"></i>
         ${ ui.message("emr.activeVisit.time", '[[- startDatetime ]]') }
     [[ } ]]
-    <% if (featureToggles.isFeatureEnabled("editVisitDates") && !emrContext.activeVisit) { %>
+    <% if (featureToggles.isFeatureEnabled("editVisitDates") ) { %>
         <a class="right" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.editVisitDate.label") }</a>
     <% } %>
 </div>

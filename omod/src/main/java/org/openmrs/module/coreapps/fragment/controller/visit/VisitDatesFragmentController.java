@@ -35,7 +35,7 @@ public class VisitDatesFragmentController {
     public FragmentActionResult setDuration(@SpringBean("visitService") VisitService visitService,
                                             @RequestParam("visitId") Visit visit,
                                             @RequestParam("startDate") Date startDate,
-                                            @RequestParam("stopDate") Date stopDate,
+                                            @RequestParam(value="stopDate", required = false) Date stopDate,
                                             HttpServletRequest request, UiUtils ui) {
 
 
@@ -43,7 +43,7 @@ public class VisitDatesFragmentController {
             visit.setStartDatetime(new DateTime(startDate).toDateMidnight().toDate());
         }
 
-        if (!isSameDay(stopDate, visit.getStopDatetime())) {
+        if ( (stopDate!=null) && !isSameDay(stopDate, visit.getStopDatetime())) {
             Date now = new DateTime().toDate();
             if (isSameDay(stopDate, now)) {
                 visit.setStopDatetime(now);
