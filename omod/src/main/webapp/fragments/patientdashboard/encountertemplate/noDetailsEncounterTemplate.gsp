@@ -20,7 +20,7 @@
 	        <div>
 	            ${ ui.message("emr.by") }
 	            <strong>
-	                {{- encounter.encounterProviders[0] ? encounter.encounterProviders[0].provider : '' }}
+                    {{- encounter.primaryProvider ? encounter.primaryProvider : '' }}
 	            </strong>
 	            ${ ui.message("emr.in") }
 	            <strong>{{- encounter.location }}</strong>

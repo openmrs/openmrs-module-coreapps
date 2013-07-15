@@ -65,11 +65,12 @@ public class VisitDetailsFragmentController {
         }
 
         List<SimpleObject> encounters = new ArrayList<SimpleObject>();
-        simpleObject.put("encounters", encounters);
 
         for (Encounter encounter : new VisitDomainWrapper(visit).getSortedEncounters()) {
             encounters.add(createEncounterJSON(uiUtils, authenticatedUser, deleteEncounter, canDelete, encounter));
         }
+
+        simpleObject.put("encounters", encounters);
 
         return simpleObject;
     }
@@ -109,8 +110,8 @@ public class VisitDetailsFragmentController {
     }
 
     private SimpleObject createEncounterJSON(UiUtils uiUtils, User authenticatedUser, boolean deleteEncounter, boolean canDelete, Encounter encounter) {
-        SimpleObject simpleEncounter = SimpleObject.fromObject(encounter, uiUtils, "encounterId", "location",
-                "encounterDatetime", "encounterProviders.provider", "voided", "form");
+        SimpleObject simpleEncounter = SimpleObject.fromObject(new EncounterDomainWrapper(encounter), uiUtils, "encounterId", "primaryProvider",
+                "location", "encounterDatetime", "encounterProviders.provider", "voided", "form");
 
         // manually set the date and time components so we can control how we format them
         simpleEncounter.put("encounterDate",
