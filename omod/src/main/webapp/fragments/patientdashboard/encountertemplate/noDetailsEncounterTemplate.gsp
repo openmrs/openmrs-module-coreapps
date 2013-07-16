@@ -27,16 +27,19 @@
 	        </div>
 	    </li>
 	</ul>
-	{{ if ( encounter.canDelete ) { }}
+
 	<span>
-        {{ if ( config.editable ) { }}
         <% if (featureToggles.isFeatureEnabled("editAdmissionNote")) { %>
-        <i class="editEncounter delete-item icon-pencil" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.edit") }"></i>
-        <% } %>
+        {{ if ( config.editable && encounter.canEdit) { }}
+            <i class="editEncounter delete-item icon-pencil" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.edit") }"></i>
         {{ } }}
-	    <i class="deleteEncounterId delete-item icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
+        <% } %>
+
+        {{ if ( encounter.canDelete ) { }}
+	        <i class="deleteEncounterId delete-item icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
+        {{  } }}
 	</span>
-	{{  } }}
+
 	<div id="encounter-summary{{- encounter.encounterId }}" class="collapse">
 	    <div class="encounter-summary-container"></div>
 	</div>

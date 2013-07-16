@@ -49,8 +49,8 @@ public class VisitDetailsFragmentController {
 
         User authenticatedUser = sessionContext.getCurrentUser();
 
-        boolean deleteEncounter = featureToggleProperties.isFeatureEnabled("deleteEncounter");
         boolean canDelete = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_ENCOUNTER);
+        boolean canEdit = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_EDIT_ENCOUNTER);
 
         Date startDatetime = visit.getStartDatetime();
         Date stopDatetime = visit.getStopDatetime();
@@ -67,7 +67,7 @@ public class VisitDetailsFragmentController {
         List<SimpleObject> encounters = new ArrayList<SimpleObject>();
 
         for (Encounter encounter : new VisitDomainWrapper(visit).getSortedEncounters()) {
-            encounters.add(createEncounterJSON(uiUtils, authenticatedUser, deleteEncounter, canDelete, encounter));
+            encounters.add(createEncounterJSON(uiUtils, authenticatedUser, canDelete, canEdit, encounter));
         }
 
         simpleObject.put("encounters", encounters);
@@ -97,9 +97,8 @@ public class VisitDetailsFragmentController {
 
         if (encounter != null) {
             User authenticatedUser = sessionContext.getCurrentUser();
-            boolean deleteEncounter = featureToggleProperties.isFeatureEnabled("deleteEncounter");
             boolean canDelete = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_ENCOUNTER);
-            if (verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete, deleteEncounter)) {
+            if (verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete)) {
                 encounterService.voidEncounter(encounter, "delete encounter");
                 encounterService.saveEncounter(encounter);
             } else {
@@ -109,7 +108,7 @@ public class VisitDetailsFragmentController {
         return new SuccessResult(ui.message("emr.patientDashBoard.deleteEncounter.successMessage"));
     }
 
-    private SimpleObject createEncounterJSON(UiUtils uiUtils, User authenticatedUser, boolean deleteEncounter, boolean canDelete, Encounter encounter) {
+    private SimpleObject createEncounterJSON(UiUtils uiUtils, User authenticatedUser, boolean canDelete, boolean canEdit, Encounter encounter) {
         SimpleObject simpleEncounter = SimpleObject.fromObject(new EncounterDomainWrapper(encounter), uiUtils, "encounterId", "primaryProvider",
                 "location", "encounterDatetime", "encounterProviders.provider", "voided", "form");
 
@@ -123,16 +122,28 @@ public class VisitDetailsFragmentController {
         simpleEncounter.put("encounterType",
                 SimpleObject.create("uuid", encounterType.getUuid(), "name", uiUtils.format(encounterType)));
 
-        if (verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete, deleteEncounter)) {
+        if (verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete)) {
             simpleEncounter.put("canDelete", true);
         }
+
+        if (verifyIfUserHasPermissionToEditAnEncounter(encounter, authenticatedUser, canEdit)) {
+            simpleEncounter.put("canEdit", true);
+        }
+
         return simpleEncounter;
     }
 
     private boolean verifyIfUserHasPermissionToDeleteAnEncounter(Encounter encounter, User authenticatedUser,
-                                                                 boolean canDelete, boolean deleteEncounter) {
+                                                                 boolean canDelete) {
         EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
         boolean userParticipatedInEncounter = encounterDomainWrapper.participatedInEncounter(authenticatedUser);
-        return canDelete || (deleteEncounter && userParticipatedInEncounter);
+        return canDelete || userParticipatedInEncounter;
+    }
+
+    private boolean verifyIfUserHasPermissionToEditAnEncounter(Encounter encounter, User authenticatedUser,
+                                                                 boolean canEdit) {
+        EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
+        boolean userParticipatedInEncounter = encounterDomainWrapper.participatedInEncounter(authenticatedUser);
+        return canEdit || userParticipatedInEncounter;
     }
 }
