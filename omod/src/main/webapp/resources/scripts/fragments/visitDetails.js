@@ -30,7 +30,7 @@ function loadTemplates (visitId) {
 
     var visitDetailsSection = $("#visit-details");
 
-    if (visitId || !emr.isFeatureEnabled('noActiveVisitView')) {
+    if (visitId) {
         visitElement = $('.viewVisitDetails[data-visit-id=' + visitId + ']');
         //load provided visit
         loadVisit(visitElement);
