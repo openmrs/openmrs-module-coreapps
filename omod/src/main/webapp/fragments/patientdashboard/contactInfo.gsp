@@ -1,4 +1,4 @@
-<h3>${ui.message("emr.patientDashBoard.contactinfo")}</h3>
+<h3>${ui.message("coreapps.patientDashBoard.contactinfo")}</h3>
 
 <% if(!config.hideEditContactInfoButton){ %>
 <div class="right">
@@ -8,13 +8,13 @@
 
 <div class="contact-info">
     <ul>
-        <li><strong>${ ui.message("emr.person.address")}: </strong>
+        <li><strong>${ ui.message("coreapps.person.address")}: </strong>
         <% addressHierarchyLevels.each { addressLevel -> %>
            <% if(patient.personAddress && patient.personAddress[addressLevel]) { %>
                  ${patient.personAddress[addressLevel]}<% if(addressLevel != addressHierarchyLevels.last()){%>,<%}%>
             <% }%>
         <% } %>
         </li>
-        <li><strong>${ ui.message("emr.person.telephoneNumber")}:</strong> ${patient.telephoneNumber ?: ''}</li>
+        <li><strong>${ ui.message("coreapps.person.telephoneNumber")}:</strong> ${patient.telephoneNumber ?: ''}</li>
     </ul>
 </div>

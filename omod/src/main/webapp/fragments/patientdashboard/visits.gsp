@@ -10,7 +10,7 @@
 %>
 
 <script type="text/javascript">
-    breadcrumbs.push({ label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.id])}'});
+    breadcrumbs.push({ label: "${ui.message("coreapps.patientDashBoard.visits")}" , link:'${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.id])}'});
 
     jq(".collapse").collapse();
 </script>
@@ -80,7 +80,7 @@
             <% if(wrapper.visit.stopDatetime != null) { %>
                 - ${dateFormat.format(wrapper.visit.stopDatetime)}
             <% } else { %>
-                (${ ui.message("emr.patientDashBoard.activeSince")} ${timeFormat.format(wrapper.visit.startDatetime)})
+                (${ ui.message("coreapps.patientDashBoard.activeSince")} ${timeFormat.format(wrapper.visit.startDatetime)})
             <% } %>
         </span>
         <span class="menu-title">
@@ -88,7 +88,7 @@
             <% if (primaryDiagnoses) { %>
                 ${ formatDiagnoses(primaryDiagnoses) }
             <% } else { %>
-                ${ ui.message("emr.patientDashBoard.noDiagnosis")}
+                ${ ui.message("coreapps.patientDashBoard.noDiagnosis")}
             <% } %>
         </span>
         <span class="arrow-border"></span>
@@ -109,20 +109,20 @@
     <% } %>
 
     <% if(patient.allVisitsUsingWrappers.size == 0) { %>
-        ${ ui.message("emr.patientDashBoard.noVisits")}
+        ${ ui.message("coreapps.patientDashBoard.noVisits")}
     <% } %>
 </ul>
 
 <div id="visit-details" class="main-content">
     <% if (patient.patient.dead) { %>
-        <h4>${ ui.message('emr.noActiveVisit') }</h4>
-        <p class="spaced">${ ui.message('emr.deadPatient.description') }</p>
+        <h4>${ ui.message('coreapps.noActiveVisit') }</h4>
+        <p class="spaced">${ ui.message('coreapps.deadPatient.description') }</p>
     <% } else if (!activeVisit) { %>
-        <h4>${ ui.message('emr.noActiveVisit') }</h4>
-        <p class="spaced">${ ui.message('emr.noActiveVisit.description') }</p>
+        <h4>${ ui.message('coreapps.noActiveVisit') }</h4>
+        <p class="spaced">${ ui.message('coreapps.noActiveVisit.description') }</p>
         <p class="spaced">
             <a id="noVisitShowVisitCreationDialog" href="javascript:visit.showQuickVisitCreationDialog()" class="button task">
-                <i class="icon-check-in small"></i>${ ui.message("emr.task.startVisit.label") }
+                <i class="icon-check-in small"></i>${ ui.message("coreapps.task.startVisit.label") }
             </a>
         </p>
     <% } %>
@@ -130,18 +130,18 @@
 
 <div id="delete-encounter-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
-        <h3>${ ui.message("emr.patientDashBoard.deleteEncounter.title") }</h3>
+        <h3>${ ui.message("coreapps.patientDashBoard.deleteEncounter.title") }</h3>
     </div>
     <div class="dialog-content">
         <input type="hidden" id="encounterId" value=""/>
         <ul>
             <li class="info">
-                <span>${ ui.message("emr.patientDashBoard.deleteEncounter.message") }</span>
+                <span>${ ui.message("coreapps.patientDashBoard.deleteEncounter.message") }</span>
             </li>
         </ul>
 
-        <button class="confirm right">${ ui.message("emr.yes") }</button>
-        <button class="cancel">${ ui.message("emr.no") }</button>
+        <button class="confirm right">${ ui.message("coreapps.yes") }</button>
+        <button class="cancel">${ ui.message("coreapps.no") }</button>
     </div>
 </div>
 
@@ -188,8 +188,8 @@
 
         <br><br>
 
-        <button class="cancel">${ ui.message("emr.cancel") }</button>
-        <button class="confirm right">${ ui.message("emr.confirm") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
+        <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
     </div>
 </div>
 
@@ -214,7 +214,7 @@
 
         <br><br>
 
-        <button class="cancel">${ ui.message("emr.cancel") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
         <button class="confirm no-color">${ ui.message("coreapps.retrospectiveVisit.changeDate.label") }</button>
     </div>
 </div>

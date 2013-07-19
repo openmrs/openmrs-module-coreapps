@@ -1,10 +1,10 @@
 <div class="status-container">
     [[ if (stopDatetime) { ]]
-        <i class="icon-time small"></i> ${ ui.message("emr.visitDetails", '[[- startDatetime ]]', '[[- stopDatetime ]]') }
+        <i class="icon-time small"></i> ${ ui.message("coreapps.visitDetails", '[[- startDatetime ]]', '[[- stopDatetime ]]') }
     [[ } else { ]]
-        <span class="status active"></span> ${ ui.message("emr.activeVisit") }
+        <span class="status active"></span> ${ ui.message("coreapps.activeVisit") }
         <i class="icon-time small"></i>
-        ${ ui.message("emr.activeVisit.time", '[[- startDatetime ]]') }
+        ${ ui.message("coreapps.activeVisit.time", '[[- startDatetime ]]') }
     [[ } ]]
     <% if (featureToggles.isFeatureEnabled("editVisitDates") ) { %>
         <a class="right" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.editVisitDate.label") }</a>
@@ -37,7 +37,7 @@
     <% } %>
 </div>
 
-<h4>${ ui.message("emr.patientDashBoard.encounters")} </h4>
+<h4>${ ui.message("coreapps.patientDashBoard.encounters")} </h4>
 <ul id="encountersList">
     [[ _.each(encounters, function(encounter) { ]]
         [[= encounterTemplates.displayEncounter(encounter, patient) ]]

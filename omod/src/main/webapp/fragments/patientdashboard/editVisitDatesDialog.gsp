@@ -41,8 +41,8 @@
 
             <br><br>
 
-            <button class="cancel">${ ui.message("emr.cancel") }</button>
-            <button class="confirm right">${ ui.message("emr.confirm") }</button>
+            <button class="cancel">${ ui.message("coreapps.cancel") }</button>
+            <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
         </form>
     </div>
 </div>

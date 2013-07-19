@@ -4,25 +4,25 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("emr.app.activeVisits.label")}"}
+        { label: "${ ui.message("coreapps.app.activeVisits.label")}"}
     ];
 </script>
 
-<h3>${ ui.message("emr.activeVisits.title") }</h3>
+<h3>${ ui.message("coreapps.activeVisits.title") }</h3>
 
 <table id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
 	<thead>
 		<tr>
-			<th>${ ui.message("emr.patient.identifier") }</th>
-			<th>${ ui.message("emr.person.name") }</th>
-			<th>${ ui.message("emr.activeVisits.checkIn") }</th>
-			<th>${ ui.message("emr.activeVisits.lastSeen") }</th>
+			<th>${ ui.message("coreapps.patient.identifier") }</th>
+			<th>${ ui.message("coreapps.person.name") }</th>
+			<th>${ ui.message("coreapps.activeVisits.checkIn") }</th>
+			<th>${ ui.message("coreapps.activeVisits.lastSeen") }</th>
 		</tr>
 	</thead>
 	<tbody>
         <% if (visitSummaries.size() == 0) { %>
             <tr>
-                <td colspan="4">${ ui.message("emr.none") }</td>
+                <td colspan="4">${ ui.message("coreapps.none") }</td>
             </tr>
         <% } %>
 		<% visitSummaries.each { v ->

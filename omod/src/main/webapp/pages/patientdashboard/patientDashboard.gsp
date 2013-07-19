@@ -9,11 +9,11 @@
     ui.includeJavascript("uicommons", "bootstrap-transition.js")
 
     def tabs = [
-        [ id: "visits", label: ui.message("emr.patientDashBoard.visits"), provider: "coreapps", fragment: "patientdashboard/visits" ],
+        [ id: "visits", label: ui.message("coreapps.patientDashBoard.visits"), provider: "coreapps", fragment: "patientdashboard/visits" ],
         patientTabs.collect{
             [id: it.id, label: ui.message(it.label), provider: it.extensionParams.provider, fragment: it.extensionParams.fragment]
         },
-        [ id: "contactInfo", label: ui.message("emr.patientDashBoard.contactinfo"), provider: "coreapps", fragment: "patientdashboard/contactInfo" ]
+        [ id: "contactInfo", label: ui.message("coreapps.patientDashBoard.contactinfo"), provider: "coreapps", fragment: "patientdashboard/contactInfo" ]
     ].flatten()
 
 %>
@@ -37,12 +37,12 @@
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, activeVisit: activeVisit ]) }
 <div class="actions dropdown">
-    <span class="dropdown-name"><i class="icon-cog"></i>${ ui.message("emr.actions") }<i class="icon-sort-down"></i></span>
+    <span class="dropdown-name"><i class="icon-cog"></i>${ ui.message("coreapps.actions") }<i class="icon-sort-down"></i></span>
     <ul>
         <% if (!activeVisit && !patient.patient.dead) { %>
         <li>
             <a href="javascript:visit.showQuickVisitCreationDialog()">
-                <i class="icon-check-in"></i>${ ui.message("emr.task.startVisit.label") }
+                <i class="icon-check-in"></i>${ ui.message("coreapps.task.startVisit.label") }
             </a>
         </li>
         <% } %>
@@ -88,23 +88,23 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 <div id="request-paper-record-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
         <i class="icon-folder-open"></i>
-        <h3>${ ui.message("emr.patientDashBoard.requestPaperRecord.title") }</h3>
+        <h3>${ ui.message("coreapps.patientDashBoard.requestPaperRecord.title") }</h3>
     </div>
     <div class="dialog-content">
-        <p class="dialog-instructions">${ ui.message("emr.patientDashBoard.requestPaperRecord.confirmTitle") }</p>
+        <p class="dialog-instructions">${ ui.message("coreapps.patientDashBoard.requestPaperRecord.confirmTitle") }</p>
         <ul>
             <li class="info">
-                <span>${ ui.message("emr.patient") }</span>
+                <span>${ ui.message("coreapps.patient") }</span>
                 <h5>${ ui.format(patient.patient) }</h5>
             </li>
             <li class="info">
-                <span>${ ui.message("emr.location") }</span>
+                <span>${ ui.message("coreapps.location") }</span>
                 <h5 data-bind="text: text"></h5>
             </li>
         </ul>
 
-        <button class="confirm right">${ ui.message("emr.yes") }</button>
-        <button class="cancel">${ ui.message("emr.no") }</button>
+        <button class="confirm right">${ ui.message("coreapps.yes") }</button>
+        <button class="cancel">${ ui.message("coreapps.no") }</button>
     </div>
 </div>
 
@@ -112,12 +112,12 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
     <div class="dialog-header">
         <h3>
             <i class="icon-check-in"></i>
-            ${ ui.message("emr.visit.createQuickVisit.title") }</h3>
+            ${ ui.message("coreapps.visit.createQuickVisit.title") }</h3>
     </div>
     <div class="dialog-content">
-        <p class="dialog-instructions">${ ui.message("emr.task.startVisit.message", ui.format(patient.patient)) }</p>
+        <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.format(patient.patient)) }</p>
 
-        <button class="confirm right">${ ui.message("emr.confirm") }</button>
-        <button class="cancel">${ ui.message("emr.cancel") }</button>
+        <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
     </div>
 </div>

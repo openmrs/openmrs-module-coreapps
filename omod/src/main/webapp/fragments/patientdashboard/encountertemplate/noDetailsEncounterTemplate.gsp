@@ -18,11 +18,11 @@
 	    </li>
 	    <li>
 	        <div>
-	            ${ ui.message("emr.by") }
+	            ${ ui.message("coreapps.by") }
 	            <strong>
                     {{- encounter.primaryProvider ? encounter.primaryProvider : '' }}
 	            </strong>
-	            ${ ui.message("emr.in") }
+	            ${ ui.message("coreapps.in") }
 	            <strong>{{- encounter.location }}</strong>
 	        </div>
 	    </li>
@@ -31,12 +31,12 @@
 	<span>
         <% if (featureToggles.isFeatureEnabled("editAdmissionNote")) { %>
         {{ if ( config.editable && encounter.canEdit) { }}
-            <i class="editEncounter delete-item icon-pencil" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.edit") }"></i>
+            <i class="editEncounter delete-item icon-pencil" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("coreapps.edit") }"></i>
         {{ } }}
         <% } %>
 
         {{ if ( encounter.canDelete ) { }}
-	        <i class="deleteEncounterId delete-item icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
+	        <i class="deleteEncounterId delete-item icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("coreapps.delete") }"></i>
         {{  } }}
 	</span>
 

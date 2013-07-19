@@ -22,19 +22,19 @@
 	    </li>
 	    <li>
 	        <div>
-	            ${ ui.message("emr.by") }
+	            ${ ui.message("coreapps.by") }
 	            <strong>
 	                {{- encounter.primaryProvider ? encounter.primaryProvider : '' }}
 	            </strong>
-	            ${ ui.message("emr.in") }
+	            ${ ui.message("coreapps.in") }
 	            <strong>{{- encounter.location }}</strong>
 	        </div>
 	    </li>
 	    <li>
 	        <div class="details-action">
 	            <a class="view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-target="#encounter-summary{{- encounter.encounterId }}" data-toggle="collapse" data-target="#encounter-summary{{- encounter.encounterId }}">
-	                <span class="show-details">${ ui.message("emr.patientDashBoard.showDetails")}</span>
-	                <span class="hide-details">${ ui.message("emr.patientDashBoard.hideDetails")}</span>
+	                <span class="show-details">${ ui.message("coreapps.patientDashBoard.showDetails")}</span>
+	                <span class="hide-details">${ ui.message("coreapps.patientDashBoard.hideDetails")}</span>
 	                <i class="icon-caret-right"></i>
 	            </a>
 	        </div>
@@ -43,10 +43,10 @@
 
 	<span>
         {{ if ( config.editable && encounter.canEdit) { }}
-            <i class="editEncounter delete-item icon-pencil" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.edit") }"></i>
+            <i class="editEncounter delete-item icon-pencil" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("coreapps.edit") }"></i>
         {{ } }}
         {{ if ( encounter.canDelete ) { }}
-	       <i class="deleteEncounterId delete-item icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
+	       <i class="deleteEncounterId delete-item icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("coreapps.delete") }"></i>
         {{  } }}
 	</span>
 
@@ -65,10 +65,10 @@
 
     {{ _.each(orders, function(order) { }}
         <p>
-            <small>${ ui.message("emr.patientDashBoard.accessionNumber")}</small><span>{{- order.accessionNumber }}</span>
+            <small>${ ui.message("coreapps.patientDashBoard.accessionNumber")}</small><span>{{- order.accessionNumber }}</span>
         </p>
         <p>
-            <small>${ ui.message("emr.patientDashBoard.order")}</small><span>{{- order.concept }}</span>
+            <small>${ ui.message("coreapps.patientDashBoard.order")}</small><span>{{- order.concept }}</span>
         </p>
     {{ }); }}
 </script>
