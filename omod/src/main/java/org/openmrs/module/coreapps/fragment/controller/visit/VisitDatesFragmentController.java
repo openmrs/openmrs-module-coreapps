@@ -17,10 +17,9 @@ import org.joda.time.DateTime;
 import org.openmrs.Visit;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.appui.AppUiConstants;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
-import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
-import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -32,7 +31,7 @@ import static org.apache.commons.lang.time.DateUtils.isSameDay;
 @Transactional
 public class VisitDatesFragmentController {
 
-    public FragmentActionResult setDuration(@SpringBean("visitService") VisitService visitService,
+    public SimpleObject setDuration(@SpringBean("visitService") VisitService visitService,
                                             @RequestParam("visitId") Visit visit,
                                             @RequestParam("startDate") Date startDate,
                                             @RequestParam(value="stopDate", required = false) Date stopDate,
@@ -62,7 +61,9 @@ public class VisitDatesFragmentController {
         request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, ui.message("coreapps.editVisitDate.visitSavedMessage"));
         request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
-        return new SuccessResult();
+        return SimpleObject.create("success", true, "url", ui.pageLink("coreapps", "patientdashboard/patientDashboard",
+                SimpleObject.create("patientId", visit.getPatient().getId().toString(), "visitId", visit.getId().toString())));
+
     }
 
 }

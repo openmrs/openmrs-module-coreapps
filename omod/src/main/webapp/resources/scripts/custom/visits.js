@@ -105,8 +105,10 @@ function showEditVisitDateDialog(visitId) {
             actions: {
                 confirm: function() {
                     var url = emr.fragmentActionLink("coreapps", "visit/visitDates", "setDuration");
-                    $.getJSON(url, $('#edit-visit-dates-dialog-form-' + visitId).serialize()).success(function() {
-                            window.location.reload();
+                    $.getJSON(url, $('#edit-visit-dates-dialog-form-' + visitId).serialize()).success(function(data) {
+                            if (data.success) {
+                                window.location = data.url;
+                            }
                         }
                     );
                     return false;

@@ -5,6 +5,7 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.appui.AppUiConstants;
@@ -45,7 +46,8 @@ public class VisitDatesFragmentControllerTest {
         UiUtils ui = mock(UiUtils.class);
         when(ui.message("coreapps.editVisitDate.visitSavedMessage")).thenReturn("message");
 
-        Visit visit = new Visit();
+        Visit visit = new Visit(1);
+        visit.setPatient(new Patient(1));
         visit.setStartDatetime(new Date());
         visit.setStopDatetime(new Date());
         controller.setDuration(visitService, visit, new Date(), new Date(), request, ui);
@@ -62,9 +64,10 @@ public class VisitDatesFragmentControllerTest {
         Date expectedStartDate = (new DateTime(2013, 6, 24, 0, 0, 0)).toDate();
         Date expectedStopDate = (new DateTime(2013, 6, 25, 23, 59, 59, 999)).toDate();
 
-        Visit visit = new Visit();
+        Visit visit = new Visit(1);
         visit.setStartDatetime(new Date());
         visit.setStopDatetime(new Date());
+        visit.setPatient(new Patient(1));
 
         controller.setDuration(visitService, visit, startDate, stopDate, request, mock(UiUtils.class));
 
@@ -75,7 +78,9 @@ public class VisitDatesFragmentControllerTest {
 
     @Test
     public void shouldNotChangeStartOrStopDatetimeIfSettingToSameDay() throws Exception {
-        Visit visit = new Visit();
+        Visit visit = new Visit(1);
+        visit.setPatient(new Patient(1));
+
         Date startDate = (new DateTime(2013, 6, 24, 13, 1, 7)).toDate();
         visit.setStartDatetime(startDate);
 
@@ -91,7 +96,9 @@ public class VisitDatesFragmentControllerTest {
 
     @Test
     public void shouldSetTimeToNowIfChangingVisitEndToToday() throws Exception {
-        Visit visit = new Visit();
+        Visit visit = new Visit(1);
+        visit.setPatient(new Patient(1));
+
         Date startDate = (new DateTime(2013, 6, 24, 13, 1, 7)).toDate();
         visit.setStartDatetime(startDate);
 
@@ -106,7 +113,9 @@ public class VisitDatesFragmentControllerTest {
 
     @Test
     public void shouldNotChangeStopDatetimeIfSettingToSameDayAndToday() throws Exception {
-        Visit visit = new Visit();
+        Visit visit = new Visit(1);
+        visit.setPatient(new Patient(1));
+
         Date startDate = (new DateTime(2013, 6, 24, 13, 1, 7)).toDate();
         visit.setStartDatetime(startDate);
 
