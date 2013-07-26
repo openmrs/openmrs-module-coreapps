@@ -19,6 +19,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.Extension;
+import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -44,7 +45,8 @@ public class PatientDashboardPageController {
 	                       @SpringBean("orderService") OrderService orderService,
 	                       @SpringBean("adtService") AdtService adtService,
 	                       @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
-	                       UiSessionContext sessionContext) {
+                           @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
+                           UiSessionContext sessionContext) {
 		
         if (patient.isVoided() || patient.isPersonVoided()) {
             return new Redirect("coreapps", "patientdashboard/deletedPatient", "patientId=" + patient.getId());
@@ -78,6 +80,17 @@ public class PatientDashboardPageController {
 		model.addAttribute("overallActions", overallActions);
 		
 		List<Extension> visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions");
+
+        // TODO this is a whole block can be removed once this feature is enabled
+        if (!featureToggleProperties.isFeatureEnabled("orderRadiologyRetrospective"))  {
+            for (Extension visitAction : visitActions) {
+                if (visitAction.getId().equals("org.openmrs.module.radiologyapp.orderXray") ||
+                        visitAction.getId().equals("org.openmrs.module.radiologyapp.orderCT")) {
+                       visitAction.setRequire("visit.active");
+                }
+            }
+        }
+
 		Collections.sort(visitActions);
 		model.addAttribute("visitActions", visitActions);
 		model.addAttribute("patientTabs", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.tabs"));
