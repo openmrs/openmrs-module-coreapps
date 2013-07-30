@@ -85,7 +85,7 @@ public class ParserEncounterIntoSimpleObjects {
 	private SimpleObject parseObs(Obs obs, Locale locale) {
 		SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
 		simpleObject.put("question", capitalizeString(uiUtils.format(obs.getConcept())));
-		simpleObject.put("answer", obs.getValueAsString(locale));
+		simpleObject.put("answer", uiUtils.format(obs));
 		return simpleObject;
 	}
 	
