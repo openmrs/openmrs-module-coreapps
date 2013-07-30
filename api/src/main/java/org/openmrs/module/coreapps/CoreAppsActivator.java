@@ -15,8 +15,15 @@ package org.openmrs.module.coreapps;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.ModuleFactory;
+import org.openmrs.module.coreapps.htmlformentry.EncounterDiagnosesTagHandler;
+import org.openmrs.module.coreapps.htmlformentry.EncounterDispositionTagHandler;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -24,8 +31,32 @@ import org.openmrs.module.ModuleActivator;
 public class CoreAppsActivator extends BaseModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
-	
-	/**
+
+    /**
+     * Public static so it can be used in tests
+     * @param emrApiProperties
+     * @return
+     */
+    public static EncounterDispositionTagHandler setupEncounterDispositionTagHandler(EmrApiProperties emrApiProperties) {
+        EncounterDispositionTagHandler encounterDispositionTagHandler = new EncounterDispositionTagHandler();
+        encounterDispositionTagHandler.setEmrApiProperties(emrApiProperties);
+        return encounterDispositionTagHandler;
+    }
+
+    /**
+     * Public static so it can be used in tests
+     * @param conceptService
+     * @param emrApiProperties
+     * @return
+     */
+    public static EncounterDiagnosesTagHandler setupEncounterDiagnosesTagHandler(ConceptService conceptService, EmrApiProperties emrApiProperties) {
+        EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = new EncounterDiagnosesTagHandler();
+        encounterDiagnosesTagHandler.setEmrApiProperties(emrApiProperties);
+        encounterDiagnosesTagHandler.setConceptService(conceptService);
+        return encounterDiagnosesTagHandler;
+    }
+
+    /**
 	 * @see ModuleActivator#willRefreshContext()
 	 */
 	public void willRefreshContext() {
@@ -50,8 +81,21 @@ public class CoreAppsActivator extends BaseModuleActivator {
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
-		log.info("Core Apps Module started");
-	}
+        ConceptService conceptService = Context.getConceptService();
+        EmrApiProperties emrApiProperties = Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class);
+
+        if (ModuleFactory.isModuleStarted("htmlformentry")) {
+            HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
+
+            EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, emrApiProperties);
+            htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
+
+            EncounterDispositionTagHandler encounterDispositionTagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties);
+            htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, encounterDispositionTagHandler);
+        }
+
+        log.info("Core Apps Module started");
+    }
 	
 	/**
 	 * @see ModuleActivator#willStop()
@@ -64,6 +108,14 @@ public class CoreAppsActivator extends BaseModuleActivator {
 	 * @see ModuleActivator#stopped()
 	 */
 	public void stopped() {
+        try {
+            HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
+            htmlFormEntryService.getHandlers().remove(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME);
+            htmlFormEntryService.getHandlers().remove(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME);
+        } catch (Exception ex) {
+            // pass
+        }
+
 		log.info("Core Apps Module stopped");
 	}
 	

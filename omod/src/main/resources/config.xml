@@ -40,13 +40,20 @@
         <require_module version="${idgenVersion}">
             org.openmrs.module.idgen
         </require_module>
-			
-	</require_modules>
+
+        <require_module version="${webservicesRestVersion}">
+            org.openmrs.module.webservices.rest
+        </require_module>
+
+    </require_modules>
 	<!-- / Required Modules -->
 
     <aware_of_modules>
         <aware_of_module version="${addresshierarchyVersion}">
             org.openmrs.module.addresshierarchy
+        </aware_of_module>
+        <aware_of_module version="${htmlformentryVersion}">
+            org.openmrs.module.htmlformentry
         </aware_of_module>
     </aware_of_modules>
 

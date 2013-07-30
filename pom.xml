@@ -43,22 +43,13 @@
         <addresshierarchyVersion>2.2.9</addresshierarchyVersion>
         <webservicesRestVersion>2.1</webservicesRestVersion>
         <uicommonsVersion>1.0-SNAPSHOT</uicommonsVersion>
+        <htmlformentryVersion>2.1.4-SNAPSHOT</htmlformentryVersion>
+        <providermanagementVersion>1.1.3</providermanagementVersion>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
 		
-			<!--
-			Libraries to add as dependencies with compile or runtime scope:
-			Find matching dependencies in the maven central repository.
-			<dependency>
-				<groupId>org.other.library</groupId>
-				<artifactId>library-name</artifactId>
-				<version>library.version</version>
-				<scope>compile</scope>
-			</dependency>
-			-->
-
 			<!-- Begin OpenMRS core -->
 			
 			<dependency>
@@ -136,7 +127,6 @@
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>emrapi-api</artifactId>
@@ -145,6 +135,21 @@
                 <scope>test</scope>
             </dependency>
 
+            <!-- required by emrapi so we need this for tests -->
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>providermanagement-api</artifactId>
+                <version>${providermanagementVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>appui-api</artifactId>
+                <version>${appuiVersion}</version>
+                <type>jar</type>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>appui-api</artifactId>
@@ -155,18 +160,25 @@
 
             <dependency>
                 <groupId>org.openmrs.module</groupId>
-                <artifactId>appui-api</artifactId>
-                <version>${appuiVersion}</version>
+                <artifactId>idgen-api</artifactId>
+                <version>${idgenVersion}</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.openmrs.module</groupId>
-                <artifactId>idgen-api</artifactId>
-                <version>${idgenVersion}</version>
+                <artifactId>htmlformentry-api</artifactId>
+                <version>${htmlformentryVersion}</version>
                 <type>jar</type>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>htmlformentry-api</artifactId>
+                <version>${htmlformentryVersion}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
