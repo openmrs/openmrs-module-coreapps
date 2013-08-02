@@ -28,6 +28,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.TestUiUtils;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
@@ -91,7 +92,7 @@ public class VisitDetailsFragmentControllerTest {
 		UiUtils uiUtils = new TestUiUtils(administrationService);
 		VisitDetailsFragmentController controller = new VisitDetailsFragmentController();
 		
-		SimpleObject response = controller.getVisitDetails(featureToggleProperties, visit, uiUtils,
+		SimpleObject response = controller.getVisitDetails(featureToggleProperties, mock(EmrApiProperties.class), visit, uiUtils,
 		    sessionContext);
 		List<SimpleObject> actualEncounters = (List<SimpleObject>) response.get("encounters");
 		SimpleObject actualEncounter = actualEncounters.get(0);

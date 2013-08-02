@@ -21,7 +21,7 @@
             url = "/" + contextPath + "/" + url
     %>
         <% if (task.require) { %>
-            [[ if ((function() { var patientId = ${ patient.id }; var visit = { id: id, active: stopDatetime == null }; return (${ task.require }); })()) { ]]
+            [[ if ((function() { var patientId = ${ patient.id }; var visit = { id: id, active: stopDatetime == null, admitted: admitted }; return (${ task.require }); })()) { ]]
         <% } %>
             <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { patientId: ${ patient.id }, 'visit.id': id, 'visit.active': stopDatetime == null }) ]]" class="button task">
         <% } else { // script

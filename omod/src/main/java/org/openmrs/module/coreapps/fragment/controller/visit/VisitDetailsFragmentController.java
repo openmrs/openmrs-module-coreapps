@@ -42,6 +42,7 @@ import java.util.List;
 public class VisitDetailsFragmentController {
 
     public SimpleObject getVisitDetails(@SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
+                                        @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                                         @RequestParam("visitId") Visit visit, UiUtils uiUtils,
                                         UiSessionContext sessionContext) throws ParseException {
 
@@ -64,13 +65,15 @@ public class VisitDetailsFragmentController {
             simpleObject.put("stopDatetime", null);
         }
 
-        List<SimpleObject> encounters = new ArrayList<SimpleObject>();
+        VisitDomainWrapper visitWrapper = new VisitDomainWrapper(visit, emrApiProperties);
 
-        for (Encounter encounter : new VisitDomainWrapper(visit).getSortedEncounters()) {
+        List<SimpleObject> encounters = new ArrayList<SimpleObject>();
+        for (Encounter encounter : visitWrapper.getSortedEncounters()) {
             encounters.add(createEncounterJSON(uiUtils, authenticatedUser, canDelete, canEdit, encounter));
         }
-
         simpleObject.put("encounters", encounters);
+
+        simpleObject.put("admitted", visitWrapper.isAdmitted());
 
         return simpleObject;
     }
