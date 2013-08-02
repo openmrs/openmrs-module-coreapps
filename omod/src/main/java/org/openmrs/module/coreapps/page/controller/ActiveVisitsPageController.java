@@ -22,10 +22,13 @@ import org.openmrs.ui.framework.page.PageModel;
 
 public class ActiveVisitsPageController {
 	
-	public void get(UiSessionContext sessionContext, PageModel model, @SpringBean AdtService service,
+	public String get(UiSessionContext sessionContext, PageModel model, @SpringBean AdtService service,
 	                @SpringBean("locationService") LocationService locationService) {
 		
 		Location sessionLocation = sessionContext.getSessionLocation();
+        if (sessionLocation == null) {
+            return "redirect:login.htm";
+        }
 		Location visitLocation = null;
 		if (sessionLocation != null) {
 			visitLocation = service.getLocationThatSupportsVisits(sessionLocation);
@@ -35,6 +38,7 @@ public class ActiveVisitsPageController {
 		}
 		
 		model.addAttribute("visitSummaries", service.getActiveVisits(visitLocation));
+        return null;
 	}
 	
 }
