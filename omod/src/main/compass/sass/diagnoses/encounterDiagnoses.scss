@@ -1,56 +1,45 @@
 @import "variables";
 @import "compass/css3";
 
-#encounter-diagnoses-app {
-
-  #diagnosis-search-container {
-    display: inline-block;
-    width: 58%;
+#display-encounter-diagnoses-container {
+  font-size: 0.9em;
+  h3 {
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 5px;
   }
+  li {
+    margin-bottom: 10px;
+    .diagnosis {
+      display: inline-block;
+      background: #006191;
+      border-left: 8px #006191 solid;
+      padding: 5px 10px;
+      width: 84%;
+      color: white;
+      @include border-radius(3px);
 
-  #display-diagnoses-container {
-    display: inline-block;
-    width: 40%;
-    vertical-align: top;
-    font-size: 0.9em;
-    h3 {
-      border-bottom: 1px solid #CCC;
-      padding-bottom: 5px;
-    }
-    li {
-      margin-bottom: 10px;
-      .diagnosis {
-        display: inline-block;
-        background: #006191;
-        border-left: 8px #006191 solid;
-        padding: 5px 10px;
-        width: 84%;
-        color: white;
-        @include border-radius(3px);
+      &.primary {
+        border-left: 8px $success solid;
+      }
 
-        &.primary {
-          border-left: 8px $success solid;
-        }
+      .actions {
+        float: right;
+        font-size: 0.8em;
+        margin-top: 5px;
 
-        .actions {
-          float: right;
+        input {
+          float: none;
+          margin: 0px 0px 0px 10px;
           font-size: 0.8em;
-          margin-top: 5px;
-
-          input {
-            float: none;
-            margin: 0px 0px 0px 10px;
-            font-size: 0.8em;
-          }
-          label {
-            vertical-align: top;
-            display: inline;
-          }
+        }
+        label {
+          vertical-align: top;
+          display: inline;
         }
       }
-      i {
-        display: inline;
-      }
+    }
+    i {
+      display: inline;
     }
   }
 
@@ -58,6 +47,7 @@
     display: block;
     font-size: 1em;
   }
+
   .preferred-name {
     margin-top: 5px;
     display: block;
@@ -73,4 +63,5 @@
     font-family: $primaryLightFont;
     font-size: 0.9em;
   }
+
 }

@@ -69,7 +69,7 @@
             <input id="diagnosis-search" type="text" placeholder="${ ui.message("emr.consult.addDiagnosis.placeholder") }" autocomplete itemFormatter="autocomplete-render-item"/>
         </div>
 
-        <div id="display-diagnoses-container">
+        <div id="display-encounter-diagnoses-container">
             <h3>${ui.message("emr.consult.primaryDiagnosis")}</h3>
 
             <div data-ng-show="encounterDiagnoses.primaryDiagnoses().length == 0">

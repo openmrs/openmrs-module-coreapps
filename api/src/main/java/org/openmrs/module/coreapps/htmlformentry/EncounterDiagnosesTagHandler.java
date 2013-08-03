@@ -43,6 +43,7 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
         EncounterDiagnosesElement element = new EncounterDiagnosesElement();
         element.setUiUtils(uiUtils);
         element.setRequired("true".equals(attributes.get("required")));
+        element.setSelectedDiagnosesTarget(attributes.get("selectedDiagnosesTarget"));
         element.setEmrApiProperties(emrApiProperties);
         element.setConceptService(conceptService);
         controller.addAction(element);

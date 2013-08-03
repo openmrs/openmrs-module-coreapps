@@ -57,11 +57,13 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     private boolean required = false;
     private UiUtils uiUtils;
+    private String selectedDiagnosesTarget;
 
     private EmrApiProperties emrApiProperties;
-    private ConceptService conceptService;
 
+    private ConceptService conceptService;
     // we do not actually use the hiddenDiagnoses widget (the form field name is hardcoded) but we need it to register errorWidget
+
     private HiddenFieldWidget hiddenDiagnoses;
     private ErrorWidget errorWidget;
 
@@ -71,6 +73,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     @Override
     public String generateHtml(FormEntryContext context) {
         List<Diagnosis> existingDiagnoses = getExistingDiagnoses(context, emrApiProperties.getDiagnosisMetadata());
+
         if (FormEntryContext.Mode.VIEW == context.getMode()) {
             StringBuilder sb = new StringBuilder();
             if (existingDiagnoses != null) {
@@ -101,8 +104,13 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
                 try {
-                    return errorWidget.generateHtml(context)
-                            + uiUtils.includeFragment("coreapps", "diagnosis/encounterDiagnoses", fragmentConfig);
+                    StringBuilder output = new StringBuilder();
+                    output.append(errorWidget.generateHtml(context));
+                    output.append(uiUtils.includeFragment("coreapps", "diagnosis/encounterDiagnoses", fragmentConfig));
+                    if (selectedDiagnosesTarget != null) {
+                        output.append("\n <script type=\"text/javascript\"> \n $(function() { $('#display-encounter-diagnoses-container').appendTo('" + selectedDiagnosesTarget + "'); }); \n </script>");
+                    }
+                    return output.toString();
                 } catch (NullPointerException ex) {
                     // if we are validating/submitting the form, then this method is being called from a fragment action method
                     // and the UiUtils we have access to doesn't have a FragmentIncluder. That's okay, because we don't actually
@@ -266,4 +274,11 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         this.conceptService = conceptService;
     }
 
+    public void setSelectedDiagnosesTarget(String selectedDiagnosesTarget) {
+        this.selectedDiagnosesTarget = selectedDiagnosesTarget;
+    }
+
+    public String getSelectedDiagnosesTarget() {
+        return selectedDiagnosesTarget;
+    }
 }
