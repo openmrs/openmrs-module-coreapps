@@ -8,6 +8,7 @@
     ui.includeJavascript("uicommons", "bootstrap-collapse.js")
     ui.includeJavascript("uicommons", "bootstrap-transition.js")
 
+
     def tabs = [
         [ id: "visits", label: ui.message("coreapps.patientDashBoard.visits"), provider: "coreapps", fragment: "patientdashboard/visits" ],
         patientTabs.collect{
@@ -50,14 +51,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
         <% overallActions.each {
             def url = it.url
             if (it.type != "script") {
+                url = url.replace("{{ patientId }}", "" + patient.id)
                 url = "/" + contextPath + "/" + url
             } else{
                 url = "javascript:"+it.script
             }
         %>
-        <li>
-            <a href="${ url }"><i class="${ it.icon }"></i>${ ui.message(it.label) }</a>
-        </li>
+            <li>
+                <a href="${ url }"><i class="${ it.icon }"></i>${ ui.message(it.label) }</a>
+            </li>
         <% } %>
     </ul>
 </div>

@@ -8,5 +8,15 @@
         "icon": "icon-plus",
         "order": -12,
         "requiredPrivilege": "Task: coreapps.createRetrospectiveVisit"
+    },
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.mergeVisits",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "link",
+        "label": "coreapps.task.mergeVisits.label",
+        "url": "/coreapps/mergeVisits.page?patientId={{ patientId }}",
+        "icon": "icon-link",
+        "order": -13,
+        "requiredPrivilege": "Task: coreapps.mergeVisits"
     }
 ]
