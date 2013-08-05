@@ -29,10 +29,17 @@
 	</ul>
 
 	<span>
-        <% if (featureToggles.isFeatureEnabled("editAdmissionNote")) { %>
-        {{ if ( config.editable && encounter.canEdit) { }}
-            <i class="editEncounter delete-item icon-pencil" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("coreapps.edit") }"></i>
-        {{ } }}
+
+        <% if (!featureToggles.isFeatureEnabled("editTransferAndDischargeNotes")) { %>
+            {{ if (encounter.encounterType.uuid != "436cfe33-6b81-40ef-a455-f134a9f7e580" && encounter.encounterType.uuid != "b6631959-2105-49dd-b154-e1249e0fbcd7") { }}
+        <% } %>
+
+                {{ if ( config.editable && encounter.canEdit) { }}
+                    <i class="editEncounter delete-item icon-pencil" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("coreapps.edit") }"></i>
+                {{ } }}
+
+        <% if (!featureToggles.isFeatureEnabled("editTransferAndDischargeNotes")) { %>
+            {{ } }}
         <% } %>
 
         {{ if ( encounter.canDelete ) { }}
