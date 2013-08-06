@@ -2,7 +2,9 @@ package org.openmrs.module.coreapps.page.controller;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.LocationService;
+import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
@@ -48,6 +50,7 @@ public class MergeVisitsPageController {
 
     public String post(@RequestParam("patientId") Patient patient,
                        @RequestParam("mergeVisits") List<Integer> mergeVisits,
+                       @SpringBean AdtService service,
                        UiUtils ui,
                        HttpServletRequest request){
 
@@ -57,8 +60,14 @@ public class MergeVisitsPageController {
         }
 
         if (mergeVisits!=null && mergeVisits.size() > 0 ){
-            //are the visits consecutives ?
-            //merge visits
+            Visit mergedVisit = service.mergeConsecutiveVisits(mergeVisits, patient);
+            if (mergedVisit != null){
+                request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, ui.message("coreapps.task.mergeVisits.success"));
+                request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+            }else{
+                request.getSession().setAttribute("emr.errorMessage", ui.message("coreapps.task.mergeVisits.error"));
+                request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+            }
         }
         return "redirect:" + ui.pageLink("coreapps", "mergeVisits", SimpleObject.create("patientId", patient.getId().toString() ));
     }
