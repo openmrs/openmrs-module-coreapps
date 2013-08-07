@@ -27,7 +27,31 @@
         var mergeVisitsArray = new Array();
         var visitsIndexArray = ${visitsIndex};
         jq.enableMergeButton = function() {
-            if (mergeVisitsArray.length > 1 ) {
+            var enableButton =  false;
+            var consecutiveCounter = 0;
+            var nonConsecutiveCounter = 0;
+            jq('#active-visits').find(':checkbox').each( function (i, element){
+                var visitId = element.attributes.getNamedItem('data-visit-id').nodeValue;
+                var visitChecked = element.checked;
+                if ( visitChecked ) {
+                    consecutiveCounter++;
+                    if (nonConsecutiveCounter > 0) {
+                        enableButton = false;
+                        consecutiveCounter = 0;
+                        return false;
+                    }
+                }else {
+                    if (consecutiveCounter > 0){
+                        nonConsecutiveCounter++;
+                    }
+                }
+            });
+
+            if (consecutiveCounter > 1) {
+                enableButton = true;
+            }
+
+            if ( enableButton ) {
                 jq("#mergeVisitsBtn").removeAttr('disabled');
                 jq("#mergeVisitsBtn").removeClass('disabled');
                 jq("#mergeVisitsBtn").addClass('enabled');
@@ -36,7 +60,9 @@
                 jq("#mergeVisitsBtn").attr('disabled', 'disabled');
                 jq("#mergeVisitsBtn").addClass('disabled');
             }
+
         };
+
         jq.enableMergeButton();
 
         jq('.selectVisit').click(function(event){
@@ -45,8 +71,11 @@
             if ( visitChecked && jq.inArray(selectedVisit, mergeVisitsArray) == -1) {
                 //if the visit is checked and the array does not contain the value already
                 mergeVisitsArray.push(selectedVisit);
-                jq.enableMergeButton();
+            }else{
+                mergeVisitsArray.splice(jq.inArray(selectedVisit, mergeVisitsArray), 1);
             }
+            jq.enableMergeButton();
+
         });
 
         jq("form").submit(function(){
@@ -103,9 +132,6 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
         <% } %>
         </tbody>
     </table>
-    <!--
-    <input type="hidden" name="mergeVisits" id="mergeVisits" value="">
-    -->
     <input type="hidden" name="patientId" value="${ patient.patient.id }">
 
     <div>
