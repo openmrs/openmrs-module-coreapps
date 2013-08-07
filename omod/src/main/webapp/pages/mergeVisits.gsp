@@ -109,7 +109,7 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
     <input type="hidden" name="patientId" value="${ patient.patient.id }">
 
     <div>
-        <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }" onclick="javascript:window.location='${ ui.pageLink("coreapps", "mergeVisits", [patientId: patient.patient.id]) }'" />
+        <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }" onclick="javascript:window.location='${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id]) }'" />
         <input type="submit" id="mergeVisitsBtn" class="confirm" value="${ ui.message("coreapps.task.mergeVisits.mergeSelectedVisits") }" />
     </div>
 </form>
