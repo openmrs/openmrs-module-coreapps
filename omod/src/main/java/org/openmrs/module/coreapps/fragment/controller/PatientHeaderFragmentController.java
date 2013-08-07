@@ -14,9 +14,14 @@
 
 package org.openmrs.module.coreapps.fragment.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -29,9 +34,6 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Ideally you pass in a PatientDomainWrapper as the "patient" config parameter. But if you pass in
@@ -60,8 +62,11 @@ public class PatientHeaderFragmentController {
             }
 		}
 
-		if (activeVisit != null)
-			config.addAttribute("activeVisit", activeVisit);
+        if (activeVisit != null) {
+            config.addAttribute("activeVisit", activeVisit);
+            config.addAttribute("activeVisitStartDatetime",
+                    DateFormatUtils.format(activeVisit.getStartDatetime(), "dd MMM yyyy hh:mm a", Context.getLocale()));
+        }
 		
 		List<ExtraPatientIdentifierType> extraPatientIdentifierTypes = new ArrayList<ExtraPatientIdentifierType>();
 		

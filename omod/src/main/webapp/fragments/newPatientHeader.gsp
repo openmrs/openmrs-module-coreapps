@@ -53,6 +53,32 @@
                 query: { patientId: ${patient.patient.id} }
             });
         })
+
+        jq("div#contactInfoContent").dialog({
+            autoOpen: false,
+            width: '700',
+            height: '200',
+            show: 'slideDown',
+            hide: 'slideUp',
+            position: { my: "top", at: "bottom", of: jq("div#patient-header-contactInfo") }
+        });
+
+        jq("div#patient-header-contactInfo").click(function(){
+            var contactInfoDialogDiv = jq("#contactInfoContent");
+            //hide the title bar
+            contactInfoDialogDiv.siblings('.ui-dialog-titlebar').first().hide();
+            if(contactInfoDialogDiv.dialog('isOpen')){
+                contactInfoDialogDiv.dialog('close');
+                jq(this).children('i.toggle-icon').removeClass('icon-caret-up');
+                jq(this).children('i.toggle-icon').addClass('icon-caret-down');
+                return
+            }
+
+            contactInfoDialogDiv.dialog('open');
+            jq(this).children('i.toggle-icon').removeClass('icon-caret-down');
+            jq(this).children('i.toggle-icon').addClass('icon-caret-up');
+        });
+
     })
 </script>
 
@@ -93,12 +119,26 @@
         </div>
         <% } %>
         <% if (config.activeVisit) { %>
-        <div class="status-container">
-            <% def visit = config.activeVisit.visit %>
-            <span class="status active"></span>
-            ${ui.message("coreapps.activeVisit")}
+        <br />
+        <div class="active-visit-started-at-message">
+            ${ui.message("coreapps.patientHeader.activeVisit.at", config.activeVisitStartDatetime)}
+        </div>
+        <% if (config.activeVisit.admitted) { %>
+        <div class="active-visit-message">
+            ${ui.message("coreapps.patientHeader.activeVisit.inpatient", ui.format(config.activeVisit.latestAdtEncounter.location))}
+        </div>
+        <% } else { %>
+        <div class="active-visit-message">
+            ${ui.message("coreapps.patientHeader.activeVisit.outpatient")}
         </div>
         <% } %>
+        <% } %>
+        <div id="patient-header-contactInfo" class="white-bordered-message">
+            ${ui.message("coreapps.patientHeader.contactinfo")} <i class="toggle-icon icon-caret-down small"></i>
+        </div>
+        <div id="contactInfoContent">
+            ${ui.includeFragment("coreapps", "patientdashboard/contactInfo")}
+        </div>
     </div>
 
 
@@ -113,18 +153,18 @@
         <% config.extraPatientIdentifierTypes.each { %>
         <% def extraPatientIdentifier = patient.patient.getPatientIdentifier(it.patientIdentifierType) %>
         <% if (extraPatientIdentifier) { %>
-            <em>${ui.format(it.patientIdentifierType)}</em>
-            <% if (it.editable) { %>
-                 <span><a class="editPatientIdentifier" data-identifier-type-id="${it.patientIdentifierType.id}" data-identifier-type-name="${ui.format(it.patientIdentifierType)}"
-                    data-patient-identifier-value="${extraPatientIdentifier}" href="#${it.patientIdentifierType.id}">${extraPatientIdentifier}</a></span>
-            <% } else {%>
-                <span>${extraPatientIdentifier}</span>
-            <% } %>
+        <em>${ui.format(it.patientIdentifierType)}</em>
+        <% if (it.editable) { %>
+        <span><a class="editPatientIdentifier" data-identifier-type-id="${it.patientIdentifierType.id}" data-identifier-type-name="${ui.format(it.patientIdentifierType)}"
+                 data-patient-identifier-value="${extraPatientIdentifier}" href="#${it.patientIdentifierType.id}">${extraPatientIdentifier}</a></span>
+        <% } else {%>
+        <span>${extraPatientIdentifier}</span>
+        <% } %>
         <% } else if (it.editable) { %>
-            <em>${ui.format(it.patientIdentifierType)}</em>
-            <span class="add-id"><a class="editPatientIdentifier" data-identifier-type-id="${it.patientIdentifierType.id}"
-                                    data-identifier-type-name="${ui.format(it.patientIdentifierType)}" data-patient-identifier-value=""
-                                    href="#${it.patientIdentifierType.id}">${ui.message("coreapps.patient.identifier.add")}</a></span>
+        <em>${ui.format(it.patientIdentifierType)}</em>
+        <span class="add-id"><a class="editPatientIdentifier" data-identifier-type-id="${it.patientIdentifierType.id}"
+                                data-identifier-type-name="${ui.format(it.patientIdentifierType)}" data-patient-identifier-value=""
+                                href="#${it.patientIdentifierType.id}">${ui.message("coreapps.patient.identifier.add")}</a></span>
         <% } %>
 
         <br/>
