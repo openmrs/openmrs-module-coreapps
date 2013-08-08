@@ -119,13 +119,7 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
                 <% } %>
             </td>
             <td>
-               <% def encounters = wrapper.sortedEncounters
-                   encounters.each { encounter ->
-                   def encounterTypeUuid = "ui.i18n.EncounterType.name." + encounter.encounterType.uuid
-               %>
-                    ${ ui.message( encounterTypeUuid ) }<% if (encounter != encounters.last()) { %>, <% } %>
-               <% } %>
-
+                <%= wrapper.sortedEncounters.collect { ui.format(it.encounterType) }.join(", ") %>
             </td>
         </tr>
         <% } %>
