@@ -16,7 +16,7 @@
         "label": "coreapps.task.mergeVisits.label",
         "url": "/coreapps/mergeVisits.page?patientId={{ patientId }}",
         "icon": "icon-link",
-        "order": -13,
+        "order": 13,
         "requiredPrivilege": "Task: coreapps.mergeVisits"
     }
 ]
