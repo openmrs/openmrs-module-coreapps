@@ -109,16 +109,16 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
             def visitId = wrapper.visit.id
         %>
         <tr id="visit-${ visitId }">
-            <td><input type="checkbox" name="mergeVisits" value="${ visitId }" id="mergeVisit-${ visitId }" class="selectVisit" data-visit-id="${ visitId }"/></td>
-            <td>
+            <td width="8%"><input type="checkbox" name="mergeVisits" value="${ visitId }" id="mergeVisit-${ visitId }" class="selectVisit" data-visit-id="${ visitId }"/></td>
+            <td width="14%">
                 ${dateFormat.format(wrapper.visit.startDatetime)}
             </td>
-            <td>
+            <td width="14%">
                 <% if(wrapper.visit.stopDatetime != null) { %>
                     ${dateFormat.format(wrapper.visit.stopDatetime)}
                 <% } %>
             </td>
-            <td>
+            <td width="64%">
                 <%= wrapper.sortedEncounters.collect { ui.format(it.encounterType) }.join(", ") %>
             </td>
         </tr>
