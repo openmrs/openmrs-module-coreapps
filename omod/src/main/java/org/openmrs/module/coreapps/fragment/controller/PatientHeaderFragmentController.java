@@ -78,6 +78,7 @@ public class PatientHeaderFragmentController {
 		
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
         config.addAttribute("hideEditDemographicsButton", featureToggleProperties.isFeatureEnabled("hideEditPatientDemographicsButton"));
+        config.addAttribute("isNewPatientHeaderEnabled", featureToggleProperties.isFeatureEnabled("enableNewPatientHeader"));
 	}
 	
 	public class ExtraPatientIdentifierType {

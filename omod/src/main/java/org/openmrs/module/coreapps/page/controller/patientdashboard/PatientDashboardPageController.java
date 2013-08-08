@@ -94,6 +94,8 @@ public class PatientDashboardPageController {
 		Collections.sort(visitActions);
 		model.addAttribute("visitActions", visitActions);
 		model.addAttribute("patientTabs", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.tabs"));
+        model.addAttribute("isNewPatientHeaderEnabled",
+                featureToggleProperties.isFeatureEnabled("enableNewPatientHeader"));
         return null;
 	}
 	

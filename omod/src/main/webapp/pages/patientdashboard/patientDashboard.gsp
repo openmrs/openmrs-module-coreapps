@@ -13,9 +13,13 @@
         [ id: "visits", label: ui.message("coreapps.patientDashBoard.visits"), provider: "coreapps", fragment: "patientdashboard/visits" ],
         patientTabs.collect{
             [id: it.id, label: ui.message(it.label), provider: it.extensionParams.provider, fragment: it.extensionParams.fragment]
-        },
-        [ id: "contactInfo", label: ui.message("coreapps.patientDashBoard.contactinfo"), provider: "coreapps", fragment: "patientdashboard/contactInfo" ]
-    ].flatten()
+        }
+    ]
+
+    if (!isNewPatientHeaderEnabled) {
+      tabs.add([ id: "contactInfo", label: ui.message("coreapps.patientDashBoard.contactinfo"), provider: "coreapps", fragment: "patientdashboard/contactInfo" ])
+    }
+    tabs = tabs.flatten()
 
 %>
 <script type="text/javascript">
