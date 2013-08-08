@@ -9,7 +9,11 @@
 <div class="contact-info">
     <ul>
         <li><strong>${ ui.message("coreapps.person.address")}: </strong>
-            ${ ui.format(patient.personAddress) }
+        <% addressHierarchyLevels.each { addressLevel -> %>
+           <% if(patient.personAddress && patient.personAddress[addressLevel]) { %>
+                 ${patient.personAddress[addressLevel]}<% if(addressLevel != addressHierarchyLevels.last()){%>,<%}%>
+            <% }%>
+        <% } %>
         </li>
         <li><strong>${ ui.message("coreapps.person.telephoneNumber")}:</strong> ${patient.telephoneNumber ?: ''}</li>
     </ul>
