@@ -20,10 +20,10 @@
 	        <div>
 	            ${ ui.message("coreapps.by") }
 	            <strong>
-                    {{- encounter.primaryProvider ? encounter.primaryProvider : '' }}
+                    <span class="provider">{{- encounter.primaryProvider ? encounter.primaryProvider : '' }}</span>
 	            </strong>
 	            ${ ui.message("coreapps.in") }
-	            <strong>{{- encounter.location }}</strong>
+	            <strong><span class="location">{{- encounter.location }}</span></strong>
 	        </div>
 	    </li>
 	</ul>
