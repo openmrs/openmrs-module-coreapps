@@ -123,8 +123,7 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
                    encounters.each { encounter ->
                    def encounterTypeUuid = "ui.i18n.EncounterType.name." + encounter.encounterType.uuid
                %>
-                    ${ ui.message( encounterTypeUuid ) }
-                    <% if (encounter != encounters.last()) { %>, <% } %>
+                    ${ ui.message( encounterTypeUuid ) }<% if (encounter != encounters.last()) { %>, <% } %>
                <% } %>
 
             </td>
