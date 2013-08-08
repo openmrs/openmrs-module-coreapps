@@ -19,6 +19,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
@@ -52,6 +53,7 @@ public class VisitDetailsFragmentController {
 
         boolean canDelete = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_ENCOUNTER);
         boolean canEdit = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_EDIT_ENCOUNTER);
+        boolean canDeleteVisit = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_VISIT);
 
         Date startDatetime = visit.getStartDatetime();
         Date stopDatetime = visit.getStopDatetime();
@@ -74,8 +76,19 @@ public class VisitDetailsFragmentController {
         simpleObject.put("encounters", encounters);
 
         simpleObject.put("admitted", visitWrapper.isAdmitted());
+        simpleObject.put("canDeleteVisit", verifyIfUserHasPermissionToDeleteVisit(visit, authenticatedUser, canDeleteVisit));
 
         return simpleObject;
+    }
+
+    private boolean verifyIfUserHasPermissionToDeleteVisit(Visit visit, User authenticatedUser, boolean canDeleteVisit) {
+        VisitDomainWrapper visitDomainWrapper = new VisitDomainWrapper(visit);
+        if ( visitDomainWrapper.hasEncounters() ){
+            // allowed to delete only empty visits
+            return false;
+        }
+        boolean userParticipatedInVisit = visitDomainWrapper.participatedInVisit(authenticatedUser);
+        return canDeleteVisit || userParticipatedInVisit;
     }
 
     public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
@@ -111,6 +124,24 @@ public class VisitDetailsFragmentController {
         return new SuccessResult(ui.message("emr.patientDashBoard.deleteEncounter.successMessage"));
     }
 
+    public FragmentActionResult deleteVisit(UiUtils ui,
+                                                @RequestParam("visitId") Visit visit,
+                                                @SpringBean("visitService") VisitService visitService,
+                                                UiSessionContext sessionContext) {
+
+        if (visit != null ) {
+            User authenticatedUser = sessionContext.getCurrentUser();
+            boolean canDeleteVisit = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_VISIT);
+            if (verifyIfUserHasPermissionToDeleteVisit(visit, authenticatedUser, canDeleteVisit)) {
+                visitService.voidVisit(visit, "delete visit");
+                visitService.saveVisit(visit);
+            } else {
+                return new FailureResult(ui.message("emr.patientDashBoard.deleteVisit.notAllowed"));
+            }
+        }
+        return new SuccessResult(ui.message("coreapps.task.deleteVisit.successMessage"));
+    }
+
     private SimpleObject createEncounterJSON(UiUtils uiUtils, User authenticatedUser, boolean canDelete, boolean canEdit, Encounter encounter) {
         SimpleObject simpleEncounter = SimpleObject.fromObject(new EncounterDomainWrapper(encounter), uiUtils, "encounterId", "primaryProvider",
                 "location", "encounterDatetime", "encounterProviders.provider", "voided", "form");
@@ -137,7 +168,7 @@ public class VisitDetailsFragmentController {
     }
 
     private boolean verifyIfUserHasPermissionToDeleteAnEncounter(Encounter encounter, User authenticatedUser,
-                                                                 boolean canDelete) {
+                                                                   boolean canDelete) {
         EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
         boolean userParticipatedInEncounter = encounterDomainWrapper.participatedInEncounter(authenticatedUser);
         return canDelete || userParticipatedInEncounter;

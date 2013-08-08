@@ -1,4 +1,4 @@
-function loadTemplates (visitId) {
+function loadTemplates (visitId, patientId) {
     function loadVisit(visitElement) {
         var localVisitId = visitElement.data('visit-id');
         visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
@@ -12,8 +12,13 @@ function loadTemplates (visitId) {
             visitDetailsSection.html(visitDetailsTemplate(data));
             visitDetailsSection.show();
 
-            $('.status-container a').click(function() {
+            $('#editVisitDatesLink').click(function() {
                 showEditVisitDateDialog($(this).data('visit-id'));
+                return false;
+            });
+            $('#deleteVisitLink').click(function() {
+                createDeleteVisitDialog($(this).data('visit-id'), patientId);
+                showDeleteVisitDialog($(this).data('visit-id'));
                 return false;
             });
         }).error(function(err) {

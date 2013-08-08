@@ -63,7 +63,7 @@
         <% } else if (activeVisit != null) { %>
             visitId = ${ activeVisit.visit.id };
         <% } %>
-        loadTemplates(visitId);
+        loadTemplates(visitId, ${ patient.id });
     });
 </script>
 
@@ -137,6 +137,23 @@
         <ul>
             <li class="info">
                 <span>${ ui.message("coreapps.patientDashBoard.deleteEncounter.message") }</span>
+            </li>
+        </ul>
+
+        <button class="confirm right">${ ui.message("coreapps.yes") }</button>
+        <button class="cancel">${ ui.message("coreapps.no") }</button>
+    </div>
+</div>
+
+<div id="delete-visit-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("coreapps.task.deleteVisit.label") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="visitId" value=""/>
+        <ul>
+            <li class="info">
+                <span>${ ui.message("coreapps.task.deleteVisit.message") }</span>
             </li>
         </ul>
 

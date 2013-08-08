@@ -81,7 +81,6 @@
         jq("form").submit(function(){
             if( mergeVisitsArray.length > 0 ){
                 var jsonMergeVisits = JSON.stringify({"mergeVisits": mergeVisitsArray});
-                // jq("#mergeVisits").val(jsonMergeVisits);
                 return true;
             }
             return false;

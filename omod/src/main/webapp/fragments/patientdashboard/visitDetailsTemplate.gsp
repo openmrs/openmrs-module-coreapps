@@ -6,8 +6,11 @@
         <i class="icon-time small"></i>
         ${ ui.message("coreapps.activeVisit.time", '[[- startDatetime ]]') }
     [[ } ]]
+    [[ if (canDeleteVisit) { ]]
+        <a class="right" id="deleteVisitLink" href="#" data-visit-id="[[= id]]"> | ${ ui.message("coreapps.task.deleteVisit.label") }</a>
+    [[ } ]]
     <% if (featureToggles.isFeatureEnabled("editVisitDates") ) { %>
-        <a class="right" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.editVisitDate.label") }</a>
+        <a class="right" id="editVisitDatesLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.editVisitDate.label") } </a>
     <% } %>
 </div>
 

@@ -1,6 +1,7 @@
 var requestPaperRecordDialog = null;
 var editPatientIdentifierDialog = null;
 var deleteEncounterDialog= null;
+var deleteVisitDialog= null;
 
 function showRequestChartDialog () {
     requestPaperRecordDialog.show();
@@ -13,6 +14,11 @@ function showEditPatientIdentifierDialog () {
 
 function showDeleteEncounterDialog () {
     deleteEncounterDialog.show();
+    return false;
+}
+
+function showDeleteVisitDialog () {
+    deleteVisitDialog.show();
     return false;
 }
 
@@ -117,6 +123,33 @@ function createDeleteEncounterDialog(encounterId, deleteElement) {
             },
             cancel: function() {
                 deleteEncounterDialog.close();
+            }
+        }
+    });
+}
+
+function createDeleteVisitDialog(visitId, patientId) {
+    deleteVisitDialog = emr.setupConfirmationDialog({
+        selector: '#delete-visit-dialog',
+        actions: {
+            confirm: function() {
+                emr.getFragmentActionWithCallback('coreapps', 'visit/visitDetails', 'deleteVisit'
+                    , { visitId: visitId}
+                    , function(data) {
+                        emr.successMessage(data.message);
+                        deleteVisitDialog.close();
+                        emr.navigateTo({
+                            provider: 'coreapps',
+                            page: 'patientdashboard/patientDashboard',
+                            query: { patientId: patientId }
+                        });
+                    },function(err){
+                        emr.handleError(err);
+                        deleteVisitDialog.close();
+                    });
+            },
+            cancel: function() {
+                deleteVisitDialog.close();
             }
         }
     });

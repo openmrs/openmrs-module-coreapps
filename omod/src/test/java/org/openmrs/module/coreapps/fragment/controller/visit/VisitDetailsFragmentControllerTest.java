@@ -67,6 +67,7 @@ public class VisitDetailsFragmentControllerTest {
 		visit.setLocation(visitLocation);
 		visit.setStartDatetime(new Date());
 		visit.setStopDatetime(new Date());
+        visit.setCreator(authenticatedUser);
 		Location encounterLocation = new Location();
 		encounterLocation.setName("Location");
 		EncounterType encounterType = new EncounterType();
