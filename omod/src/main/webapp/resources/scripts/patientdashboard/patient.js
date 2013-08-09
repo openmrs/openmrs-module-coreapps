@@ -112,10 +112,13 @@ function createDeleteEncounterDialog(encounterId, deleteElement) {
                     , function(data) {
                         emr.successMessage(data.message);
                         deleteEncounterDialog.close();
+                        var visitId = deleteElement.attr("data-visit-id");
                         var encounterElement = deleteElement.parents("li:first");
                         if(encounterElement!=null && encounterElement!=undefined){
                             encounterElement.remove();
                         }
+                        //
+                        $(".viewVisitDetails[data-visit-id=" + visitId + "]").click();
                     },function(err){
                         emr.handleError(err);
                         deleteEncounterDialog.close();

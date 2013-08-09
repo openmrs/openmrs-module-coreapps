@@ -87,7 +87,7 @@ public class VisitDetailsFragmentController {
             // allowed to delete only empty visits
             return false;
         }
-        boolean userParticipatedInVisit = visitDomainWrapper.participatedInVisit(authenticatedUser);
+        boolean userParticipatedInVisit = visitDomainWrapper.verifyIfUserIsTheCreatorOfVisit(authenticatedUser);
         return canDeleteVisit || userParticipatedInVisit;
     }
 
@@ -163,7 +163,9 @@ public class VisitDetailsFragmentController {
         if (verifyIfUserHasPermissionToEditAnEncounter(encounter, authenticatedUser, canEdit)) {
             simpleEncounter.put("canEdit", true);
         }
-
+        if ( encounter.getVisit() != null ){
+            simpleEncounter.put("visitId" , encounter.getVisit().getId());
+        }
         return simpleEncounter;
     }
 
