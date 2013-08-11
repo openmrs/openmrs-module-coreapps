@@ -15,9 +15,7 @@ package org.openmrs.module.coreapps.page.controller.patientdashboard;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
-import org.openmrs.api.APIException;
 import org.openmrs.api.OrderService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appframework.service.AppFrameworkService;
@@ -31,7 +29,6 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.Redirect;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,7 +52,6 @@ public class PatientDashboardPageController {
 		patientDomainWrapper.setPatient(patient);
 		model.addAttribute("patient", patientDomainWrapper);
 		model.addAttribute("orders", orderService.getOrdersByPatient(patient));
-		model.addAttribute("addressHierarchyLevels", getAddressHierarchyLevels());
 		model.addAttribute("selectedTab", selectedTab);
 
         Location visitLocation = null;
@@ -97,34 +93,5 @@ public class PatientDashboardPageController {
         model.addAttribute("isNewPatientHeaderEnabled",
                 featureToggleProperties.isFeatureEnabled("enableNewPatientHeader"));
         return null;
-	}
-	
-	private static List<String> getAddressHierarchyLevels() {
-		List<String> l = new ArrayList<String>();
-		
-		try {
-			Class<?> svcClass = Context.loadClass("org.openmrs.module.addresshierarchy.service.AddressHierarchyService");
-			Object svc = Context.getService(svcClass);
-			List<Object> levels = (List<Object>) svcClass.getMethod("getOrderedAddressHierarchyLevels", Boolean.class,
-			    Boolean.class).invoke(svc, true, true);
-			Class<?> levelClass = Context.loadClass("org.openmrs.module.addresshierarchy.AddressHierarchyLevel");
-			Class<?> fieldClass = Context.loadClass("org.openmrs.module.addresshierarchy.AddressField");
-			for (Object o : levels) {
-				Object addressField = levelClass.getMethod("getAddressField").invoke(o);
-				String fieldName = (String) fieldClass.getMethod("getName").invoke(addressField);
-				l.add(fieldName);
-			}
-			if (l.size() > 1) {
-				Collections.reverse(l);
-			}
-		}
-		catch (ClassNotFoundException cnfe) {
-			//ignore, the module isn't installed
-		}
-		catch (Exception e) {
-			throw new APIException("Error obtaining address hierarchy levels", e);
-		}
-		
-		return l;
 	}
 }
