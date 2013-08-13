@@ -61,7 +61,7 @@
             height: '200',
             show: 'slideDown',
             hide: 'slideUp',
-            position: { my: "top", at: "bottom", of: jq("div#patient-header-contactInfo") }
+            position: { my: "${ (!config.activeVisit) ? "left " : "" }top", at: "${ (!config.activeVisit) ? "left " : "" }bottom", of: jq("div#patient-header-contactInfo") }
         });
 
         jq("div#patient-header-contactInfo").click(function(){
@@ -112,16 +112,17 @@
             <input type="button" value="${ui.message("general.edit")}" onclick='javascript:emr.navigateTo({url:"/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}"})' />
         </span>
         <% } %>
-
+        <% def skipLineBreak = false %>
         <% if (patient.patient.dead) { %>
-        <br>
+        <br /><% skipLineBreak = true %>
         <div class="death-message">
             ${ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate))}
         </div>
         <% } %>
         <% if (config.activeVisit) { %>
+        <% def visit = config.activeVisit.visit %>
         <% if (config.isNewPatientHeaderEnabled) { %>
-        <br />
+        <% if(!skipLineBreak) { %><br /><% skipLineBreak = true } %>
         <div class="active-visit-started-at-message">
             ${ui.message("coreapps.patientHeader.activeVisit.at", config.activeVisitStartDatetime)}
         </div>
@@ -134,19 +135,21 @@
             ${ui.message("coreapps.patientHeader.activeVisit.outpatient")}
         </div>
         <% } %>
+        <% } else {%>
+        <div class="status-container">
+            <span class="status active"></span>
+            ${ui.message("coreapps.activeVisit")}
+        </div>
+        <% } %>
+        <% } %>
+        <% if (config.isNewPatientHeaderEnabled) { %>
+        <% if(!skipLineBreak) { %><br /><% } %>
         <div id="patient-header-contactInfo" class="white-bordered-message">
             ${ui.message("coreapps.patientHeader.contactinfo")} <i class="toggle-icon icon-caret-down small"></i>
         </div>
         <div id="contactInfoContent">
             ${ui.includeFragment("coreapps", "patientdashboard/contactInfo")}
         </div>
-        <% } else {%>
-        <div class="status-container">
-            <% def visit = config.activeVisit.visit %>
-            <span class="status active"></span>
-            ${ui.message("coreapps.activeVisit")}
-        </div>
-        <% } %>
         <% } %>
     </div>
 

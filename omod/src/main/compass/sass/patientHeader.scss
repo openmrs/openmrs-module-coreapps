@@ -2,7 +2,7 @@
 @import "reference";
 
 $darkGray: #666;
-$darkGreen: #009384;
+$green: #51A351;
 
 .patient-header {
   position: relative;
@@ -64,8 +64,8 @@ $darkGreen: #009384;
     .active-visit-started-at-message {
       @extend .bordered-colored-message;
 
-      background: $darkGreen;
-      border-color: $darkGreen;
+      background: $green;
+      border-color: $green;
     }
 
     .active-visit-message {
