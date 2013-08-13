@@ -78,7 +78,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                         </li>
                         <% } %>
                     </ul>
-                    <a class="view-more">${ ui.message("coreapps.clinicianfacing.showMoreInfo") } ></a>
+                    <a class="view-more" href="${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id])}">
+                        ${ ui.message("coreapps.clinicianfacing.showMoreInfo") } >
+                    </a>
                 </div>
             </div>
         </div>
