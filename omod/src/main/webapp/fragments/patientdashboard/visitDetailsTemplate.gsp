@@ -6,7 +6,6 @@
         <i class="icon-time small"></i>
         ${ ui.message("coreapps.activeVisit.time", '[[- startDatetime ]]') }
     [[ } ]]
-        <br>
     [[ if (canDeleteVisit) { ]]
         <a class="right" id="deleteVisitLink" href="#" data-visit-id="[[= id]]"> | ${ ui.message("coreapps.task.deleteVisit.label") }</a>
     [[ } ]]
