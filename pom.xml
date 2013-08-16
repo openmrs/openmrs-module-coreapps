@@ -39,7 +39,7 @@
         <uiframeworkVersion>2.5.2</uiframeworkVersion>
         <emrapiVersion>1.0-SNAPSHOT</emrapiVersion>
         <appuiVersion>1.0-SNAPSHOT</appuiVersion>
-        <idgenVersion>2.7-SNAPSHOT</idgenVersion>
+        <idgenVersion>2.6</idgenVersion>
         <addresshierarchyVersion>2.2.9</addresshierarchyVersion>
         <webservicesRestVersion>2.1</webservicesRestVersion>
         <uicommonsVersion>1.0-SNAPSHOT</uicommonsVersion>
