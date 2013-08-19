@@ -9,12 +9,12 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("referenceapplication.vitals.title") }", link: "${ ui.pageLink("coreapps", "vitals/findPatient") }" }
+        { label: "${ ui.message("referenceapplication.app.capturevitals.title") }", link: "${ ui.pageLink("coreapps", "vitals/findPatient") }" }
     ];
 </script>
 
 <h1>
-    ${ ui.message("referenceapplication.vitals.title") }
+    ${ ui.message("referenceapplication.app.capturevitals.title") }
 </h1>
 
 ${ ui.includeFragment("uicommons", "widget/findPatient", [
