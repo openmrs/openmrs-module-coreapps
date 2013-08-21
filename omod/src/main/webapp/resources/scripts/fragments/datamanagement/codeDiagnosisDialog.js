@@ -1,10 +1,15 @@
 var codeDiagnosisDialog = null;
 
-function showCodeDiagnosisDialog (patientId, personName, obsId, nonCodedDiagnosis) {
+function showCodeDiagnosisDialog (patientId, patientIdentifier, personName, obsId, nonCodedDiagnosis) {
     jq("#hiddenPatientId").val(patientId);
     jq("#hiddenNonCodedObsId").val(obsId);
+
+    patientDashboardLink = patientDashboardLink + "?patientId=" + patientId;
     instructionsTemplate= instructionsTemplate.replace("{1}", "<span><b>" + nonCodedDiagnosis + "</b></span>" );
-    instructionsTemplate = instructionsTemplate.replace("{2}", "<span><b>" + personName  + "</b></span>" );
+    instructionsTemplate = instructionsTemplate.replace("{2}",
+            "<span><b><a href="
+            + patientDashboardLink + ">" + personName  + " (" + patientIdentifier + " )"
+            + "</a></b></span>" );
     jq("#instructions").html(instructionsTemplate + ": ");
     codeDiagnosisDialog.show();
     return false;

@@ -15,7 +15,7 @@
     var formatTemplate;
     var instructionsTemplate = '${ ui.escapeJs(ui.message("coreapps.dataManagement.replaceNonCoded")) }';
 
-    //instructionsTemplate.replace("{0}", "Bob");
+    var patientDashboardLink = '${ui.pageLink("coreapps", "patientdashboard/patientDashboard")}';
 
     jq(function() {
         var xhr=null;//used to track active ajax requests
