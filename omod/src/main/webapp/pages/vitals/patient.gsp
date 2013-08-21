@@ -42,7 +42,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
     }
 </style>
 
-<% if (sessionContext.activeVisit) { %>
+<% if (activeVisit) { %>
 
     <div class="container half-width">
 

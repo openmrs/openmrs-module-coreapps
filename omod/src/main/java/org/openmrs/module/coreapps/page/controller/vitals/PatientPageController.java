@@ -23,6 +23,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.FormService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
@@ -45,16 +46,18 @@ public class PatientPageController {
 		
 		Form vitalsForm = formService.getFormByUuid("a000cb34-9ec1-4344-a1c8-f692232f6edd");
 		
+		VisitDomainWrapper activeVisit = (VisitDomainWrapper)model.getAttribute("activeVisit");
+		
 		List<Encounter> existingEncounters = new ArrayList<Encounter>();
-		if (emrContext.getActiveVisit() != null) {
-			for (Encounter encounter : emrContext.getActiveVisit().getVisit().getEncounters()) {
+		if (activeVisit != null) {
+			for (Encounter encounter : activeVisit.getVisit().getEncounters()) {
 				if (!encounter.isVoided() && vitalsForm.equals(encounter.getForm())) {
 					existingEncounters.add(encounter);
 				}
 			}
 		}
 		
-		model.addAttribute("visit", emrContext.getActiveVisit() != null ? emrContext.getActiveVisit().getVisit() : null);
+		model.addAttribute("visit", activeVisit != null ? activeVisit.getVisit() : null);
 		model.addAttribute("existingEncounters", existingEncounters);
 		model.addAttribute("patient", patientDomainWrapper);
 		model.addAttribute("breadcrumbOverride", ui.toJson(Arrays.asList(appHomepageBreadcrumb, patientPageBreadcrumb)));
