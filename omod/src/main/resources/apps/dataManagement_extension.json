@@ -1,0 +1,15 @@
+[
+    {
+        "id": "coreapps.dataMgmt",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "coreapps.dataManagement.title",
+        "url": "mirebalaisreports/nonCodedDiagnoses.page",
+        "icon": "icon-paper-clip",
+        "order": 15,
+        "requiredPrivilege": "App: coreapps.dataMgmt",
+        "extensionParams": {
+            "featureToggle": "dataMgmt"
+        }
+    }
+]

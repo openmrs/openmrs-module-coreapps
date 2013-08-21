@@ -19,12 +19,18 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptSearchResult;
 import org.openmrs.ConceptSource;
+import org.openmrs.Obs;
+import org.openmrs.api.ObsService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.concept.EmrConceptService;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
+import org.openmrs.ui.framework.fragment.action.FailureResult;
+import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
+import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -56,6 +62,47 @@ public class DiagnosesFragmentController {
             ret.add(simplify(hit, ui, locale));
         }
         return ret;
+    }
+
+    public List<SimpleObject> searchNonCoded(UiSessionContext context,
+                                     UiUtils ui,
+                                     @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
+                                     @SpringBean("emrConceptService") EmrConceptService emrConceptService,
+                                     @RequestParam("term") String query,
+                                     @RequestParam(value = "start", defaultValue = "0") Integer start,
+                                     @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
+
+        Collection<Concept> diagnosisSets = emrApiProperties.getDiagnosisSets();
+        Locale locale = context.getLocale();
+
+        List<ConceptSource> sources = emrApiProperties.getConceptSourcesForDiagnosisSearch();
+
+        List<ConceptSearchResult> hits = emrConceptService.conceptSearch(query, locale, null, diagnosisSets, sources, null);
+        List<SimpleObject> ret = new ArrayList<SimpleObject>();
+        for (ConceptSearchResult hit : hits) {
+            ret.add(simplify(hit, ui, locale));
+        }
+        return ret;
+    }
+
+    public FragmentActionResult codeDiagnosis(UiUtils ui,
+                                             @RequestParam("nonCodedObsId") Integer nonCodedObsId,
+                                             @RequestParam("codedConceptId") Concept codedConcept,
+                                             @SpringBean("obsService") ObsService obsService,
+                                             @SpringBean("diagnosisService") DiagnosisService diagnosisService
+                                             ) throws Exception {
+
+
+        if(nonCodedObsId != null){
+            Obs nonCodedObs = obsService.getObs(nonCodedObsId);
+            if (nonCodedObs !=null ){
+                nonCodedObs = diagnosisService.codeNonCodedDiagnosis(nonCodedObs, codedConcept);
+                if (nonCodedObs != null){
+                    return new SuccessResult(ui.message("coreapps.dataManagement.codeDiagnosis.success"));
+                }
+            }
+        }
+        return new FailureResult(ui.message("coreapps.dataManagement.codeDiagnosis.failure"));
     }
 
     /**
