@@ -4,9 +4,9 @@
         {{ if (item.code) { }}
         {{- item.code }}
         {{ } else if (item.concept) { }}
-        ${ ui.message("emr.consult.codedButNoCode") }
+        ${ ui.message("coreapps.consult.codedButNoCode") }
         {{ } else { }}
-        ${ ui.message("emr.consult.nonCoded") }
+        ${ ui.message("coreapps.consult.nonCoded") }
         {{ } }}
     </span>
     <strong class="matched-name">
@@ -14,7 +14,7 @@
     </strong>
     {{ if (item.preferredName) { }}
     <span class="preferred-name">
-        <small>${ ui.message("emr.consult.synonymFor") }</small>
+        <small>${ ui.message("coreapps.consult.synonymFor") }</small>
         {{- item.concept.preferredName }}
     </span>
     {{ } }}

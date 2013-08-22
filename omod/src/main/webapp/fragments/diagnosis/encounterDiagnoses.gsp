@@ -13,9 +13,9 @@
         {{ if (item.code) { }}
         {{- item.code }}
         {{ } else if (item.concept) { }}
-        ${ui.message("emr.consult.codedButNoCode")}
+        ${ui.message("coreapps.consult.codedButNoCode")}
         {{ } else { }}
-        ${ui.message("emr.consult.nonCoded")}
+        ${ui.message("coreapps.consult.nonCoded")}
         {{ } }}
     </span>
     <strong class="matched-name">
@@ -23,7 +23,7 @@
     </strong>
     {{ if (item.preferredName) { }}
     <span class="preferred-name">
-        <small>${ui.message("emr.consult.synonymFor")}</small>
+        <small>${ui.message("coreapps.consult.synonymFor")}</small>
         {{- item.concept.preferredName }}
     </span>
     {{ } }}
@@ -36,26 +36,26 @@
             <span class="code">
                 <span data-ng-show="d.diagnosis.code">{{ d.diagnosis.code }}</span>
                 <span data-ng-show="!d.diagnosis.code && d.diagnosis.concept">
-                    ${ui.message("emr.consult.codedButNoCode")}
+                    ${ui.message("coreapps.consult.codedButNoCode")}
                 </span>
                 <span data-ng-show="!d.diagnosis.code && !d.diagnosis.concept">
-                    ${ui.message("emr.consult.nonCoded")}
+                    ${ui.message("coreapps.consult.nonCoded")}
                 </span>
             </span>
             <strong class="matched-name">{{ d.diagnosis.matchedName }}</strong>
             <span class="preferred-name" data-ng-show="d.diagnosis.preferredName">
-                <small>${ui.message("emr.consult.synonymFor")}</small>
+                <small>${ui.message("coreapps.consult.synonymFor")}</small>
                 <span>{{ d.diagnosis.concept.preferredName }}</span>
             </span>
 
             <div class="actions">
                 <label>
                     <input type="checkbox" data-ng-model="d.primary"/>
-                    ${ui.message("emr.Diagnosis.Order.PRIMARY")}
+                    ${ui.message("coreapps.Diagnosis.Order.PRIMARY")}
                 </label>
                 <label>
                     <input type="checkbox" data-ng-model="d.confirmed"/>
-                    ${ui.message("emr.Diagnosis.Certainty.CONFIRMED")}
+                    ${ui.message("coreapps.Diagnosis.Certainty.CONFIRMED")}
                 </label>
             </div>
         </div>
