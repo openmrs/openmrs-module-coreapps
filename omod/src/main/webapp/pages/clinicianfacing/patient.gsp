@@ -34,7 +34,19 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 </div>
                 <div class="info-body">
                     <ul>
-                        <li></li>
+                    	<li>
+                    		<% if( lastVitalsDate ){ %> 
+                    			${ ui.message("coreapps.clinicianfacing.lastVitalsDateLabel") } ${ lastVitalsDate }
+                    		<% } %>
+                    	</li> 
+                    	
+                        <% vitals.each{ %>
+	                        <li>
+	                        	<% if(it.answer){ %> 
+	                        		<small> ${ it.question } </small> ${ it.answer }
+	                        	<% } %>
+	                        </li>
+                        <% } %>
                     </ul>
                     <a class="view-more">${ ui.message("coreapps.clinicianfacing.showMoreInfo") } ></a>
                 </div>

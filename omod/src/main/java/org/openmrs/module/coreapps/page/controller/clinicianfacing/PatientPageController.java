@@ -15,16 +15,26 @@ package org.openmrs.module.coreapps.page.controller.clinicianfacing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
 import org.openmrs.Location;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.ui.framework.SimpleObject;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -37,8 +47,9 @@ public class PatientPageController {
 	                         @InjectBeans PatientDomainWrapper patientDomainWrapper,
 	                         @SpringBean("adtService") AdtService adtService,
 	                         @SpringBean("visitService") VisitService visitService,
+	                         @SpringBean("encounterService") EncounterService encounterService,
 	                         @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
-	                         UiSessionContext sessionContext) {
+	                         UiSessionContext sessionContext, UiUtils uiUtils) {
 		
 		if (patient.isVoided() || patient.isPersonVoided()) {
 			return new Redirect("coreapps", "patientdashboard/deletedPatient", "patientId=" + patient.getId());
@@ -72,6 +83,26 @@ public class PatientPageController {
 		
 		model.addAttribute("activeVisit", activeVisit);
 		model.addAttribute("patientVisits", patientVisits);
+		
+		List<SimpleObject> vitals = new ArrayList<SimpleObject>();
+		
+		List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
+		encounterTypes.add(encounterService.getEncounterTypeByUuid(CoreAppsConstants.VITALS_ENCOUNTER_TYPE_UUID));
+		List<Encounter> encounters = encounterService.getEncounters(patient, null, null, null, null, encounterTypes, null, null, null, false);
+		if (encounters.size() > 0) {
+			Encounter encounter = encounters.get(encounters.size() - 1);
+			Set<Obs> observations = encounter.getObsAtTopLevel(false);
+			for (Obs obs : observations) {
+				SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
+				simpleObject.put("question", uiUtils.format(obs.getConcept()));
+				simpleObject.put("answer", uiUtils.format(obs));
+				vitals.add(simpleObject);
+			}
+			
+			model.addAttribute("lastVitalsDate", DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy hh:mm a", Context.getLocale()));
+		}
+		
+		model.addAttribute("vitals", vitals);
 		
 		return null;
 	}
