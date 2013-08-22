@@ -75,7 +75,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                         <li class="clear">
                             <a class="visit-link">
                                 ${ ui.formatDatePretty(it.startDatetime) }
-                            <% if(it.admissionEncounter){ %> - ${ ui.formatDatePretty(it.stopDatetime) }<% } %>
+                            <% if(it.admissionEncounter && it.stopDatetime){ %> - ${ ui.formatDatePretty(it.stopDatetime) }<% } %>
                             </a>
                         <div class="tag">${ (it.admissionEncounter) ? ui.message("coreapps.clinicianfacing.inpatient") : ui.message("coreapps.clinicianfacing.outpatient") }</div>
                         </li>
