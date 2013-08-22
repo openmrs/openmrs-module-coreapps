@@ -65,15 +65,15 @@
     <div data-ng-controller="DiagnosesController">
 
         <div id="diagnosis-search-container">
-            <label for="diagnosis-search">${ ui.message("emr.consult.addDiagnosis") }</label>
-            <input id="diagnosis-search" type="text" placeholder="${ ui.message("emr.consult.addDiagnosis.placeholder") }" autocomplete itemFormatter="autocomplete-render-item"/>
+            <label for="diagnosis-search">${ ui.message("coreapps.consult.addDiagnosis") }</label>
+            <input id="diagnosis-search" type="text" placeholder="${ ui.message("coreapps.consult.addDiagnosis.placeholder") }" autocomplete itemFormatter="autocomplete-render-item"/>
         </div>
 
         <div id="display-encounter-diagnoses-container">
-            <h3>${ui.message("emr.consult.primaryDiagnosis")}</h3>
+            <h3>${ui.message("coreapps.consult.primaryDiagnosis")}</h3>
 
             <div data-ng-show="encounterDiagnoses.primaryDiagnoses().length == 0">
-                ${ui.message("emr.consult.primaryDiagnosis.notChosen")}
+                ${ui.message("coreapps.consult.primaryDiagnosis.notChosen")}
             </div>
             <ul>
                 <li data-ng-repeat="d in encounterDiagnoses.primaryDiagnoses()">
@@ -82,10 +82,10 @@
             </ul>
             <br/>
 
-            <h3>${ui.message("emr.consult.secondaryDiagnoses")}</h3>
+            <h3>${ui.message("coreapps.consult.secondaryDiagnoses")}</h3>
 
             <div data-ng-show="encounterDiagnoses.secondaryDiagnoses().length == 0">
-                ${ui.message("emr.consult.secondaryDiagnoses.notChosen")}
+                ${ui.message("coreapps.consult.secondaryDiagnoses.notChosen")}
             </div>
             <ul>
                 <li data-ng-repeat="d in encounterDiagnoses.secondaryDiagnoses()">
