@@ -74,8 +74,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                         <% patientVisits.each{ %>
                         <li class="clear">
                             <a class="visit-link">
-                                ${ ui.dateToString(it.startDatetime, "dd MMM yyyy", null, true) }
-                            <% if(it.admissionEncounter){ %> - ${ ui.dateToString(it.stopDatetime, "dd MMM yyyy", null, true) }<% } %>
+                                ${ ui.formatDatePretty(it.startDatetime) }
+                            <% if(it.admissionEncounter){ %> - ${ ui.formatDatePretty(it.stopDatetime) }<% } %>
                             </a>
                         <div class="tag">${ (it.admissionEncounter) ? ui.message("coreapps.clinicianfacing.inpatient") : ui.message("coreapps.clinicianfacing.outpatient") }</div>
                         </li>
