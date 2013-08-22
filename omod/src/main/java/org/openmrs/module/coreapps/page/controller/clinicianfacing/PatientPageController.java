@@ -60,8 +60,6 @@ public class PatientPageController {
 		List<VisitDomainWrapper> patientVisits = new ArrayList<VisitDomainWrapper>();
 		if (visitLocation != null) {
 			activeVisit = adtService.getActiveVisit(patient, visitLocation);
-			if (activeVisit != null)
-				visits.remove(activeVisit.getVisit());
 		}
 		
 		//Core API returns visits sorted with latest coming first
