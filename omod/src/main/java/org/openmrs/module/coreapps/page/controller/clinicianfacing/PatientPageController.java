@@ -101,6 +101,8 @@ public class PatientPageController {
 			
 			model.addAttribute("lastVitalsDate", DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy hh:mm a", Context.getLocale()));
 		}
+		else
+			model.addAttribute("lastVitalsDate", null);
 		
 		model.addAttribute("vitals", vitals);
 		
