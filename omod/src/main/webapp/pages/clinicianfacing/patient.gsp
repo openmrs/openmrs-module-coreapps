@@ -82,10 +82,13 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                     <h3>${ ui.message("coreapps.clinicianfacing.visits").toUpperCase() }</h3>
                 </div>
                 <div class="info-body">
+                    <% if (patientVisits.isEmpty()) { %>
+                    ${ui.message("coreapps.none")}
+                    <% } %>
                     <ul>
                         <% patientVisits.each{ %>
                         <li class="clear">
-                            <a class="visit-link">
+                            <a href="${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id, visitId: it.visitId])}#visits" class="visit-link">
                                 ${ ui.formatDatePretty(it.startDatetime) }
                             <% if(it.admissionEncounter && it.stopDatetime){ %> - ${ ui.formatDatePretty(it.stopDatetime) }<% } %>
                             </a>
@@ -93,7 +96,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                         </li>
                         <% } %>
                     </ul>
-                    <a class="view-more" href="${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id])}">
+                    <a class="view-more" href="${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id])}#visits">
                         ${ ui.message("coreapps.clinicianfacing.showMoreInfo") } >
                     </a>
                 </div>
