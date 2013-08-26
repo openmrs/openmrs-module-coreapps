@@ -19,9 +19,12 @@ import java.util.List;
 
 import org.openmrs.Encounter;
 import org.openmrs.Form;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.FormService;
+import org.openmrs.api.PatientService;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
@@ -35,6 +38,8 @@ public class PatientPageController {
 	
 	public void controller(@RequestParam("patientId") Patient patient, UiUtils ui, UiSessionContext emrContext, PageModel model,
 	                       @SpringBean("formService") FormService formService,
+	                       @SpringBean("patientService") PatientService patientService,
+	                       @SpringBean("adtService") AdtService adtService,
 	                       @InjectBeans PatientDomainWrapper patientDomainWrapper) {
 		
 		patientDomainWrapper.setPatient(patient);
@@ -46,7 +51,8 @@ public class PatientPageController {
 		
 		Form vitalsForm = formService.getFormByUuid("a000cb34-9ec1-4344-a1c8-f692232f6edd");
 		
-		VisitDomainWrapper activeVisit = (VisitDomainWrapper)model.getAttribute("activeVisit");
+		Location visitLocation = adtService.getLocationThatSupportsVisits(emrContext.getSessionLocation());
+		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
 		
 		List<Encounter> existingEncounters = new ArrayList<Encounter>();
 		if (activeVisit != null) {

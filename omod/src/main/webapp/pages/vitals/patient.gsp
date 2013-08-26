@@ -5,7 +5,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("referenceapplication.app.capturevitals.title") }", link: "${ ui.pageLink("coreapps", "vitals/findPatient") }" },
+        { label: "${ ui.message("referenceapplication.app.capturevitals.title") }", link: "${ ui.pageLink("coreapps", "findpatient/findPatient", [app: "referenceapplication.vitalsapp"]) }" },
         { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" , link: '${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.id])}'},
     ];
 </script>
@@ -17,7 +17,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
         jq('#actions .cancel').click(function() {
             emr.navigateTo({
                 provider: "coreapps",
-                page: "vitals/findPatient"
+                page: "findpatient/findPatient",
+                query: {
+                    app: "referenceapplication.vitalsapp"
+                }
             });
         });
         jq('#actions .confirm').click(function() {
@@ -28,7 +31,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
                     patientId: "${ patient.id }",
                     visitId: "${ visit?.id }",
                     definitionUiResource: "referenceapplication:htmlforms/vitals.xml",
-                    returnUrl: "${ ui.escapeJs(ui.pageLink("coreapps", "vitals/findPatient")) }",
+                    returnUrl: "${ ui.escapeJs(ui.pageLink("coreapps", "findpatient/findPatient?app=referenceapplication.vitalsapp")) }",
                     breadcrumbOverride: "${ ui.escapeJs(breadcrumbOverride) }"
                 }
             });
@@ -42,7 +45,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
     }
 </style>
 
-<% if (activeVisit) { %>
+<% if (visit) { %>
 
     <div class="container half-width">
 
