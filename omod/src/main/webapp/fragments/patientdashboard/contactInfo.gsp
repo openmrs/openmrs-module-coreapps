@@ -7,10 +7,13 @@
 <% } %>
 
 <div class="contact-info">
-    <ul>
-        <li><strong>${ ui.message("coreapps.person.address")}: </strong>
-            ${ ui.format(patient.personAddress) }
-        </li>
-        <li><strong>${ ui.message("coreapps.person.telephoneNumber")}:</strong> ${patient.telephoneNumber ?: ''}</li>
-    </ul>
+    <div>
+        <strong>${ ui.message("coreapps.person.address")}: </strong><br>
+        <div class="left-margin">${ ui.format(patient.personAddress).replace("\n", "<br>") }</div>
+    </div>
+    <br>
+    <div>
+        <strong>${ ui.message("coreapps.person.telephoneNumber")}: </strong>
+        <span class="left-margin">${patient.telephoneNumber ?: ''}</span>
+    </div>
 </div>

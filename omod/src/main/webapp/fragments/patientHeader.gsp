@@ -58,7 +58,7 @@
         jq("div#contactInfoContent").dialog({
             autoOpen: false,
             width: '700',
-            height: '200',
+            height: '250',
             show: 'slideDown',
             hide: 'slideUp',
             position: { my: "${ (!config.activeVisit) ? "left " : "" }top", at: "${ (!config.activeVisit) ? "left " : "" }bottom", of: jq("div#patient-header-contactInfo") }
