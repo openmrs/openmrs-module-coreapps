@@ -148,7 +148,7 @@
             ${ui.message("coreapps.patientHeader.contactinfo")} <i class="toggle-icon icon-caret-down small"></i>
         </div>
         <div id="contactInfoContent">
-            ${ui.includeFragment("coreapps", "patientdashboard/contactInfo", [ patient: config.patient ])}
+            ${ui.includeFragment("coreapps", "patientdashboard/contactInfo")}
         </div>
         <% } %>
     </div>
