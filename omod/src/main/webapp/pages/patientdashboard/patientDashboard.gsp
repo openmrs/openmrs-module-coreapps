@@ -84,7 +84,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 
         <% tabs.each { %>
         <div id="${it.id}">
-            ${ ui.includeFragment(it.provider, it.fragment) }
+            ${ ui.includeFragment(it.provider, it.fragment, [ patient: patient ]) }
         </div>
         <% } %>
 
