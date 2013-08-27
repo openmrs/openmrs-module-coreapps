@@ -33,21 +33,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                     <h3>${ ui.message("coreapps.clinicianfacing.vitals").toUpperCase() }</h3>
                 </div>
                 <div class="info-body">
-                    <ul>
-                    	<li>
-                    		<% if( lastVitalsDate ){ %> 
-                    			${ ui.message("coreapps.clinicianfacing.lastVitalsDateLabel") } ${ lastVitalsDate }
-                    		<% } %>
-                    	</li> 
-                    	
-                        <% vitals.each{ %>
-	                        <li>
-	                        	<% if(it.answer){ %> 
-	                        		<small> ${ it.question } </small> ${ it.answer }
-	                        	<% } %>
-	                        </li>
-                        <% } %>
-                    </ul>
+                    ${ ui.includeFragment("coreapps", "vitals/mostRecentVitals", [patientId: patient.patient.id]) }
                     <a class="view-more">${ ui.message("coreapps.clinicianfacing.showMoreInfo") } ></a>
                 </div>
             </div>
