@@ -61,7 +61,7 @@
             height: '250',
             show: 'slideDown',
             hide: 'slideUp',
-            position: { my: "${ (!config.activeVisit) ? "left " : "" }top", at: "${ (!config.activeVisit) ? "left " : "" }bottom", of: jq("div#patient-header-contactInfo") }
+            position: { my: "right top", at: "right bottom", of: jq("div#patient-header-contactInfo") }
         });
 
         jq("div#patient-header-contactInfo").click(function(){
@@ -87,31 +87,32 @@
 
     <div class="demographics">
         <h1 class="name">
-            <span>${ui.format(patient.patient.familyName)},<em>${ui.message("coreapps.patientHeader.surname")}</em></span>
-            <span>${ui.format(patient.patient.givenName)}<em>${ui.message("coreapps.patientHeader.name")}</em></span>
-
+            <span>${ui.format(patient.patient.familyName)},<em>${ui.message("coreapps.patientHeader.givenname")}</em></span>
+            <span>${ui.format(patient.patient.givenName)}<em>${ui.message("coreapps.patientHeader.familyname")}</em></span>
+            &nbsp;
+            <span class="gender-age">
+                <span>${ui.message("coreapps.gender." + patient.gender)}&nbsp; <em>&nbsp;</em></span>
+                <span>
+                <% if (patient.birthdate) { %>
+                <% if (patient.age > 0) { %>
+                ${ui.message("coreapps.ageYears", patient.age)}
+                <% } else if (patient.ageInMonths > 0) { %>
+                ${ui.message("coreapps.ageMonths", patient.ageInMonths)}
+                <% } else { %>
+                ${ui.message("coreapps.ageDays", patient.ageInDays)}
+                <% } %>
+                <% } else { %>
+                ${ui.message("coreapps.unknownAge")}
+                <% } %> <em>&nbsp;</em>
+                </span>
+                <% if(!config.hideEditDemographicsButton){ %>
+                <span>
+                    <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}">${ui.message("general.edit")}</a></small>
+                    <em>&nbsp;</em>
+                </span>
+                <% } %>
+            </span>
         </h1>
-
-        <div class="gender-age">
-            <span>${ui.message("coreapps.gender." + patient.gender)}</span>
-            <% if (patient.birthdate) { %>
-            <% if (patient.age > 0) { %>
-            <span>${ui.message("coreapps.ageYears", patient.age)}</span>
-            <% } else if (patient.ageInMonths > 0) { %>
-            <span>${ui.message("coreapps.ageMonths", patient.ageInMonths)}</span>
-            <% } else { %>
-            <span>${ui.message("coreapps.ageDays", patient.ageInDays)}</span>
-            <% } %>
-            <% } else { %>
-            <span>${ui.message("coreapps.unknownAge")}</span>
-            <% } %>
-        </div>
-
-        <% if(!config.hideEditDemographicsButton){ %>
-        <span>
-            <input type="button" value="${ui.message("general.edit")}" onclick='javascript:emr.navigateTo({url:"/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}"})' />
-        </span>
-        <% } %>
         <% def skipLineBreak = false %>
         <% if (patient.patient.dead) { %>
         <br /><% skipLineBreak = true %>
@@ -142,17 +143,16 @@
         </div>
         <% } %>
         <% } %>
-        <% if (config.isNewPatientHeaderEnabled) { %>
-        <% if(!skipLineBreak) { %><br /><% } %>
-        <div id="patient-header-contactInfo" class="white-bordered-message">
-            ${ui.message("coreapps.patientHeader.contactinfo")} <i class="toggle-icon icon-caret-down small"></i>
-        </div>
-        <div id="contactInfoContent">
-            ${ ui.includeFragment("coreapps", "patientdashboard/contactInfo", [ patient: config.patient ]) }
-        </div>
-        <% } %>
     </div>
 
+    <% if (config.isNewPatientHeaderEnabled) { %>
+    <div id="patient-header-contactInfo" class="contact-info-label">
+        ${ui.message("coreapps.patientHeader.contactinfo")} <i class="toggle-icon icon-caret-down small"></i>
+    </div>
+    <div id="contactInfoContent">
+        ${ ui.includeFragment("coreapps", "patientdashboard/contactInfo", [ patient: config.patient ]) }
+    </div>
+    <% } %>
 
 
     <div class="identifiers">

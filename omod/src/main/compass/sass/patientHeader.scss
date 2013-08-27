@@ -36,7 +36,7 @@ $green: #51A351;
        }
     }
     .gender-age {
-      @include horizontal-list;
+      font-size: 0.7em;
     }
 
     .colored-message {
@@ -74,13 +74,17 @@ $green: #51A351;
       background: $darkGray;
       border-color: $darkGray;
     }
+  }
 
-    .white-bordered-message {
-      @extend .bordered-colored-message;
-
-      color: $darkGray;
-      background: white;
-    }
+  .contact-info-label {
+    font-size: 0.9em;
+    padding: 4px 8px;
+    border-radius: 2px;
+    color: $darkGray;
+    border: 1px solid lightgray;
+    position: absolute;
+    bottom: 5px;
+    right: 0;
   }
   .identifiers {
     max-width: 520px;
