@@ -8,10 +8,10 @@
 
 <div class="contact-info">
     <div>
-        <strong>${ ui.message("coreapps.person.address")}: </strong><br>
-        <div class="left-margin">${ ui.format(config.patient.personAddress).replace("\n", "<br>") }</div>
+        <strong>${ ui.message("coreapps.person.address")}: </strong><br />
+        <div class="left-margin">${ ui.format(config.patient.personAddress).replace("\n", "<br />") }</div>
     </div>
-    <br>
+    <br />
     <div>
         <strong>${ ui.message("coreapps.person.telephoneNumber")}: </strong>
         <span class="left-margin">${config.patient.telephoneNumber ?: ''}</span>
