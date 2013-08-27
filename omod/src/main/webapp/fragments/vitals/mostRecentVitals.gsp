@@ -3,7 +3,7 @@
 </div>
 
 <script type="text/javascript"/>
-	emr.getFragmentActionWithCallback("htmlformentryui", "viewEncounterWithHtmlForm", "getAsHtml", { encounterId: ${encounterId} }, function(result) {
+	emr.getFragmentActionWithCallback("htmlformentryui", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: ${encounterId} }, function(result) {
 	    jq('#most-recent-vitals-container').html(result.html);
 });
 </script>
