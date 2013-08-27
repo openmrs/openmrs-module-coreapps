@@ -21,6 +21,11 @@ function loadTemplates (visitId, patientId) {
                 showDeleteVisitDialog($(this).data('visit-id'));
                 return false;
             });
+            $('#endVisitLink').click(function() {
+                createEndVisitDialog($(this).data('visit-id'), patientId);
+                showEndVisitDialog($(this).data('visit-id'));
+                return false;
+            });
         }).error(function(err) {
             emr.errorMessage(err);
         });

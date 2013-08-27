@@ -18,6 +18,7 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.User;
 import org.openmrs.Visit;
+import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
@@ -141,6 +142,20 @@ public class VisitDetailsFragmentController {
         }
         return new SuccessResult(ui.message("coreapps.task.deleteVisit.successMessage"));
     }
+
+	public FragmentActionResult endVisit(UiUtils ui,
+											@RequestParam("visitId") Visit visit,
+											@SpringBean("visitService") VisitService visitService,
+											UiSessionContext sessionContext) {
+		if (visit != null ) {
+			try {
+				visitService.endVisit(visit, new Date());
+			} catch (APIAuthenticationException e) {
+				return new FailureResult(ui.message("coreapps.task.endVisit.notAllowed"));
+			}
+		}
+		return new SuccessResult(ui.message("coreapps.task.endVisit.successMessage"));
+	}
 
     private SimpleObject createEncounterJSON(UiUtils uiUtils, User authenticatedUser, boolean canDelete, boolean canEdit, Encounter encounter) {
         SimpleObject simpleEncounter = SimpleObject.fromObject(new EncounterDomainWrapper(encounter), uiUtils, "encounterId", "primaryProvider",

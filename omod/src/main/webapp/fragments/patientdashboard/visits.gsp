@@ -162,6 +162,23 @@
     </div>
 </div>
 
+<div id="end-visit-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("coreapps.task.endVisit.label") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="visitId" value=""/>
+        <ul>
+            <li class="info">
+                <span>${ ui.message("coreapps.task.endVisit.message") }</span>
+            </li>
+        </ul>
+
+        <button class="confirm right">${ ui.message("coreapps.yes") }</button>
+        <button class="cancel">${ ui.message("coreapps.no") }</button>
+    </div>
+</div>
+
 <div id="retrospective-visit-creation-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
         <i class="icon-plus"></i>

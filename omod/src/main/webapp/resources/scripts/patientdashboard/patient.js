@@ -22,6 +22,11 @@ function showDeleteVisitDialog () {
     return false;
 }
 
+function showEndVisitDialog () {
+    endVisitDialog.show();
+    return false;
+}
+
 function createPaperRecordDialog(patientId) {
     requestPaperRecordDialog = emr.setupConfirmationDialog({
         selector: '#request-paper-record-dialog',
@@ -153,6 +158,33 @@ function createDeleteVisitDialog(visitId, patientId) {
             },
             cancel: function() {
                 deleteVisitDialog.close();
+            }
+        }
+    });
+}
+
+function createEndVisitDialog(visitId, patientId) {
+    endVisitDialog = emr.setupConfirmationDialog({
+        selector: '#end-visit-dialog',
+        actions: {
+            confirm: function() {
+                emr.getFragmentActionWithCallback('coreapps', 'visit/visitDetails', 'endVisit'
+                    , { visitId: visitId}
+                    , function(data) {
+                        emr.successMessage(data.message);
+                        endVisitDialog.close();
+                        emr.navigateTo({
+                            provider: 'coreapps',
+                            page: 'patientdashboard/patientDashboard',
+                            query: { patientId: patientId }
+                        });
+                    },function(err){
+                        emr.handleError(err);
+                        endVisitDialog.close();
+                    });
+            },
+            cancel: function() {
+                endVisitDialog.close();
             }
         }
     });
