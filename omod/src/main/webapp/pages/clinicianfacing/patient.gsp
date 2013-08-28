@@ -93,41 +93,35 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
         </div>
         <div class="action-container column">
             <div class="action-section">
+                <% if (activeVisit) {
+                    def contextModel = [ patientId: patient.id, "visit.id": activeVisit.visitId, "visit.active": true, "visit.admitted": activeVisit.admitted ]
+                %>
+                    <ul>
+                        <h3>${ ui.message("coreapps.clinicianfacing.activeVisitActions") }</h3>
+                        <% visitActions.each { ext -> %>
+                            <li>
+                                <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), contextModel)) }" id="${ ext.id }">
+                                    <i class="${ ext.icon }"></i>
+                                    ${ ui.message(ext.label) }
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                <% } %>
                 <ul>
-                    <h3>${ ui.message("general.patient").toUpperCase() }</h3>
-                    <li>
-                        <i class="icon-vitals"></i>${ ui.message("coreapps.clinicianfacing.recordVitals") }
-                    </li>
-                    <% if(activeVisit){ %>
-                    <li>
-                        <a href="/${contextPath}/htmlformentryui/htmlform/enterHtmlFormWithSimpleUi.page?patientId=${patient.id}&visitId=${activeVisit.visit.id}&definitionUiResource=referenceapplication:htmlforms/consultNote.xml">
-                            <i class="icon-stethoscope"></i>${ ui.message("coreapps.clinicianfacing.writeConsultNote") }
-                        </a>
-                    </li>
+                    <h3>${ ui.message("coreapps.clinicianfacing.overallActions") }</h3>
+                    <%
+                        def contextModel = [ patientId: patient.id ]
+                        overallActions.each { ext -> %>
+                            <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), contextModel)) }" id="${ ext.id }">
+                                <li>
+                                    <i class="${ ext.icon }"></i>
+                                    ${ ui.message(ext.label) }
+                                </li>
+                            </a>
                     <% } %>
-                    <li>
-                        <i class="icon-stethoscope"></i>${ ui.message("coreapps.clinicianfacing.writeEdNote") }
-                    </li>
-                    <li>
-                        <i class="icon-x-ray"></i>${ ui.message("coreapps.clinicianfacing.orderXray") }
-                    </li>
-                    <li>
-                        <i class="icon-tomo"></i>${ ui.message("coreapps.clinicianfacing.orderCTScan") }
-                    </li>
-                    <li>
-                        <i class="icon-paste"></i>${ ui.message("coreapps.clinicianfacing.writeSurgeryNote") }
-                    </li>
-                    <h3>${ ui.message("coreapps.general").toUpperCase() }</h3>
-                    <li>
-                        <i class="icon-folder-open"></i>${ ui.message("coreapps.clinicianfacing.requestPaperRecord") }
-                    </li>
-                    <li>
-                        <i class="icon-print"></i>${ ui.message("coreapps.clinicianfacing.printCardLabel") }
-                    </li>
-                    <li>
-                        <i class="icon-print"></i>${ ui.message("coreapps.clinicianfacing.printChartLabel") }
-                    </li>
                 </ul>
+
                 <a class="button medium " href="#">
                     <i class="icon-x-ray"></i>${ ui.message("coreapps.clinicianfacing.radiology") }
                 </a>
