@@ -2,7 +2,7 @@
 
 <% if(!config.hideEditContactInfoButton){ %>
     <div class="right">
-        <input type="button" value="${ui.message("general.edit")}" onclick='javascript:emr.navigateTo({url:"/${contextPath}/registrationapp/editPatientContactInfo.page?patientId=${config.patient.patient.id}&appId=referenceapplication.registrationapp.registerPatient"})' />
+        <small><a href="/${contextPath}/registrationapp/editPatientContactInfo.page?patientId=${config.patient.patient.id}&appId=referenceapplication.registrationapp.registerPatient">${ui.message("general.edit")}</a></small>
     </div>
 <% } %>
 
