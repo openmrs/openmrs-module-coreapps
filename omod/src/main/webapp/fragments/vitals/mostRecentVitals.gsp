@@ -1,4 +1,8 @@
-<div id="most-recent-vitals-container">
+<%
+	ui.includeCss("coreapps", "patientdashboard/patientDashboard.css")
+%>
+
+<div id="most-recent-vitals-container" class="in collapse">
     Loading...
 </div>
 
