@@ -8,6 +8,11 @@
                 "name": "afterSelectedUrl",
                 "description": "URL to go to after the user selects a patient. Supports {{patientId}}",
                 "defaultValue": "/coreapps/patientdashboard/patientDashboard.page?patientId={{ patientId }}"
+            },
+            {
+                "name": "label",
+                "description": "Label used by the find patient widget",
+                "defaultValue": "coreapps.findPatient.app.label"
             }
         ]
     }

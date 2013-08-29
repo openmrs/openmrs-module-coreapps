@@ -28,6 +28,8 @@ public class AppTest {
         assertThat(app.getTemplate().getId(), is("coreapps.template.findPatient"));
         String expectedUrl = app.getTemplate().getConfigOptions().get(0).getDefaultValue().getTextValue();
         assertThat(app.getConfig().get("afterSelectedUrl").getTextValue(), is(expectedUrl));
+        String expectedLabel = app.getTemplate().getConfigOptions().get(1).getDefaultValue().getTextValue();
+        assertThat(app.getConfig().get("label").getTextValue(), is(expectedLabel));
     }
 
     @Test

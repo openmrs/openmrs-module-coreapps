@@ -5,7 +5,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("coreapps.findPatient.app.label")}"}
+        { label: "${ ui.message(label)}"}
     ];
 
     jq(function() {
