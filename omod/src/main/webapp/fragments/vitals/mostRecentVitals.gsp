@@ -10,6 +10,7 @@
 	if (${encounterId}) {
 		emr.getFragmentActionWithCallback("htmlformentryui", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: ${encounterId} }, function(result) {
 		    jq('#most-recent-vitals-container').html(result.html);
+		    jq('.collapse .title').text('${ui.message("coreapps.clinicianfacing.lastVitalsDateLabel")} ' + result.formattedEncounterDatetime);
 		});
 	}
 	else {
