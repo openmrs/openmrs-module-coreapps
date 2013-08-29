@@ -91,7 +91,7 @@
             <span>${ui.format(patient.patient.givenName)}<em>${ui.message("coreapps.patientHeader.givenname")}</em></span>
             &nbsp;
             <span class="gender-age">
-                <span>${ui.message("coreapps.gender." + patient.gender)}&nbsp; <em>&nbsp;</em></span>
+                <span>${ui.message("coreapps.gender." + patient.gender)}&nbsp;</span>
                 <span>
                 <% if (patient.birthdate) { %>
                 <% if (patient.age > 0) { %>
@@ -103,12 +103,11 @@
                 <% } %>
                 <% } else { %>
                 ${ui.message("coreapps.unknownAge")}
-                <% } %> <em>&nbsp;</em>
+                <% } %>
                 </span>
                 <% if(!config.hideEditDemographicsButton){ %>
                 <span>
                     <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}">${ui.message("general.edit")}</a></small>
-                    <em>&nbsp;</em>
                 </span>
                 <% } %>
             </span>
