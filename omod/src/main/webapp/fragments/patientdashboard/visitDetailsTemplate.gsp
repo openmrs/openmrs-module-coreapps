@@ -9,12 +9,14 @@
     [[ if (canDeleteVisit) { ]]
         <a class="right" id="deleteVisitLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.deleteVisit.label")}</a>
     [[ } ]]
+    <% if (context.hasPrivilege("Task: End Visit")) { %>
     [[ if (stopDatetime == null) { ]]
         [[ if (canDeleteVisit) { ]]
             <span class="right"> | </span>
         [[ } ]]
         <a class="right" id="endVisitLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.endVisit.label")}</a>
     [[ } ]]
+    <% } %>
     <% if (featureToggles.isFeatureEnabled("editVisitDates") ) { %>
         [[ if (canDeleteVisit || stopDatetime == null) { ]]
             <span class="right"> | </span>

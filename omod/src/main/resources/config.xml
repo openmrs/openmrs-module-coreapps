@@ -91,5 +91,10 @@
         </description>
     </globalProperty>
 
+    <privilege>
+        <name>Task: End Visit</name>
+        <description>Ability to end visit</description>
+    </privilege>
+
 </module>
 
