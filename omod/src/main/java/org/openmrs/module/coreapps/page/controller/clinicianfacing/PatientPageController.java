@@ -65,20 +65,9 @@ public class PatientPageController {
 		}
 		
 		VisitDomainWrapper activeVisit = null;
-		List<Visit> visits = visitService.getVisitsByPatient(patient, true, false);
-		List<VisitDomainWrapper> patientVisits = new ArrayList<VisitDomainWrapper>();
 		if (visitLocation != null) {
 			activeVisit = adtService.getActiveVisit(patient, visitLocation);
 		}
-		
-		//Core API returns visits sorted with latest coming first
-		for (Visit v : visits) {
-			patientVisits.add(new VisitDomainWrapper(v, emrApiProperties));
-			//Limit to 5 visits
-			if (patientVisits.size() == 5)
-				break;
-		}
-		
 		model.addAttribute("activeVisit", activeVisit);
 
         SimpleBindings contextModel = new SimpleBindings();
@@ -92,8 +81,6 @@ public class PatientPageController {
         List<Extension> visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions", contextModel);
         Collections.sort(visitActions);
         model.addAttribute("visitActions", visitActions);
-
-		model.addAttribute("patientVisits", patientVisits);
 
 		return null;
 	}
