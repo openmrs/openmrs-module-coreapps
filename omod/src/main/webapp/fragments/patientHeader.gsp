@@ -87,8 +87,8 @@
 
     <div class="demographics">
         <h1 class="name">
-            <span>${ui.format(patient.patient.familyName)},<em>${ui.message("coreapps.patientHeader.givenname")}</em></span>
-            <span>${ui.format(patient.patient.givenName)}<em>${ui.message("coreapps.patientHeader.familyname")}</em></span>
+            <span>${ui.format(patient.patient.familyName)},<em>${ui.message("coreapps.patientHeader.familyname")}</em></span>
+            <span>${ui.format(patient.patient.givenName)}<em>${ui.message("coreapps.patientHeader.givenname")}</em></span>
             &nbsp;
             <span class="gender-age">
                 <span>${ui.message("coreapps.gender." + patient.gender)}&nbsp; <em>&nbsp;</em></span>
