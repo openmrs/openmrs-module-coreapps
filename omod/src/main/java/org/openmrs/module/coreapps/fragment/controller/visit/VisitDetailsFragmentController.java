@@ -148,7 +148,7 @@ public class VisitDetailsFragmentController {
 											@SpringBean("visitService") VisitService visitService,
 											UiSessionContext sessionContext) {
 		User currentUser = sessionContext.getCurrentUser();
-		if (currentUser != null && !currentUser.hasPrivilege(EmrApiConstants.PRIVILEGE_END_VISIT)) {
+		if (currentUser == null || !currentUser.hasPrivilege(EmrApiConstants.PRIVILEGE_END_VISIT)) {
 			return new FailureResult(ui.message("coreapps.task.endVisit.notAllowed"));
 		}
 
