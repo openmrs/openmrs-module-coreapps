@@ -55,30 +55,21 @@
         })
 
         <% if (config.isNewPatientHeaderEnabled) { %>
-        jq("div#contactInfoContent").dialog({
-            autoOpen: false,
-            width: '700',
-            height: '250',
-            show: 'slideDown',
-            hide: 'slideUp',
-            position: { my: "right top", at: "right bottom", of: jq("div#patient-header-contactInfo") }
-        });
+            jq("#patient-header-contactInfo").click(function (){
+                var contactInfoDialogDiv = jq("#contactInfoContent");
 
-        jq("div#patient-header-contactInfo").click(function(){
-            var contactInfoDialogDiv = jq("#contactInfoContent");
-            //hide the title bar
-            contactInfoDialogDiv.siblings('.ui-dialog-titlebar').first().hide();
-            if(contactInfoDialogDiv.dialog('isOpen')){
-                contactInfoDialogDiv.dialog('close');
-                jq(this).children('i.toggle-icon').removeClass('icon-caret-up');
-                jq(this).children('i.toggle-icon').addClass('icon-caret-down');
-                return
-            }
+                if (contactInfoDialogDiv.hasClass('hidden')) {
+                    contactInfoDialogDiv.removeClass('hidden');
+                    jq(this).children('i.toggle-icon').removeClass('icon-caret-down');
+                    jq(this).children('i.toggle-icon').addClass('icon-caret-up');
+                } else {
+                    contactInfoDialogDiv.addClass('hidden');
+                    jq(this).children('i.toggle-icon').removeClass('icon-caret-up');
+                    jq(this).children('i.toggle-icon').addClass('icon-caret-down');
+                }
 
-            contactInfoDialogDiv.dialog('open');
-            jq(this).children('i.toggle-icon').removeClass('icon-caret-down');
-            jq(this).children('i.toggle-icon').addClass('icon-caret-up');
-        });
+                return false;
+            });
         <% } %>
     })
 </script>
@@ -95,64 +86,61 @@
                 <span>
                 <% if (patient.birthdate) { %>
                 <% if (patient.age > 0) { %>
-                ${ui.message("coreapps.ageYears", patient.age)} (<% if (patient.birthdateEstimated) { %> ~ <% } %>${ config.formattedBirthdate })
+                    ${ui.message("coreapps.ageYears", patient.age)} (<% if (patient.birthdateEstimated) { %> ~ <% } %>${ config.formattedBirthdate })
                 <% } else if (patient.ageInMonths > 0) { %>
-                ${ui.message("coreapps.ageMonths", patient.ageInMonths)}
+                    ${ui.message("coreapps.ageMonths", patient.ageInMonths)}
                 <% } else { %>
-                ${ui.message("coreapps.ageDays", patient.ageInDays)}
+                    ${ui.message("coreapps.ageDays", patient.ageInDays)}
                 <% } %>
                 <% } else { %>
-                ${ui.message("coreapps.unknownAge")}
+                    ${ui.message("coreapps.unknownAge")}
                 <% } %>
                 </span>
                 <% if(!config.hideEditDemographicsButton){ %>
-                <span>
-                    <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}">${ui.message("general.edit")}</a></small>
-                </span>
+                    <span>
+                        <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}">${ui.message("general.edit")}</a></small>
+                    </span>
                 <% } %>
             </span>
+            <% if (config.isNewPatientHeaderEnabled) { %>
+                <div class="hidden" id="contactInfoContent">
+                    ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient ]) }
+                </div>
+                <a href="#" id="patient-header-contactInfo" class="contact-info-label">
+                    ${ui.message("coreapps.patientHeader.contactinfo")}
+                    <i class="toggle-icon icon-caret-down small"></i>
+                </a>
+            <% } %>
+
         </h1>
-        <% def skipLineBreak = false %>
         <% if (patient.patient.dead) { %>
-        <br /><% skipLineBreak = true %>
-        <div class="death-message">
-            ${ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate))}
-        </div>
+            <div class="death-message">
+                ${ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate))}
+            </div>
         <% } %>
         <% if (config.activeVisit) { %>
-        <% def visit = config.activeVisit.visit %>
-        <% if (config.isNewPatientHeaderEnabled) { %>
-        <% if(!skipLineBreak) { %><br /><% skipLineBreak = true } %>
-        <div class="active-visit-started-at-message">
-            ${ui.message("coreapps.patientHeader.activeVisit.at", config.activeVisitStartDatetime)}
-        </div>
-        <% if (config.activeVisit.admitted) { %>
-        <div class="active-visit-message">
-            ${ui.message("coreapps.patientHeader.activeVisit.inpatient", ui.format(config.activeVisit.latestAdtEncounter.location))}
-        </div>
-        <% } else { %>
-        <div class="active-visit-message">
-            ${ui.message("coreapps.patientHeader.activeVisit.outpatient")}
-        </div>
-        <% } %>
-        <% } else {%>
-        <div class="status-container">
-            <span class="status active"></span>
-            ${ui.message("coreapps.activeVisit")}
-        </div>
-        <% } %>
+            <% def visit = config.activeVisit.visit %>
+            <% if (config.isNewPatientHeaderEnabled) { %>
+                <div class="active-visit-started-at-message">
+                    ${ui.message("coreapps.patientHeader.activeVisit.at", config.activeVisitStartDatetime)}
+                </div>
+                <% if (config.activeVisit.admitted) { %>
+                    <div class="active-visit-message">
+                        ${ui.message("coreapps.patientHeader.activeVisit.inpatient", ui.format(config.activeVisit.latestAdtEncounter.location))}
+                    </div>
+                <% } else { %>
+                    <div class="active-visit-message">
+                        ${ui.message("coreapps.patientHeader.activeVisit.outpatient")}
+                    </div>
+                <% } %>
+            <% } else { %>
+            <div class="status-container">
+                <span class="status active"></span>
+                ${ui.message("coreapps.activeVisit")}
+            </div>
+            <% } %>
         <% } %>
     </div>
-
-    <% if (config.isNewPatientHeaderEnabled) { %>
-    <div id="patient-header-contactInfo" class="contact-info-label">
-        ${ui.message("coreapps.patientHeader.contactinfo")} <i class="toggle-icon icon-caret-down small"></i>
-    </div>
-    <div id="contactInfoContent">
-        ${ ui.includeFragment("coreapps", "patientdashboard/contactInfo", [ patient: config.patient ]) }
-    </div>
-    <% } %>
-
 
     <div class="identifiers">
         <em>${ui.message("coreapps.patientHeader.patientId")}</em>
@@ -174,8 +162,8 @@
         <% } else if (it.editable) { %>
             <em>${ui.format(it.patientIdentifierType)}</em>
             <span class="add-id"><a class="editPatientIdentifier" data-identifier-type-id="${it.patientIdentifierType.id}"
-                                    data-identifier-type-name="${ui.format(it.patientIdentifierType)}" data-patient-identifier-value=""
-                                    href="#${it.patientIdentifierType.id}">${ui.message("coreapps.patient.identifier.add")}</a></span>
+            data-identifier-type-name="${ui.format(it.patientIdentifierType)}" data-patient-identifier-value=""
+            href="#${it.patientIdentifierType.id}">${ui.message("coreapps.patient.identifier.add")}</a></span>
         <% } %>
 
         <br/>

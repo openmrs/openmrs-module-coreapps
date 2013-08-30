@@ -26,8 +26,10 @@ $green: #51A351;
 
     h1 {
       margin: 0;
+
       span {
          display: inline-block;
+
          em {
            font-size: 0.4em;
            color: #888;
@@ -41,6 +43,19 @@ $green: #51A351;
       font-size: 0.6em;
       vertical-align: top;
       margin-top: 10px;
+    }
+
+    .contact-info-inline {
+      font-size: 0.6em;
+
+      em {
+        font-size: 0.7em;
+      }
+
+      small {
+        position: relative;
+        top: -15px;
+      }
     }
 
     .colored-message {
@@ -81,21 +96,16 @@ $green: #51A351;
   }
 
   .contact-info-label {
-    font-size: 0.9em;
-    padding: 4px 8px;
-    border-radius: 2px;
-    color: $darkGray;
-    border: 1px solid lightgray;
-    position: absolute;
-    bottom: 5px;
-    right: 0;
+    font-size: 0.5em;
   }
+
   .identifiers {
     max-width: 520px;
     display: inline-block;
     float: right;
     text-align: right;
     margin-left: 20px;
+
     em {
       max-width: 170px;
       min-width: 120px;
@@ -105,6 +115,7 @@ $green: #51A351;
       font-size: 0.9em;
       border-bottom: 1px solid #DDD;
     }
+
     span {
       background: $darkGray;
       color: white;
@@ -114,11 +125,14 @@ $green: #51A351;
       padding: 3px 8px;
       font-size: 0.8em;
       @include border-radius(50px);
+
       a, a:link, a:visited {
         color: #FFF;
       }
+
       &.add-id {
         background: none;
+
         a, a:link, a:visited {
           color: $link;
         }
@@ -138,6 +152,7 @@ $green: #51A351;
 
 #patient-header-contactInfo {
   cursor: pointer;
+  display: block;
 }
 
 .left-margin{
