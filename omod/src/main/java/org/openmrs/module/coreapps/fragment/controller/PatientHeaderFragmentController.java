@@ -14,6 +14,7 @@
 
 package org.openmrs.module.coreapps.fragment.controller;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +51,9 @@ public class PatientHeaderFragmentController {
 		if (patient instanceof Patient) {
 			wrapper.setPatient((Patient) patient);
 			config.addAttribute("patient", wrapper);
+			if (((Patient) patient).getBirthdate() != null) {
+				config.addAttribute("formattedBirthdate", DateFormat.getDateInstance(DateFormat.MEDIUM, Context.getLocale()).format(((Patient) patient).getBirthdate()));
+			}
 		}
 		
 		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");
