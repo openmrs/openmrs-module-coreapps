@@ -3,6 +3,8 @@ var editPatientIdentifierDialog = null;
 var deleteEncounterDialog= null;
 var deleteVisitDialog= null;
 
+// TODO: move the request chart dialog, print ID Card label, and print paper record label dialogs out into paperrecord module
+
 function showRequestChartDialog () {
     requestPaperRecordDialog.show();
     return false;
@@ -32,7 +34,7 @@ function createPaperRecordDialog(patientId) {
         selector: '#request-paper-record-dialog',
         actions: {
             confirm: function() {
-                emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'requestPaperRecord'
+                emr.getFragmentActionWithCallback('paperrecord', 'requestPaperRecord', 'requestPaperRecord'
                     , { patientId: patientId, locationId: sessionLocationModel.id() }
                     , function(data) {
                         emr.successMessage(data.message);
@@ -47,7 +49,7 @@ function createPaperRecordDialog(patientId) {
 }
 
 function printIdCardLabel() {
-    emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'printIdCardLabel'
+    emr.getFragmentActionWithCallback('paperrecord', 'requestPaperRecord', 'printIdCardLabel'
         , { patientId: patient.id, locationId: sessionLocationModel.id() }
         , function(data) {
             if(data.success) {
@@ -60,7 +62,7 @@ function printIdCardLabel() {
 }
 
 function printPaperRecordLabel() {
-    emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'printPaperRecordLabel'
+    emr.getFragmentActionWithCallback('paperecord', 'requestPaperRecord', 'printPaperRecordLabel'
         , { patientId: patient.id, locationId: sessionLocationModel.id() }
         , function(data) {
             if(data.success) {
