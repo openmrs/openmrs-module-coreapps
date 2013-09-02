@@ -91,5 +91,10 @@
         </description>
     </globalProperty>
 
+    <privilege>
+        <name>Task: coreapps.endVisit</name>
+        <description>Ability to end visit</description>
+    </privilege>
+
 </module>
 

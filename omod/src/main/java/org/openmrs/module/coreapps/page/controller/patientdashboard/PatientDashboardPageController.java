@@ -29,6 +29,8 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.Redirect;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.script.Bindings;
+import javax.script.SimpleBindings;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,18 +62,26 @@ public class PatientDashboardPageController {
         } catch (IllegalArgumentException ex) {
             // location does not support visits
         }
+
+		VisitDomainWrapper activeVisit = null;
         if (visitLocation != null) {
-            VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
-            model.addAttribute("activeVisit", activeVisit);
-        } else {
-            model.addAttribute("activeVisit", null);
+            activeVisit = adtService.getActiveVisit(patient, visitLocation);
         }
+		model.addAttribute("activeVisit", activeVisit);
 
 		List<Extension> encounterTemplateExtensions = appFrameworkService
 		        .getExtensionsForCurrentUser(ENCOUNTER_TEMPLATE_EXTENSION);
 		model.addAttribute("encounterTemplateExtensions", encounterTemplateExtensions);
-		
-		List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions");
+
+
+		Bindings bindings = new SimpleBindings();
+		bindings.put("patientId", patient.getPatientId());
+		if (activeVisit != null) {
+			bindings.put("activeVisitId", activeVisit.getVisitId());
+		}
+		model.addAttribute("actionBindings", bindings);
+
+		List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions", bindings);
 		Collections.sort(overallActions);
 		model.addAttribute("overallActions", overallActions);
 		

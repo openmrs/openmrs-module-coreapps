@@ -51,22 +51,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
             </a>
         </li>
         <% } %>
-        <% if (context.hasPrivilege("Task: End Visit") && activeVisit) { %>
-        <li>
-            <a href="javascript:visit.showEndVisitDialog(${activeVisit.visitId})">
-                <i class="icon-check-in"></i>${ ui.message("coreapps.task.endVisit.label") }
-            </a>
-        </li>
-        <% } %>
-
         <% overallActions.each {
             def url = it.url
-            if (it.type != "script") {
-                url = url.replace("{{ patientId }}", "" + patient.id)
-                url = "/" + contextPath + "/" + url
-            } else{
-                url = "javascript:"+it.script
-            }
+            url = it.url(contextPath, actionBindings)
         %>
             <li>
                 <a href="${ url }"><i class="${ it.icon }"></i>${ ui.message(it.label) }</a>

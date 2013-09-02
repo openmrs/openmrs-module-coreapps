@@ -24,6 +24,7 @@ import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
@@ -148,7 +149,7 @@ public class VisitDetailsFragmentController {
 											@SpringBean("visitService") VisitService visitService,
 											UiSessionContext sessionContext) {
 		User currentUser = sessionContext.getCurrentUser();
-		if (currentUser == null || !currentUser.hasPrivilege(EmrApiConstants.PRIVILEGE_END_VISIT)) {
+		if (currentUser == null || !currentUser.hasPrivilege(CoreAppsConstants.PRIVILEGE_END_VISIT)) {
 			return new FailureResult(ui.message("coreapps.task.endVisit.notAllowed"));
 		}
 
