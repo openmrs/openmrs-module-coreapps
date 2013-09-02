@@ -62,9 +62,10 @@ $green: #51A351;
       @include horizontal-list;
 
       color: white;
-      padding: 4px 8px;
-      border-radius: 2px;
+      padding: 2px 4px;
+      border-radius: 1px;
       margin-top: 4px;
+      font-size: 0.8em;
     }
 
     .bordered-colored-message {
@@ -120,9 +121,9 @@ $green: #51A351;
       background: $darkGray;
       color: white;
       letter-spacing: 1px;
-      margin: 5px;
+      margin: 2px;
       display: inline-block;
-      padding: 3px 8px;
+      padding: 2px 8px;
       font-size: 0.8em;
       @include border-radius(50px);
 
