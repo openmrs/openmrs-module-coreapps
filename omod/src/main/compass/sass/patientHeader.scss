@@ -43,6 +43,10 @@ $green: #51A351;
       font-size: 0.6em;
       vertical-align: top;
       margin-top: 10px;
+
+      small {
+        margin-left: 10px;
+      }
     }
 
     .contact-info-inline {
@@ -97,7 +101,22 @@ $green: #51A351;
   }
 
   .contact-info-label {
-    font-size: 0.5em;
+    font-size: 0.8em;
+    margin-left: 10px;
+
+    .hide, .icon-caret-up {
+      display: none;
+    }
+
+    &.expanded {
+      .hide, .icon-caret-up {
+        display: inline;
+      }
+
+      .show, .icon-caret-down {
+        display: none;
+      }
+    }
   }
 
   .identifiers {
@@ -149,11 +168,6 @@ $green: #51A351;
 
 .unknown-patient {
   @include status-container;
-}
-
-#patient-header-contactInfo {
-  cursor: pointer;
-  display: block;
 }
 
 .left-margin{

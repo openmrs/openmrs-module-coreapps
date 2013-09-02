@@ -60,12 +60,10 @@
 
                 if (contactInfoDialogDiv.hasClass('hidden')) {
                     contactInfoDialogDiv.removeClass('hidden');
-                    jq(this).children('i.toggle-icon').removeClass('icon-caret-down');
-                    jq(this).children('i.toggle-icon').addClass('icon-caret-up');
+                    jq(this).addClass('expanded');
                 } else {
                     contactInfoDialogDiv.addClass('hidden');
-                    jq(this).children('i.toggle-icon').removeClass('icon-caret-up');
-                    jq(this).children('i.toggle-icon').addClass('icon-caret-down');
+                    jq(this).removeClass('expanded');
                 }
 
                 return false;
@@ -102,15 +100,17 @@
                         <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}">${ui.message("general.edit")}</a></small>
                     </span>
                 <% } %>
+                <a href="#" id="patient-header-contactInfo" class="contact-info-label">
+                    <span class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
+                    <i class="toggle-icon icon-caret-down small"></i>
+                    <span class="hide">${ui.message("coreapps.patientHeader.hidecontactinfo")}</span>
+                    <i class="toggle-icon icon-caret-up small"></i>
+                </a>
             </span>
             <% if (config.isNewPatientHeaderEnabled) { %>
                 <div class="hidden" id="contactInfoContent">
                     ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient ]) }
                 </div>
-                <a href="#" id="patient-header-contactInfo" class="contact-info-label">
-                    ${ui.message("coreapps.patientHeader.contactinfo")}
-                    <i class="toggle-icon icon-caret-down small"></i>
-                </a>
             <% } %>
 
         </h1>
