@@ -26,6 +26,36 @@ visit.showQuickVisitCreationDialog = function() {
     visit.quickVisitCreationDialog.show();
 };
 
+visit.endVisitDialog = null;
+visit.createEndVisitDialog = function() {
+    visit.endVisitDialog = emr.setupConfirmationDialog({
+        selector: '#end-visit-dialog',
+        actions: {
+            confirm: function() {
+                emr.getFragmentActionWithCallback('coreapps', 'visit/visitDetails', 'endVisit'
+                    , { visitId: visit.visitId}
+                    , function(data) {
+                        visit.endVisitDialog.close();
+                        window.location.reload();
+                    },function(err){
+                        emr.handleError(err);
+                        visit.endVisitDialog.close();
+                    });
+            },
+            cancel: function() {
+                visit.endVisitDialog.close();
+            }
+        }
+    });
+}
+visit.showEndVisitDialog = function(visitId) {
+    visit.visitId = visitId;
+    if (visit.endVisitDialog == null) {
+        visit.createEndVisitDialog();
+    }
+    visit.endVisitDialog.show();
+};
+
 visit.retrospectiveVisitCreationDialog = null;
 
 visit.createRetrospectiveVisitDialog = function(patientId) {

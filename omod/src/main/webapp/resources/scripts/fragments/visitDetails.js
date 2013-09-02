@@ -1,6 +1,7 @@
 function loadTemplates (visitId, patientId) {
     function loadVisit(visitElement) {
         var localVisitId = visitElement.data('visit-id');
+
         visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
         $.getJSON(
             emr.fragmentActionLink("coreapps", "visit/visitDetails", "getVisitDetails", {
@@ -19,11 +20,6 @@ function loadTemplates (visitId, patientId) {
             $('#deleteVisitLink').click(function() {
                 createDeleteVisitDialog($(this).data('visit-id'), patientId);
                 showDeleteVisitDialog($(this).data('visit-id'));
-                return false;
-            });
-            $('#endVisitLink').click(function() {
-                createEndVisitDialog($(this).data('visit-id'), patientId);
-                showEndVisitDialog($(this).data('visit-id'));
                 return false;
             });
         }).error(function(err) {
