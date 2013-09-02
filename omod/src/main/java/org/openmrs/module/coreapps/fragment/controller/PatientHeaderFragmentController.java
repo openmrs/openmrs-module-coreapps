@@ -52,7 +52,7 @@ public class PatientHeaderFragmentController {
 			wrapper.setPatient((Patient) patient);
 			config.addAttribute("patient", wrapper);
 			if (((Patient) patient).getBirthdate() != null) {
-				config.addAttribute("formattedBirthdate", DateFormat.getDateInstance(DateFormat.MEDIUM, Context.getLocale()).format(((Patient) patient).getBirthdate()));
+				config.addAttribute("formattedBirthdate", DateFormatUtils.format(((Patient) patient).getBirthdate(), "dd MMM yyyy", Context.getLocale()));
 			}
 		}
 		

@@ -86,7 +86,8 @@
                 <span>
                 <% if (patient.birthdate) { %>
                 <% if (patient.age > 0) { %>
-                    ${ui.message("coreapps.ageYears", patient.age)} (<% if (patient.birthdateEstimated) { %> ~ <% } %>${ config.formattedBirthdate })
+                    ${ui.message("coreapps.ageYears", patient.age)} 
+                    - <% if (patient.birthdateEstimated) { %> ~ <% } %>${ config.formattedBirthdate }
                 <% } else if (patient.ageInMonths > 0) { %>
                     ${ui.message("coreapps.ageMonths", patient.ageInMonths)}
                 <% } else { %>
