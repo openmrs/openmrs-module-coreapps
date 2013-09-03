@@ -51,9 +51,6 @@ public class PatientHeaderFragmentController {
 		if (patient instanceof Patient) {
 			wrapper.setPatient((Patient) patient);
 			config.addAttribute("patient", wrapper);
-			if (((Patient) patient).getBirthdate() != null) {
-				config.addAttribute("formattedBirthdate", DateFormatUtils.format(((Patient) patient).getBirthdate(), "dd MMM yyyy", Context.getLocale()));
-			}
 		}
 		
 		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");
