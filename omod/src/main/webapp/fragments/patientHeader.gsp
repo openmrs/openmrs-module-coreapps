@@ -100,12 +100,14 @@
                         <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}">${ui.message("general.edit")}</a></small>
                     </span>
                 <% } %>
+                <% if (config.isNewPatientHeaderEnabled) { %>
                 <a href="#" id="patient-header-contactInfo" class="contact-info-label">
                     <span class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
                     <i class="toggle-icon icon-caret-down small"></i>
                     <span class="hide">${ui.message("coreapps.patientHeader.hidecontactinfo")}</span>
                     <i class="toggle-icon icon-caret-up small"></i>
                 </a>
+                <% } %>
             </span>
             <% if (config.isNewPatientHeaderEnabled) { %>
                 <div class="hidden" id="contactInfoContent">
