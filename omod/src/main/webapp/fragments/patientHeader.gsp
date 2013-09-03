@@ -85,12 +85,12 @@
                 <% if (patient.birthdate) { %>
                 <% if (patient.age > 0) { %>
                     ${ui.message("coreapps.ageYears", patient.age)} 
-                    (<% if (patient.birthdateEstimated) { %>~<% } %>${ ui.formatDatePretty(patient.birthdate) })
                 <% } else if (patient.ageInMonths > 0) { %>
                     ${ui.message("coreapps.ageMonths", patient.ageInMonths)}
                 <% } else { %>
                     ${ui.message("coreapps.ageDays", patient.ageInDays)}
-                <% } %>
+                <% } %>   
+                (<% if (patient.birthdateEstimated) { %>~<% } %>${ ui.formatDatePretty(patient.birthdate) })          
                 <% } else { %>
                     ${ui.message("coreapps.unknownAge")}
                 <% } %>
