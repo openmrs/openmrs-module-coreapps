@@ -1,16 +1,5 @@
 [
     {
-        "id": "${project.parent.groupId}.${project.parent.artifactId}.endVisit",
-        "extensionPointId": "patientDashboard.overallActions",
-        "type": "script",
-        "label": "coreapps.task.endVisit.label",
-        "script": "visit.showEndVisitDialog({{activeVisitId}})",
-        "icon": "icon-off",
-        "require": "activeVisitId != null",
-        "order": -13,
-        "requiredPrivilege": "Task: coreapps.endVisit"
-    },
-    {
         "id": "${project.parent.groupId}.${project.parent.artifactId}.createRetrospectiveVisit",
         "extensionPointId": "patientDashboard.overallActions",
         "type": "script",
