@@ -62,7 +62,7 @@ function printIdCardLabel() {
 }
 
 function printPaperRecordLabel() {
-    emr.getFragmentActionWithCallback('paperecord', 'requestPaperRecord', 'printPaperRecordLabel'
+    emr.getFragmentActionWithCallback('paperrecord', 'requestPaperRecord', 'printPaperRecordLabel'
         , { patientId: patient.id, locationId: sessionLocationModel.id() }
         , function(data) {
             if(data.success) {
