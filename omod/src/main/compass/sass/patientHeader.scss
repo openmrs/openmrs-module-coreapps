@@ -104,8 +104,16 @@ $green: #51A351;
     font-size: 0.8em;
     margin-left: 10px;
 
+    .icon-caret-up, .icon-caret-down {
+      text-decoration: none;
+    }
+
     .hide, .icon-caret-up {
       display: none;
+    }
+
+    .show {
+      display: inline;
     }
 
     &.expanded {
