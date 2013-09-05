@@ -116,7 +116,7 @@ ${ ui.includeFragment("coreapps", "datamanagement/diagnosisAutocompleteTemplate"
             <br>
             <li class="info">
                 <input type="hidden" id="${ configId }-value" value="0"/>
-                <input type="text" class="field-display" id="${ configId }" placeholder="${ placeholder }" value="" size="50"/>
+                <input type="text" class="field-display" id="${ configId }" placeholder="${ placeholder }" value="" size="45"/>
             </li>
         </ul>
 
