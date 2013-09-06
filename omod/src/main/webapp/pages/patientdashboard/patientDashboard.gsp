@@ -3,8 +3,6 @@
 
 	ui.includeCss("coreapps", "patientdashboard/patientDashboard.css")
 
-    ui.includeJavascript("coreapps", "patientdashboard/patient.js")
-    ui.includeJavascript("coreapps", "custom/visits.js")
     ui.includeJavascript("uicommons", "bootstrap-collapse.js")
     ui.includeJavascript("uicommons", "bootstrap-transition.js")
 
