@@ -27,16 +27,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                     <a class="view-more">${ ui.message("coreapps.clinicianfacing.showMoreInfo") } ></a>
                 </div>
             </div>
-            <div class="info-section vitals">
-                <div class="info-header">
-                    <i class="icon-vitals"></i>
-                    <h3>${ ui.message("coreapps.clinicianfacing.vitals").toUpperCase() }</h3>
-                </div>
-                <div class="info-body">
-                    ${ ui.includeFragment("coreapps", "vitals/mostRecentVitals", [patientId: patient.patient.id]) }
-                    <a class="view-more">${ ui.message("coreapps.clinicianfacing.showMoreInfo") } ></a>
-                </div>
-            </div>
+
+            ${ ui.includeFragment("coreapps", "vitals/mostRecentVitals", [patientId: patient.patient.id]) }
         </div>
         <div class="info-container column">
             <div class="info-section">

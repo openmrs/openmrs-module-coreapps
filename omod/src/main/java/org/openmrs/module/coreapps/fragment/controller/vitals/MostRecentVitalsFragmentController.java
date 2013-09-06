@@ -13,9 +13,6 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.vitals;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
@@ -24,6 +21,9 @@ import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MostRecentVitalsFragmentController {
 	
@@ -37,9 +37,9 @@ public class MostRecentVitalsFragmentController {
 		    null, null, false);
 		
 		if (encounters.size() > 0) {
-			encounterId = encounters.get(encounters.size() - 1).getEncounterId();
-		}
-		
-		model.addAttribute("encounterId", encounterId);
+            model.addAttribute("encounter", encounters.get(encounters.size() - 1));
+		} else {
+            model.addAttribute("encounter", null);
+        }
 	}
 }
