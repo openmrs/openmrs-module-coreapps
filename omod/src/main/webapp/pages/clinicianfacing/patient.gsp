@@ -7,7 +7,14 @@
         { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" ,
         link: '${ui.pageLink("coreapps", "clinicianfacing/clinicianFacingPatientDashboard", [patientId: patient.patient.id])}'}
     ]
+    var patient = { id: ${ patient.id } };
 </script>
+
+<% if(includes){
+    includes.each(){ %>
+${ ui.includeFragment(it.extensionParams.resource, it.extensionParams.fragment)}
+<%   }
+} %>
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, activeVisit: activeVisit ]) }
 

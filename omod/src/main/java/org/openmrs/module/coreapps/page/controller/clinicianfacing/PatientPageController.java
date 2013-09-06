@@ -82,6 +82,10 @@ public class PatientPageController {
         Collections.sort(visitActions);
         model.addAttribute("visitActions", visitActions);
 
+        List<Extension> includes = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.includes");
+        Collections.sort(includes);
+        model.addAttribute("includes", includes);
+
 		return null;
 	}
 
