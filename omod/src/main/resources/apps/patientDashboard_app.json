@@ -14,6 +14,10 @@
             {
                 "id": "patientDashboard.tabs",
                 "description" : "${project.parent.artifactId}.patientDashboard.extension.tabs.description"
+            },
+            {
+                "id": "patientDashboard.jsIncludes",
+                "description" : "${project.parent.artifactId}.patientDashboard.extension.includes.description"
             }
         ],
         "contextModel": [ "patientId", "activeVisitId" ]

@@ -30,14 +30,17 @@
 
     jq(function(){
         jq(".tabs").tabs();
-        createPaperRecordDialog(${patient.id});
         visit.createQuickVisitCreationDialog(${patient.id});
-        ko.applyBindings( sessionLocationModel, jq('#request-paper-record-dialog').get(0) );
     });
 
     var patient = { id: ${ patient.id } };
 </script>
 
+<% if(includes){
+     includes.each(){ %>
+         ${ ui.includeFragment(it.extensionParams.resource, it.extensionParams.fragment)}
+<%   }
+} %>
 
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, activeVisit: activeVisit ]) }
@@ -82,29 +85,6 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
         </div>
         <% } %>
 
-    </div>
-</div>
-
-<div id="request-paper-record-dialog" class="dialog" style="display: none">
-    <div class="dialog-header">
-        <i class="icon-folder-open"></i>
-        <h3>${ ui.message("coreapps.patientDashBoard.requestPaperRecord.title") }</h3>
-    </div>
-    <div class="dialog-content">
-        <p class="dialog-instructions">${ ui.message("coreapps.patientDashBoard.requestPaperRecord.confirmTitle") }</p>
-        <ul>
-            <li class="info">
-                <span>${ ui.message("coreapps.patient") }</span>
-                <h5>${ ui.format(patient.patient) }</h5>
-            </li>
-            <li class="info">
-                <span>${ ui.message("coreapps.location") }</span>
-                <h5 data-bind="text: text"></h5>
-            </li>
-        </ul>
-
-        <button class="confirm right">${ ui.message("coreapps.yes") }</button>
-        <button class="cancel">${ ui.message("coreapps.no") }</button>
     </div>
 </div>
 
