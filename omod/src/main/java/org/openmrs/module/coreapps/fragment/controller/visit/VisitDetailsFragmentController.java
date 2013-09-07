@@ -120,10 +120,10 @@ public class VisitDetailsFragmentController {
                 encounterService.voidEncounter(encounter, "delete encounter");
                 encounterService.saveEncounter(encounter);
             } else {
-                return new FailureResult(ui.message("emr.patientDashBoard.deleteEncounter.notAllowed"));
+                return new FailureResult(ui.message("coreapps.patientDashBoard.deleteEncounter.notAllowed"));
             }
         }
-        return new SuccessResult(ui.message("emr.patientDashBoard.deleteEncounter.successMessage"));
+        return new SuccessResult(ui.message("coreapps.patientDashBoard.deleteEncounter.successMessage"));
     }
 
     public FragmentActionResult deleteVisit(UiUtils ui,
