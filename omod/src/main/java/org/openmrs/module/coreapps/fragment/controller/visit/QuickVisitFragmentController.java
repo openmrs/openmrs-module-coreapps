@@ -43,7 +43,7 @@ public class QuickVisitFragmentController {
 		visitWrapperRepository.persist(visitWrapper);
 		
 		request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
-		    uiUtils.message("emr.visit.createQuickVisit.successMessage", uiUtils.format(patient)));
+		    uiUtils.message("coreapps.visit.createQuickVisit.successMessage", uiUtils.format(patient)));
 		request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 		
 		return new SuccessResult();

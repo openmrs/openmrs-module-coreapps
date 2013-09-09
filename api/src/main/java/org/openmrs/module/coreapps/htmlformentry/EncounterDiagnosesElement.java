@@ -81,10 +81,10 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 for (Diagnosis diagnosis : existingDiagnoses) {
                     sb.append("<p><small>");
                     // question (e.g. "Primary diagnosis")
-                    sb.append(uiUtils.message("emr.patientDashBoard.diagnosisQuestion." + diagnosis.getOrder()));
+                    sb.append(uiUtils.message("coreapps.patientDashBoard.diagnosisQuestion." + diagnosis.getOrder()));
                     sb.append("</small><span>");
                     // answer (e.g. "(Confirmed) Malaria [code]")
-                    sb.append("(" + uiUtils.message("emr.Diagnosis.Certainty." + diagnosis.getCertainty()) + ") ");
+                    sb.append("(" + uiUtils.message("coreapps.Diagnosis.Certainty." + diagnosis.getCertainty()) + ") ");
                     sb.append(diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(), conceptSourcesForDiagnosisSearch));
                     sb.append("</span></p>");
                 }

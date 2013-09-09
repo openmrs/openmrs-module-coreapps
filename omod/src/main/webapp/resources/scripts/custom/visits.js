@@ -1,5 +1,9 @@
 var visit = visit || {};
 
+visit.reloadPageWithoutVisitId = function() {
+    window.location.search = window.location.search.replace(/visitId=[^\&]*/g, "");
+}
+
 visit.quickVisitCreationDialog = null;
 visit.createQuickVisitCreationDialog = function(patientId) {
     visit.quickVisitCreationDialog = emr.setupConfirmationDialog({
@@ -10,7 +14,7 @@ visit.createQuickVisitCreationDialog = function(patientId) {
                     { patientId: patientId, locationId: sessionLocationModel.id() },
                     function(data) {
                         visit.quickVisitCreationDialog.close();
-                        window.location.reload();
+                        visit.reloadPageWithoutVisitId();
                     });
             },
             cancel: function() {
@@ -36,7 +40,7 @@ visit.createEndVisitDialog = function() {
                     , { visitId: visit.visitId}
                     , function(data) {
                         visit.endVisitDialog.close();
-                        window.location.reload();
+                        visit.reloadPageWithoutVisitId();
                     },function(err){
                         emr.handleError(err);
                         visit.endVisitDialog.close();
@@ -48,6 +52,7 @@ visit.createEndVisitDialog = function() {
         }
     });
 }
+
 visit.showEndVisitDialog = function(visitId) {
     visit.visitId = visitId;
     if (visit.endVisitDialog == null) {
