@@ -34,6 +34,10 @@
     });
 </script>
 
+<h2>
+	${ ui.message(heading) }
+</h2>
+    
 <form method="get" id="patient-search-form">
     <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off"/>
     <input type="submit" value="${ ui.message("coreapps.findPatient.search.button") }"/>

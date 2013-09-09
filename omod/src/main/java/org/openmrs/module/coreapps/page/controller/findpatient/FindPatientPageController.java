@@ -18,6 +18,7 @@ public class FindPatientPageController {
     public void get(PageModel model,
                     @RequestParam("app") AppDescriptor app) {
         model.addAttribute("afterSelectedUrl", app.getConfig().get("afterSelectedUrl").getTextValue());
+        model.addAttribute("heading", app.getConfig().get("heading").getTextValue());
         model.addAttribute("label", app.getConfig().get("label").getTextValue());
     }
 

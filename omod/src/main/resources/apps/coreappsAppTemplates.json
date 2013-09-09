@@ -13,6 +13,11 @@
                 "name": "label",
                 "description": "Label used by the find patient widget",
                 "defaultValue": "coreapps.findPatient.app.label"
+            },
+            {
+                "name": "heading",
+                "description": "Heading used by the find patient widget",
+                "defaultValue": "coreapps.findPatient.app.label"
             }
         ]
     }
