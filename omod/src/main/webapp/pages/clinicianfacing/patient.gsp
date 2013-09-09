@@ -22,18 +22,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 <div class="container">
     <div class="dashboard clear">
         <div class="info-container column">
-            <div class="info-section">
-                <div class="info-header">
-                    <i class="icon-diagnosis"></i>
-                    <h3>${ ui.message("coreapps.clinicianfacing.diagnosis").toUpperCase() }</h3>
-                </div>
-                <div class="info-body">
-                    <ul>
-                        <li></li>
-                    </ul>
-                    <a class="view-more">${ ui.message("coreapps.clinicianfacing.showMoreInfo") } ></a>
-                </div>
-            </div>
+            ${ ui.includeFragment("coreapps", "clinicianfacing/diagnosisWidget", [ patient: patient ]) }
 
             ${ ui.includeFragment("coreapps", "vitals/mostRecentVitals", [patientId: patient.patient.id]) }
         </div>
