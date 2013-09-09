@@ -20,6 +20,7 @@ import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
@@ -76,9 +77,8 @@ public class PatientDashboardPageController {
 
 		Bindings bindings = new SimpleBindings();
 		bindings.put("patientId", patient.getPatientId());
-		if (activeVisit != null) {
-			bindings.put("activeVisitId", activeVisit.getVisitId());
-		}
+		bindings.put("patientDead", patient.isDead());
+		bindings.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
 		model.addAttribute("actionBindings", bindings);
 
 		List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions", bindings);

@@ -1,5 +1,16 @@
 [
     {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.createVisit",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "script",
+        "label": "coreapps.task.startVisit.label",
+        "script": "visit.showQuickVisitCreationDialog({{patientId}})",
+        "icon": "icon-check-in",
+        "order": -20,
+        "require": "!visit && !patientDead",
+        "requiredPrivilege": "Task: coreapps.createVisit"
+    },
+    {
         "id": "${project.parent.groupId}.${project.parent.artifactId}.createRetrospectiveVisit",
         "extensionPointId": "patientDashboard.overallActions",
         "type": "script",

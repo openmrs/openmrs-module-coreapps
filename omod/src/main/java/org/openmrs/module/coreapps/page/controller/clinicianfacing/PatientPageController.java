@@ -72,6 +72,7 @@ public class PatientPageController {
 
         SimpleBindings contextModel = new SimpleBindings();
         contextModel.put("patientId", patient.getId());
+		contextModel.put("patientDead", patient.isDead());
         contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
 
         List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions", contextModel);

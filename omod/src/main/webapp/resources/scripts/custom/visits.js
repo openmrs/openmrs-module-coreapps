@@ -11,7 +11,7 @@ visit.createQuickVisitCreationDialog = function(patientId) {
         actions: {
             confirm: function() {
                 emr.getFragmentActionWithCallback('coreapps', 'visit/quickVisit', 'create',
-                    { patientId: patientId, locationId: sessionLocationModel.id() },
+                    { patientId: visit.patientId, locationId: sessionLocationModel.id() },
                     function(data) {
                         visit.quickVisitCreationDialog.close();
                         visit.reloadPageWithoutVisitId();
@@ -25,8 +25,11 @@ visit.createQuickVisitCreationDialog = function(patientId) {
 
     visit.quickVisitCreationDialog.close();
 }
-
-visit.showQuickVisitCreationDialog = function() {
+visit.showQuickVisitCreationDialog = function(patientId) {
+    visit.patientId = patientId;
+    if (visit.quickVisitCreationDialog == null) {
+        visit.createQuickVisitCreationDialog();
+    }
     visit.quickVisitCreationDialog.show();
 };
 
