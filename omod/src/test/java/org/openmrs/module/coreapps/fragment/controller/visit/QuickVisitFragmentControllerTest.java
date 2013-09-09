@@ -69,7 +69,7 @@ public class QuickVisitFragmentControllerTest {
 		String successMessage = "Success message";
 		String formattedPatient = "Patient name";
 		when(uiUtils.format(patient)).thenReturn(formattedPatient);
-		when(uiUtils.message("emr.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
+		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
 		
 		HttpSession session = mock(HttpSession.class);
 		HttpServletRequest request = mock(HttpServletRequest.class);
