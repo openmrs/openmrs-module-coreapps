@@ -91,10 +91,20 @@
         </description>
     </globalProperty>
 
+	<globalProperty>
+		<property>coreapps.recentDiagnosisPeriodInDays</property>
+		<defaultValue></defaultValue>
+		<description>
+			Number of days to consider diagnosis as recent
+		</description>
+	</globalProperty>
+
     <privilege>
         <name>Task: coreapps.endVisit</name>
         <description>Ability to end visit</description>
     </privilege>
+
+
 
 </module>
 

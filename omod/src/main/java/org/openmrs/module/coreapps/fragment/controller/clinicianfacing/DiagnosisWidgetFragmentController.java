@@ -14,20 +14,37 @@
 package org.openmrs.module.coreapps.fragment.controller.clinicianfacing;
 
 import org.openmrs.Patient;
+import org.openmrs.module.coreapps.CoreAppsProperties;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 
+import java.util.Calendar;
+import java.util.List;
 
-public class DiagnosisWidgetFragment {
 
-	public void controller(FragmentConfiguration config, @InjectBeans PatientDomainWrapper patientWrapper) {
+public class DiagnosisWidgetFragmentController {
+
+	public void controller(FragmentConfiguration config, @InjectBeans PatientDomainWrapper patientWrapper,
+						   @InjectBeans CoreAppsProperties properties) {
 		config.require("patient");
 		Object patient = config.get("patient");
 
 		if (patient instanceof Patient) {
 			patientWrapper.setPatient((Patient) patient);
 			config.addAttribute("patient", patientWrapper);
+		} else if (patient instanceof PatientDomainWrapper) {
+			patientWrapper = (PatientDomainWrapper) patient;
+		} else {
+			throw new IllegalArgumentException("Patient must be of type Patient or PatientDomainWrapper");
 		}
+
+		int days = properties.getRecentDiagnosisPeriodInDays();
+		Calendar recent = Calendar.getInstance();
+		recent.set(Calendar.DATE, -days);
+
+		List<Diagnosis> recentDiagnoses = patientWrapper.getDiagnosesSince(recent.getTime());
+		config.addAttribute("recentDiagnoses", recentDiagnoses);
 	}
 }
