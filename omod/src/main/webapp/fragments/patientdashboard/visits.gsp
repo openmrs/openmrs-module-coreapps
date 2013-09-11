@@ -106,7 +106,7 @@
     <% } else if (!activeVisit) { %>
         <h4>${ ui.message('coreapps.noActiveVisit') }</h4>
         <p class="spaced">${ ui.message('coreapps.noActiveVisit.description') }</p>
-        <% if (sessionContext.userContext.hasPrivilege(org.openmrs.module.coreapps.CoreAppsConstants.PRIVILEGE_START_VISIT)) { %>
+        <% if (sessionContext.userContext.hasPrivilege("Task: coreapps.createVisit")) { %>
             <p class="spaced">
                 <a id="noVisitShowVisitCreationDialog" href="javascript:visit.showQuickVisitCreationDialog(${patient.id})" class="button task">
                     <i class="icon-check-in small"></i>${ ui.message("coreapps.task.startVisit.label") }
