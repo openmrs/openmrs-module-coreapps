@@ -10,9 +10,9 @@
     var patient = { id: ${ patient.id } };
 </script>
 
-<% if(includes){
-    includes.each(){ %>
-${ ui.includeFragment(it.extensionParams.resource, it.extensionParams.fragment)}
+<% if(includeFragments){
+    includeFragments.each{ %>
+        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment)}
 <%   }
 } %>
 

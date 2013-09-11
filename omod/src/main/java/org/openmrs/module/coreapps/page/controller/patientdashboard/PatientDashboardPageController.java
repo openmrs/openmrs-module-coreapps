@@ -85,9 +85,9 @@ public class PatientDashboardPageController {
 		Collections.sort(overallActions);
 		model.addAttribute("overallActions", overallActions);
 
-        List<Extension> includes = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.includes");
-        Collections.sort(includes);
-        model.addAttribute("includes", includes);
+        List<Extension> includeFragments = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.includeFragments");
+        Collections.sort(includeFragments);
+        model.addAttribute("includeFragments", includeFragments);
 		
 		List<Extension> visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions");
 
