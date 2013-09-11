@@ -1,5 +1,7 @@
 @import "variables";
 
+$rowHighlightBackground: #F26522;
+
 #patient-search-form {
   input {
     display: inline;
@@ -8,6 +10,7 @@
 
 #patient-search-results {
   margin-top: 1em;
+  display: none;
 
   .patient-search-result {
     padding: 10px 5px;
@@ -44,4 +47,18 @@
       float: right;
     }
   }
+
+  #patient-search-results-table tbody tr:hover{
+    background-color: $rowHighlightBackground;
+    cursor: pointer;
+  }
+
+  #patient-search-results-table tbody tr td.dataTables_empty:hover{
+    background-color: #ffffff;
+    cursor: auto;
+  }
+}
+
+.search_table_row_highlight{
+  background-color: $rowHighlightBackground !important;
 }
