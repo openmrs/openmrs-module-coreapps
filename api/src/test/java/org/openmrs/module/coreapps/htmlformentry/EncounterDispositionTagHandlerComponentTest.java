@@ -50,6 +50,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleConte
         ContextSensitiveMetadataTestUtils.setupDispositionDescriptor(conceptService, emrApiProperties);
         EncounterDispositionTagHandler tagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionFactory);
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, tagHandler);
+        dispositionFactory.setDispositionConfig("coreappsTestDispositionConfig.json");  // we use a custom name so as to not clash with the test one in the emr-api module
     }
 
     @Test
