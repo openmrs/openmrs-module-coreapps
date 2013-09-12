@@ -19,6 +19,7 @@
 
     function getConfig(){
         var config = {
+            minSearchCharacters: ${minSearchCharacters},
             searchInputId: 'patient-search',
             searchButtonId: 'patient-search-button',
             searchResultsTableId: 'patient-search-results-table',
@@ -39,13 +40,14 @@
 </script>
 
 <h2>
-	${ ui.message('coreapps.findPatient.app.label') }
+	${ ui.message(heading) }
 </h2>
 
 <form method="get" id="patient-search-form" onsubmit="return false">
     <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off"/>
     <input type="button" id="patient-search-button" value="${ ui.message("coreapps.findPatient.search.button") }" />
 </form>
+<span class="search-widget-info">${ui.message("coreapps.search.charsRequired", minSearchCharacters)}</span>
 
 <div id="patient-search-results">
     <table id="patient-search-results-table">

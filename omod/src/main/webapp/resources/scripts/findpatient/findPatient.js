@@ -102,7 +102,7 @@ function PatientSearchWidget(configuration){
 
         var prevRow = highlightedKeyboardRowIndex;
         //if we are on the last page, and the last row is highlighted, do nothing
-        if(getCurrVisiblePage() == pageCount && prevRow >= (searchResultsData.length-1))
+        if(isLastPage() && prevRow >= (searchResultsData.length-1))
             return;
 
         //only move the highlight to next row if it is currently on the visible page otherwise should be on first row
@@ -142,7 +142,7 @@ function PatientSearchWidget(configuration){
             }
         }else{
             //user just flipped pages, highlight the last row on the currently visible page
-            if(getCurrVisiblePage() < pageCount){
+            if(!isLastPage()){
                 highlightedKeyboardRowIndex = dTable.fnSettings()._iDisplayStart + dTable.fnSettings()._iDisplayLength - 1;
             }else{
                 //this is the last page, highlight the last item in the table
@@ -156,12 +156,10 @@ function PatientSearchWidget(configuration){
     var doPageDown = function() {
         dTable.fnPageChange('next');
         //if this is the last page and we already have a selected row, do nothing
-        if( (getCurrVisiblePage() == pageCount) && highlightedKeyboardRowIndex > dTable.fnSettings()._iDisplayStart)
+        if(isLastPage() && isHighlightedRowOnVisiblePage())
             return;
 
-        //update the highlightest row to the first on the new page
-        //highlightRow();
-        highlightedKeyboardRowIndex = undefined;
+        unHighlightKeyboardSelectedRowIfAny();
     }
 
     var doPageUp = function() {
@@ -169,9 +167,7 @@ function PatientSearchWidget(configuration){
         if(isHighlightedRowOnVisiblePage())
             return;
 
-        //update the highlight to go to last row on previous page
-        //highlightRow();
-        highlightedKeyboardRowIndex = undefined;
+        unHighlightKeyboardSelectedRowIfAny();
     }
 
     /**
@@ -179,6 +175,11 @@ function PatientSearchWidget(configuration){
      * first on the current visible page
      */
     var highlightRow = function(){
+        //always remove highlightfrom  the current keyboard row if any before proceeding
+        if(highlightedKeyboardRowIndex != undefined){
+            var prevHighlightedRowNode = dTable.fnGetNodes()[highlightedKeyboardRowIndex];
+            jq(prevHighlightedRowNode).removeClass('search_table_row_highlight');
+        }
         //the row to highlight has to be on the visible page, this helps not to lose the highlight
         //when the user uses the pagination buttons(datatables provides no callback function)
         if(!isHighlightedRowOnVisiblePage()){
@@ -187,6 +188,13 @@ function PatientSearchWidget(configuration){
         }
         var highlightedRowNode = dTable.fnGetNodes()[highlightedKeyboardRowIndex];
         jq(highlightedRowNode).addClass('search_table_row_highlight');
+    }
+
+    var unHighlightKeyboardSelectedRowIfAny = function(){
+        if(highlightedKeyboardRowIndex != undefined){
+            unHighlightRow(dTable.fnGetNodes()[highlightedKeyboardRowIndex]);
+            highlightedKeyboardRowIndex = undefined;
+        }
     }
 
     /**
@@ -209,6 +217,10 @@ function PatientSearchWidget(configuration){
      */
     var getCurrVisiblePage = function(){
         return Math.ceil(dTable.fnSettings()._iDisplayStart / dTable.fnSettings()._iDisplayLength) + 1;
+    }
+
+    var isLastPage = function(){
+        return getCurrVisiblePage() == pageCount;
     }
 
     /********************* INITIALIZATION DATATABLE *********************/
@@ -296,10 +308,13 @@ function PatientSearchWidget(configuration){
         clearTimeoutIfNecessary();
 
         var text = jq.trim(input.val());
-        if(text.length > 0){
+        if(text.length >= config.minSearchCharacters){
             // force a longer delay since we are going to search on a shorter string
             //or may be the user is still typing more characters
-            var effectiveSearchDelay = (text.length > 2) ? searchDelayShort : searchDelayLong;
+            var effectiveSearchDelay = searchDelayShort;
+            if(config.minSearchCharacters < 3 && text.length < 3){
+                effectiveSearchDelay = searchDelayLong;
+            }
 
             //wait for a couple of milliseconds, if the user isn't typing anymore chars before triggering search
             //this minimizes the number of un-necessary calls made to the server for first typists
@@ -316,7 +331,7 @@ function PatientSearchWidget(configuration){
     //catch control keys to stop the cursor in the input box from moving.
     input.keydown(function(event) {
         var kc = event.keyCode;
-        if((kc == 13 || _.contains(keyboardNavigationKeys, kc)) && !isTableEmpty()) {
+        if(kc == 13 ||(_.contains(keyboardNavigationKeys, kc) && !isTableEmpty())) {
 
             switch(kc) {
                 case 13:
