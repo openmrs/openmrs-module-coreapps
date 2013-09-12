@@ -27,6 +27,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
             ${ ui.includeFragment("coreapps", "vitals/mostRecentVitals", [patientId: patient.patient.id]) }
         </div>
         <div class="info-container column">
+            <%/*
             <div class="info-section">
                 <div class="info-header">
                     <i class="icon-medicine"></i>
@@ -50,6 +51,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                     </ul>
                 </div>
             </div>
+            */%>
             ${ ui.includeFragment("coreapps", "clinicianfacing/visitsSection", [patient: patient]) }
         </div>
         <div class="action-container column">
@@ -82,16 +84,13 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                             </a>
                     <% } %>
                 </ul>
-
-                <a class="button medium " href="#">
-                    <i class="icon-x-ray"></i>${ ui.message("coreapps.clinicianfacing.radiology") }
+                <%
+                 def cxtModel = [ patientId: patient.id, activeVisitId: activeVisit ? activeVisit.visit.id : null]
+                 otherActions.each { action -> %>
+                <a id="${ action.id }" class="button medium" href="${ ui.escapeJs(action.url("/" + ui.contextPath(), cxtModel)) }">
+                    <i class="${ action.icon }"></i>${ ui.message(action.label) }
                 </a>
-                <a class="button medium " href="#">
-                    <i class="icon-paste"></i>${ ui.message("coreapps.clinicianfacing.notes") }
-                </a>
-                <a class="button medium " href="#">
-                    <i class="icon-paper-clip"></i>${ ui.message("coreapps.clinicianfacing.surgery") }
-                </a>
+                <% } %>
             </div>
         </div>
     </div>

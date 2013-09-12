@@ -1,0 +1,13 @@
+[
+    {
+        "id": "${project.parent.artifactId}.clinicianFacingPatientDashboardApp",
+        "description": "Contains extension points for the clinician facing patient dashboard",
+        "extensionPoints": [
+            {
+                "id": "clinicianFacingPatientDashboard.otherActions",
+                "description": "Action items to add to the list below the 'General Actions' on the clinician facing patient dashboard"
+            }
+        ],
+        "contextModel": [ "patientId", "activeVisitId" ]
+    }
+]

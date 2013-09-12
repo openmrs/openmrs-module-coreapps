@@ -87,6 +87,11 @@ public class PatientPageController {
         Collections.sort(includeFragments);
         model.addAttribute("includeFragments", includeFragments);
 
+        List<Extension> otherActions = appFrameworkService.getExtensionsForCurrentUser(
+                "clinicianFacingPatientDashboard.otherActions", contextModel);
+        Collections.sort(otherActions);
+        model.addAttribute("otherActions", otherActions);
+
 		return null;
 	}
 
