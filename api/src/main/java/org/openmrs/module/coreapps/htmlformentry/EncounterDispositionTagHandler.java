@@ -55,7 +55,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
         // TODO: allow the id to be passed in from the form?
         Element dispositionObs = node.getOwnerDocument().createElement("obs");
-        dispositionObs.setAttribute("id", "disposition" + UUID.randomUUID().toString());
+        dispositionObs.setAttribute("id", "disposition-" + UUID.randomUUID().toString());
         dispositionObs.setAttribute("style", "dropdown");
         dispositionObs.setAttribute("conceptId", "org.openmrs.module.emr:Disposition");
         if (((Element) node).hasAttribute("required") && ((Element) node).getAttribute("required").equalsIgnoreCase("true")) {
