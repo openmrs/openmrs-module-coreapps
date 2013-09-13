@@ -34,6 +34,7 @@ import org.openmrs.ui.framework.page.Redirect;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.script.SimpleBindings;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +48,7 @@ public class PatientPageController {
 	                         @SpringBean("encounterService") EncounterService encounterService,
 	                         @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                              @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
-	                         UiSessionContext sessionContext, UiUtils uiUtils) {
+	                         UiSessionContext sessionContext) {
 		
 		if (patient.isVoided() || patient.isPersonVoided()) {
 			return new Redirect("coreapps", "patientdashboard/deletedPatient", "patientId=" + patient.getId());

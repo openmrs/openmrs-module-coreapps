@@ -54,8 +54,7 @@ public class RetrospectiveVisitFragmentController {
                     ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
             request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
-            return SimpleObject.create("success", true, "url", ui.pageLink("coreapps", "patientdashboard/patientDashboard",
-                    SimpleObject.create("patientId", patient.getId().toString(), "visitId", createdVisit.getVisit().getId().toString())));
+            return SimpleObject.create("success", true, "search", "?patientId=" + patient.getId() + "&visitId=" + createdVisit.getVisit().getId());
         }
         catch (ExistingVisitDuringTimePeriodException e) {
 
