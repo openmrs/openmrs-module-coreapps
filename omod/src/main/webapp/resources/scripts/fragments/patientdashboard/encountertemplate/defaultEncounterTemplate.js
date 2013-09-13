@@ -35,13 +35,11 @@ $(function() {
     var detailsTemplates = {};
 
 	function getEncounterDetails(id, isHtmlForm, dataTarget, displayTemplateId) {
-        if (!detailsTemplates[displayTemplateId]) {
-            detailsTemplates[displayTemplateId] = _.template($('#' + displayTemplateId).html());
-        }
-        var displayTemplate = detailsTemplates[displayTemplateId];
 
 	    var encounterDetailsSection = $(dataTarget + ' .encounter-summary-container');
-	    if (isHtmlForm) {
+
+	    // if this is an html form and no custom display template was specified, use the html form to view the encounter
+        if (isHtmlForm && !displayTemplateId) {
 	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
 	        $.getJSON(
 	        		emr.fragmentActionLink("htmlformentryui", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
@@ -51,6 +49,13 @@ $(function() {
 	            emr.errorAlert(err);
 	        });
 	    } else {
+
+            if (!detailsTemplates[displayTemplateId]) {
+                detailsTemplates[displayTemplateId] = _.template($('#' + displayTemplateId).html());
+            }
+
+            var displayTemplate = detailsTemplates[displayTemplateId];
+
 	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
 	        $.getJSON(
 	            emr.fragmentActionLink("coreapps", "visit/visitDetails", "getEncounterDetails", { encounterId: id })
