@@ -25,7 +25,8 @@ public class MergeVisitsPageController {
                     @InjectBeans PatientDomainWrapper patientDomainWrapper,
                     UiSessionContext sessionContext,
                     PageModel model, @SpringBean AdtService service,
-                    @SpringBean("locationService") LocationService locationService) {
+                    @SpringBean("locationService") LocationService locationService,
+					@RequestParam(value = "returnUrl", required = false) String returnUrl) {
 
         if (patient.isVoided() || patient.isPersonVoided()) {
             return new Redirect("coreapps", "patientdashboard/deletedPatient", "patientId=" + patient.getId());
@@ -33,6 +34,7 @@ public class MergeVisitsPageController {
 
         patientDomainWrapper.setPatient(patient);
         model.addAttribute("patient", patientDomainWrapper);
+		model.addAttribute("returnUrl", returnUrl);
 
         Location sessionLocation = sessionContext.getSessionLocation();
         Location visitLocation = null;
@@ -50,13 +52,14 @@ public class MergeVisitsPageController {
 
     public String post(@RequestParam("patientId") Patient patient,
                        @RequestParam("mergeVisits") List<Integer> mergeVisits,
+					   @RequestParam(value = "returnUrl", required = false) String returnUrl,
                        @SpringBean AdtService service,
                        UiUtils ui,
-                       HttpServletRequest request){
+                       HttpServletRequest request, PageModel model){
 
         if (patient.isVoided() || patient.isPersonVoided()) {
             return "redirect:" + ui.pageLink("coreapps", "patientdashboard/deletedPatient",
-                    SimpleObject.create("patientId", patient.getId().toString() ));
+					SimpleObject.create("patientId", patient.getId().toString() ));
         }
 
         if (mergeVisits!=null && mergeVisits.size() > 0 ){
@@ -69,6 +72,7 @@ public class MergeVisitsPageController {
                 request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
             }
         }
-        return "redirect:" + ui.pageLink("coreapps", "mergeVisits", SimpleObject.create("patientId", patient.getId().toString() ));
+
+		return "redirect:" + ui.pageLink("coreapps", "mergeVisits", SimpleObject.create("patientId", patient.getId(), "returnUrl", returnUrl));
     }
 }

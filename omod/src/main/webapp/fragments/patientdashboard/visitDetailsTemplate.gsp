@@ -26,12 +26,11 @@
         [[ if ((function() { var patientId = ${ patient.id }; var visit = { id: id, active: stopDatetime == null, admitted: admitted }; return (${ task.require }); })()) { ]]
         <% }
 
+		def url = task.url(contextPath, actionBindings, ui.thisUrl())
         if (task.type != "script") {
-            def url = "/" + contextPath + "/" + task.url
         %>
-        <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { patientId: ${ patient.id }, 'visit.id': id, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task">
+        <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { 'visit.id': id, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task">
     <% } else { // script
-            def url = "javascript:" + task.script
         %>
         <a href="[[= emr.applyContextModel('${ url }', {'visit.id': id})]]" class="button task">
     <% } %>

@@ -77,7 +77,7 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
                         stopDate: jq('[name=retrospectiveVisitStopDate]').val() },
                     function(data) {
                         if (data.success) {
-                            window.location = data.url;
+                            window.location.search = data.search;
                         }
                         else {
                            // display the past visits within the existing visits dialog (which we open below)
@@ -145,7 +145,7 @@ function showEditVisitDateDialog(visitId) {
                     var url = emr.fragmentActionLink("coreapps", "visit/visitDates", "setDuration");
                     $.getJSON(url, $('#edit-visit-dates-dialog-form-' + visitId).serialize()).success(function(data) {
                             if (data.success) {
-                                window.location = data.url;
+                                window.location.search = data.search;
                             }
                         }
                     );
