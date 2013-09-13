@@ -46,7 +46,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
     <ul>
         <% overallActions.each {
             def url = it.url
-            url = it.url(contextPath, actionBindings)
+            url = it.url(contextPath, actionBindings, ui.thisUrl())
         %>
             <li>
                 <a href="${ url }"><i class="${ it.icon }"></i>${ ui.message(it.label) }</a>

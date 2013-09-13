@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.coreapps.page.controller.patientdashboard;
 
+import org.apache.http.HttpRequest;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.script.Bindings;
 import javax.script.SimpleBindings;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 

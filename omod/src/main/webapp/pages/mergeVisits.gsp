@@ -15,11 +15,15 @@
         visitsIndex = visits.collect{ it.visit.id }.sort().reverse()
     }
 
+	if (!returnUrl) {
+		returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id])
+	}
+
 %>
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" , link: '${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id])}'},
+        { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" , link: '${ returnUrl }'},
         { label: "${ ui.message("coreapps.task.mergeVisits.label")}"}
     ];
 
@@ -124,10 +128,11 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
         <% } %>
         </tbody>
     </table>
-    <input type="hidden" name="patientId" value="${ patient.patient.id }">
+    <input type="hidden" name="patientId" value="${ patient.patient.id }" />
+	<input type="hidden" name="returnUrl" value="${ returnUrl }" />
 
     <div>
-        <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }" onclick="javascript:window.location='${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id]) }'" />
+        <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }" onclick="javascript:window.location='${ returnUrl }'" />
         <input type="submit" id="mergeVisitsBtn" class="confirm" value="${ ui.message("coreapps.task.mergeVisits.mergeSelectedVisits") }" />
     </div>
 </form>

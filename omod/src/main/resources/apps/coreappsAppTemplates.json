@@ -7,7 +7,7 @@
             {
                 "name": "afterSelectedUrl",
                 "description": "URL to go to after the user selects a patient. Supports {{patientId}}",
-                "defaultValue": "/coreapps/patientdashboard/patientDashboard.page?patientId={{ patientId }}"
+                "defaultValue": "/coreapps/clinicianfacing/patient.page?patientId={{ patientId }}"
             },
             {
                 "name": "label",

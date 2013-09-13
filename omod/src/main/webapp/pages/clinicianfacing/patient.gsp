@@ -63,7 +63,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                         <h3>${ ui.message("coreapps.clinicianfacing.activeVisitActions") }</h3>
                         <% visitActions.each { ext -> %>
                             <li>
-                                <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), contextModel)) }" id="${ ext.id }">
+                                <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), contextModel, ui.thisUrl())) }" id="${ ext.id }">
                                     <i class="${ ext.icon }"></i>
                                     ${ ui.message(ext.label) }
                                 </a>
@@ -76,7 +76,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                     <%
                         def contextModel = [ patientId: patient.id ]
                         overallActions.each { ext -> %>
-                            <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), contextModel)) }" id="${ ext.id }">
+                            <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), contextModel, ui.thisUrl())) }" id="${ ext.id }">
                                 <li>
                                     <i class="${ ext.icon }"></i>
                                     ${ ui.message(ext.label) }

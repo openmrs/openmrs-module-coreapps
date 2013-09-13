@@ -61,8 +61,7 @@ public class VisitDatesFragmentController {
         request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, ui.message("coreapps.editVisitDate.visitSavedMessage"));
         request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
-        return SimpleObject.create("success", true, "url", ui.pageLink("coreapps", "patientdashboard/patientDashboard",
-                SimpleObject.create("patientId", visit.getPatient().getId().toString(), "visitId", visit.getId().toString())));
+        return SimpleObject.create("success", true, "search", "?patientId=" + visit.getPatient().getId() + "&visitId=" + visit.getId());
 
     }
 
