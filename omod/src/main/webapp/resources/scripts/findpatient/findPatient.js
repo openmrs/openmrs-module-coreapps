@@ -232,7 +232,7 @@ function PatientSearchWidget(configuration){
         iDisplayLength: 15,
         sPaginationType: "full_numbers",
         bSort: false,
-        sDom: 't<"fg-toolbar ui-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix"ip>',
+        sDom: 't<"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg"ip>',
         oLanguage: {
             "sInfo": config.messages.info,
             "sZeroRecords": config.messages.noMatchesFound,
