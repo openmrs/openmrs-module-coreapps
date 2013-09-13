@@ -78,9 +78,9 @@ public class RetrospectiveVisitFragmentControllerTest {
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                 ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
-        verify(ui).pageLink(eq("coreapps"), eq("patientdashboard/patientDashboard"), any(SimpleObject.class));
 
         assertTrue((Boolean) result.get("success"));
+        assertThat((String) result.get("search"), is("?patientId=1&visitId=1"));
     }
 
     @Test
@@ -105,9 +105,9 @@ public class RetrospectiveVisitFragmentControllerTest {
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                 ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
-        verify(ui).pageLink(eq("coreapps"), eq("patientdashboard/patientDashboard"), any(SimpleObject.class));
 
         assertTrue((Boolean) result.get("success"));
+        assertThat((String) result.get("search"), is("?patientId=1&visitId=1"));
     }
 
     @Test
