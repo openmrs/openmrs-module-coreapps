@@ -53,9 +53,27 @@ $rowHighlightBackground: #F26522;
     cursor: pointer;
   }
 
+  #patient-search-results-table tbody tr:hover {
+    background: $link;
+    cursor: pointer;
+    color: white;
+  }
+
   #patient-search-results-table tbody tr td.dataTables_empty:hover{
-    background-color: #ffffff;
-    cursor: auto;
+    background: $link;
+    cursor: pointer;
+    color: white;
+  }
+
+  .ui-state-disabled {
+    display: none;
+  }
+
+  .ui-state-default.ui-button {
+    border: 0;
+    background: white;
+    color: $link;
+    cursor: pointer;
   }
 }
 
