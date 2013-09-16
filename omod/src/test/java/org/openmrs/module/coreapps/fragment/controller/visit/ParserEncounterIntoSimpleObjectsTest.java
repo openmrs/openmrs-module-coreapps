@@ -40,6 +40,7 @@ import org.openmrs.module.emrapi.test.builder.ObsBuilder;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -224,7 +225,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 
         SimpleObject expectedAdmissionLocationObject = SimpleObject.create("obsId", dateOfDeathObs.getObsId());
         expectedAdmissionLocationObject.put("question","Date of death");
-        expectedAdmissionLocationObject.put("answer", "Mon Feb 20 10:10:10 EST 2012");
+        expectedAdmissionLocationObject.put("answer", "20 Feb 2012 10:10 AM");
 
         List<SimpleObject> expectedAdditionalObsList = new ArrayList<SimpleObject>();
         expectedAdditionalObsList.add(expectedAdmissionLocationObject);
@@ -317,7 +318,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 			if (obs.getValueCoded() != null) {
 				return obs.getValueCoded().getNames(false).iterator().next().getName();
 			} else if (obs.getValueDate() != null) {
-                return obs.getValueDate().toString();
+                return new SimpleDateFormat("dd MMM yyyy hh:mm a").format(obs.getValueDate());
             }
             else {
 				return obs.getValueAsString(locale);
