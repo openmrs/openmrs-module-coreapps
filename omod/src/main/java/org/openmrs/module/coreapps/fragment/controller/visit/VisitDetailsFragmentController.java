@@ -20,6 +20,7 @@ import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
@@ -95,10 +96,11 @@ public class VisitDetailsFragmentController {
 
     public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
                                             @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
+                                            @SpringBean("locationService") LocationService locationService,
                                             UiUtils uiUtils) {
 
         ParserEncounterIntoSimpleObjects parserEncounter = new ParserEncounterIntoSimpleObjects(encounter, uiUtils,
-                emrApiProperties);
+                emrApiProperties, locationService);
 
         ParsedObs parsedObs = parserEncounter.parseObservations(uiUtils.getLocale());
         List<SimpleObject> orders = parserEncounter.parseOrders();

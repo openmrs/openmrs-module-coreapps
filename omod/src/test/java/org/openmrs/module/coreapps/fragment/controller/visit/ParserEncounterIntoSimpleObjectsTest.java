@@ -13,26 +13,18 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.commons.beanutils.PropertyUtils;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.Encounter;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.LocationService;
 import org.openmrs.module.appui.TestUiUtils;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.concept.EmrConceptService;
@@ -40,12 +32,28 @@ import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.Disposition;
-import org.openmrs.module.emrapi.disposition.DispositionDescriptor;;
+import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.DispositionObs;
 import org.openmrs.module.emrapi.test.MockMetadataTestUtil;
 import org.openmrs.module.emrapi.test.builder.ConceptBuilder;
 import org.openmrs.module.emrapi.test.builder.ObsBuilder;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+;
 
 /**
  *
@@ -61,6 +69,8 @@ public class ParserEncounterIntoSimpleObjectsTest {
 	private EmrConceptService emrConceptService;
 	
 	private ConceptService conceptService;
+
+    private LocationService locationService;
 	
 	private UiUtils uiUtils;
 	
@@ -72,6 +82,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 	public void setUp() throws Exception {
 		emrApiProperties = mock(EmrApiProperties.class);
 		conceptService = mock(ConceptService.class);
+        locationService = mock(LocationService.class);
 		
 		MockMetadataTestUtil.setupMockConceptService(conceptService, emrApiProperties);
 		
@@ -85,7 +96,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		uiUtils = testUiUtils;
 		
 		encounter = new Encounter();
-		parser = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties);
+		parser = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties, locationService);
 	}
 	
 	@Test
@@ -119,7 +130,112 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		assertThat(path(parsed.getDispositions(), 0, "disposition"), is((Object) "Admit"));
 		assertThat(path(parsed.getDispositions(), 0, "additionalObs"), is((Object) Collections.emptyList()));
 	}
-	
+
+    @Test
+    public void testParsingDispositionWithAdmissionLocation() throws Exception {
+        Concept admit = new ConceptBuilder(null, conceptService.getConceptDatatypeByName("N/A"),
+                conceptService.getConceptClassByName("Misc")).addName("Admit").get();
+        when(emrConceptService.getConcept("test:admit")).thenReturn(admit);
+
+        Obs dispositionObs = dispositionDescriptor.buildObsGroup(new Disposition("emrapi.admit", "Admit", "test:admit",
+                Collections.<String> emptyList(), Collections.<DispositionObs> emptyList()), emrConceptService);
+
+        Obs admissionLocationObs = new Obs();
+        admissionLocationObs.setObsId(100);
+        admissionLocationObs.setConcept(dispositionDescriptor.getAdmissionLocationConcept());
+        admissionLocationObs.setValueText("3");
+        dispositionObs.addGroupMember(admissionLocationObs);
+
+        Location admissionLocation = new Location();
+        admissionLocation.setName("Outpatient clinic");
+        when(locationService.getLocation(3)).thenReturn(admissionLocation);
+
+        encounter.addObs(doNotGoToServiceToFormatMembers(dispositionObs));
+        ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
+
+        SimpleObject expectedAdmissionLocationObject = SimpleObject.create("obsId", admissionLocationObs.getObsId());
+        expectedAdmissionLocationObject.put("question","Admission location");
+        expectedAdmissionLocationObject.put("answer","Outpatient clinic");
+
+        List<SimpleObject> expectedAdditionalObsList = new ArrayList<SimpleObject>();
+        expectedAdditionalObsList.add(expectedAdmissionLocationObject);
+
+        assertThat(parsed.getDiagnoses().size(), is(0));
+        assertThat(parsed.getDispositions().size(), is(1));
+        assertThat(parsed.getObs().size(), is(0));
+        assertThat(path(parsed.getDispositions(), 0, "disposition"), is((Object) "Admit"));
+        assertThat(path(parsed.getDispositions(), 0, "additionalObs"), is((Object) expectedAdditionalObsList));
+    }
+
+    @Test
+    public void testParsingDispositionWithTransferLocation() throws Exception {
+        Concept admit = new ConceptBuilder(null, conceptService.getConceptDatatypeByName("N/A"),
+                conceptService.getConceptClassByName("Misc")).addName("Transfer").get();
+        when(emrConceptService.getConcept("test:transfer")).thenReturn(admit);
+
+        Obs dispositionObs = dispositionDescriptor.buildObsGroup(new Disposition("emrapi.transfer", "Transfer", "test:transfer",
+                Collections.<String> emptyList(), Collections.<DispositionObs> emptyList()), emrConceptService);
+
+        Obs transferLocationObs = new Obs();
+        transferLocationObs.setObsId(100);
+        transferLocationObs.setConcept(dispositionDescriptor.getInternalTransferLocationConcept());
+        transferLocationObs.setValueText("3");
+        dispositionObs.addGroupMember(transferLocationObs);
+
+        Location transferLocation = new Location();
+        transferLocation.setName("Outpatient clinic");
+        when(locationService.getLocation(3)).thenReturn(transferLocation);
+
+        encounter.addObs(doNotGoToServiceToFormatMembers(dispositionObs));
+        ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
+
+        SimpleObject expectedTransferLocationObject = SimpleObject.create("obsId", transferLocationObs.getObsId());
+        expectedTransferLocationObject.put("question", "Transfer location");
+        expectedTransferLocationObject.put("answer", "Outpatient clinic");
+
+        List<SimpleObject> expectedAdditionalObsList = new ArrayList<SimpleObject>();
+        expectedAdditionalObsList.add(expectedTransferLocationObject);
+
+        assertThat(parsed.getDiagnoses().size(), is(0));
+        assertThat(parsed.getDispositions().size(), is(1));
+        assertThat(parsed.getObs().size(), is(0));
+        assertThat(path(parsed.getDispositions(), 0, "disposition"), is((Object) "Transfer"));
+        assertThat(path(parsed.getDispositions(), 0, "additionalObs"), is((Object) expectedAdditionalObsList));
+    }
+
+    @Test
+    public void testParsingDispositionWithDateOfDeath() throws Exception {
+        Concept admit = new ConceptBuilder(null, conceptService.getConceptDatatypeByName("N/A"),
+                conceptService.getConceptClassByName("Misc")).addName("Death").get();
+        when(emrConceptService.getConcept("test:death")).thenReturn(admit);
+
+        Obs dispositionObs = dispositionDescriptor.buildObsGroup(new Disposition("emrapi.death", "Death", "test:death",
+                Collections.<String> emptyList(), Collections.<DispositionObs> emptyList()), emrConceptService);
+
+        Date dateOfDeath = new DateTime(2012,2,20,10,10,10).toDate();
+        Obs dateOfDeathObs = new Obs();
+        dateOfDeathObs.setObsId(100);
+        dateOfDeathObs.setConcept(dispositionDescriptor.getDateOfDeathConcept());
+        dateOfDeathObs.setValueDate(dateOfDeath);
+        dispositionObs.addGroupMember(dateOfDeathObs);
+
+        encounter.addObs(doNotGoToServiceToFormatMembers(dispositionObs));
+        ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
+
+        SimpleObject expectedAdmissionLocationObject = SimpleObject.create("obsId", dateOfDeathObs.getObsId());
+        expectedAdmissionLocationObject.put("question","Date of death");
+        expectedAdmissionLocationObject.put("answer", "Mon Feb 20 10:10:10 EST 2012");
+
+        List<SimpleObject> expectedAdditionalObsList = new ArrayList<SimpleObject>();
+        expectedAdditionalObsList.add(expectedAdmissionLocationObject);
+
+        assertThat(parsed.getDiagnoses().size(), is(0));
+        assertThat(parsed.getDispositions().size(), is(1));
+        assertThat(parsed.getObs().size(), is(0));
+        assertThat(path(parsed.getDispositions(), 0, "disposition"), is((Object) "Death"));
+        assertThat(path(parsed.getDispositions(), 0, "additionalObs"), is((Object) expectedAdditionalObsList));
+    }
+
 	private Obs doNotGoToServiceToFormatMembers(Obs obsGroup) {
 		Set<Obs> replacements = new HashSet<Obs>();
 		for (Obs member : obsGroup.getGroupMembers()) {
@@ -175,17 +291,35 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		public DoNotGoToServiceWhenFormatting(Obs obs) {
 			this.obs = obs;
 		}
-		
+
+        @Override
+        public Integer getId() {
+            return obs.getId();
+        }
+
+        @Override
+        public Integer getObsId() {
+            return obs.getObsId();
+        }
+
+        @Override
+        public String getValueText() {
+            return obs.getValueText();
+        }
+
 		@Override
 		public Concept getConcept() {
 			return obs.getConcept();
 		}
-		
+
 		@Override
 		public String getValueAsString(Locale locale) {
 			if (obs.getValueCoded() != null) {
 				return obs.getValueCoded().getNames(false).iterator().next().getName();
-			} else {
+			} else if (obs.getValueDate() != null) {
+                return obs.getValueDate().toString();
+            }
+            else {
 				return obs.getValueAsString(locale);
 			}
 		}
