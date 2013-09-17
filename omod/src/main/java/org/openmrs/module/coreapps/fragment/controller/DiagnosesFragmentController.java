@@ -15,6 +15,7 @@
 package org.openmrs.module.coreapps.fragment.controller;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptSearchResult;
@@ -119,10 +120,21 @@ public class DiagnosesFragmentController {
 
         Concept concept = result.getConcept();
         ConceptName conceptName = result.getConceptName();
-        ConceptName preferredName = concept.getPreferredName(locale);
+        ConceptName preferredName = getPreferredName(locale, concept);
         PropertyUtils.setProperty(simple, "concept.preferredName", preferredName.getName());
 
         return simple;
+    }
+
+    private ConceptName getPreferredName(Locale locale, Concept concept) {
+        ConceptName name = concept.getPreferredName(locale);
+        if (name == null && (StringUtils.isNotEmpty(locale.getCountry()) || StringUtils.isNotEmpty(locale.getVariant()))) {
+            name = concept.getPreferredName(new Locale(locale.getLanguage()));
+        }
+        if (name == null) {
+            name = concept.getName(locale);
+        }
+        return name;
     }
 
 }
