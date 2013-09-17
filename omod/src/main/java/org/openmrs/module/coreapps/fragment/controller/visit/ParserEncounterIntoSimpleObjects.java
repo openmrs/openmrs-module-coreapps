@@ -60,14 +60,19 @@ public class ParserEncounterIntoSimpleObjects {
 	
 	public ParsedObs parseObservations(Locale locale) {
 		DiagnosisMetadata diagnosisMetadata = emrApiProperties.getDiagnosisMetadata();
-		DispositionDescriptor dispositionDescriptor = emrApiProperties.getDispositionDescriptor();
+		DispositionDescriptor dispositionDescriptor = null;
+        try {
+            dispositionDescriptor = emrApiProperties.getDispositionDescriptor();
+        } catch (IllegalStateException ex) {
+            // No problem. We do not require dispositions to be configured here
+        }
 		
 		ParsedObs parsedObs = new ParsedObs();
 		
 		for (Obs obs : encounter.getObsAtTopLevel(false)) {
 			if (diagnosisMetadata.isDiagnosis(obs)) {
 				parsedObs.getDiagnoses().add(parseDiagnosis(diagnosisMetadata, obs));
-			} else if (dispositionDescriptor.isDisposition(obs)) {
+			} else if (dispositionDescriptor != null && dispositionDescriptor.isDisposition(obs)) {
 				parsedObs.getDispositions().add(parseDisposition(dispositionDescriptor, obs, locale));
 			} else {
 				parsedObs.getObs().add(parseObs(obs, locale));
