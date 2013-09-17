@@ -41,8 +41,9 @@
         <% } %>
     <% } %>
 </div>
-
+[[ if (encounters.length > 0) { ]]
 <h4>${ ui.message("coreapps.patientDashBoard.encounters")} </h4>
+[[ } ]]
 <ul id="encountersList">
     [[ _.each(encounters, function(encounter) { ]]
         [[= encounterTemplates.displayEncounter(encounter, patient) ]]
