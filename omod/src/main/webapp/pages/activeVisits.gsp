@@ -32,7 +32,7 @@
 			<tr id="visit-${ v.visit.id }">
 				<td>${ ui.format(v.visit.patient.patientIdentifier) }</td>
 				<td>
-                    <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.visit.patient.id ]) }">
+                    <a href="${ ui.urlBind("/" + contextPath + patientPageUrl, [ patientId: v.visit.patient.id ]) }">
                         ${ ui.format(v.visit.patient) }
                     </a>
                 </td>

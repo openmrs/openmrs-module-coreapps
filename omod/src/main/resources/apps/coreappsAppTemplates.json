@@ -20,5 +20,16 @@
                 "defaultValue": "coreapps.findPatient.app.label"
             }
         ]
-    }
+    },
+	{
+		"id": "coreapps.template.activeVisits",
+		"description": "coreapps.activeVisits.app.description",
+		"configOptions": [
+			{
+				"name": "patientPageUrl",
+				"description": "URL pointing to a patient details page",
+				"defaultValue": "/coreapps/clinicianfacing/patient.page?patientId={{patientId}}"
+			}
+		]
+	}
 ]

@@ -1,6 +1,7 @@
 [
     {
         "id": "coreapps.activeVisits",
+		"instanceOf": "coreapps.template.activeVisits",
         "description": "coreapps.activeVisits.app.description",
         "order": 10,
         "extensions": [
@@ -9,7 +10,7 @@
                 "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
                 "type": "link",
                 "label": "coreapps.activeVisits.app.label",
-                "url": "coreapps/activeVisits.page",
+                "url": "coreapps/activeVisits.page?app=coreapps.activeVisits",
                 "icon": "icon-calendar",
                 "requiredPrivilege": "App: ${project.parent.groupId}.${project.parent.artifactId}.activeVisits"
             }

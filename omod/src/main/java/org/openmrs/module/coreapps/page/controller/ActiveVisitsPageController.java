@@ -15,15 +15,17 @@ package org.openmrs.module.coreapps.page.controller;
 
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;
+import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public class ActiveVisitsPageController {
 	
 	public String get(UiSessionContext sessionContext, PageModel model, @SpringBean AdtService service,
-	                @SpringBean("locationService") LocationService locationService) {
+	                @SpringBean("locationService") LocationService locationService, @RequestParam("app") AppDescriptor app) {
 		
 		Location sessionLocation = sessionContext.getSessionLocation();
         if (sessionLocation == null) {
@@ -38,6 +40,10 @@ public class ActiveVisitsPageController {
 		}
 		
 		model.addAttribute("visitSummaries", service.getActiveVisits(visitLocation));
+
+		String patientPageUrl = app.getConfig().get("patientPageUrl").getTextValue();
+		model.addAttribute("patientPageUrl", patientPageUrl);
+
         return null;
 	}
 	
