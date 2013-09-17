@@ -90,8 +90,12 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
                                 var listItem = jq("<li class=\"menu-item past-visit-date-item\" visitId=\"visit.id\">" + v.startDate + " - " + v.stopDate + "</li>");
 
                                 listItem.click(function() {
-                                    visit.retrospectiveVisitExistingVisitsDialog.close();
-                                    jq('.viewVisitDetails').filter('[visitId=' + v.id + ']').click();
+									if (jq('.viewVisitDetails').length) {
+                                    	visit.retrospectiveVisitExistingVisitsDialog.close();
+                                    	jq('.viewVisitDetails').filter('[data-visit-Id=' + v.id + ']').click();
+									} else {
+										window.location = visit.contextPath + "/coreapps/patientdashboard/patientDashboard.page?patientId=" + patientId + "&visitId=" + v.id + "#visits";
+									}
                                 });
 
                                 jq('#past-visit-dates').append(listItem);
