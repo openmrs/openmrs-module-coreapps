@@ -117,9 +117,10 @@
 
 <div id="quick-visit-creation-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
+        <i class="icon-check-in"></i>
         <h3>
-            <i class="icon-check-in"></i>
-            ${ ui.message("coreapps.visit.createQuickVisit.title") }</h3>
+            ${ ui.message("coreapps.visit.createQuickVisit.title") }
+        </h3>
     </div>
     <div class="dialog-content">
         <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.format(patient.patient)) }</p>
