@@ -95,7 +95,9 @@
     <% } %>
 
     <% if(patient.allVisitsUsingWrappers.size == 0) { %>
-        ${ ui.message("coreapps.patientDashBoard.noVisits")}
+        <div class="no-results">
+            ${ ui.message("coreapps.patientDashBoard.noVisits")}
+        </div>
     <% } %>
 </ul>
 
