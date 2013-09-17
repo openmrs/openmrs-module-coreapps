@@ -57,6 +57,10 @@
 </script>
 
 <script type="text/template" id="defaultEncounterDetailsTemplate">
+    {{ _.each(_.filter(diagnoses, function(d) { return d.answer }), function(d) { }}
+        <p><small>{{- d.question}}</small><span>{{- d.answer}}</span></p>
+    {{ }); }}
+
     {{ _.each(observations, function(observation) { }}
         {{ if(observation.answer != null) {}}
             <p><small>{{- observation.question}}</small><span>{{- observation.answer}}</span></p>
