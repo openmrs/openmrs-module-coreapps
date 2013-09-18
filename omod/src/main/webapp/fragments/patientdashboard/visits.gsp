@@ -147,7 +147,7 @@
             </li>
         </ul>
 
-        <button class="confirm right">${ ui.message("coreapps.yes") }</button>
+        <button class="confirm right">${ ui.message("coreapps.yes") }<i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i></button>
         <button class="cancel">${ ui.message("coreapps.no") }</button>
     </div>
 </div>

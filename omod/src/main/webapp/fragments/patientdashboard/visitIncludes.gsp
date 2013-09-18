@@ -84,7 +84,7 @@
         <br><br>
 
         <button class="cancel">${ ui.message("coreapps.cancel") }</button>
-        <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
+        <button class="confirm right">${ ui.message("coreapps.confirm") }<i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i></button>
     </div>
 </div>
 
@@ -125,7 +125,7 @@
     <div class="dialog-content">
         <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.format(patient.patient)) }</p>
 
-        <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
+        <button class="confirm right">${ ui.message("coreapps.confirm") }<i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i></button>
         <button class="cancel">${ ui.message("coreapps.cancel") }</button>
     </div>
 </div>

@@ -42,7 +42,7 @@
             <br><br>
 
             <button class="cancel">${ ui.message("coreapps.cancel") }</button>
-            <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
+            <button class="confirm right">${ ui.message("coreapps.confirm") }<i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i></button>
         </form>
     </div>
 </div>

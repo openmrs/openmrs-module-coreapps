@@ -94,8 +94,7 @@ function createDeleteVisitDialog(visitId, patientId) {
                 emr.getFragmentActionWithCallback('coreapps', 'visit/visitDetails', 'deleteVisit'
                     , { visitId: visitId}
                     , function(data) {
-                        emr.successMessage(data.message);
-                        deleteVisitDialog.close();
+                        jq('#delete-visit-dialog' + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
                         emr.navigateTo({
                             provider: 'coreapps',
                             page: 'patientdashboard/patientDashboard',

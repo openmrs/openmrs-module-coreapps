@@ -13,7 +13,7 @@ visit.createQuickVisitCreationDialog = function(patientId) {
                 emr.getFragmentActionWithCallback('coreapps', 'visit/quickVisit', 'create',
                     { patientId: visit.patientId, locationId: sessionLocationModel.id() },
                     function(data) {
-                        visit.quickVisitCreationDialog.close();
+                        jq('#quick-visit-creation-dialog' + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled')
                         visit.reloadPageWithoutVisitId();
                     });
             },
@@ -77,6 +77,7 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
                         stopDate: jq('[name=retrospectiveVisitStopDate]').val() },
                     function(data) {
                         if (data.success) {
+                            jq('#retrospective-visit-creation-dialog .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
                             window.location.search = data.search;
                         }
                         else {
@@ -149,6 +150,7 @@ function showEditVisitDateDialog(visitId) {
                     var url = emr.fragmentActionLink("coreapps", "visit/visitDates", "setDuration");
                     $.getJSON(url, $('#edit-visit-dates-dialog-form-' + visitId).serialize()).success(function(data) {
                             if (data.success) {
+                                jq('#edit-visit-dates-dialog-form-' + visitId + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
                                 window.location.search = data.search;
                             }
                         }
