@@ -44,7 +44,7 @@ public class DiagnosisWidgetFragmentController {
 		Calendar recent = Calendar.getInstance();
 		recent.set(Calendar.DATE, -days);
 
-		List<Diagnosis> recentDiagnoses = patientWrapper.getDiagnosesSince(recent.getTime());
+		List<Diagnosis> recentDiagnoses = patientWrapper.getUniqueDiagnosesSince(recent.getTime());
 		config.addAttribute("recentDiagnoses", recentDiagnoses);
 	}
 }
