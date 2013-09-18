@@ -97,7 +97,7 @@
                 </span>
                 <% if(!config.hideEditDemographicsButton){ %>
                     <span>
-                        <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}">${ui.message("general.edit")}</a></small>
+                        <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}&returnUrl=${ui.urlEncode(ui.thisUrl())}">${ui.message("general.edit")}</a></small>
                     </span>
                 <% } %>
                 <% if (config.isNewPatientHeaderEnabled) { %>

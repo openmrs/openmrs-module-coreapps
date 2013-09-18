@@ -2,7 +2,7 @@
 
 <% if(!config.hideEditContactInfoButton){ %>
     <div class="right">
-        <small><a href="/${contextPath}/registrationapp/editPatientContactInfo.page?patientId=${config.patient.patient.id}&appId=referenceapplication.registrationapp.registerPatient">${ui.message("general.edit")}</a></small>
+        <small><a href="/${contextPath}/registrationapp/editPatientContactInfo.page?patientId=${config.patient.patient.id}&appId=referenceapplication.registrationapp.registerPatient&returnUrl=${ui.urlEncode(ui.thisUrl())}">${ui.message("general.edit")}</a></small>
     </div>
 <% } %>
 

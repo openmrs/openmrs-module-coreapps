@@ -8,6 +8,6 @@
         <em>${ ui.message("coreapps.person.telephoneNumber")}</em>
     </span>
     <% if(!config.hideEditContactInfoButton){ %>
-        <small class="left-margin"><a href="/${contextPath}/registrationapp/editPatientContactInfo.page?patientId=${config.patient.patient.id}&appId=referenceapplication.registrationapp.registerPatient">${ui.message("general.edit")}</a></small>
+        <small class="left-margin"><a href="/${contextPath}/registrationapp/editPatientContactInfo.page?patientId=${config.patient.patient.id}&appId=referenceapplication.registrationapp.registerPatient&returnUrl=${ui.urlEncode(ui.thisUrl())}">${ui.message("general.edit")}</a></small>
     <% } %>
 </div>

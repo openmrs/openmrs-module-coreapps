@@ -42,7 +42,8 @@ public class PatientDashboardPageController {
 	private static final String ENCOUNTER_TEMPLATE_EXTENSION = "org.openmrs.referenceapplication.encounterTemplate";
 	
 	public Object controller(@RequestParam("patientId") Patient patient,
-	                       @RequestParam(value = "tab", defaultValue = "visits") String selectedTab, PageModel model,
+	                       @RequestParam(value = "tab", defaultValue = "visits") String selectedTab,
+						   @RequestParam(value = "returnUrl", required = false) String returnUrl, PageModel model,
 	                       @InjectBeans PatientDomainWrapper patientDomainWrapper,
 	                       @SpringBean("orderService") OrderService orderService,
 	                       @SpringBean("adtService") AdtService adtService,
@@ -55,6 +56,7 @@ public class PatientDashboardPageController {
         }
 
 		patientDomainWrapper.setPatient(patient);
+		model.addAttribute("returnUrl", returnUrl);
 		model.addAttribute("patient", patientDomainWrapper);
 		model.addAttribute("orders", orderService.getOrdersByPatient(patient));
 		model.addAttribute("selectedTab", selectedTab);

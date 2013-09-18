@@ -25,7 +25,7 @@
             </li>
             <% } %>
         </ul>
-        <a class="view-more" href="${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id])}#visits">
+        <a class="view-more" href="${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id, returnUrl: ui.thisUrl()])}#visits">
             ${ ui.message("coreapps.clinicianfacing.showMoreInfo") } >
         </a>
     </div>
