@@ -24,6 +24,7 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.event.ApplicationEventService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.UiUtils;
@@ -48,6 +49,7 @@ public class PatientPageController {
 	                         @SpringBean("encounterService") EncounterService encounterService,
 	                         @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                              @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
+                             @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
 	                         UiSessionContext sessionContext) {
 		
 		if (patient.isVoided() || patient.isPersonVoided()) {
@@ -92,6 +94,8 @@ public class PatientPageController {
                 "clinicianFacingPatientDashboard.otherActions", contextModel);
         Collections.sort(otherActions);
         model.addAttribute("otherActions", otherActions);
+
+        applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 
 		return null;
 	}

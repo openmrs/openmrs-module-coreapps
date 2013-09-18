@@ -23,6 +23,7 @@ import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.event.ApplicationEventService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.annotation.InjectBeans;
@@ -49,6 +50,7 @@ public class PatientDashboardPageController {
 	                       @SpringBean("adtService") AdtService adtService,
 	                       @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
                            @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
+                           @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
                            UiSessionContext sessionContext) {
 		
         if (patient.isVoided() || patient.isPersonVoided()) {
@@ -110,6 +112,9 @@ public class PatientDashboardPageController {
 		model.addAttribute("patientTabs", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.tabs"));
         model.addAttribute("isNewPatientHeaderEnabled",
                 featureToggleProperties.isFeatureEnabled("enableNewPatientHeader"));
+
+        applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
+
         return null;
 	}
 }
