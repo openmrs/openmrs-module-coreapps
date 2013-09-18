@@ -9,6 +9,20 @@ function PatientSearchWidget(configuration){
     var searchDelayLong = 1000;
     var searchDelayTimer;
     var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/patient';
+    var initialData = [];
+    var lastViewedPatientsUuids = [];
+    if(config.lastViewedPatients){
+        _.each(config.lastViewedPatients, function(p){
+            //only add the uuid since it is only one we need to reference later
+            searchResultsData.push({uuid: p.uuid});
+            lastViewedPatientsUuids.push(p.uuid);
+            initialData.push([p.identifier+" <span class='viewed'>"+config.messages.viewed+"</span>",
+                p.fullName, p.age, p.gender, p.birthdate]);
+        });
+    }
+    if(lastViewedPatientsUuids.length > 0){
+         jq('#'+config.searchResultsDivId).show();
+    }
     //UP(38), DOWN(40), PAGE UP(33), PAGE DOWN(34)
     var keyboardNavigationKeys = [33,34,38,40];
     /*
@@ -45,14 +59,20 @@ function PatientSearchWidget(configuration){
     }
 
     var updateSearchResults = function(results){
+        reset();
         searchResultsData = results;
         var dataRows = [];
-        _.each(searchResultsData, function(patient, index) {
+        _.each(searchResultsData, function(patient) {
             var birthdate = '';
             if(patient.person.birthdate){
                 birthdate = moment(patient.person.birthdate).format('DD-MMM-YYYY');
             }
-            dataRows.push([patient.patientIdentifier.identifier, patient.person.personName.fullName,
+            var identifier = patient.patientIdentifier.identifier;
+            if(_.contains(lastViewedPatientsUuids, patient.uuid)){
+                identifier = patient.patientIdentifier.identifier+
+                    " <span class='viewed'>"+config.messages.viewed+"</span>";
+            }
+            dataRows.push([identifier, patient.person.personName.fullName,
                 patient.person.age, patient.person.gender, birthdate]);
         });
 
@@ -232,6 +252,7 @@ function PatientSearchWidget(configuration){
         iDisplayLength: 15,
         sPaginationType: "full_numbers",
         bSort: false,
+        aaData: initialData,
         sDom: 't<"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg"ip>',
         oLanguage: {
             "sInfo": config.messages.info,

@@ -1,6 +1,7 @@
 @import "variables";
 
 $rowHighlightBackground: #F26522;
+$green: #51A351;
 
 #patient-search-form {
   input {
@@ -84,4 +85,14 @@ $rowHighlightBackground: #F26522;
 .search-widget-info{
   font-size: 0.7em;
   font-style: italic;
+}
+
+.viewed {
+  display: inline-block;
+  vertical-align: text-bottom;
+  font-size: 0.7em;
+  border: 1px solid $green;
+  color: $green;
+  padding: 1px 2px;
+  border-radius: 4px;
 }

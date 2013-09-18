@@ -12,6 +12,12 @@
         { label: "${ ui.message(label)}"}
     ];
 
+    var lastViewedPatients = [];
+    <%lastViewedPatients.each{ it -> %>
+        lastViewedPatients.push({uuid:"${ it.uuid }",fullName:"${ it.personName.fullName }",gender:"${ it.gender }",
+            age:"${ it.age }",birthdate:"${ dateFormatter.format(it.birthdate) }",identifier:"${ it.patientIdentifier.identifier }"});
+    <%}%>
+
     jq(function() {
         new PatientSearchWidget(getConfig());
         jq('#patient-search').focus();
@@ -19,6 +25,7 @@
 
     function getConfig(){
         var config = {
+            lastViewedPatients : lastViewedPatients,
             minSearchCharacters: ${minSearchCharacters},
             searchInputId: 'patient-search',
             searchButtonId: 'patient-search-button',
@@ -31,7 +38,8 @@
                 previous: '${ ui.message("coreapps.search.previous") }',
                 next: '${ ui.message("coreapps.search.next") }',
                 last: '${ ui.message("coreapps.search.last") }',
-                noMatchesFound: '${ ui.message("coreapps.search.noMatchesFound") }'
+                noMatchesFound: '${ ui.message("coreapps.search.noMatchesFound") }',
+                viewed: '${ ui.message("coreapps.search.Viewed") }'
             }
         };
 
