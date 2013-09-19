@@ -137,7 +137,7 @@ public class ParserEncounterIntoSimpleObjects {
 	private SimpleObject parseDiagnosis(DiagnosisMetadata diagnosisMetadata, Obs obs) {
 		Diagnosis diagnosis = diagnosisMetadata.toDiagnosis(obs);
 		
-		String answer = "(" + uiUtils.message("emr.Diagnosis.Certainty." + diagnosis.getCertainty()) + ") ";
+		String answer = "(" + uiUtils.message("coreapps.Diagnosis.Certainty." + diagnosis.getCertainty()) + ") ";
 		answer += diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(),
 		    emrApiProperties.getConceptSourcesForDiagnosisSearch());
 		
@@ -159,7 +159,7 @@ public class ParserEncounterIntoSimpleObjects {
     }
 
 	private String formatDiagnosisQuestion(Diagnosis.Order order) {
-		return uiUtils.message("emr.patientDashBoard.diagnosisQuestion." + order);
+		return uiUtils.message("coreapps.patientDashBoard.diagnosisQuestion." + order);
 	}
 	
 	private String capitalizeString(String name) {

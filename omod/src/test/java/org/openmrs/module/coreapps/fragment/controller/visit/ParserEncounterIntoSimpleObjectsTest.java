@@ -54,8 +54,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-;
-
 /**
  *
  */
@@ -109,7 +107,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		assertThat(parsed.getDiagnoses().size(), is(1));
 		assertThat(parsed.getDispositions().size(), is(0));
 		assertThat(parsed.getObs().size(), is(0));
-		assertThat(path(parsed.getDiagnoses(), 0, "question"), is((Object) "emr.patientDashBoard.diagnosisQuestion.PRIMARY"));
+		assertThat(path(parsed.getDiagnoses(), 0, "question"), is((Object) "coreapps.patientDashBoard.diagnosisQuestion.PRIMARY"));
 		assertThat(path(parsed.getDiagnoses(), 0, "answer"),
 		    is((Object) "(emr.Diagnosis.Certainty.PRESUMED) Random Disease"));
 		assertThat(path(parsed.getDiagnoses(), 0, "order"), is((Object) 0));
