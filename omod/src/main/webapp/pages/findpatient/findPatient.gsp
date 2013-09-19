@@ -3,8 +3,8 @@
     ui.includeCss("coreapps", "findpatient/findPatient.css")
     ui.includeCss("uicommons", "datatables/dataTables_jui.css")
     ui.includeJavascript("uicommons", "datatables/jquery.dataTables.min.js")
-    ui.includeJavascript("coreapps", "findpatient/findPatient.js")
-    ui.includeJavascript("coreapps", "moment.min.js")
+    ui.includeJavascript("coreapps", "findpatient/patientSearchWidget.js")
+    ui.includeJavascript("uicommons", "moment.min.js")
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -31,7 +31,6 @@
                 last: '${ ui.message("coreapps.search.last") }',
                 noMatchesFound: '${ ui.message("coreapps.search.noMatchesFound") }',
                 recent: '${ ui.message("coreapps.search.label.recent") }',
-                searching: '${ ui.message("coreapps.searching") }',
                 identifierColHeader: '${ ui.message("coreapps.search.identifier") }',
                 nameColHeader: '${ ui.message("coreapps.search.name") }',
                 genderColHeader: '${ ui.message("coreapps.gender") }',

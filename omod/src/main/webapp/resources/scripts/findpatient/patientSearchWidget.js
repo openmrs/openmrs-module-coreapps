@@ -20,7 +20,7 @@ function PatientSearchWidget(configuration){
                         '<tbody></tbody>'+
                     '</table>';
 
-    var searchingHtml = '<span><img class="search-spinner" src="/' + OPENMRS_CONTEXT_PATH+'/ms/uiframework/resource/uicommons/images/spinner.gif" />'+config.messages.searching+'...</span>';
+    var searchingHtml = '<span><img class="search-spinner" src="'+emr.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>';
 
     jq('#'+config.searchResultsDivId).append(tableHtml);
     var input = jq('#'+config.searchInputId);
