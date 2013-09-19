@@ -65,6 +65,7 @@ function createDeleteEncounterDialog(encounterId, deleteElement) {
                 emr.getFragmentActionWithCallback('coreapps', 'visit/visitDetails', 'deleteEncounter'
                     , { encounterId: encounterId}
                     , function(data) {
+                        jq('#delete-encounter-dialog' + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
                         emr.successMessage(data.message);
                         deleteEncounterDialog.close();
                         var visitId = deleteElement.attr("data-visit-id");
