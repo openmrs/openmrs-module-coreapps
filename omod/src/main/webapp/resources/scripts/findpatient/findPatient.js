@@ -1,5 +1,28 @@
 function PatientSearchWidget(configuration){
-    var config = configuration;
+    var defaults = {
+        minSearchCharacters: 3,
+        searchInputId: 'patient-search',
+        searchResultsDivId: 'patient-search-results'
+    };
+
+    var config = jq.extend({}, defaults, configuration);
+    var tableId = 'patient-search-results-table';
+    var tableHtml = '<table id="'+tableId+'">'+
+                        '<thead>'+
+                            '<tr>'+
+                                '<th>'+config.messages.identifierColHeader+'</th>'+
+                                '<th>'+config.messages.nameColHeader+'</th>'+
+                                '<th>'+config.messages.genderColHeader+'</th>'+
+                                '<th>'+config.messages.ageColHeader+'</th>'+
+                                '<th>'+config.messages.birthdateColHeader+'</th>'+
+                            '</tr>'+
+                        '</thead>'+
+                        '<tbody></tbody>'+
+                    '</table>';
+
+    var searchingHtml = '<span><img class="search-spinner" src="/' + OPENMRS_CONTEXT_PATH+'/ms/uiframework/resource/uicommons/images/spinner.gif" />'+config.messages.searching+'...</span>';
+
+    jq('#'+config.searchResultsDivId).append(tableHtml);
     var input = jq('#'+config.searchInputId);
     var pageCount = 0;
     var searchResultsData = [];
@@ -10,17 +33,18 @@ function PatientSearchWidget(configuration){
     var searchDelayTimer;
     var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/patient';
     var initialData = [];
-    var lastViewedPatientsUuids = [];
-    if(config.lastViewedPatients){
-        _.each(config.lastViewedPatients, function(p){
+    var initialPatientUuids = [];
+    var tableObject = jq('#'+tableId);
+    if(config.initialPatients){
+        _.each(config.initialPatients, function(p){
             //only add the uuid since it is only one we need to reference later
             searchResultsData.push({uuid: p.uuid});
-            lastViewedPatientsUuids.push(p.uuid);
-            initialData.push([p.identifier+" <span class='viewed'>"+config.messages.viewed+"</span>",
-                p.fullName, p.age, p.gender, p.birthdate]);
+            initialPatientUuids.push(p.uuid);
+            initialData.push([p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
+                p.fullName, p.gender, p.age, p.birthdate]);
         });
     }
-    if(lastViewedPatientsUuids.length > 0){
+    if(initialPatientUuids.length > 0){
          jq('#'+config.searchResultsDivId).show();
     }
     //UP(38), DOWN(40), PAGE UP(33), PAGE DOWN(34)
@@ -39,11 +63,13 @@ function PatientSearchWidget(configuration){
 
     var doSearch = function(query){
         reset();
+        jq('#'+tableId).find('td.dataTables_empty').html(searchingHtml);
         if(!jq('#'+config.searchResultsDivId).is(':visible')){
             jq('#'+config.searchResultsDivId).show();
         }
         query = jq.trim(query);
         jq.getJSON(url, {v: customRep, q: query }, function(data) {
+            jq('#'+tableId).find('td.dataTables_empty').html(' ');
             if(data){
                 updateSearchResults(data.results);
             }
@@ -68,12 +94,12 @@ function PatientSearchWidget(configuration){
                 birthdate = moment(patient.person.birthdate).format('DD-MMM-YYYY');
             }
             var identifier = patient.patientIdentifier.identifier;
-            if(_.contains(lastViewedPatientsUuids, patient.uuid)){
+            if(_.contains(initialPatientUuids, patient.uuid)){
                 identifier = patient.patientIdentifier.identifier+
-                    " <span class='viewed'>"+config.messages.viewed+"</span>";
+                    " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
             }
             dataRows.push([identifier, patient.person.personName.fullName,
-                patient.person.age, patient.person.gender, birthdate]);
+                patient.person.gender, patient.person.age, birthdate]);
         });
 
         dTable.fnAddData(dataRows);
@@ -91,6 +117,9 @@ function PatientSearchWidget(configuration){
     }
 
     var isTableEmpty = function(){
+        if(searchResultsData.length > 0){
+            return false
+        }
         return !dTable || dTable.fnGetNodes().length == 0;
     }
 
@@ -245,7 +274,7 @@ function PatientSearchWidget(configuration){
 
     /********************* INITIALIZATION DATATABLE *********************/
 
-    var dTable = jq('#'+config.searchResultsTableId).dataTable({
+    var dTable = tableObject.dataTable({
         bFilter: false,
         bJQueryUI: true,
         bLengthChange: false,
@@ -279,17 +308,17 @@ function PatientSearchWidget(configuration){
             //fnDrawCallback is called on each page redraw so we need to remove any previous handlers
             //otherwise there will multiple hence the logic getting executed multiples times as the
             //user the goes back and forth between pages
-            dTable.$('tr').unbind('click');
-            dTable.$('tr').unbind('hover');
+            tableObject.find('tbody tr').unbind('click');
+            tableObject.find('tbody tr').unbind('hover');
 
-            dTable.$('tr').click(
+            tableObject.find('tbody tr').click(
                 function(){
                     highlightedMouseRowIndex = dTable.fnGetPosition(this);
                     selectRow(highlightedMouseRowIndex);
                 }
             );
 
-            dTable.$('tr').hover(
+            tableObject.find('tbody tr').hover(
                 function(){
                     if(highlightedKeyboardRowIndex){
                         var keyboardHighlightedNode = dTable.fnGetNodes()[highlightedKeyboardRowIndex];
@@ -309,14 +338,6 @@ function PatientSearchWidget(configuration){
     });
 
     /***************** SETUP KEYBOARD AND MOUSE EVENT HANDLERS **************/
-
-    jq('#'+config.searchButtonId).click(
-        function(){
-            var enterEvent = jQuery.Event("keydown", { keyCode: 13 });
-            input.trigger( enterEvent);
-            input.focus();//ensures key board events handlers are not broken
-        }
-    );
 
     input.keyup(function(event) {
         var kc = event.keyCode;

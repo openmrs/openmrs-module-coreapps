@@ -19,18 +19,9 @@
     <%}%>
 
     jq(function() {
-        new PatientSearchWidget(getConfig());
-        jq('#patient-search').focus();
-    });
-
-    function getConfig(){
-        var config = {
-            lastViewedPatients : lastViewedPatients,
+        var widgetConfig = {
+            initialPatients : lastViewedPatients,
             minSearchCharacters: ${minSearchCharacters},
-            searchInputId: 'patient-search',
-            searchButtonId: 'patient-search-button',
-            searchResultsTableId: 'patient-search-results-table',
-            searchResultsDivId: 'patient-search-results',
             afterSelectedUrl: '${ ui.escapeJs(afterSelectedUrl) }',
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
@@ -39,12 +30,20 @@
                 next: '${ ui.message("coreapps.search.next") }',
                 last: '${ ui.message("coreapps.search.last") }',
                 noMatchesFound: '${ ui.message("coreapps.search.noMatchesFound") }',
-                viewed: '${ ui.message("coreapps.search.Viewed") }'
+                recent: '${ ui.message("coreapps.search.label.recent") }',
+                searching: '${ ui.message("coreapps.searching") }',
+                identifierColHeader: '${ ui.message("coreapps.search.identifier") }',
+                nameColHeader: '${ ui.message("coreapps.search.name") }',
+                genderColHeader: '${ ui.message("coreapps.gender") }',
+                ageColHeader: '${ ui.message("coreapps.age") }',
+                birthdateColHeader: '${ ui.message("coreapps.birthdate") }'
             }
         };
 
-        return config;
-    }
+        new PatientSearchWidget(widgetConfig);
+
+        jq('#patient-search').focus();
+    });
 </script>
 
 <h2>
@@ -53,21 +52,6 @@
 
 <form method="get" id="patient-search-form" onsubmit="return false">
     <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off"/>
-    <input type="button" id="patient-search-button" value="${ ui.message("coreapps.findPatient.search.button") }" />
 </form>
-<span class="search-widget-info">${ui.message("coreapps.search.charsRequired", minSearchCharacters)}</span>
 
-<div id="patient-search-results">
-    <table id="patient-search-results-table">
-        <thead>
-            <tr>
-                <th>${ ui.message("coreapps.search.identifier") }</th>
-                <th>${ ui.message("coreapps.search.name") }</th>
-                <th>${ ui.message("coreapps.age") }</th>
-                <th>${ ui.message("coreapps.gender") }</th>
-                <th>${ ui.message("coreapps.birthdate") }</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
+<div id="patient-search-results"></div>

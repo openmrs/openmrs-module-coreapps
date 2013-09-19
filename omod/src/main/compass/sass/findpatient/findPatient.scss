@@ -61,9 +61,9 @@ $green: #51A351;
   }
 
   #patient-search-results-table tbody tr td.dataTables_empty:hover{
-    background: $link;
-    cursor: pointer;
-    color: white;
+    background: white;
+    cursor: default;
+    color: #363463;
   }
 
   .ui-state-disabled {
@@ -87,7 +87,7 @@ $green: #51A351;
   font-style: italic;
 }
 
-.viewed {
+.recent-lozenge {
   display: inline-block;
   vertical-align: text-bottom;
   font-size: 0.7em;
@@ -95,4 +95,8 @@ $green: #51A351;
   color: $green;
   padding: 1px 2px;
   border-radius: 4px;
+}
+
+img.search-spinner{
+  vertical-align: middle;
 }
