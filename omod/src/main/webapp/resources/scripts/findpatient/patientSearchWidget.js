@@ -146,7 +146,7 @@ function PatientSearchWidget(configuration){
 
     var doKeyDown = function() {
         //the user is using the mouse and they also want to use up/down keys?, dont support this
-        if(highlightedMouseRowIndex)
+        if(highlightedMouseRowIndex != undefined)
             return;
 
         var prevRow = highlightedKeyboardRowIndex;
@@ -285,6 +285,7 @@ function PatientSearchWidget(configuration){
         sDom: 't<"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg"ip>',
         oLanguage: {
             "sInfo": config.messages.info,
+            "sInfoEmpty": " ",
             "sZeroRecords": config.messages.noMatchesFound,
             "oPaginate": {
                 "sFirst": config.messages.first,
