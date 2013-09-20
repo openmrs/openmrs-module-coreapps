@@ -104,6 +104,16 @@
         <description>Ability to end visit</description>
     </privilege>
 
+	<privilege>
+		<name>App: coreapps.findPatient</name>
+		<description>Able to access the find patient app</description>
+	</privilege>
+
+	<privilege>
+		<name>App: coreapps.activeVisits</name>
+		<description>Able to access the active visits app</description>
+	</privilege>
+
 
 
 </module>

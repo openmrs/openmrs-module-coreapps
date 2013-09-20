@@ -12,7 +12,7 @@
                 "label": "coreapps.activeVisits.app.label",
                 "url": "coreapps/activeVisits.page?app=coreapps.activeVisits",
                 "icon": "icon-calendar",
-                "requiredPrivilege": "App: ${project.parent.groupId}.${project.parent.artifactId}.activeVisits"
+                "requiredPrivilege": "App: coreapps.activeVisits"
             }
         ]
     }
