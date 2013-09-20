@@ -339,6 +339,7 @@
                         <source>${project.basedir}/src/test/webapp/provided/scripts/angular.min.js</source>
                         <source>${project.basedir}/src/test/webapp/provided/scripts/jquery-1.8.3.min.js</source>
                         <source>${project.basedir}/src/test/webapp/provided/scripts/underscore-min.js</source>
+                        <source>${project.basedir}/src/test/webapp/provided/scripts/knockout-2.1.0.js</source>
                     </preloadSources>
                     <serverPort>7234</serverPort>
                     <skipTests>false</skipTests>

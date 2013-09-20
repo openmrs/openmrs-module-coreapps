@@ -15,16 +15,24 @@
 package org.openmrs.module.coreapps.fragment.controller;
 
 import org.apache.commons.beanutils.PropertyUtils;
+
 import org.apache.commons.lang.StringUtils;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptSearchResult;
 import org.openmrs.ConceptSource;
 import org.openmrs.Obs;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.concept.EmrConceptService;
+import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
@@ -36,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -88,17 +97,29 @@ public class DiagnosesFragmentController {
 
     public FragmentActionResult codeDiagnosis(UiUtils ui,
                                              @RequestParam("nonCodedObsId") Integer nonCodedObsId,
-                                             @RequestParam("codedConceptId") Concept codedConcept,
+                                             @RequestParam("diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
                                              @SpringBean("obsService") ObsService obsService,
-                                             @SpringBean("diagnosisService") DiagnosisService diagnosisService
+                                             @SpringBean("diagnosisService") DiagnosisService diagnosisService,
+                                             @SpringBean("conceptService") ConceptService conceptService
                                              ) throws Exception {
 
 
         if(nonCodedObsId != null){
             Obs nonCodedObs = obsService.getObs(nonCodedObsId);
             if (nonCodedObs !=null ){
-                nonCodedObs = diagnosisService.codeNonCodedDiagnosis(nonCodedObs, codedConcept);
-                if (nonCodedObs != null){
+                List<Diagnosis> diagnosisList = new ArrayList<Diagnosis>();
+                for (String diagnosisJson : diagnoses) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode rootNode = mapper.readTree(diagnosisJson);
+                    Iterator<JsonNode> iterator = rootNode.iterator();
+                    while (iterator.hasNext()){
+                        JsonNode next = iterator.next();
+                        Diagnosis diagnosis = parseDiagnosisJson(next.toString(), conceptService);
+                        diagnosisList.add(diagnosis);
+                    }
+                }
+                List<Obs> newDiagnoses= diagnosisService.codeNonCodedDiagnosis(nonCodedObs, diagnosisList);
+                if ((newDiagnoses != null) && (newDiagnoses.size()>0) ){
                     return new SuccessResult(ui.message("coreapps.dataManagement.codeDiagnosis.success"));
                 }
             }
@@ -135,6 +156,26 @@ public class DiagnosesFragmentController {
             name = concept.getName(locale);
         }
         return name;
+
+    }
+
+    /**
+     * @param diagnosisJson  like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
+     * @param conceptService
+     * @return
+     * @throws Exception
+     */
+    private Diagnosis parseDiagnosisJson(String diagnosisJson, ConceptService conceptService) throws Exception {
+        JsonNode node = new ObjectMapper().readTree(diagnosisJson);
+
+        CodedOrFreeTextAnswer answer = new CodedOrFreeTextAnswer(node.get("diagnosis").getTextValue(), conceptService);
+        Diagnosis.Order diagnosisOrder = Diagnosis.Order.valueOf(node.get("diagnosisOrder").getTextValue());
+        Diagnosis.Certainty certainty = Diagnosis.Certainty.valueOf(node.get("certainty").getTextValue());
+
+        Diagnosis diagnosis = new Diagnosis(answer, diagnosisOrder);
+        diagnosis.setCertainty(certainty);
+
+        return diagnosis;
     }
 
 }
