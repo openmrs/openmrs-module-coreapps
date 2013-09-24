@@ -101,8 +101,23 @@
 
     <privilege>
         <name>Task: coreapps.endVisit</name>
-        <description>Ability to end visit</description>
+        <description>Able to end a visit</description>
     </privilege>
+
+	<privilege>
+		<name>Task: coreapps.createVisit</name>
+		<description>Able to create a visit</description>
+	</privilege>
+
+	<privilege>
+		<name>Task: coreapps.createRetrospectiveVisit</name>
+		<description>Able to create a retrospective visit</description>
+	</privilege>
+
+	<privilege>
+		<name>Task: coreapps.mergeVisits</name>
+		<description>Able to merge visits</description>
+	</privilege>
 
 	<privilege>
 		<name>App: coreapps.findPatient</name>
