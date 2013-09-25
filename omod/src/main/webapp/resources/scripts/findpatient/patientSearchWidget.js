@@ -7,9 +7,7 @@ function PatientSearchWidget(configuration){
 
     var config = jq.extend({}, defaults, configuration);
     var tableId = 'patient-search-results-table';
-    var errorMsgId = 'patient-search-error';
-    var tableHtml = '<div id="'+errorMsgId+'">'+config.messages.searchError+'</div>' +
-                    '<table id="'+tableId+'">'+
+    var tableHtml = '<table id="'+tableId+'">'+
                         '<thead>'+
                             '<tr>'+
                                 '<th>'+config.messages.identifierColHeader+'</th>'+
@@ -73,16 +71,13 @@ function PatientSearchWidget(configuration){
         }
         query = jq.trim(query);
         jq.getJSON(url, {v: customRep, q: query })
-        .always(function(){
-            jq('#'+tableId).find('td.dataTables_empty').html(' ');
-        })
         .done(function(data) {
             if(data){
                 updateSearchResults(data.results);
             }
         })
         .fail(function() {
-            jq('#'+errorMsgId).show();
+            jq('#'+tableId).find('td.dataTables_empty').html("<span class='patient-search-error'>"+config.messages.searchError+"</span>");
         });
     }
 
@@ -92,7 +87,7 @@ function PatientSearchWidget(configuration){
         pageCount = 0;
         highlightedKeyboardRowIndex = undefined;
         highlightedMouseRowIndex = undefined;
-        jq('#'+errorMsgId).hide();
+        jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noMatchesFound);
     }
 
     var updateSearchResults = function(results){
@@ -129,6 +124,9 @@ function PatientSearchWidget(configuration){
             pageCount = rowCount/dTable.fnSettings()._iDisplayLength;
         }else{
             pageCount = Math.floor(rowCount/dTable.fnSettings()._iDisplayLength)+1;
+        }
+        if(rowCount == 0){
+            jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noMatchesFound);
         }
     }
 
