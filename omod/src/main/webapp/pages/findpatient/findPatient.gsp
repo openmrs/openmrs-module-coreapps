@@ -31,6 +31,7 @@
                 last: '${ ui.message("coreapps.search.last") }',
                 noMatchesFound: '${ ui.message("coreapps.search.noMatchesFound") }',
                 recent: '${ ui.message("coreapps.search.label.recent") }',
+                searchError: '${ ui.message("coreapps.search.error") }',
                 identifierColHeader: '${ ui.message("coreapps.search.identifier") }',
                 nameColHeader: '${ ui.message("coreapps.search.name") }',
                 genderColHeader: '${ ui.message("coreapps.gender") }',
