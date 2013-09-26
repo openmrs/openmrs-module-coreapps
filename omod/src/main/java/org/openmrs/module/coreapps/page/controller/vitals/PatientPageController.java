@@ -45,7 +45,7 @@ public class PatientPageController {
 		patientDomainWrapper.setPatient(patient);
 		
 		SimpleObject appHomepageBreadcrumb = SimpleObject.create("label", ui.message("referenceapplication.app.capturevitals.title"),
-		    "link", ui.pageLink("coreapps", "findpatient/findPatient?app=referenceapplication.vitalsapp"));
+		    "link", ui.pageLink("coreapps", "findpatient/findPatient?app=referenceapplication.vitals"));
 		SimpleObject patientPageBreadcrumb = SimpleObject.create("label",
 		    patient.getFamilyName() + ", " + patient.getGivenName(), "link", ui.thisUrlWithContextPath());
 		

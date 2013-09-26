@@ -5,7 +5,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("referenceapplication.app.capturevitals.title") }", link: "${ ui.pageLink("coreapps", "findpatient/findPatient", [app: "referenceapplication.vitalsapp"]) }" },
+        { label: "${ ui.message("referenceapplication.app.capturevitals.title") }", link: "${ ui.pageLink("coreapps", "findpatient/findPatient", [app: "referenceapplication.vitals"]) }" },
         { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" , link: '${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.id])}'},
     ];
 </script>
@@ -19,7 +19,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
                 provider: "coreapps",
                 page: "findpatient/findPatient",
                 query: {
-                    app: "referenceapplication.vitalsapp"
+                    app: "referenceapplication.vitals"
                 }
             });
         });
@@ -31,7 +31,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
                     patientId: "${ patient.id }",
                     visitId: "${ visit?.id }",
                     definitionUiResource: "referenceapplication:htmlforms/vitals.xml",
-                    returnUrl: "${ ui.escapeJs(ui.pageLink("coreapps", "findpatient/findPatient?app=referenceapplication.vitalsapp")) }",
+                    returnUrl: "${ ui.escapeJs(ui.pageLink("coreapps", "findpatient/findPatient?app=referenceapplication.vitals")) }",
                     breadcrumbOverride: "${ ui.escapeJs(breadcrumbOverride) }"
                 }
             });
