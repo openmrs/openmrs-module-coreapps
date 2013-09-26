@@ -20,7 +20,7 @@ function PatientSearchWidget(configuration){
                         '<tbody></tbody>'+
                     '</table>';
 
-    var searchingHtml = '<span><img class="search-spinner" src="'+emr.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>';
+    var spinnerImage = '<span><img class="search-spinner" src="'+emr.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>';
 
     jq('#'+config.searchResultsDivId).append(tableHtml);
     var input = jq('#'+config.searchInputId);
@@ -33,16 +33,18 @@ function PatientSearchWidget(configuration){
     var searchDelayTimer;
     var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/patient';
     var initialData = [];
+    var initialPatientData = [];
     var initialPatientUuids = [];
     var tableObject = jq('#'+tableId);
     if(config.initialPatients){
         _.each(config.initialPatients, function(p){
             //only add the uuid since it is only one we need to reference later
-            searchResultsData.push({uuid: p.uuid});
+            initialPatientData.push({uuid: p.uuid});
             initialPatientUuids.push(p.uuid);
             initialData.push([p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
                 p.fullName, p.gender, p.age, p.birthdate]);
         });
+        searchResultsData = initialPatientData;
     }
     if(initialPatientUuids.length > 0){
          jq('#'+config.searchResultsDivId).show();
@@ -63,16 +65,19 @@ function PatientSearchWidget(configuration){
 
     var doSearch = function(query){
         reset();
-        jq('#'+tableId).find('td.dataTables_empty').html(searchingHtml);
+        jq('#'+tableId).find('td.dataTables_empty').html(spinnerImage);
         if(!jq('#'+config.searchResultsDivId).is(':visible')){
             jq('#'+config.searchResultsDivId).show();
         }
         query = jq.trim(query);
-        jq.getJSON(url, {v: customRep, q: query }, function(data) {
-            jq('#'+tableId).find('td.dataTables_empty').html(' ');
+        jq.getJSON(url, {v: customRep, q: query })
+        .done(function(data) {
             if(data){
                 updateSearchResults(data.results);
             }
+        })
+        .fail(function() {
+            jq('#'+tableId).find('td.dataTables_empty').html("<span class='patient-search-error'>"+config.messages.searchError+"</span>");
         });
     }
 
@@ -82,25 +87,31 @@ function PatientSearchWidget(configuration){
         pageCount = 0;
         highlightedKeyboardRowIndex = undefined;
         highlightedMouseRowIndex = undefined;
+        jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noMatchesFound);
     }
 
     var updateSearchResults = function(results){
-        reset();
-        searchResultsData = results;
         var dataRows = [];
-        _.each(searchResultsData, function(patient) {
-            var birthdate = '';
-            if(patient.person.birthdate){
-                birthdate = moment(patient.person.birthdate).format('DD-MMM-YYYY');
-            }
-            var identifier = patient.patientIdentifier.identifier;
-            if(_.contains(initialPatientUuids, patient.uuid)){
-                identifier = patient.patientIdentifier.identifier+
-                    " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
-            }
-            dataRows.push([identifier, patient.person.personName.fullName,
-                patient.person.gender, patient.person.age, birthdate]);
-        });
+        if(results){
+            searchResultsData = results;
+            _.each(searchResultsData, function(patient) {
+                var birthdate = '';
+                if(patient.person.birthdate){
+                    birthdate = moment(patient.person.birthdate).format('DD-MMM-YYYY');
+                }
+                var identifier = patient.patientIdentifier.identifier;
+                if(_.contains(initialPatientUuids, patient.uuid)){
+                    identifier = patient.patientIdentifier.identifier+
+                        " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
+                }
+                dataRows.push([identifier, patient.person.personName.fullName,
+                    patient.person.gender, patient.person.age, birthdate]);
+            });
+        }else if(config.initialPatients){
+            //show the recently viewed
+            searchResultsData = initialPatientData;
+            dataRows = initialData;
+        }
 
         dTable.fnAddData(dataRows);
 
@@ -113,6 +124,9 @@ function PatientSearchWidget(configuration){
             pageCount = rowCount/dTable.fnSettings()._iDisplayLength;
         }else{
             pageCount = Math.floor(rowCount/dTable.fnSettings()._iDisplayLength)+1;
+        }
+        if(rowCount == 0){
+            jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noMatchesFound);
         }
     }
 
@@ -366,6 +380,7 @@ function PatientSearchWidget(configuration){
             }, effectiveSearchDelay);
         }else{
             reset();
+            updateSearchResults();
         }
 
         return false;

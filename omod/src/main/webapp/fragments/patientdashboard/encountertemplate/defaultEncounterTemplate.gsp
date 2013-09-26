@@ -32,7 +32,7 @@
 	    </li>
 	    <li>
 	        <div class="details-action">
-	            <a class="view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-target="#encounter-summary{{- encounter.encounterId }}" data-toggle="collapse" data-target="#encounter-summary{{- encounter.encounterId }}">
+	            <a class="view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-display-with-html-form="{{- config.displayWithHtmlForm }}" data-target="#encounter-summary{{- encounter.encounterId }}" data-toggle="collapse" data-target="#encounter-summary{{- encounter.encounterId }}">
 	                <span class="show-details">${ ui.message("coreapps.patientDashBoard.showDetails")}</span>
 	                <span class="hide-details">${ ui.message("coreapps.patientDashBoard.hideDetails")}</span>
 	                <i class="icon-caret-right"></i>
