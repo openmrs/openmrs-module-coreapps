@@ -16,7 +16,7 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.eq;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,6 +33,8 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.appui.AppUiConstants;
+import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapperFactory;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapperRepository;
@@ -49,12 +51,18 @@ public class QuickVisitFragmentControllerTest {
 	
 	private UiUtils uiUtils;
 	
+	private UiSessionContext emrContext;
+	
+	private AdtService adtService;
+	
 	@Before
 	public void setUp() {
 		controller = new QuickVisitFragmentController();
 		visitWrapperFactory = mock(VisitDomainWrapperFactory.class);
 		visitWrapperRepository = mock(VisitDomainWrapperRepository.class);
 		uiUtils = mock(UiUtils.class);
+		emrContext = mock(UiSessionContext.class);
+		adtService = mock(AdtService.class);
 	}
 	
 	@Test
@@ -75,8 +83,8 @@ public class QuickVisitFragmentControllerTest {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getSession()).thenReturn(session);
 		
-		FragmentActionResult result = controller.create(visitWrapperFactory, visitWrapperRepository, patient, location,
-		    uiUtils, request);
+		FragmentActionResult result = controller.create(visitWrapperFactory, visitWrapperRepository, adtService, patient, location,
+		    uiUtils, emrContext, request);
 		
 		verify(visitWrapperRepository).persist(visitWrapper);
 		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
