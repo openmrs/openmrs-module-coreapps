@@ -20,11 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.module.appui.AppUiConstants;
+import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapperFactory;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapperRepository;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
+import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,9 +38,17 @@ public class QuickVisitFragmentController {
 	@Transactional
 	public FragmentActionResult create(@SpringBean("emrapiVisitDomainWrapperFactory") VisitDomainWrapperFactory visitWrapperFactory,
 	                                   @SpringBean("emrapiVisitDomainWrapperRepository") VisitDomainWrapperRepository visitWrapperRepository,
+	                                   @SpringBean("adtService") AdtService adtService,
 	                                   @RequestParam("patientId") Patient patient,
 	                                   @RequestParam("locationId") Location location, UiUtils uiUtils,
+	                                   UiSessionContext emrContext,
 	                                   HttpServletRequest request) {
+		
+		Location visitLocation = adtService.getLocationThatSupportsVisits(emrContext.getSessionLocation());
+		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
+		if (activeVisit != null) {
+			return new FailureResult(uiUtils.message("coreapps.activeVisits.alreadyExists"));
+		}
 		
 		VisitDomainWrapper visitWrapper = visitWrapperFactory.createNewVisit(patient, location, new Date());
 		visitWrapperRepository.persist(visitWrapper);
