@@ -265,7 +265,26 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		assertThat(path(parsed.getObs(), 0, "question"), is((Object) consultNote));
 		assertThat(path(parsed.getObs(), 0, "answer"), is((Object) valueText));
 	}
-	
+
+    @Test
+    public void testParsingObsWithLocationAnswer() throws Exception {
+        ConceptDatatype textDatatype = conceptService.getConceptDatatypeByName("Text");
+        ConceptClass misc = conceptService.getConceptClassByName("Misc");
+
+        Location xanadu = new Location();
+        xanadu.setName("Xanadu");
+        when(locationService.getLocation(2)).thenReturn(xanadu);
+
+        Concept someLocation = new ConceptBuilder(conceptService, textDatatype, misc).addName("Some location").get();
+
+        encounter.addObs(new ObsBuilder().setConcept(someLocation).setValue("2").setComment("org.openmrs.Location").get());
+        ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
+;
+        assertThat(parsed.getObs().size(), is(1));
+        assertThat(path(parsed.getObs(), 0, "question"), is((Object) "Some location"));
+        assertThat(path(parsed.getObs(), 0, "answer"), is((Object) "Xanadu"));
+    }
+
 	private Object path(Object simpleObjectOrList, Object... paths) {
 		Object current = simpleObjectOrList;
 		for (Object path : paths) {

@@ -74,9 +74,12 @@ public class ParserEncounterIntoSimpleObjects {
 				parsedObs.getDiagnoses().add(parseDiagnosis(diagnosisMetadata, obs));
 			} else if (dispositionDescriptor != null && dispositionDescriptor.isDisposition(obs)) {
 				parsedObs.getDispositions().add(parseDisposition(dispositionDescriptor, obs, locale));
-			} else {
-				parsedObs.getObs().add(parseObs(obs, locale));
+			} else if ("org.openmrs.Location".equals(obs.getComment())) {
+				parsedObs.getObs().add(parseObsWithLocationAnswer(obs, locationService.getLocation(Integer.valueOf(obs.getValueText()))));
 			}
+            else {
+                parsedObs.getObs().add(parseObs(obs, locale));
+            }
 		}
 		
 		Collections.sort(parsedObs.getDiagnoses(), new Comparator<SimpleObject>() {
