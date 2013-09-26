@@ -29,17 +29,15 @@
         jq('#diagnosis-search').focus();
 
         jq('#consult-note').submit(function() {
-            console.log("consult-note submit");
+
             var newDiagnosis = jq("#diagnosis");
             var submitValue = JSON.parse(newDiagnosis.val());
-            console.log("diagnosis=" + jq("#diagnosis").val());
 
             var valid = viewModel.isValid();
             if (valid) {
                 viewModel.startSubmitting();
             }
             return false;
-            return valid;
         });
     } );
 </script>
