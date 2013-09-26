@@ -1,5 +1,8 @@
 package org.openmrs.module.coreapps.htmlformentry;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -27,9 +30,19 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
     private final Log log = LogFactory.getLog(getClass());
 
+    private static final Transformer PREFIX_WITH_HASH = new Transformer() {
+
+        @Override
+        public Object transform(Object o) {
+            return "#" + (String) o;
+        }
+
+    };
+
     private EmrApiProperties emrApiProperties;
 
     private DispositionFactory dispositionFactory;
+
 
     @Override
     public boolean doStartTag(FormEntrySession session, PrintWriter out, Node parent, Node node) throws BadFormDesignException {
@@ -76,9 +89,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
             // determine if there are any additional observations we need to collect for this disposition
             if (disposition.getAdditionalObs() != null && disposition.getAdditionalObs().size() > 0) {
-                for (DispositionObs additionalObs : disposition.getAdditionalObs()) {
-                    controls.add(buildNewControl(disposition, additionalObs));
-                }
+                controls.add(buildNewControl(disposition, disposition.getAdditionalObs()));
             }
         }
 
@@ -113,13 +124,17 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         this.dispositionFactory = dispositionFactory;
     }
 
-    private Control buildNewControl(Disposition disposition, DispositionObs additionalObs) {
+    private Control buildNewControl(Disposition disposition, List<DispositionObs> additionalObs) {
         Control control = new Control();
         control.setWhenValue(disposition.getConceptCode());
-        control.setThenDisplay(UUID.randomUUID().toString());
-        control.setLabel(additionalObs.getLabel());
-        control.setConceptId(additionalObs.getConceptCode());
-        control.setParams(additionalObs.getParams());
+
+        for (DispositionObs obs : additionalObs) {
+            control.getThenDisplay().add(UUID.randomUUID().toString());
+            control.getLabel().add(obs.getLabel());
+            control.getConceptId().add(obs.getConceptCode());
+            control.getParams().add(obs.getParams());
+        }
+
         return control;
     }
 
@@ -130,7 +145,9 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         for (Control control : controls) {
             Element when = controlsElement.getOwnerDocument().createElement("when");
             when.setAttribute("value", control.getWhenValue());
-            when.setAttribute("thenDisplay", "#" + control.getThenDisplay());
+            List<String> thenDisplay = new ArrayList<String>(control.getThenDisplay());
+            CollectionUtils.transform(thenDisplay, PREFIX_WITH_HASH); // prefix with the hash, since we are referencing by id
+            when.setAttribute("thenDisplay", StringUtils.join(thenDisplay, ","));
             controlsElement.appendChild(when);
         }
 
@@ -140,26 +157,30 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
     private void generateAdditionalObsElements(Node dispositionObsGroup, List<Control> controls) {
 
         for (Control control : controls) {
-            Element p = dispositionObsGroup.getOwnerDocument().createElement("p");
-            p.setAttribute("id", control.getThenDisplay());
-            p.setAttribute("style", "display:none;");
 
-            Element label = dispositionObsGroup.getOwnerDocument().createElement("label");
-            Element uimessage = dispositionObsGroup.getOwnerDocument().createElement("uimessage");
-            uimessage.setAttribute("code", control.getLabel());
-            label.appendChild(uimessage);
-            p.appendChild(label);
+            for (int i = 0; i < control.getThenDisplay().size(); i++) {
 
-            Element obs = dispositionObsGroup.getOwnerDocument().createElement("obs");
-            obs.setAttribute("conceptId", control.getConceptId());
-            if (control.getParams() != null) {
-                for (Map.Entry<String,String> param : control.getParams().entrySet()) {
-                    obs.setAttribute(param.getKey(), param.getValue());
+                Element p = dispositionObsGroup.getOwnerDocument().createElement("p");
+                p.setAttribute("id", control.getThenDisplay().get(i));
+                p.setAttribute("style", "display:none;");
+
+                Element label = dispositionObsGroup.getOwnerDocument().createElement("label");
+                Element uimessage = dispositionObsGroup.getOwnerDocument().createElement("uimessage");
+                uimessage.setAttribute("code", control.getLabel().get(i));
+                label.appendChild(uimessage);
+                p.appendChild(label);
+
+                Element obs = dispositionObsGroup.getOwnerDocument().createElement("obs");
+                obs.setAttribute("conceptId", control.getConceptId().get(i));
+                if (control.getParams() != null) {
+                    for (Map.Entry<String,String> param : control.getParams().get(i).entrySet()) {
+                        obs.setAttribute(param.getKey(), param.getValue());
+                    }
                 }
-            }
-            p.appendChild(obs);
 
-            dispositionObsGroup.appendChild(p);
+                p.appendChild(obs);
+                dispositionObsGroup.appendChild(p);
+            }
         }
     }
 
@@ -167,13 +188,13 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
         private String whenValue;
 
-        private String thenDisplay;
+        private List<String> thenDisplay = new ArrayList<String>();
 
-        private String conceptId;
+        private List<String> conceptId = new ArrayList<String>();
 
-        private String label;
+        private List<String> label = new ArrayList<String>();
 
-        private Map<String, String> params;
+        private List<Map<String, String>> params = new ArrayList<Map<String, String>>();
 
         private String getWhenValue() {
             return whenValue;
@@ -183,35 +204,35 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
             this.whenValue = whenValue;
         }
 
-        private String getThenDisplay() {
+        private List<String> getThenDisplay() {
             return thenDisplay;
         }
 
-        private void setThenDisplay(String thenDisplay) {
+        private void setThenDisplay(List<String> thenDisplay) {
             this.thenDisplay = thenDisplay;
         }
 
-        private String getConceptId() {
+        private List<String> getConceptId() {
             return conceptId;
         }
 
-        private void setConceptId(String conceptId) {
+        private void setConceptId(List<String> conceptId) {
             this.conceptId = conceptId;
         }
 
-        private String getLabel() {
+        private List<String> getLabel() {
             return label;
         }
 
-        private void setLabel(String label) {
+        private void setLabel(List<String> label) {
             this.label = label;
         }
 
-        private Map<String, String> getParams() {
+        private List<Map<String, String>> getParams() {
             return params;
         }
 
-        private void setParams(Map<String, String> params) {
+        private void setParams(List<Map<String, String>> params) {
             this.params = params;
         }
     }
