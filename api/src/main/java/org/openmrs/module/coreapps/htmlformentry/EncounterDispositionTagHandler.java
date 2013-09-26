@@ -5,6 +5,7 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionFactory;
@@ -57,7 +58,8 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         }
 
         Element dispositionObsGroup = node.getOwnerDocument().createElement("obsgroup");
-        dispositionObsGroup.setAttribute("groupingConceptId", "org.openmrs.module.emr:Disposition Concept Set");
+        dispositionObsGroup.setAttribute("groupingConceptId", emrApiProperties.getEmrApiConceptSource().getName() + ":"
+                + EmrApiConstants.CONCEPT_CODE_DISPOSITION_CONCEPT_SET);
 
         // TODO: allow the label text to be overwritten, move the message code  to the coreapps module
         Element label = node.getOwnerDocument().createElement("label");
@@ -70,7 +72,8 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         Element dispositionObs = node.getOwnerDocument().createElement("obs");
         dispositionObs.setAttribute("id", "disposition-" + UUID.randomUUID().toString());
         dispositionObs.setAttribute("style", "dropdown");
-        dispositionObs.setAttribute("conceptId", "org.openmrs.module.emr:Disposition");
+        dispositionObs.setAttribute("conceptId",  emrApiProperties.getEmrApiConceptSource().getName() + ":"
+                + EmrApiConstants.CONCEPT_CODE_DISPOSITION);
         if (((Element) node).hasAttribute("required") && ((Element) node).getAttribute("required").equalsIgnoreCase("true")) {
             dispositionObs.setAttribute("required", "true");
         }

@@ -2,11 +2,11 @@
     {
         "uuid": "d2d89630-b698-11e2-9e96-0800200c9a66",
         "name": "disposition.admission",
-        "conceptCode": "org.openmrs.module.emr: Admit to hospital",
+        "conceptCode": "org.openmrs.module.emrapi: Admit to hospital",
         "actions": [],
         "additionalObs": [
             { "label": "Admission Location",
-              "conceptCode": "org.openmrs.module.emr: Admission Location",
+              "conceptCode": "org.openmrs.module.emrapi: Admission Location",
               "params" : {
                 "style": "location",
                 "required": "true"
@@ -18,13 +18,13 @@
     {
         "uuid": "66de7f60-b73a-11e2-9e96-0800200c9a66",
         "name": "disposition.transfer",
-        "conceptCode": "org.openmrs.module.emr: Transfer out of hospital",
+        "conceptCode": "org.openmrs.module.emrapi: Transfer out of hospital",
         "actions": []
     },
     {
         "uuid": "77d23160-b73a-11e2-9e96-0800200c9a66",
         "name": "disposition.discharged",
-        "conceptCode": "org.openmrs.module.emr: Discharged",
+        "conceptCode": "org.openmrs.module.emrapi: Discharged",
         "actions": []
     }
 ]
