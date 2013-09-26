@@ -74,10 +74,7 @@ public class ParserEncounterIntoSimpleObjects {
 				parsedObs.getDiagnoses().add(parseDiagnosis(diagnosisMetadata, obs));
 			} else if (dispositionDescriptor != null && dispositionDescriptor.isDisposition(obs)) {
 				parsedObs.getDispositions().add(parseDisposition(dispositionDescriptor, obs, locale));
-			} else if ("org.openmrs.Location".equals(obs.getComment())) {
-				parsedObs.getObs().add(parseObsWithLocationAnswer(obs, locationService.getLocation(Integer.valueOf(obs.getValueText()))));
-			}
-            else {
+			} else {
                 parsedObs.getObs().add(parseObs(obs, locale));
             }
 		}
@@ -96,11 +93,16 @@ public class ParserEncounterIntoSimpleObjects {
 	}
 	
 	private SimpleObject parseObs(Obs obs, Locale locale) {
-		SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
+        if ("org.openmrs.Location".equals(obs.getComment())) {
+            return (parseObsWithLocationAnswer(obs, locationService.getLocation(Integer.valueOf(obs.getValueText()))));
+        }
+        else {
+            SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
 
-		simpleObject.put("question", capitalizeString(uiUtils.format(obs.getConcept())));
-		simpleObject.put("answer", uiUtils.format(obs));
-		return simpleObject;
+            simpleObject.put("question", capitalizeString(uiUtils.format(obs.getConcept())));
+            simpleObject.put("answer", uiUtils.format(obs));
+            return simpleObject;
+        }
 	}
 	
 	private SimpleObject parseDisposition(DispositionDescriptor dispositionDescriptor, Obs obs, Locale locale) {
