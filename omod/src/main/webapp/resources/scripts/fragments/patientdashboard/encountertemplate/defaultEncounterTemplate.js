@@ -2,10 +2,10 @@ $(function() {
 	$(document).on('click','.view-details.collapsed', function(event){
         var jqTarget = $(event.currentTarget);
         var encounterId = jqTarget.data("encounter-id");
-        var isHtmlForm = jqTarget.data("encounter-form");
+        var displayWithHtmlForm = jqTarget.data("encounter-form") && jqTarget.data("display-with-html-form");
         var dataTarget = jqTarget.data("target");
         var customTemplateId = jqTarget.data("display-template");
-        getEncounterDetails(encounterId, isHtmlForm, dataTarget, customTemplateId ? customTemplateId : "defaultEncounterDetailsTemplate");
+        getEncounterDetails(encounterId, displayWithHtmlForm, dataTarget, customTemplateId ? customTemplateId : "defaultEncounterDetailsTemplate");
     });
 	    
 	$(document).on('click', '.deleteEncounterId', function(event) {
@@ -34,12 +34,11 @@ $(function() {
 	//net.sourceforge.htmlunit.corejs.javascript.EcmaError: TypeError: Cannot call method "replace" of undefined
     var detailsTemplates = {};
 
-	function getEncounterDetails(id, isHtmlForm, dataTarget, displayTemplateId) {
+	function getEncounterDetails(id, displayWithHtmlForm, dataTarget, displayTemplateId) {
 
 	    var encounterDetailsSection = $(dataTarget + ' .encounter-summary-container');
 
-	    // if this is an html form and no custom display template was specified, use the html form to view the encounter
-        if (isHtmlForm && !displayTemplateId) {
+        if (displayWithHtmlForm) {
 	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
 	        $.getJSON(
 	        		emr.fragmentActionLink("htmlformentryui", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
