@@ -15,6 +15,8 @@ visit.createQuickVisitCreationDialog = function(patientId) {
                     function(data) {
                         jq('#quick-visit-creation-dialog' + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled')
                         visit.reloadPageWithoutVisitId();
+                    },function(err){
+                        visit.reloadPageWithoutVisitId();
                     });
             },
             cancel: function() {
