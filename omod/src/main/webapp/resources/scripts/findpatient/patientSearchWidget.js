@@ -41,8 +41,14 @@ function PatientSearchWidget(configuration){
             //only add the uuid since it is only one we need to reference later
             initialPatientData.push({uuid: p.uuid});
             initialPatientUuids.push(p.uuid);
+            var bdate = p.birthdate;
+            if( p.birthdateEstimated == true){
+                bdate = "~ "+bdate;
+            }else{
+                bdate = "&nbsp;&nbsp; "+bdate;
+            }
             initialData.push([p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
-                p.fullName, p.gender, p.age, p.birthdate]);
+                p.fullName, p.gender, p.age, bdate]);
         });
         searchResultsData = initialPatientData;
     }
@@ -97,8 +103,10 @@ function PatientSearchWidget(configuration){
                 var birthdate = '';
                 if(patient.person.birthdate){
                     birthdate = moment(patient.person.birthdate).format('DD-MMM-YYYY');
-                    if(patient.person.birthdateEstimated){
-                        birthdate= "~ "+birthdate;
+                    if( patient.person.birthdateEstimated ){
+                        birthdate = "~ "+birthdate;
+                    }else{
+                        birthdate = "&nbsp;&nbsp; "+birthdate;
                     }
                 }
                 var identifier = patient.patientIdentifier.identifier;
