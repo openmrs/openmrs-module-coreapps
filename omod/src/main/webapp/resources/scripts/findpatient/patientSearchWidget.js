@@ -64,7 +64,6 @@ function PatientSearchWidget(configuration){
                     'person:(gender,age,birthdate,birthdateEstimated,personName:(fullName)))';
 
     var doSearch = function(query){
-        reset();
         jq('#'+tableId).find('td.dataTables_empty').html(spinnerImage);
         if(!jq('#'+config.searchResultsDivId).is(':visible')){
             jq('#'+config.searchResultsDivId).show();
@@ -147,18 +146,19 @@ function PatientSearchWidget(configuration){
 
     var doKeyEnter = function() {
         if (highlightedKeyboardRowIndex == undefined){
-            clearTimeoutIfNecessary();
+            prepareForNewSearch();
             doSearch(input.val());
             return;
         }
         selectRow(highlightedKeyboardRowIndex);
     }
 
-    var clearTimeoutIfNecessary = function(){
+    var prepareForNewSearch = function(){
         //if there is any search delay in progress, cancel it
         if(searchDelayTimer != undefined){
             window.clearTimeout(searchDelayTimer);
         }
+        reset();
     }
 
     var doKeyDown = function() {
@@ -364,8 +364,7 @@ function PatientSearchWidget(configuration){
             return false;
         }
 
-        //if there is any search delay set, cancel it
-        clearTimeoutIfNecessary();
+        prepareForNewSearch();
 
         var text = jq.trim(input.val());
         if(text.length >= config.minSearchCharacters){
@@ -381,8 +380,8 @@ function PatientSearchWidget(configuration){
             searchDelayTimer = window.setTimeout(function(){
                 doSearch(text);
             }, effectiveSearchDelay);
-        }else{
-            reset();
+
+        }else if( text.length == 0 ){
             updateSearchResults();
         }
 
