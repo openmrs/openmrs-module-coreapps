@@ -61,7 +61,7 @@ function PatientSearchWidget(configuration){
     var keyboardControlKeys = [16,17,18,20,27,35,36,37,39,91,93,224];
     var customRep = 'custom:(uuid,' +
                     'patientIdentifier:(uuid,identifier),' +
-                    'person:(gender,age,birthdate,personName:(fullName)))';
+                    'person:(gender,age,birthdate,birthdateEstimated,personName:(fullName)))';
 
     var doSearch = function(query){
         reset();
@@ -98,6 +98,9 @@ function PatientSearchWidget(configuration){
                 var birthdate = '';
                 if(patient.person.birthdate){
                     birthdate = moment(patient.person.birthdate).format('DD-MMM-YYYY');
+                    if(patient.person.birthdateEstimated){
+                        birthdate= "~ "+birthdate;
+                    }
                 }
                 var identifier = patient.patientIdentifier.identifier;
                 if(_.contains(initialPatientUuids, patient.uuid)){
