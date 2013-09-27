@@ -1,6 +1,6 @@
 <div class="contact-info-inline">
     <span>
-        ${ ui.format(config.patient.personAddress)}
+        ${ ui.format(config.patient.personAddress).replace("\n", ", ")}
         <em>${ ui.message("coreapps.person.address")}</em>
     </span>
     <span class="left-margin">
