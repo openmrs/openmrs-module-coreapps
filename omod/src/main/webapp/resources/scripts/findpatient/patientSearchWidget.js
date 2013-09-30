@@ -31,6 +31,7 @@ function PatientSearchWidget(configuration){
     var searchDelayShort = 300;
     var searchDelayLong = 1000;
     var searchDelayTimer;
+    var requestCount = 0;
     var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/patient';
     var initialData = [];
     var initialPatientData = [];
@@ -69,7 +70,7 @@ function PatientSearchWidget(configuration){
                     'patientIdentifier:(uuid,identifier),' +
                     'person:(gender,age,birthdate,birthdateEstimated,personName:(fullName)))';
 
-    var doSearch = function(query){
+    var doSearch = function(query, currRequestCount){
         jq('#'+tableId).find('td.dataTables_empty').html(spinnerImage);
         if(!jq('#'+config.searchResultsDivId).is(':visible')){
             jq('#'+config.searchResultsDivId).show();
@@ -77,12 +78,15 @@ function PatientSearchWidget(configuration){
         query = jq.trim(query);
         jq.getJSON(url, {v: customRep, q: query })
         .done(function(data) {
-            if(data){
+            //late ajax responses should be ignored not to overwrite the latest
+            if(data && (!currRequestCount || currRequestCount >= requestCount)){
                 updateSearchResults(data.results);
             }
         })
         .fail(function() {
-            jq('#'+tableId).find('td.dataTables_empty').html("<span class='patient-search-error'>"+config.messages.searchError+"</span>");
+            if(!currRequestCount || currRequestCount >= requestCount){
+                jq('#'+tableId).find('td.dataTables_empty').html("<span class='patient-search-error'>"+config.messages.searchError+"</span>");
+            }
         });
     }
 
@@ -92,7 +96,7 @@ function PatientSearchWidget(configuration){
         pageCount = 0;
         highlightedKeyboardRowIndex = undefined;
         highlightedMouseRowIndex = undefined;
-        jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noMatchesFound);
+        jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noData);
     }
 
     var updateSearchResults = function(results){
@@ -382,11 +386,11 @@ function PatientSearchWidget(configuration){
             if(config.minSearchCharacters < 3 && text.length < 3){
                 effectiveSearchDelay = searchDelayLong;
             }
-
+            var currentCount = ++requestCount;
             //wait for a couple of milliseconds, if the user isn't typing anymore chars before triggering search
             //this minimizes the number of un-necessary calls made to the server for first typists
             searchDelayTimer = window.setTimeout(function(){
-                doSearch(text);
+                doSearch(text, currentCount);
             }, effectiveSearchDelay);
 
         }else if( text.length == 0 ){
