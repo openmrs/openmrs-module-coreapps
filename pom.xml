@@ -42,7 +42,7 @@
         <idgenVersion>2.6</idgenVersion>
         <addresshierarchyVersion>2.2.9</addresshierarchyVersion>
         <webservicesRestVersion>2.1</webservicesRestVersion>
-        <uicommonsVersion>1.0-SNAPSHOT</uicommonsVersion>
+        <uicommonsVersion>1.0</uicommonsVersion>
         <htmlformentryVersion>2.2</htmlformentryVersion>
         <providermanagementVersion>1.1.3</providermanagementVersion>
 	</properties>
