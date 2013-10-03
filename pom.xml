@@ -37,8 +37,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<appframeworkVersion>2.0</appframeworkVersion>
         <uiframeworkVersion>3.0</uiframeworkVersion>
-        <emrapiVersion>1.0-SNAPSHOT</emrapiVersion>
-        <appuiVersion>1.0-SNAPSHOT</appuiVersion>
+        <emrapiVersion>1.0</emrapiVersion>
+        <appuiVersion>1.0</appuiVersion>
         <idgenVersion>2.6</idgenVersion>
         <addresshierarchyVersion>2.2.9</addresshierarchyVersion>
         <webservicesRestVersion>2.1</webservicesRestVersion>
