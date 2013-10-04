@@ -62,12 +62,13 @@ function createDeleteEncounterDialog(encounterId, deleteElement) {
         selector: '#delete-encounter-dialog',
         actions: {
             confirm: function() {
+                jq('#delete-encounter-dialog' + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
                 emr.getFragmentActionWithCallback('coreapps', 'visit/visitDetails', 'deleteEncounter'
                     , { encounterId: encounterId}
                     , function(data) {
-                        jq('#delete-encounter-dialog' + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
                         emr.successMessage(data.message);
                         deleteEncounterDialog.close();
+                        jq('#delete-encounter-dialog' + ' .icon-spin').css('display', 'none').parent().removeClass('disabled');
                         var visitId = deleteElement.attr("data-visit-id");
                         var encounterElement = deleteElement.parents("li:first");
                         if(encounterElement!=null && encounterElement!=undefined){
@@ -78,6 +79,7 @@ function createDeleteEncounterDialog(encounterId, deleteElement) {
                     },function(err){
                         emr.handleError(err);
                         deleteEncounterDialog.close();
+                        jq('#delete-encounter-dialog' + ' .icon-spin').css('display', 'none').parent().removeClass('disabled');
                     });
             },
             cancel: function() {
