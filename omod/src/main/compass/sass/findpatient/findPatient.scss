@@ -65,17 +65,6 @@ $green: #51A351;
     cursor: default;
     color: #363463;
   }
-
-  .ui-state-disabled {
-    display: none;
-  }
-
-  .ui-state-default.ui-button {
-    border: 0;
-    background: white;
-    color: $link;
-    cursor: pointer;
-  }
 }
 
 .search_table_row_highlight{
