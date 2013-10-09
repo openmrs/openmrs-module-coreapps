@@ -32,7 +32,7 @@ function PatientSearchWidget(configuration){
     var searchDelayLong = 1000;
     var searchDelayTimer;
     var requestCount = 0;
-    var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/patient';
+    var searchUrl = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/patient';
     var initialData = [];
     var initialPatientData = [];
     var initialPatientUuids = [];
@@ -76,14 +76,22 @@ function PatientSearchWidget(configuration){
             jq('#'+config.searchResultsDivId).show();
         }
         query = jq.trim(query);
-        jq.getJSON(url, {v: customRep, q: query })
+        jq.ajax({url:searchUrl, data:{q: query, v: customRep },
+            beforeSend:function(jqXHR){
+                jqXHR.setRequestHeader("Disable-WWW-Authenticate", "true");
+            }
+        })
         .done(function(data) {
             //late ajax responses should be ignored not to overwrite the latest
             if(data && (!currRequestCount || currRequestCount >= requestCount)){
                 updateSearchResults(data.results);
             }
         })
-        .fail(function() {
+        .fail(function(jqXHR){
+            if(jqXHR.status == 401){
+                window.location = "/" + OPENMRS_CONTEXT_PATH+"/login.htm";
+                return;
+            }
             if(!currRequestCount || currRequestCount >= requestCount){
                 jq('#'+tableId).find('td.dataTables_empty').html("<span class='patient-search-error'>"+config.messages.searchError+"</span>");
             }
