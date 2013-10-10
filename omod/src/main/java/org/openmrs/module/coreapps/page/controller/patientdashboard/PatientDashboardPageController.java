@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.coreapps.page.controller.patientdashboard;
 
-import org.apache.http.HttpRequest;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.script.Bindings;
 import javax.script.SimpleBindings;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 
@@ -96,16 +94,6 @@ public class PatientDashboardPageController {
         model.addAttribute("includeFragments", includeFragments);
 		
 		List<Extension> visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions");
-
-        // TODO this is a whole block can be removed once this feature is enabled
-        if (!featureToggleProperties.isFeatureEnabled("orderRadiologyRetrospective"))  {
-            for (Extension visitAction : visitActions) {
-                if (visitAction.getId().equals("org.openmrs.module.radiologyapp.orderXray") ||
-                        visitAction.getId().equals("org.openmrs.module.radiologyapp.orderCT")) {
-                       visitAction.setRequire("visit.active");
-                }
-            }
-        }
 
 		Collections.sort(visitActions);
 		model.addAttribute("visitActions", visitActions);
