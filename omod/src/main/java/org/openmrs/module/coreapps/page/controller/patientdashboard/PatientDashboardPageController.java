@@ -20,6 +20,7 @@ import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.event.ApplicationEventService;
@@ -37,10 +38,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class PatientDashboardPageController {
-	
-	private static final String ENCOUNTER_TEMPLATE_EXTENSION = "org.openmrs.referenceapplication.encounterTemplate";
-	
-	public Object controller(@RequestParam("patientId") Patient patient,
+
+    public Object controller(@RequestParam("patientId") Patient patient,
 	                       @RequestParam(value = "tab", defaultValue = "visits") String selectedTab,
 						   @RequestParam(value = "returnUrl", required = false) String returnUrl, PageModel model,
 	                       @InjectBeans PatientDomainWrapper patientDomainWrapper,
@@ -75,7 +74,7 @@ public class PatientDashboardPageController {
 		model.addAttribute("activeVisit", activeVisit);
 
 		List<Extension> encounterTemplateExtensions = appFrameworkService
-		        .getExtensionsForCurrentUser(ENCOUNTER_TEMPLATE_EXTENSION);
+		        .getExtensionsForCurrentUser(CoreAppsConstants.ENCOUNTER_TEMPLATE_EXTENSION);
 		model.addAttribute("encounterTemplateExtensions", encounterTemplateExtensions);
 
 

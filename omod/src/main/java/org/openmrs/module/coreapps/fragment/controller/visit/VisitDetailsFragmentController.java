@@ -15,7 +15,10 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterProvider;
+import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
+import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.api.APIAuthenticationException;
@@ -23,7 +26,9 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
+import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiConstants;
@@ -42,11 +47,14 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class VisitDetailsFragmentController {
 
-    public SimpleObject getVisitDetails(@SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
-                                        @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
+    public SimpleObject getVisitDetails(@SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
+                                        @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
+                                        @SpringBean("encounterService") EncounterService encounterService,
                                         @RequestParam("visitId") Visit visit, UiUtils uiUtils,
                                         UiSessionContext sessionContext) throws ParseException {
 
@@ -74,7 +82,8 @@ public class VisitDetailsFragmentController {
 
         List<SimpleObject> encounters = new ArrayList<SimpleObject>();
         for (Encounter encounter : visitWrapper.getSortedEncounters()) {
-            encounters.add(createEncounterJSON(uiUtils, authenticatedUser, canDelete, canEdit, encounter));
+            encounters.add(createEncounterJSON(appFrameworkService, encounterService, uiUtils, authenticatedUser,
+                    canDelete, canEdit, encounter));
         }
         simpleObject.put("encounters", encounters);
 
@@ -165,8 +174,10 @@ public class VisitDetailsFragmentController {
 		return new SuccessResult(ui.message("coreapps.task.endVisit.successMessage"));
 	}
 
-    private SimpleObject createEncounterJSON(UiUtils uiUtils, User authenticatedUser, boolean canDelete, boolean canEdit, Encounter encounter) {
-        SimpleObject simpleEncounter = SimpleObject.fromObject(new EncounterDomainWrapper(encounter), uiUtils, "encounterId", "primaryProvider",
+    private SimpleObject createEncounterJSON(AppFrameworkService appFrameworkService, EncounterService encounterService,
+                                             UiUtils uiUtils, User authenticatedUser, boolean canDelete, boolean canEdit, Encounter encounter) {
+
+        SimpleObject simpleEncounter = SimpleObject.fromObject(new EncounterDomainWrapper(encounter), uiUtils, "encounterId",
                 "location", "encounterDatetime", "encounterProviders.provider", "voided", "form");
 
         // manually set the date and time components so we can control how we format them
@@ -178,6 +189,25 @@ public class VisitDetailsFragmentController {
         EncounterType encounterType = encounter.getEncounterType();
         simpleEncounter.put("encounterType",
                 SimpleObject.create("uuid", encounterType.getUuid(), "name", uiUtils.format(encounterType)));
+
+        // determine the provider
+        Provider primaryProvider = null;
+
+        // if a primary encounter role has been specified, get the provider for that role
+        EncounterRole primaryEncounterRole = getPrimaryEncounterRoleForEncounter(appFrameworkService, encounterService, encounter);
+        if (primaryEncounterRole != null) {
+            Set<Provider> providers = encounter.getProvidersByRole(primaryEncounterRole);
+            if (providers != null && !providers.isEmpty()) {
+                // for now, if there are multiple providers with this role, return an arbitrary one
+                primaryProvider = providers.iterator().next();
+            }
+        }
+
+        // otherwise, just pick an arbitrary (non-voided) provider
+        if (primaryProvider == null) {
+            primaryProvider = getFirstNonVoidedProvider(encounter);
+        }
+        simpleEncounter.put("primaryProvider", uiUtils.format(primaryProvider));
 
         if (verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete)) {
             simpleEncounter.put("canDelete", true);
@@ -204,5 +234,43 @@ public class VisitDetailsFragmentController {
         EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
         boolean userParticipatedInEncounter = encounterDomainWrapper.participatedInEncounter(authenticatedUser);
         return canEdit || userParticipatedInEncounter;
+    }
+
+    private EncounterRole getPrimaryEncounterRoleForEncounter(AppFrameworkService appFrameworkService,
+                                                              EncounterService encounterService, Encounter encounter) {
+
+        // TODO this whole thing seems a bit back-to-front
+        List<Extension> encounterTemplateExtensions = appFrameworkService
+                .getExtensionsForCurrentUser(CoreAppsConstants.ENCOUNTER_TEMPLATE_EXTENSION);
+
+        for (Extension extension : encounterTemplateExtensions) {
+            Object supportedEncounterTypes = extension.getExtensionParams().get("supportedEncounterTypes");
+
+            if (supportedEncounterTypes != null) {
+                for (String encounterTypeUuid : ((Map<String,Object>) supportedEncounterTypes).keySet()) {
+                    if (encounterTypeUuid.equals(encounter.getEncounterType().getUuid())) {
+                        Object primaryEncounterRole = ((Map<String,Object>) ((Map<String, Object>) supportedEncounterTypes)
+                                .get(encounterTypeUuid)).get("primaryEncounterRole");
+                        if (primaryEncounterRole != null) {
+                            return encounterService.getEncounterRoleByUuid((String) primaryEncounterRole);
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private Provider getFirstNonVoidedProvider(Encounter encounter) {
+        for (EncounterProvider provider : encounter.getEncounterProviders()) {
+            if (!provider.isVoided()) {
+                return provider.getProvider();
+            }
+        }
+        return null;
     }
 }
