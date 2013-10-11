@@ -1,5 +1,6 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
+    ui.includeJavascript("uicommons", "datatables/jquery.dataTables.min.js")
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -57,3 +58,23 @@
 		<% } %>
 	</tbody>
 </table>
+
+
+<script type="text/javascript">
+    var visitSummaries = "${ visitSummaries != null ? visitSummaries.size() : 0 }";
+
+    jq(function() {
+
+        if (parseInt (visitSummaries, 10) > 0 ) {
+            jq("#active-visits").dataTable({
+                bFilter: false,
+                bJQueryUI: true,
+                bLengthChange: false,
+                iDisplayLength: 10,
+                sPaginationType: "full_numbers",
+                bSort: false,
+                sDom: 't<"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg"ip>'
+            });
+        }
+    });
+</script>
