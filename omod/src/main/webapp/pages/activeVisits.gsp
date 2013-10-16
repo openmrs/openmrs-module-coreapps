@@ -67,13 +67,13 @@
 
         if (parseInt (visitSummaries, 10) > 0 ) {
             jq("#active-visits").dataTable({
-                bFilter: false,
+                bFilter: true,
                 bJQueryUI: true,
                 bLengthChange: false,
                 iDisplayLength: 10,
                 sPaginationType: "full_numbers",
                 bSort: false,
-                sDom: 't<"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg"ip>'
+                sDom: 'ft<"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg "ip>'
             });
         }
     });
