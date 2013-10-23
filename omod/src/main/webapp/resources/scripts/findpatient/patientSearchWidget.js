@@ -76,11 +76,7 @@ function PatientSearchWidget(configuration){
             jq('#'+config.searchResultsDivId).show();
         }
         query = jq.trim(query);
-        jq.ajax({url:searchUrl, data:{q: query, v: customRep },
-            beforeSend:function(jqXHR){
-                jqXHR.setRequestHeader("Disable-WWW-Authenticate", "true");
-            }
-        })
+        emr.getJSON(searchUrl, {q: query, v: customRep })
         .done(function(data) {
             //late ajax responses should be ignored not to overwrite the latest
             if(data && (!currRequestCount || currRequestCount >= requestCount)){
@@ -88,10 +84,6 @@ function PatientSearchWidget(configuration){
             }
         })
         .fail(function(jqXHR){
-            if(jqXHR.status == 401){
-                window.location = "/" + OPENMRS_CONTEXT_PATH+"/login.htm";
-                return;
-            }
             if(!currRequestCount || currRequestCount >= requestCount){
                 jq('#'+tableId).find('td.dataTables_empty').html("<span class='patient-search-error'>"+config.messages.searchError+"</span>");
             }
