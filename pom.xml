@@ -21,9 +21,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:git:git@github.com:openmrs/openmrs-module-coreapps.git</connection>
-		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-coreapps.git</developerConnection>
-		<url>scm:git:git@github.com:openmrs/openmrs-module-coreapps.git</url>
+		<connection>scm:git:https://github.com/openmrs/openmrs-module-coreapps</connection>
+		<developerConnection>scm:git:https://github.com/openmrs/openmrs-module-coreapps</developerConnection>
+		<url>https://github.com/openmrs/openmrs-module-coreapps</url>
 	  <tag>HEAD</tag>
   </scm>
 
