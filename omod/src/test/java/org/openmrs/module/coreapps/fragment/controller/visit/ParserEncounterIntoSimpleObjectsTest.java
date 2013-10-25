@@ -34,6 +34,7 @@ import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.DispositionObs;
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.emrapi.test.MockMetadataTestUtil;
 import org.openmrs.module.emrapi.test.builder.ConceptBuilder;
 import org.openmrs.module.emrapi.test.builder.ObsBuilder;
@@ -70,6 +71,8 @@ public class ParserEncounterIntoSimpleObjectsTest {
 	private ConceptService conceptService;
 
     private LocationService locationService;
+
+    private DispositionService dispositionService;
 	
 	private UiUtils uiUtils;
 	
@@ -82,20 +85,22 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		emrApiProperties = mock(EmrApiProperties.class);
 		conceptService = mock(ConceptService.class);
         locationService = mock(LocationService.class);
+        dispositionService = mock(DispositionService.class);
 		
 		MockMetadataTestUtil.setupMockConceptService(conceptService, emrApiProperties);
 		
 		emrConceptService = mock(EmrConceptService.class);
 		
 		diagnosisMetadata = MockMetadataTestUtil.setupDiagnosisMetadata(emrApiProperties, conceptService);
-		dispositionDescriptor = MockMetadataTestUtil.setupDispositionDescriptor(emrApiProperties, conceptService);
-		
+		dispositionDescriptor = MockMetadataTestUtil.setupDispositionDescriptor(conceptService);
+		when(dispositionService.getDispositionDescriptor()).thenReturn(dispositionDescriptor);
+
 		TestUiUtils testUiUtils = new TestUiUtils();
 		testUiUtils.setMockFormattingConcepts(true);
 		uiUtils = testUiUtils;
 		
 		encounter = new Encounter();
-		parser = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties, locationService);
+		parser = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties, locationService, dispositionService);
 	}
 	
 	@Test

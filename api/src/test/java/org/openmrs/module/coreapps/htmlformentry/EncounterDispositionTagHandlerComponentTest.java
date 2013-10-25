@@ -13,7 +13,7 @@ import org.openmrs.module.coreapps.CoreAppsActivator;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
-import org.openmrs.module.emrapi.disposition.DispositionFactory;
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.emrapi.test.ContextSensitiveMetadataTestUtils;
 import org.openmrs.module.emrapi.test.builder.ConceptBuilder;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
@@ -43,14 +43,14 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleConte
     private EmrApiProperties emrApiProperties;
 
    @Autowired
-   private DispositionFactory dispositionFactory;
+   private DispositionService dispositionService;
 
     @Before
     public void setUp() throws Exception {
-        ContextSensitiveMetadataTestUtils.setupDispositionDescriptor(conceptService, emrApiProperties);
-        EncounterDispositionTagHandler tagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionFactory);
+        ContextSensitiveMetadataTestUtils.setupDispositionDescriptor(conceptService, dispositionService);
+        EncounterDispositionTagHandler tagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService);
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, tagHandler);
-        dispositionFactory.setDispositionConfig("coreappsTestDispositionConfig.json");  // we use a custom name so as to not clash with the test one in the emr-api module
+        dispositionService.setDispositionConfig("coreappsTestDispositionConfig.json");  // we use a custom name so as to not clash with the test one in the emr-api module
     }
 
     @Test
@@ -58,7 +58,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleConte
 
         ConceptClass misc = conceptService.getConceptClassByName("Misc");
         ConceptDatatype naDatatype = conceptService.getConceptDatatypeByName("N/A");
-        Concept dispositionConcept = emrApiProperties.getDispositionDescriptor().getDispositionConcept();
+        Concept dispositionConcept = dispositionService.getDispositionDescriptor().getDispositionConcept();
         dispositionConcept.addAnswer(new ConceptAnswer(new ConceptBuilder(conceptService, naDatatype, misc).addName("Should not be in option list").saveAndGet()));
 
         new RegressionTestHelper() {
@@ -102,7 +102,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleConte
     public void testEnteringForm() throws Exception {
         final Date date = new Date();
 
-        final DispositionDescriptor dispositionDescriptor = emrApiProperties.getDispositionDescriptor();
+        final DispositionDescriptor dispositionDescriptor = dispositionService.getDispositionDescriptor();
         final Concept randomDisposition = dispositionDescriptor.getDispositionConcept().getAnswers().iterator().next().getAnswerConcept();
 
         new RegressionTestHelper() {

@@ -33,6 +33,7 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
@@ -106,10 +107,11 @@ public class VisitDetailsFragmentController {
     public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
                                             @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                                             @SpringBean("locationService") LocationService locationService,
+                                            @SpringBean("dispositionService") DispositionService dispositionService,
                                             UiUtils uiUtils) {
 
         ParserEncounterIntoSimpleObjects parserEncounter = new ParserEncounterIntoSimpleObjects(encounter, uiUtils,
-                emrApiProperties, locationService);
+                emrApiProperties, locationService, dispositionService);
 
         ParsedObs parsedObs = parserEncounter.parseObservations(uiUtils.getLocale());
         List<SimpleObject> orders = parserEncounter.parseOrders();

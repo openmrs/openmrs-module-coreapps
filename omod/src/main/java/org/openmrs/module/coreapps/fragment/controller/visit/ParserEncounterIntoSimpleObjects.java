@@ -22,6 +22,7 @@ import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 
@@ -40,13 +41,17 @@ public class ParserEncounterIntoSimpleObjects {
 	private EmrApiProperties emrApiProperties;
 
     private LocationService locationService;
-	
-	public ParserEncounterIntoSimpleObjects(Encounter encounter, UiUtils uiUtils, EmrApiProperties emrApiProperties, LocationService locationService) {
-		this.encounter = encounter;
-		this.uiUtils = uiUtils;
-		this.emrApiProperties = emrApiProperties;
+
+    private DispositionService dispositionService;
+
+    public ParserEncounterIntoSimpleObjects(Encounter encounter, UiUtils uiUtils, EmrApiProperties emrApiProperties,
+                                            LocationService locationService, DispositionService dispositionService) {
+        this.encounter = encounter;
+        this.uiUtils = uiUtils;
+        this.emrApiProperties = emrApiProperties;
         this.locationService = locationService;
-	}
+        this.dispositionService = dispositionService;
+    }
 	
 	public List<SimpleObject> parseOrders() {
 		List<SimpleObject> orders = new ArrayList<SimpleObject>();
@@ -62,7 +67,7 @@ public class ParserEncounterIntoSimpleObjects {
 		DiagnosisMetadata diagnosisMetadata = emrApiProperties.getDiagnosisMetadata();
 		DispositionDescriptor dispositionDescriptor = null;
         try {
-            dispositionDescriptor = emrApiProperties.getDispositionDescriptor();
+            dispositionDescriptor = dispositionService.getDispositionDescriptor();
         } catch (IllegalStateException ex) {
             // No problem. We do not require dispositions to be configured here
         }
