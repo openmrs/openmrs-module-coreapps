@@ -13,9 +13,9 @@
 %>
 <script type="text/javascript">
     var formatTemplate;
-    var instructionsTemplate = '${ ui.escapeJs(ui.message("coreapps.dataManagement.replaceNonCoded")) }';
+    var instructionsTemplate = null;
 
-    var patientDashboardLink = '${ui.pageLink("coreapps", "patientdashboard/patientDashboard")}';
+    var patientDashboardLink = null;
 
     var formatAutosuggestion = function(item) {
         return item ? formatTemplate({ item: item }) : "";

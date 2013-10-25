@@ -5,7 +5,7 @@ function showCodeDiagnosisDialog (patientId, visitId, patientIdentifier, personN
     jq("#hiddenNonCodedObsId").val(obsId);
 
     patientDashboardLink = patientDashboardLink + "?patientId=" + patientId + "&visitId=" + visitId;
-    instructionsTemplate= instructionsTemplate.replace("{1}", "<span><b>" + nonCodedDiagnosis + "</b></span>" );
+    instructionsTemplate = instructionsTemplate.replace("{1}", "<span><b>" + nonCodedDiagnosis + "</b></span>" );
     instructionsTemplate = instructionsTemplate.replace("{2}",
             "<span><b><a href="
             + patientDashboardLink + ">" + personName  + " (" + patientIdentifier + " )"
@@ -16,6 +16,7 @@ function showCodeDiagnosisDialog (patientId, visitId, patientIdentifier, personN
 }
 
 function createCodeDiagnosisDialog() {
+    codeDiagnosisDialog = null;
     codeDiagnosisDialog = emr.setupConfirmationDialog({
         selector: '#code-diagnosis-dialog',
         actions: {
