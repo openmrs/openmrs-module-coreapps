@@ -8,8 +8,8 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.disposition.Disposition;
-import org.openmrs.module.emrapi.disposition.DispositionFactory;
 import org.openmrs.module.emrapi.disposition.DispositionObs;
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.htmlformentry.BadFormDesignException;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.handler.AbstractTagHandler;
@@ -42,7 +42,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
     private EmrApiProperties emrApiProperties;
 
-    private DispositionFactory dispositionFactory;
+    private DispositionService dispositionService;
 
 
     @Override
@@ -51,7 +51,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         List<Disposition> dispositions = null;
 
         try {
-            dispositions = dispositionFactory.getDispositions();
+            dispositions = dispositionService.getDispositions();
         }
         catch (IOException e) {
             throw new RuntimeException("Unable to load dispositions", e);
@@ -123,8 +123,8 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         this.emrApiProperties = emrApiProperties;
     }
 
-    public void setDispositionFactory(DispositionFactory dispositionFactory) {
-        this.dispositionFactory = dispositionFactory;
+    public void setDispositionService(DispositionService dispositionService) {
+        this.dispositionService = dispositionService;
     }
 
     private Control buildNewControl(Disposition disposition, List<DispositionObs> additionalObs) {

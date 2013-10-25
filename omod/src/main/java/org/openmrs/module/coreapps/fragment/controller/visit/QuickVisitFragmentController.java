@@ -13,18 +13,15 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Visit;
+import org.openmrs.api.VisitService;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
-import org.openmrs.module.emrapi.visit.VisitDomainWrapperFactory;
-import org.openmrs.module.emrapi.visit.VisitDomainWrapperRepository;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
@@ -33,30 +30,38 @@ import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+
 public class QuickVisitFragmentController {
 	
 	@Transactional
-	public FragmentActionResult create(@SpringBean("emrapiVisitDomainWrapperFactory") VisitDomainWrapperFactory visitWrapperFactory,
-	                                   @SpringBean("emrapiVisitDomainWrapperRepository") VisitDomainWrapperRepository visitWrapperRepository,
+	public FragmentActionResult create(@SpringBean("visitService") VisitService visitService,
 	                                   @SpringBean("adtService") AdtService adtService,
+                                       @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
 	                                   @RequestParam("patientId") Patient patient,
 	                                   @RequestParam("locationId") Location location, UiUtils uiUtils,
 	                                   UiSessionContext emrContext,
 	                                   HttpServletRequest request) {
 		
-		Location visitLocation = adtService.getLocationThatSupportsVisits(emrContext.getSessionLocation());
+		Location visitLocation = adtService.getLocationThatSupportsVisits(location);
 		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
 		if (activeVisit != null) {
 			return new FailureResult(uiUtils.message("coreapps.activeVisits.alreadyExists"));
 		}
-		
-		VisitDomainWrapper visitWrapper = visitWrapperFactory.createNewVisit(patient, location, new Date());
-		visitWrapperRepository.persist(visitWrapper);
-		
+
+        Visit visit = new Visit();
+        visit.setPatient(patient);
+        visit.setLocation(visitLocation);
+        visit.setStartDatetime(new Date());
+        visit.setVisitType(emrApiProperties.getAtFacilityVisitType());
+        visitService.saveVisit(visit);
+
 		request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
 		    uiUtils.message("coreapps.visit.createQuickVisit.successMessage", uiUtils.format(patient)));
 		request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 		
 		return new SuccessResult();
 	}
+
 }
