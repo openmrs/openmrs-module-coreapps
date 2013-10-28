@@ -16,9 +16,7 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
-import org.openmrs.api.VisitService;
 import org.openmrs.module.appui.AppUiConstants;
-import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.UiUtils;
@@ -34,9 +32,7 @@ import java.util.Date;
 public class VisitFragmentController {
 	
 	@Transactional
-	public FragmentActionResult start(@SpringBean("visitService") VisitService visitService,
-	                                  @SpringBean("adtService") AdtService adtService,
-                                      @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
+	public FragmentActionResult start(@SpringBean("adtService") AdtService adtService,
 	                                  @RequestParam("patientId") Patient patient,
 	                                  @RequestParam("locationId") Location location,
 	                                  @RequestParam(value = "stopActiveVisit", required = false) Boolean stopActive,
@@ -49,14 +45,9 @@ public class VisitFragmentController {
 				adtService.closeAndSaveVisit(visit);
 			}
 		}
+
 		// create new visit and save it
-        Location visitLocation = adtService.getLocationThatSupportsVisits(location);
-        Visit visit = new Visit();
-        visit.setPatient(patient);
-        visit.setLocation(visitLocation);
-        visit.setStartDatetime(new Date());
-        visit.setVisitType(emrApiProperties.getAtFacilityVisitType());
-        visitService.saveVisit(visit);
+        adtService.ensureVisit(patient, new Date(), location);
 
 		request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
 		    uiUtils.message("emr.visit.createQuickVisit.successMessage", uiUtils.format(patient)));
