@@ -16,7 +16,6 @@ import org.openmrs.module.htmlformentry.handler.AbstractTagHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,12 +49,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
         List<Disposition> dispositions = null;
 
-        try {
-            dispositions = dispositionService.getDispositions();
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Unable to load dispositions", e);
-        }
+        dispositions = dispositionService.getDispositions();
 
         Element dispositionObsGroup = node.getOwnerDocument().createElement("obsgroup");
         dispositionObsGroup.setAttribute("groupingConceptId", emrApiProperties.getEmrApiConceptSource().getName() + ":"
