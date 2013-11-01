@@ -16,6 +16,9 @@ function showCodeDiagnosisDialog (patientId, visitId, patientIdentifier, personN
 }
 
 function createCodeDiagnosisDialog() {
+    viewModel =ConsultFormViewModel();
+    formatTemplate = _.template(jq('#autocomplete-render-template').html());
+    ko.applyBindings(viewModel, jq('#contentForm').get(0));
     codeDiagnosisDialog = null;
     codeDiagnosisDialog = emr.setupConfirmationDialog({
         selector: '#code-diagnosis-dialog',

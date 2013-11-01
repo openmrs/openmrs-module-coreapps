@@ -12,7 +12,7 @@
     ui.includeCss("mirebalais", "consult.css", -200)
 %>
 <script type="text/javascript">
-    var formatTemplate;
+    var formatTemplate = null;
     var instructionsTemplate = null;
 
     var patientDashboardLink = null;
@@ -21,11 +21,10 @@
         return item ? formatTemplate({ item: item }) : "";
     };
 
-    var viewModel = ConsultFormViewModel();
+    var viewModel = null;
 
     jq(function() {
-        formatTemplate = _.template(jq('#autocomplete-render-template').html());
-        ko.applyBindings(viewModel, jq('#contentForm').get(0));
+
         jq('#diagnosis-search').focus();
 
         jq('#consult-note').submit(function() {
