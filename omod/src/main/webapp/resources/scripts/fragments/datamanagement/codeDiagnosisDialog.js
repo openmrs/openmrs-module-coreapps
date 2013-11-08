@@ -26,6 +26,7 @@ function createCodeDiagnosisDialog() {
             confirm: function() {
                 var newDiagnoses = jq("input[name='diagnosis']");
                 var diagnosesArray = new Array();
+                var obsId = jq("#hiddenNonCodedObsId").val();
                 jq.each(newDiagnoses, function(i, item) {
                     var newDiagnosis = jq.parseJSON(jq(item).val());
                     diagnosesArray.push(newDiagnosis);
@@ -33,15 +34,12 @@ function createCodeDiagnosisDialog() {
 
                 emr.getFragmentActionWithCallback('coreapps', 'diagnoses', 'codeDiagnosis'
                     , { patientId: jq("#hiddenPatientId").val(),
-                        nonCodedObsId: jq("#hiddenNonCodedObsId").val(),
+                        nonCodedObsId: obsId,
                         diagnosis: JSON.stringify(diagnosesArray) }
                     , function(data) {
                         emr.successMessage(data.message);
+                        jq("#obs-id-" + obsId).remove();
                         codeDiagnosisDialog.close();
-                        emr.navigateTo({
-                            provider: 'mirebalaisreports',
-                            page: 'nonCodedDiagnoses'
-                        });
                     });
             },
             cancel: function() {
