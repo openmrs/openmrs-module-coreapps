@@ -20,7 +20,7 @@
 		</tr>
 	</thead>
 	<tbody>
-        <% if (visitSummaries.size() == 0) { %>
+        <% if (visitSummaries == null || (visitSummaries !=null && visitSummaries.size() == 0) ) { %>
             <tr>
                 <td colspan="4">${ ui.message("coreapps.none") }</td>
             </tr>
@@ -58,7 +58,7 @@
 	</tbody>
 </table>
 
-
+<% if (visitSummaries !=null && visitSummaries.size() > 0) { %>
 ${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#active-visits",
                                                          options: [
                                                                      bFilter: true,
@@ -70,3 +70,4 @@ ${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#active-visits
                                                                      sDom: '\'ft<\"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg \"ip>\''
                                                                   ]
                                                         ]) }
+<% } %>
