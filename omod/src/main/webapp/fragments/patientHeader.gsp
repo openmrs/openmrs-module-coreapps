@@ -95,7 +95,7 @@
                     ${ui.message("coreapps.unknownAge")}
                 <% } %>
                 </span>
-                <% if(!config.hideEditDemographicsButton){ %>
+                <% if(!config.hideEditDemographicsButton) { %>
                     <span>
                         <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}&returnUrl=${ui.urlEncode(ui.thisUrl())}">${ui.message("general.edit")}</a></small>
                     </span>
