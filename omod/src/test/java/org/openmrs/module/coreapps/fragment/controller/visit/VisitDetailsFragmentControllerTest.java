@@ -16,14 +16,7 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterProvider;
-import org.openmrs.EncounterRole;
-import org.openmrs.EncounterType;
-import org.openmrs.Location;
-import org.openmrs.Provider;
-import org.openmrs.User;
-import org.openmrs.Visit;
+import org.openmrs.*;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.module.appframework.domain.Extension;
@@ -31,6 +24,7 @@ import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.TestUiUtils;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
+import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
@@ -38,13 +32,9 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.util.OpenmrsUtil;
 
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -62,7 +52,9 @@ public class VisitDetailsFragmentControllerTest {
 		UiSessionContext sessionContext = mock(UiSessionContext.class);
 		User authenticatedUser = new User();
 		when(sessionContext.getCurrentUser()).thenReturn(authenticatedUser);
-		
+
+        authenticatedUser.addRole(createRoleForUser());
+
 		AdministrationService administrationService = mock(AdministrationService.class);
 		when(administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT)).thenReturn(
 		    "dd.MMM.yyyy, HH:mm:ss");
@@ -134,12 +126,26 @@ public class VisitDetailsFragmentControllerTest {
 		assertThat(actualEncounter.get("encounterDatetime"), notNullValue());
 		assertThat(actualEncounter.get("encounterDate"), notNullValue());
 		assertThat(actualEncounter.get("encounterTime"), notNullValue());
+        assertTrue((Boolean) actualEncounter.get("canEdit"));
         assertThat((String) actualEncounter.get("primaryProvider"), is("Primary Provider"));
 		List<SimpleObject> actualProviders = (List<SimpleObject>) actualEncounter.get("encounterProviders");
 		assertThat(actualProviders.size(), is(2));
 	}
-	
-	private Matcher<SimpleObject> isSimpleObjectWith(final Object... propertiesAndValues) {
+
+    private Role createRoleForUser() {
+        Role role = new Role();
+        role.setRole("Test");
+        role.addPrivilege(createPrivilegeToEditEncounters());
+        return role;
+    }
+
+    private Privilege createPrivilegeToEditEncounters() {
+        Privilege privilege = new Privilege();
+        privilege.setPrivilege(EmrApiConstants.PRIVILEGE_EDIT_ENCOUNTER);
+        return privilege;
+    }
+
+    private Matcher<SimpleObject> isSimpleObjectWith(final Object... propertiesAndValues) {
 		return new ArgumentMatcher<SimpleObject>() {
 			
 			@Override
