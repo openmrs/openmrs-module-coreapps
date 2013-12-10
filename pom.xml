@@ -35,10 +35,10 @@
 	<properties>
 		<openMRSVersion>1.9.4</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<appframeworkVersion>2.0</appframeworkVersion>
+		<appframeworkVersion>2.1-SNAPSHOT</appframeworkVersion>
         <uiframeworkVersion>3.0</uiframeworkVersion>
         <emrapiVersion>1.1-SNAPSHOT</emrapiVersion>
-        <appuiVersion>1.0</appuiVersion>
+        <appuiVersion>1.1-SNAPSHOT</appuiVersion>
         <idgenVersion>2.6</idgenVersion>
         <addresshierarchyVersion>2.2.9</addresshierarchyVersion>
         <webservicesRestVersion>2.1</webservicesRestVersion>

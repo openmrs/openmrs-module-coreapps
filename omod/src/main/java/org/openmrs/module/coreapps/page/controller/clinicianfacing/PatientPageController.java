@@ -15,9 +15,9 @@ package org.openmrs.module.coreapps.page.controller.clinicianfacing;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
-import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
+import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
@@ -27,16 +27,12 @@ import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.event.ApplicationEventService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
-import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.Redirect;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.script.SimpleBindings;
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,7 +69,7 @@ public class PatientPageController {
 		}
 		model.addAttribute("activeVisit", activeVisit);
 
-        SimpleBindings contextModel = new SimpleBindings();
+        AppContextModel contextModel = sessionContext.generateAppContextModel();
         contextModel.put("patientId", patient.getId());
 		contextModel.put("patientDead", patient.isDead());
         contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
