@@ -20,6 +20,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Date;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
 @PrepareForTest(Context.class)
 @RunWith(PowerMockRunner.class)
 public class ParseEncounterToJsonTest {
@@ -32,14 +38,14 @@ public class ParseEncounterToJsonTest {
 
     @Before
     public void setUp(){
-        appFrameworkService = Mockito.mock(AppFrameworkService.class);
-        uiUtils = Mockito.mock(UiUtils.class);
-        encounterService = Mockito.mock(EncounterService.class);
+        appFrameworkService = mock(AppFrameworkService.class);
+        uiUtils = mock(UiUtils.class);
+        encounterService = mock(EncounterService.class);
         parseEncounterToJson = new ParseEncounterToJson(appFrameworkService, uiUtils, encounterService);
     }
 
     @Test
-    public void userShouldNotEditEncounterWhenHasPrivilegeButDidNotParticipatedInTheEncounter(){
+    public void userShouldEditEncounterWhenHasPrivilegeButDidNotParticipatedInTheEncounter(){
 
         User user = new User();
         user.addRole(createRoleForUser());
@@ -49,57 +55,51 @@ public class ParseEncounterToJsonTest {
 
         SimpleObject encounterJSON = parseEncounterToJson.createEncounterJSON(user, encounter);
 
-        Assert.assertFalse((Boolean) encounterJSON.get("canEdit"));
+        assertTrue((Boolean) encounterJSON.get("canEdit"));
 
     }
 
     @Test
     public void userShouldEditEncounterWhenHasPrivilegeAndParticipatedInTheEncounter(){
 
+        mockStatic(Context.class);
+        when(Context.getAuthenticatedUser()).thenReturn(new User());
+
         User user= new User();
         user.addRole(createRoleForUser());
-
         user.setPerson(new Person());
 
         Encounter encounter = createEncounter();
-        Provider provider = new Provider();
-        provider.setPerson(user.getPerson());
-        PowerMockito.mockStatic(Context.class);
-        Mockito.when(Context.getAuthenticatedUser()).thenReturn(new User());
-        encounter.addProvider(new EncounterRole(5), provider);
+        encounter.addProvider(new EncounterRole(5), createProvider(user));
         encounter.setCreator(new User());
 
         SimpleObject encounterJSON = parseEncounterToJson.createEncounterJSON(user, encounter);
 
-        Assert.assertTrue((Boolean) encounterJSON.get("canEdit"));
+        assertTrue((Boolean) encounterJSON.get("canEdit"));
+    }
+
+    private Provider createProvider(User user) {
+        Provider provider = new Provider();
+        provider.setPerson(user.getPerson());
+        return provider;
     }
 
     @Test
-    public void userShouldNotEditEncounterWhenHasPrivelegeAndDidNotParticipateInTheEncounter(){
+    public void userShouldEditEncounterWhenDoesNotHavePrivilegeButParticipateInTheEncounter(){
+
+        mockStatic(Context.class);
+        when(Context.getAuthenticatedUser()).thenReturn(new User());
 
         User user = new User();
-        user.addRole(createRoleForUser());
+        user.setPerson(new Person());
 
         Encounter encounter = createEncounter();
+        encounter.addProvider(new EncounterRole(5), createProvider(user));
         encounter.setCreator(new User());
 
         SimpleObject encounterJSON = parseEncounterToJson.createEncounterJSON(user,encounter);
 
-        Assert.assertFalse((Boolean) encounterJSON.get("canEdit"));
-
-    }
-
-    @Test
-    public void userShouldNotEditEncounterWhenHasNotPrivilegeAndDidNotParticipateInTheEncounter(){
-
-        User user = new User();
-
-
-        Encounter encounter = createEncounter();
-        encounter.setCreator(new User());
-
-        SimpleObject encounterJSON = parseEncounterToJson.createEncounterJSON(user,encounter);
-        Assert.assertFalse((Boolean) encounterJSON.get("canEdit"));
+        assertTrue((Boolean) encounterJSON.get("canEdit"));
 
     }
 
@@ -113,7 +113,21 @@ public class ParseEncounterToJsonTest {
         encounter.setCreator(new User());
 
         SimpleObject encounterJSON = parseEncounterToJson.createEncounterJSON(user,encounter);
-        Assert.assertTrue((Boolean) encounterJSON.get("canEdit"));
+        assertTrue((Boolean) encounterJSON.get("canEdit"));
+
+    }
+
+    @Test
+    public void userShouldNotEditAnEncounterWhenDoesNotHaveThePrivilegeAndDidNotParticipatedInTheEncounter(){
+
+        User user = new User();
+
+        Encounter encounter = createEncounter();
+        encounter.setCreator(new User());
+
+        SimpleObject encounterJSON = parseEncounterToJson.createEncounterJSON(user, encounter);
+
+        assertFalse((Boolean) encounterJSON.get("canEdit"));
 
     }
 

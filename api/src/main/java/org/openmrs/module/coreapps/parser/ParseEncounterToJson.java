@@ -87,7 +87,7 @@ public class ParseEncounterToJson {
         EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
         boolean userParticipatedInEncounter = encounterDomainWrapper.participatedInEncounter(authenticatedUser);
         boolean userIsAdmin = authenticatedUser.isSuperUser();
-        return (canEdit && userParticipatedInEncounter) || userIsAdmin;
+        return (canEdit || userParticipatedInEncounter) || userIsAdmin;
     }
 
     private EncounterRole getPrimaryEncounterRoleForEncounter(Encounter encounter) {
