@@ -21,24 +21,21 @@
     [[ if (stopDatetime) { ]]
         <p class="label"><i class="icon-warning-sign small"></i> ${ ui.message("coreapps.patientDashboard.actionsForInactiveVisit") }</p>
     [[ } ]]
-    <% visitActions.each { task ->
-        if (task.require) { %>
-        [[ if ((function() { var patientId = ${ patient.id }; var visit = { id: id, active: stopDatetime == null, admitted: admitted }; return (${ task.require }); })()) { ]]
-        <% }
+    <% visitActions.each { task ->  %>
 
-		def url = task.url(contextPath, actionBindings, ui.thisUrl())
-        if (task.type != "script") {
-        %>
-        <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { 'visit.id': id, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task">
-    <% } else { // script
-        %>
-        <a href="[[= emr.applyContextModel('${ url }', {'visit.id': id})]]" class="button task">
-    <% } %>
-        <i class="${task.icon}"></i> ${ ui.message(task.label) }</a>
+        [[ if (_.contains(availableVisitActions, '${task.id}')) { ]]
 
-        <% if (task.require) { %>
-            [[ } ]]
-        <% } %>
+            <%    def url = task.url(contextPath, actionBindings, ui.thisUrl())
+                if (task.type != "script") {
+                %>
+                <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { 'visit.id': id, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task">
+            <% } else { // script
+                %>
+                <a href="[[= emr.applyContextModel('${ url }', {'visit.id': id})]]" class="button task">
+            <% } %>
+                <i class="${task.icon}"></i> ${ ui.message(task.label) }</a>
+
+        [[ } ]]
     <% } %>
 </div>
 [[ if (encounters.length > 0) { ]]

@@ -16,6 +16,7 @@ package org.openmrs.module.coreapps.page.controller.patientdashboard;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
+import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appframework.service.AppFrameworkService;
@@ -32,8 +33,6 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.Redirect;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.script.Bindings;
-import javax.script.SimpleBindings;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,13 +77,13 @@ public class PatientDashboardPageController {
 		model.addAttribute("encounterTemplateExtensions", encounterTemplateExtensions);
 
 
-		Bindings bindings = new SimpleBindings();
-		bindings.put("patientId", patient.getPatientId());
-		bindings.put("patientDead", patient.isDead());
-		bindings.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
-		model.addAttribute("actionBindings", bindings);
+        AppContextModel contextModel = sessionContext.generateAppContextModel();
+        contextModel.put("patientId", patient.getPatientId());
+        contextModel.put("patientDead", patient.isDead());
+        contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
+		model.addAttribute("actionBindings", contextModel);
 
-		List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions", bindings);
+		List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions", contextModel);
 		Collections.sort(overallActions);
 		model.addAttribute("overallActions", overallActions);
 

@@ -22,10 +22,13 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.appframework.context.AppContextModel;
+import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
+import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.coreapps.parser.ParseEncounterToJson;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -42,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -86,7 +90,28 @@ public class VisitDetailsFragmentController {
         simpleObject.put("admitted", visitWrapper.isAdmitted());
         simpleObject.put("canDeleteVisit", verifyIfUserHasPermissionToDeleteVisit(visit, authenticatedUser, canDeleteVisit));
 
+        AppContextModel contextModel = sessionContext.generateAppContextModel();
+        contextModel.put("patientId", visit.getPatient().getPatientId());
+        contextModel.put("patientDead", visit.getPatient().isDead());
+        contextModel.put("visit", new VisitContextModel(new VisitDomainWrapper(visit, emrApiProperties)));
+
+        List<Extension> visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions", contextModel);
+        Collections.sort(visitActions);
+        simpleObject.put("availableVisitActions", convertVisitActionsToSimpleObject(visitActions));
+
         return simpleObject;
+    }
+
+    private List<String> convertVisitActionsToSimpleObject(List<Extension> visitActions) {
+
+        // just convert to a list of ids as strings
+        List<String> visitActionsSimple = new ArrayList<String>();
+
+        for (Extension visitAction : visitActions) {
+            visitActionsSimple.add(visitAction.getId());
+        }
+
+        return visitActionsSimple;
     }
 
     private boolean verifyIfUserHasPermissionToDeleteVisit(Visit visit, User authenticatedUser, boolean canDeleteVisit) {
