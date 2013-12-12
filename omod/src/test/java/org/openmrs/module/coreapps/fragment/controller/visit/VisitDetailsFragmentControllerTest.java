@@ -16,9 +16,20 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterProvider;
+import org.openmrs.EncounterRole;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.Privilege;
+import org.openmrs.Provider;
+import org.openmrs.Role;
+import org.openmrs.User;
+import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
+import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.TestUiUtils;
@@ -32,7 +43,12 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.util.OpenmrsUtil;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,6 +68,8 @@ public class VisitDetailsFragmentControllerTest {
 		UiSessionContext sessionContext = mock(UiSessionContext.class);
 		User authenticatedUser = new User();
 		when(sessionContext.getCurrentUser()).thenReturn(authenticatedUser);
+        AppContextModel appContextModel = new AppContextModel();
+        when(sessionContext.generateAppContextModel()).thenReturn(appContextModel);
 
         authenticatedUser.addRole(createRoleForUser());
 
@@ -65,13 +83,19 @@ public class VisitDetailsFragmentControllerTest {
 
         EncounterService encounterService = mock(EncounterService.class);
 
+        Patient patient = mock(Patient.class);
+        when(patient.getPatientId()).thenReturn(1);
+        when(patient.isDead()).thenReturn(false);
+
 		Visit visit = new Visit();
 		Location visitLocation = new Location();
 		visitLocation.setName("Visit Location");
+        visit.setVisitId(1);
 		visit.setLocation(visitLocation);
 		visit.setStartDatetime(new Date());
 		visit.setStopDatetime(new Date());
         visit.setCreator(authenticatedUser);
+        visit.setPatient(patient);
 		Location encounterLocation = new Location();
 		encounterLocation.setName("Location");
 		EncounterType encounterType = new EncounterType();
