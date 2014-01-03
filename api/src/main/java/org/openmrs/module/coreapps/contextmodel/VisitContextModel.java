@@ -12,20 +12,23 @@ public class VisitContextModel {
     private int id;
     private boolean active;
     private boolean admitted;
-    private Long stopDate;
+    private Long stopDatetimeInMilliseconds;
+    private Long startDatetimeInMilliseconds;
 
     public VisitContextModel(VisitDomainWrapper visit) {
         this.id = visit.getVisitId();
         this.active = visit.isOpen();
         this.admitted = visit.isAdmitted();
+        this.startDatetimeInMilliseconds = visit.getStartDatetime().getTime();
 
         Date stopDatetime = visit.getStopDatetime();
 
         if(stopDatetime!=null){
-            this.stopDate = stopDatetime.getTime();
+            this.stopDatetimeInMilliseconds = stopDatetime.getTime();
         }else{
-            this.stopDate = 0L;
+            this.stopDatetimeInMilliseconds = null;
         }
+
     }
 
     public int getId() {
@@ -40,8 +43,12 @@ public class VisitContextModel {
         return admitted;
     }
 
-    public Long getStopDate(){
-        return  stopDate;
+    public Long getStopDatetimeInMilliseconds(){
+        return stopDatetimeInMilliseconds;
+    }
+
+    public Long getStartDatetimeInMilliseconds(){
+        return startDatetimeInMilliseconds;
     }
 
 }
