@@ -1,0 +1,19 @@
+[
+    {
+        "id": "coreapps.awaitingAdmission",
+        "instanceOf": "coreapps.template.awaitingAdmission",
+        "description": "coreapps.awaitingAdmission.app.description",
+        "order": 10,
+        "extensions": [
+            {
+                "id": "${project.parent.groupId}.${project.parent.artifactId}.awaitingAdmissionHomepageLink",
+                "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+                "type": "link",
+                "label": "coreapps.app.awaitingAdmission.label",
+                "url": "coreapps/awaitingAdmission.page?app=coreapps.awaitingAdmission",
+                "icon": "icon-list-ul",
+                "requiredPrivilege": "App: coreapps.awaitingAdmission"
+            }
+        ]
+    }
+]

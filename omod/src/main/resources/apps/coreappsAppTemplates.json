@@ -31,5 +31,16 @@
 				"defaultValue": "/coreapps/clinicianfacing/patient.page?patientId={{patientId}}"
 			}
 		]
-	}
+	},
+    {
+        "id": "coreapps.template.awaitingAdmission",
+        "description": "coreapps.app.awaitingAdmission.description",
+        "configOptions": [
+            {
+                "name": "patientPageUrl",
+                "description": "URL pointing to a patient details page",
+                "defaultValue": "/coreapps/clinicianfacing/patient.page?patientId={{patientId}}"
+            }
+        ]
+    }
 ]
