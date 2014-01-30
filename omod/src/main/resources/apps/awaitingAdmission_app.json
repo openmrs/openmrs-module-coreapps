@@ -13,9 +13,7 @@
                 "url": "coreapps/awaitingAdmission.page?app=coreapps.awaitingAdmission",
                 "icon": "icon-list-ul",
                 "requiredPrivilege": "App: coreapps.awaitingAdmission",
-                "extensionParams": {
-                    "featureToggle": "awaitingAdmission"
-                }
+                "featureToggle": "awaitingAdmission"
             }
         ]
     }
