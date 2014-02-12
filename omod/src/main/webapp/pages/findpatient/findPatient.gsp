@@ -15,7 +15,7 @@
     var lastViewedPatients = [];
     <%lastViewedPatients.each{ it -> %>
         lastViewedPatients.push({uuid:"${ it.uuid }",fullName:"${ it.personName.fullName }",gender:"${ it.gender }",
-            age:"${ it.age }", birthdate:"${ dateFormatter.format(it.birthdate) }",
+            age:"${ it.age ?: '' }", birthdate:"${ it.birthdate ? dateFormatter.format(it.birthdate) : '' }",
             birthdateEstimated: ${ it.birthdateEstimated }, identifier:"${ it.patientIdentifier.identifier }"});
     <%}%>
 
