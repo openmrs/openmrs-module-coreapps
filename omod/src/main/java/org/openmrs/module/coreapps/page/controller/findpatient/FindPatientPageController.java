@@ -33,9 +33,14 @@ public class FindPatientPageController {
 		model.addAttribute("minSearchCharacters",
 		    Context.getAdministrationService()
 		            .getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, "1"));
-		List<Patient> patients = GeneralUtils.getLastViewedPatients(sessionContext.getCurrentUser());
-		model.addAttribute("lastViewedPatients", patients);
+
 		model.addAttribute("dateFormatter", new SimpleDateFormat("dd-MMM-yyy", Context.getLocale()));
+
+        if (app.getConfig().get("showLastViewedPatients").getBooleanValue()) {
+            List<Patient> patients = GeneralUtils.getLastViewedPatients(sessionContext.getCurrentUser());
+            model.addAttribute("lastViewedPatients", patients);
+        }
+        model.addAttribute("showLastViewedPatients", app.getConfig().get("showLastViewedPatients").getBooleanValue());
 	}
 	
 }

@@ -18,6 +18,11 @@
                 "name": "heading",
                 "description": "Heading used by the find patient widget",
                 "defaultValue": "coreapps.findPatient.app.label"
+            },
+            {
+                "name": "showLastViewedPatients",
+                "description": "Whether or not to show a list of the recently-viewed patients for the current user",
+                "defaultValue": true
             }
         ]
     },
