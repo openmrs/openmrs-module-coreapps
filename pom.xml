@@ -198,6 +198,15 @@
 						
 			<!-- End OpenMRS modules -->
 
+			 <!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was giving us issues,
+         can probably remove this after next sass release -->
+        <dependency>
+            <groupId>rubygems</groupId>
+            <artifactId>sass</artifactId>
+            <version>3.2.10</version>
+            <type>gem</type>
+        </dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
