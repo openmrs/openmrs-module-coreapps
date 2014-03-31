@@ -1,0 +1,12 @@
+[
+    {
+        "id": "${project.parent.artifactId}.systemAdministrationApp",
+        "description": "System Administration App",
+        "extensionPoints": [
+            {
+                "id": "systemAdministration.apps",
+                "description": "Apps on the System Administration App Home Page"
+            }
+        ]
+    }
+]
