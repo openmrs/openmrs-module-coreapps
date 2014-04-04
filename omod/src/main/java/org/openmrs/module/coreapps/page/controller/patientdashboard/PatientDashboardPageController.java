@@ -56,7 +56,6 @@ public class PatientDashboardPageController {
 		patientDomainWrapper.setPatient(patient);
 		model.addAttribute("returnUrl", returnUrl);
 		model.addAttribute("patient", patientDomainWrapper);
-		model.addAttribute("orders", orderService.getOrdersByPatient(patient));
 		model.addAttribute("selectedTab", selectedTab);
 
         Location visitLocation = null;
