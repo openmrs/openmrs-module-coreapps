@@ -43,7 +43,13 @@ var app = angular.module('diagnoses', [])
     });
 
 function DiagnosesController($scope) {
+
     $scope.encounterDiagnoses = diagnoses.EncounterDiagnoses();
+    $scope.priorDiagnoses = diagnoses.EncounterDiagnoses();
+
+    $scope.addPriorDiagnoses = function() {
+        $scope.encounterDiagnoses.addDiagnoses($scope.priorDiagnoses.getDiagnoses());
+    }
 
     $scope.removeDiagnosis = function(diagnosis) {
         $scope.encounterDiagnoses.removeDiagnosis(diagnosis);

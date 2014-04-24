@@ -67,6 +67,10 @@
         <div id="diagnosis-search-container">
             <label for="diagnosis-search">${ ui.message("coreapps.consult.addDiagnosis") }</label>
             <input id="diagnosis-search" type="text" placeholder="${ ui.message("coreapps.consult.addDiagnosis.placeholder") }" autocomplete itemFormatter="autocomplete-render-item"/>
+
+            <% if(jsForPrior.size > 0) { %>
+                <button type="button" ng-click="addPriorDiagnoses()">${ ui.message("coreapps.consult.priorDiagnoses.add") }</button>
+            <% } %>
         </div>
 
         <div id="display-encounter-diagnoses-container">
@@ -109,4 +113,14 @@
             encounterDiagnoses.addDiagnosis(diagnoses.Diagnosis(${ it }));
         <% } %>
     });
+
+    // add any prior diagnoses
+    angular.element('#encounter-diagnoses-app').scope().\$apply(function() {
+        var priorDiagnoses = angular.element('#encounter-diagnoses-app > .ng-scope').scope().priorDiagnoses;
+        <% jsForPrior.each { %>
+            priorDiagnoses.addDiagnosis(diagnoses.Diagnosis(${ it }));
+        <% } %>
+    });
+
+
 </script>

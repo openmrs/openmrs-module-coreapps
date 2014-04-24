@@ -118,6 +118,10 @@
             diagnoses: []
         };
 
+        api.getDiagnoses = function() {
+            return api.diagnoses;
+        }
+
         api.findSelectedSimilarDiagnosis = function(diagnosis) {
             return _.find(api.diagnoses, function(candidate) {
                 return diagnoses.sameDiagnosis(diagnosis, candidate);
@@ -145,6 +149,12 @@
                 diagnosis.primary = true;
             }
             api.diagnoses.push(diagnosis);
+        };
+
+        api.addDiagnoses = function(diagnoses) {
+            _.each(diagnoses, function(diagnosis) {
+                api.addDiagnosis(diagnosis);
+            });
         };
 
         api.removeDiagnosis = function(diagnosis) {

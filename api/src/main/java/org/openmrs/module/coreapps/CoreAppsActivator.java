@@ -23,6 +23,7 @@ import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.coreapps.htmlformentry.EncounterDiagnosesTagHandler;
 import org.openmrs.module.coreapps.htmlformentry.EncounterDispositionTagHandler;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 
@@ -51,10 +52,11 @@ public class CoreAppsActivator extends BaseModuleActivator {
      * @param emrApiProperties
      * @return
      */
-    public static EncounterDiagnosesTagHandler setupEncounterDiagnosesTagHandler(ConceptService conceptService, EmrApiProperties emrApiProperties) {
+    public static EncounterDiagnosesTagHandler setupEncounterDiagnosesTagHandler(ConceptService conceptService, AdtService adtService, EmrApiProperties emrApiProperties) {
         EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = new EncounterDiagnosesTagHandler();
         encounterDiagnosesTagHandler.setEmrApiProperties(emrApiProperties);
         encounterDiagnosesTagHandler.setConceptService(conceptService);
+        encounterDiagnosesTagHandler.setAdtService(adtService);
         return encounterDiagnosesTagHandler;
     }
 
@@ -86,11 +88,12 @@ public class CoreAppsActivator extends BaseModuleActivator {
         ConceptService conceptService = Context.getConceptService();
         EmrApiProperties emrApiProperties = Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class);
         DispositionService dispositionService = Context.getRegisteredComponent("dispositionService", DispositionService.class);
+        AdtService adtService = Context.getRegisteredComponent("adtService", AdtService.class);
 
         if (ModuleFactory.isModuleStarted("htmlformentry")) {
             HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
 
-            EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, emrApiProperties);
+            EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, emrApiProperties);
             htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
 
             EncounterDispositionTagHandler encounterDispositionTagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService);

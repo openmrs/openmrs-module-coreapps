@@ -14,30 +14,6 @@
 
 package org.openmrs.module.coreapps.htmlformentry;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.openmrs.ConceptSource;
-import org.openmrs.Encounter;
-import org.openmrs.Obs;
-import org.openmrs.api.ConceptService;
-import org.openmrs.module.emrapi.EmrApiProperties;
-import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
-import org.openmrs.module.emrapi.diagnosis.Diagnosis;
-import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
-import org.openmrs.module.htmlformentry.FormEntryContext;
-import org.openmrs.module.htmlformentry.FormEntrySession;
-import org.openmrs.module.htmlformentry.FormSubmissionActions;
-import org.openmrs.module.htmlformentry.FormSubmissionError;
-import org.openmrs.module.htmlformentry.InvalidActionException;
-import org.openmrs.module.htmlformentry.action.FormSubmissionControllerAction;
-import org.openmrs.module.htmlformentry.element.HtmlGeneratorElement;
-import org.openmrs.module.htmlformentry.widget.ErrorWidget;
-import org.openmrs.module.htmlformentry.widget.HiddenFieldWidget;
-import org.openmrs.ui.framework.UiUtils;
-import org.openmrs.ui.framework.page.PageAction;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,6 +25,34 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.openmrs.ConceptSource;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
+import org.openmrs.Visit;
+import org.openmrs.api.ConceptService;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
+import org.openmrs.module.emrapi.disposition.DispositionType;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.module.htmlformentry.FormEntryContext;
+import org.openmrs.module.htmlformentry.FormEntrySession;
+import org.openmrs.module.htmlformentry.FormSubmissionActions;
+import org.openmrs.module.htmlformentry.FormSubmissionError;
+import org.openmrs.module.htmlformentry.InvalidActionException;
+import org.openmrs.module.htmlformentry.action.FormSubmissionControllerAction;
+import org.openmrs.module.htmlformentry.element.HtmlGeneratorElement;
+import org.openmrs.module.htmlformentry.widget.ErrorWidget;
+import org.openmrs.module.htmlformentry.widget.HiddenFieldWidget;
+import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.ui.framework.page.PageAction;
 
 /**
  *
@@ -62,8 +66,12 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private EmrApiProperties emrApiProperties;
 
     private ConceptService conceptService;
-    // we do not actually use the hiddenDiagnoses widget (the form field name is hardcoded) but we need it to register errorWidget
 
+    private AdtService adtService;
+
+    private DispositionType dispositionTypeForPriorDiagnoses = null;
+
+    // we do not actually use the hiddenDiagnoses widget (the form field name is hardcoded) but we need it to register errorWidget
     private HiddenFieldWidget hiddenDiagnoses;
     private ErrorWidget errorWidget;
 
@@ -103,6 +111,12 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 Map<String, Object> fragmentConfig = new HashMap<String, Object>();
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
+
+                // add the prior diagnoses if requested
+                if (FormEntryContext.Mode.ENTER == context.getMode() && dispositionTypeForPriorDiagnoses != null) {
+                    fragmentConfig.put("priorDiagnoses", getPriorDiagnoses(context, dispositionTypeForPriorDiagnoses));
+                }
+
                 try {
                     StringBuilder output = new StringBuilder();
                     output.append(errorWidget.generateHtml(context));
@@ -253,6 +267,25 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         return diagnoses;
     }
 
+    private List<Diagnosis> getPriorDiagnoses(FormEntryContext context, DispositionType dispositionType) {
+        List<Diagnosis> diagnoses = new ArrayList<Diagnosis>();
+        if (context.getVisit() != null) {
+
+            VisitDomainWrapper visitDomainWrapper;
+
+            if (context.getVisit() instanceof Visit) {
+                visitDomainWrapper = adtService.wrap((Visit) context.getVisit());
+            }
+            else {
+                visitDomainWrapper = (VisitDomainWrapper) context.getVisit();
+            }
+
+            diagnoses = visitDomainWrapper.getDiagnosesFromMostRecentDispositionByType(dispositionType);
+        }
+
+        return diagnoses;
+    }
+
     private void createObsGroup(FormSubmissionActions actions, Obs obsGroup) throws InvalidActionException {
         actions.beginObsGroup(obsGroup);
         actions.endObsGroup();
@@ -260,6 +293,10 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     public void setRequired(boolean required) {
         this.required = required;
+    }
+
+    public boolean getRequired() {
+        return required;
     }
 
     public void setUiUtils(UiUtils uiUtils) {
@@ -272,6 +309,18 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     public void setConceptService(ConceptService conceptService) {
         this.conceptService = conceptService;
+    }
+
+    public void setAdtService(AdtService adtService) {
+        this.adtService = adtService;
+    }
+
+    public void setDispositionTypeForPriorDiagnoses(DispositionType dispositionTypeForPriorDiagnoses) {
+        this.dispositionTypeForPriorDiagnoses = dispositionTypeForPriorDiagnoses;
+    }
+
+    public DispositionType getDispositionTypeForPriorDiagnoses() {
+        return dispositionTypeForPriorDiagnoses;
     }
 
     public void setSelectedDiagnosesTarget(String selectedDiagnosesTarget) {

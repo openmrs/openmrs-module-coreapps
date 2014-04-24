@@ -237,4 +237,26 @@ describe("Diagnoses library", function() {
         expect(encounterDiagnoses.primaryDiagnoses()[0].diagnosis.matchedName).toBe("Bird Flu");
         expect(encounterDiagnoses.secondaryDiagnoses().length).toBe(0);
     });
+
+    it("should add multiple diagonses", function() {
+        var arrayOfDiagnoses = [];
+        arrayOfDiagnoses.push(diagnoses.Diagnosis(diagnoses.CodedOrFreeTextConceptAnswer("Swine Flu")));
+        arrayOfDiagnoses.push(diagnoses.Diagnosis(diagnoses.CodedOrFreeTextConceptAnswer("Bird Flu")));
+
+        encounterDiagnoses.addDiagnoses(arrayOfDiagnoses);
+
+        expect(encounterDiagnoses.diagnoses.length).toBe(2);
+        expect(encounterDiagnoses.diagnoses[0].valueToSubmit()).toBe(JSON.stringify({
+            certainty: "PRESUMED",
+            order: "PRIMARY",
+            diagnosis: "Non-Coded:Swine Flu",
+            existingObs: null
+        }));
+        expect(encounterDiagnoses.diagnoses[1].valueToSubmit()).toBe(JSON.stringify({
+            certainty: "PRESUMED",
+            order: "SECONDARY",
+            diagnosis: "Non-Coded:Bird Flu",
+            existingObs: null
+        }));
+    });
 });

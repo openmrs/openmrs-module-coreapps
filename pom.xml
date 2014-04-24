@@ -37,13 +37,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<appframeworkVersion>2.1</appframeworkVersion>
         <uiframeworkVersion>3.2</uiframeworkVersion>
-        <emrapiVersion>1.1</emrapiVersion>
+        <emrapiVersion>1.2-SNAPSHOT</emrapiVersion>
         <appuiVersion>1.1</appuiVersion>
         <idgenVersion>2.7</idgenVersion>
         <addresshierarchyVersion>2.2.9</addresshierarchyVersion>
         <webservicesRestVersion>2.1</webservicesRestVersion>
         <uicommonsVersion>1.0</uicommonsVersion>
-        <htmlformentryVersion>2.2.1</htmlformentryVersion>
+        <htmlformentryVersion>2.4-SNAPSHOT</htmlformentryVersion>
         <providermanagementVersion>2.1</providermanagementVersion>
 	</properties>
 

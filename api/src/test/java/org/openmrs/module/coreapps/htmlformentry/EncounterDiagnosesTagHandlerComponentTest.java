@@ -14,6 +14,12 @@
 
 package org.openmrs.module.coreapps.htmlformentry;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -33,6 +39,7 @@ import org.openmrs.module.appui.TestUiUtils;
 import org.openmrs.module.coreapps.CoreAppsActivator;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
@@ -44,12 +51,6 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.ui.framework.page.PageAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -73,12 +74,15 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleContext
     LocationService locationService;
 
     @Autowired
+    AdtService adtService;
+
+    @Autowired
     EmrApiProperties emrApiProperties;
 
     @Before
     public void setUp() throws Exception {
         ContextSensitiveMetadataTestUtils.setupDiagnosisMetadata(conceptService, emrApiProperties);
-        EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class));
+        EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class));
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
     }
 
