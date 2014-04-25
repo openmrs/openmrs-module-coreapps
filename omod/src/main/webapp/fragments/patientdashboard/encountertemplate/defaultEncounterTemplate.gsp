@@ -23,11 +23,11 @@
 	    <li>
 	        <div>
 	            ${ ui.message("coreapps.by") }
-	            <strong>
+	            <strong class="provider">>
 	                {{- encounter.primaryProvider ? encounter.primaryProvider : '' }}
 	            </strong>
 	            ${ ui.message("coreapps.in") }
-	            <strong>{{- encounter.location }}</strong>
+	            <strong class="location">{{- encounter.location }}</strong>
 	        </div>
 	    </li>
 	    <li>

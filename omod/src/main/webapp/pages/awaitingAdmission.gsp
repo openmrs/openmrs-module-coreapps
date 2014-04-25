@@ -8,7 +8,7 @@
     ];
 </script>
 
-<h3>${ ui.message("coreapps.app.awaitingAdmission.name") }</h3>
+<h3>${ ui.message("coreapps.app.eawaitingAdmission.name") }</h3>
 
 <table id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
     <thead>
