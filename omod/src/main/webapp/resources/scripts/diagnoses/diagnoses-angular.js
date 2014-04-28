@@ -48,7 +48,7 @@ function DiagnosesController($scope) {
     $scope.priorDiagnoses = diagnoses.EncounterDiagnoses();
 
     $scope.addPriorDiagnoses = function() {
-        $scope.encounterDiagnoses.addDiagnoses($scope.priorDiagnoses.getDiagnoses());
+        $scope.encounterDiagnoses.addDiagnoses(angular.copy($scope.priorDiagnoses.getDiagnoses()));
     }
 
     $scope.removeDiagnosis = function(diagnosis) {
