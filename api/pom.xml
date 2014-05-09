@@ -89,6 +89,11 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
+            <artifactId>reporting-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
             <artifactId>appui-api</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
