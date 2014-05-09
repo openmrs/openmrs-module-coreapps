@@ -16,6 +16,7 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.api.EncounterService;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
@@ -36,8 +37,10 @@ public class VisitFragmentController {
 	                                  @RequestParam("patientId") Patient patient,
 	                                  @RequestParam("locationId") Location location,
 	                                  @RequestParam(value = "stopActiveVisit", required = false) Boolean stopActive,
-	                                  VisitDomainWrapper activeVisit, UiUtils uiUtils, HttpServletRequest request) {
-		
+									  UiUtils uiUtils, HttpServletRequest request) {
+
+		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, location);
+
 		// if patient has an active visit close it
 		if (patient != null && (activeVisit != null)) {
 			Visit visit = activeVisit.getVisit();
