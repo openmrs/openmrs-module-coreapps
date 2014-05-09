@@ -45,6 +45,9 @@
         <uicommonsVersion>1.0</uicommonsVersion>
         <htmlformentryVersion>2.4-SNAPSHOT</htmlformentryVersion>
         <providermanagementVersion>2.1</providermanagementVersion>
+        <reportingVersion>0.9.1-SNAPSHOT</reportingVersion>
+        <serializationXstreamModuleVersion>0.2.7</serializationXstreamModuleVersion>
+        <calculationModuleVersion>1.0</calculationModuleVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -117,6 +120,28 @@
                 <artifactId>uiframework-api</artifactId>
                 <version>${uiframeworkVersion}</version>
                 <type>jar</type>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>reporting-api</artifactId>
+                <version>${reportingVersion}</version>
+                <type>jar</type>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>serialization.xstream-api</artifactId>
+                <version>${serializationXstreamModuleVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>calculation-api</artifactId>
+                <version>${calculationModuleVersion}</version>
                 <scope>provided</scope>
             </dependency>
 

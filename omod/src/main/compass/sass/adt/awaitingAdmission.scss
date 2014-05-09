@@ -1,0 +1,24 @@
+.inpatient-filter {
+  margin-bottom: 7px;
+}
+
+.inpatient-count {
+  margin-top: 14px;
+}
+
+#content h2 {
+  margin-bottom: 0;
+}
+
+i.admitIcon {
+  text-decoration: none;
+}
+
+#active-visits_wrapper {
+  min-height: 0;
+
+  .dataTables_filter {
+    float: right;
+    width: 26%;
+  }
+}
