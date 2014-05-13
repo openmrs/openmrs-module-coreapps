@@ -13,7 +13,8 @@
         { label: "${ ui.message("coreapps.app.awaitingAdmission.label")}"}
     ];
 
-    var WARD_COLUMN_INDEX = 5;
+    // TODO: make this more robust--kind of hacky to rely on column index now that it can change
+    var WARD_COLUMN_INDEX = ${ paperRecordIdentifierDefinitionAvailable ? '5' : '4' };
     var awaitingAdmissionsTable = jq("#awaiting-admission").dataTable();
 
     jq(document).ready(function() {
