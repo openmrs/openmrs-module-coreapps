@@ -107,6 +107,7 @@
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
+
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>appframework-api</artifactId>
@@ -133,39 +134,18 @@
 
             <dependency>
                 <groupId>org.openmrs.module</groupId>
-                <artifactId>serialization.xstream-api</artifactId>
-                <version>${serializationXstreamModuleVersion}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.openmrs.module</groupId>
-                <artifactId>calculation-api</artifactId>
-                <version>${calculationModuleVersion}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.openmrs.module</groupId>
                 <artifactId>emrapi-api</artifactId>
                 <version>${emrapiVersion}</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
+
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>emrapi-api</artifactId>
                 <version>${emrapiVersion}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
-            </dependency>
-
-            <!-- required by emrapi so we need this for tests -->
-            <dependency>
-                <groupId>org.openmrs.module</groupId>
-                <artifactId>providermanagement-api</artifactId>
-                <version>${providermanagementVersion}</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -175,6 +155,7 @@
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
+
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>appui-api</artifactId>
@@ -198,6 +179,7 @@
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
+
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>htmlformentry-api</artifactId>
@@ -213,6 +195,7 @@
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
+
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>webservices.rest-omod</artifactId>
@@ -220,8 +203,31 @@
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
-						
-			<!-- End OpenMRS modules -->
+
+            <!-- required by emrapi so we need this for tests -->
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>providermanagement-api</artifactId>
+                <version>${providermanagementVersion}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- required by reporting so we need these for testing -->
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>serialization.xstream-api</artifactId>
+                <version>${serializationXstreamModuleVersion}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>calculation-api</artifactId>
+                <version>${calculationModuleVersion}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- End OpenMRS modules -->
 
 			 <!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was giving us issues,
          can probably remove this after next sass release -->
