@@ -56,32 +56,32 @@ public class AwaitingAdmissionPageController {
                 libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.preferredName.givenName"), "");
 
         dsd.addColumn("primaryIdentifier",
-                libraries.getDefinition(PatientDataDefinition.class, "emrapi.library.patientDataDefinition.primaryIdentifier"),
+                libraries.getDefinition(PatientDataDefinition.class, "emrapi.patientDataDefinition.primaryIdentifier"),
                 "", new PropertyConverter(String.class, "identifier"));
 
         dsd.addColumn("mostRecentAdmissionRequestFromLocation",
-                libraries.getDefinition(VisitDataDefinition.class, "emrapi.library.visitDataDefinition.mostRecentAdmissionRequest"),
+                libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
                 "", new MapElementConverter("fromLocation", null));
 
         dsd.addColumn("mostRecentAdmissionRequestToLocation",
-                libraries.getDefinition(VisitDataDefinition.class, "emrapi.library.visitDataDefinition.mostRecentAdmissionRequest"),
+                libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
                 "", new MapElementConverter("toLocation", null));
 
         dsd.addColumn("mostRecentAdmissionRequestDatetime",
-                libraries.getDefinition(VisitDataDefinition.class, "emrapi.library.visitDataDefinition.mostRecentAdmissionRequest"),
+                libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
                 "", new MapElementConverter("datetime", null));
 
         dsd.addColumn("mostRecentAdmissionRequestProvider",
-                libraries.getDefinition(VisitDataDefinition.class, "emrapi.library.visitDataDefinition.mostRecentAdmissionRequest"),
+                libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
                 "", new MapElementConverter("provider", null));
 
         dsd.addColumn("mostRecentAdmissionRequestDiagnoses",
-                libraries.getDefinition(VisitDataDefinition.class, "emrapi.library.visitDataDefinition.mostRecentAdmissionRequest"),
+                libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
                 "", new MapElementConverter("diagnoses", null));
 
 
         // add the paper record identifier, if the definition is available (provided by the paper record module)
-        PatientDataDefinition paperRecordIdentifierDefinition =  libraries.getDefinition(PatientDataDefinition.class, "paperrecord.library.patientDataDefinition.paperRecordIdentifier");
+        PatientDataDefinition paperRecordIdentifierDefinition =  libraries.getDefinition(PatientDataDefinition.class, "paperrecord.patientDataDefinition.paperRecordIdentifier");
         if (paperRecordIdentifierDefinition != null) {
             model.addAttribute("paperRecordIdentifierDefinitionAvailable", true);
             dsd.addColumn("paperRecordIdentifier", paperRecordIdentifierDefinition, "",
