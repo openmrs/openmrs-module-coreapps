@@ -10,7 +10,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("coreapps.awaitingAdmission.label")}"}
+        { label: "${ ui.message("coreapps.app.awaitingAdmission.label")}"}
     ];
 
     var WARD_COLUMN_INDEX = 5;
