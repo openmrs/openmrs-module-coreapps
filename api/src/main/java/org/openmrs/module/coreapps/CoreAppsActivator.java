@@ -39,10 +39,11 @@ public class CoreAppsActivator extends BaseModuleActivator {
      * @param emrApiProperties
      * @return
      */
-    public static EncounterDispositionTagHandler setupEncounterDispositionTagHandler(EmrApiProperties emrApiProperties, DispositionService dispositionService) {
+    public static EncounterDispositionTagHandler setupEncounterDispositionTagHandler(EmrApiProperties emrApiProperties, DispositionService dispositionService, AdtService adtService) {
         EncounterDispositionTagHandler encounterDispositionTagHandler = new EncounterDispositionTagHandler();
         encounterDispositionTagHandler.setEmrApiProperties(emrApiProperties);
         encounterDispositionTagHandler.setDispositionService(dispositionService);
+        encounterDispositionTagHandler.setAdtService(adtService);
         return encounterDispositionTagHandler;
     }
 
@@ -96,7 +97,7 @@ public class CoreAppsActivator extends BaseModuleActivator {
             EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, emrApiProperties);
             htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
 
-            EncounterDispositionTagHandler encounterDispositionTagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService);
+            EncounterDispositionTagHandler encounterDispositionTagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService, adtService);
             htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, encounterDispositionTagHandler);
         }
 

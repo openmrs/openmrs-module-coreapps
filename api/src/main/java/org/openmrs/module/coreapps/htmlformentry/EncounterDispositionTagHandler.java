@@ -5,11 +5,15 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Visit;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionObs;
 import org.openmrs.module.emrapi.disposition.DispositionService;
+import org.openmrs.module.emrapi.disposition.DispositionType;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.htmlformentry.BadFormDesignException;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.handler.AbstractTagHandler;
@@ -42,6 +46,8 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
     private EmrApiProperties emrApiProperties;
 
     private DispositionService dispositionService;
+
+    private AdtService adtService;
 
 
     @Override
@@ -81,6 +87,16 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
         while (i.hasNext()) {
             Disposition disposition = i.next();
+
+            VisitDomainWrapper visitDomainWrapper = session.getContext().getVisit() != null
+                    ? adtService.wrap((Visit) session.getContext().getVisit()) : null;
+
+            // ADMISSION type dispositions are not allowed if the patient is already admitted and this is an active visit
+            if (disposition.getType() == DispositionType.ADMIT && visitDomainWrapper != null
+                && visitDomainWrapper.isAdmitted() && visitDomainWrapper.isActive()) {
+                continue;
+            }
+
             answerConceptIds = answerConceptIds + disposition.getConceptCode() + (i.hasNext() ? "," : "");
             answerCodes = answerCodes + disposition.getName() + (i.hasNext() ? "," : "");
 
@@ -119,6 +135,10 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
     public void setDispositionService(DispositionService dispositionService) {
         this.dispositionService = dispositionService;
+    }
+
+    public void setAdtService(AdtService adtService) {
+        this.adtService = adtService;
     }
 
     private Control buildNewControl(Disposition disposition, List<DispositionObs> additionalObs) {

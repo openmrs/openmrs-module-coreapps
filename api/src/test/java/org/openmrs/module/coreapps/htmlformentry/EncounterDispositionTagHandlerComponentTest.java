@@ -12,6 +12,7 @@ import org.openmrs.module.appui.TestUiUtils;
 import org.openmrs.module.coreapps.CoreAppsActivator;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.emrapi.test.ContextSensitiveMetadataTestUtils;
@@ -45,10 +46,13 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleConte
    @Autowired
    private DispositionService dispositionService;
 
+    @Autowired
+    private AdtService adtService;
+
     @Before
     public void setUp() throws Exception {
         ContextSensitiveMetadataTestUtils.setupDispositionDescriptor(conceptService, dispositionService);
-        EncounterDispositionTagHandler tagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService);
+        EncounterDispositionTagHandler tagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService, adtService);
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, tagHandler);
         dispositionService.setDispositionConfig("coreappsTestDispositionConfig.json");  // we use a custom name so as to not clash with the test one in the emr-api module
     }
