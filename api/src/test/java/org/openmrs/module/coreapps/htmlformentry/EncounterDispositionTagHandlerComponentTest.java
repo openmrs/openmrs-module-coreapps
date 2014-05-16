@@ -8,6 +8,7 @@ import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.TestUiUtils;
 import org.openmrs.module.coreapps.CoreAppsActivator;
 import org.openmrs.module.coreapps.CoreAppsConstants;
@@ -30,6 +31,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 
 /**
@@ -43,16 +45,19 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleConte
     @Autowired
     private EmrApiProperties emrApiProperties;
 
-   @Autowired
-   private DispositionService dispositionService;
+    @Autowired
+    private DispositionService dispositionService;
 
     @Autowired
     private AdtService adtService;
 
+    private FeatureToggleProperties featureToggles;    // just mock this, can pull out once we remove the feature toggle here
+
     @Before
     public void setUp() throws Exception {
+        featureToggles = mock(FeatureToggleProperties.class);
         ContextSensitiveMetadataTestUtils.setupDispositionDescriptor(conceptService, dispositionService);
-        EncounterDispositionTagHandler tagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService, adtService);
+        EncounterDispositionTagHandler tagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService, adtService, featureToggles);
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, tagHandler);
         dispositionService.setDispositionConfig("coreappsTestDispositionConfig.json");  // we use a custom name so as to not clash with the test one in the emr-api module
     }

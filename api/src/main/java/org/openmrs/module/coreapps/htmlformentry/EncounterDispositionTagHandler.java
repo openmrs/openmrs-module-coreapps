@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Visit;
+import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -49,6 +50,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
     private AdtService adtService;
 
+    private FeatureToggleProperties featureToggles;
 
     @Override
     public boolean doStartTag(FormEntrySession session, PrintWriter out, Node parent, Node node) throws BadFormDesignException {
@@ -91,10 +93,12 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
             VisitDomainWrapper visitDomainWrapper = session.getContext().getVisit() != null
                     ? adtService.wrap((Visit) session.getContext().getVisit()) : null;
 
-            // ADMISSION type dispositions are not allowed if the patient is already admitted and this is an active visit
-            if (disposition.getType() == DispositionType.ADMIT && visitDomainWrapper != null
-                && visitDomainWrapper.isAdmitted() && visitDomainWrapper.isActive()) {
-                continue;
+            if (featureToggles.isFeatureEnabled("awaitingAdmission")) {
+                // ADMISSION type dispositions are not allowed if the patient is already admitted and this is an active visit
+                if (disposition.getType() == DispositionType.ADMIT && visitDomainWrapper != null
+                    && visitDomainWrapper.isAdmitted() && visitDomainWrapper.isActive()) {
+                    continue;
+                }
             }
 
             answerConceptIds = answerConceptIds + disposition.getConceptCode() + (i.hasNext() ? "," : "");
@@ -139,6 +143,10 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
     public void setAdtService(AdtService adtService) {
         this.adtService = adtService;
+    }
+
+    public void setFeatureToggles(FeatureToggleProperties featureToggles) {
+        this.featureToggles = featureToggles;
     }
 
     private Control buildNewControl(Disposition disposition, List<DispositionObs> additionalObs) {
