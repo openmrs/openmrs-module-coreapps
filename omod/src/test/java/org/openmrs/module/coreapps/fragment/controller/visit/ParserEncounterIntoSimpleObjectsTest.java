@@ -259,7 +259,6 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		String valueText = "Patient is here for blah blah blah.";
 		
 		Concept consultComments = new ConceptBuilder(conceptService, textDatatype, misc).addName(consultNote).get();
-		when(emrApiProperties.getConsultFreeTextCommentsConcept()).thenReturn(consultComments);
 		
 		encounter.addObs(new ObsBuilder().setConcept(consultComments).setValue(valueText).get());
 		ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
