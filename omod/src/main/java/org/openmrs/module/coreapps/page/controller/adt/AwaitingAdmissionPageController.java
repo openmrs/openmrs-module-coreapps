@@ -33,7 +33,7 @@ public class AwaitingAdmissionPageController {
                     @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService) throws EvaluationException {
 
         EvaluationContext context = new EvaluationContext();
-        List<Extension> admissionActions = appFrameworkService.getAllEnabledExtensions("coreapps.app.awaitingAdmissionActions");
+        List<Extension> admissionActions = appFrameworkService.getExtensionsForCurrentUser("coreapps.app.awaitingAdmissionActions");
         Collections.sort(admissionActions);
         model.addAttribute("admissionActions", admissionActions);
 
