@@ -13,7 +13,6 @@ import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionObs;
 import org.openmrs.module.emrapi.disposition.DispositionService;
-import org.openmrs.module.emrapi.disposition.DispositionType;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.htmlformentry.BadFormDesignException;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -57,7 +56,24 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
         List<Disposition> dispositions = null;
 
-        dispositions = dispositionService.getDispositions();
+        VisitDomainWrapper visitDomainWrapper = session.getContext().getVisit() != null
+                ? adtService.wrap((Visit) session.getContext().getVisit()) : null;
+
+        // TODO remove this feature toggle once awaiting admission is toggled one
+        if (featureToggles.isFeatureEnabled("awaitingAdmission")) {
+            if (visitDomainWrapper == null) {
+                dispositions = dispositionService.getDispositions();
+            }
+            else {
+                dispositions = dispositionService.getValidDispositions(visitDomainWrapper);
+            }
+        }
+        else {
+            dispositions = dispositionService.getDispositions();
+        }
+
+        // TODO Mirebalais-specific feature toggle hack--remove this when no longer needed
+        pihFeatureToggleHack(dispositions, featureToggles);
 
         Element dispositionObsGroup = node.getOwnerDocument().createElement("obsgroup");
         dispositionObsGroup.setAttribute("groupingConceptId", emrApiProperties.getEmrApiConceptSource().getName() + ":"
@@ -89,17 +105,6 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
         while (i.hasNext()) {
             Disposition disposition = i.next();
-
-            VisitDomainWrapper visitDomainWrapper = session.getContext().getVisit() != null
-                    ? adtService.wrap((Visit) session.getContext().getVisit()) : null;
-
-            if (featureToggles.isFeatureEnabled("awaitingAdmission")) {
-                // ADMISSION type dispositions are not allowed if the patient is already admitted and this is an active visit
-                if (disposition.getType() == DispositionType.ADMIT && visitDomainWrapper != null
-                    && visitDomainWrapper.isAdmitted() && visitDomainWrapper.isActive()) {
-                    continue;
-                }
-            }
 
             answerConceptIds = answerConceptIds + disposition.getConceptCode() + (i.hasNext() ? "," : "");
             answerCodes = answerCodes + disposition.getName() + (i.hasNext() ? "," : "");
@@ -259,6 +264,27 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
         private void setParams(List<Map<String, String>> params) {
             this.params = params;
+        }
+    }
+
+    // TODO Mirebalais-specific feature toggle hack--remove this when no longer needed
+    private void pihFeatureToggleHack(List<Disposition> dispositions, FeatureToggleProperties featureToggles) {
+        if (featureToggles.isFeatureEnabled("awaitingAdmission")) {
+            Iterator<Disposition> i = dispositions.iterator();
+            while (i.hasNext()) {
+                if ("transferWithinHospital".equals(i.next().getUuid())) {
+                    i.remove();
+                }
+            }
+        }
+        else {
+            Iterator<Disposition> i = dispositions.iterator();
+            while (i.hasNext()) {
+                String uuid = i.next().getUuid();
+                if ("outpatientTransferWithinHospital".equals(uuid) || "inpatientTransferWithinHospital".equals(uuid)) {
+                    i.remove();
+                }
+            }
         }
     }
 }
