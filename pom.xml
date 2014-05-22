@@ -41,7 +41,6 @@
         <appuiVersion>1.1</appuiVersion>
         <idgenVersion>2.7</idgenVersion>
         <addresshierarchyVersion>2.2.9</addresshierarchyVersion>
-        <webservicesRestVersion>2.1</webservicesRestVersion>
         <uicommonsVersion>1.0</uicommonsVersion>
         <htmlformentryVersion>2.4-SNAPSHOT</htmlformentryVersion>
         <providermanagementVersion>2.1</providermanagementVersion>
@@ -186,22 +185,6 @@
                 <version>${htmlformentryVersion}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.openmrs.module</groupId>
-                <artifactId>webservices.rest-api</artifactId>
-                <version>${webservicesRestVersion}</version>
-                <type>jar</type>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.openmrs.module</groupId>
-                <artifactId>webservices.rest-omod</artifactId>
-                <version>${webservicesRestVersion}</version>
-                <type>jar</type>
-                <scope>provided</scope>
             </dependency>
 
             <!-- required by emrapi so we need this for tests -->

@@ -18,7 +18,13 @@
 		Add other dependencies from parent's pom: 
 		<dependency> 
 			<groupId>org.other.library</groupId> 
-			<artifactId>library-name</artifactId> 
+			<artifactId>library-name</artifactId>                              <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>webservices.rest-omod</artifactId>
+                <version>${webservicesRestVersion}</version>
+                <type>jar</type>
+                <scope>provided</scope>
+            </dependency>
 		</dependency> 
 		-->
 
