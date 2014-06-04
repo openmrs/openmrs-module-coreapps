@@ -1,9 +1,16 @@
-.inpatient-filter {
-  margin-bottom: 7px;
+
+.inpatient-current-location-filter {
+  display: inline-block;
+  float: left;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-.inpatient-count {
-  margin-top: 14px;
+.inpatient-admitTo-location-filter {
+  display: inline-block;
+  float: right;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 #content h2 {

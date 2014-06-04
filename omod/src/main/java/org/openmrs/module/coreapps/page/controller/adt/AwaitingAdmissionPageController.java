@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
+import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.adt.reporting.query.AwaitingAdmissionVisitQuery;
 import org.openmrs.module.reporting.common.SortCriteria;
 import org.openmrs.module.reporting.data.converter.MapElementConverter;
@@ -95,6 +96,10 @@ public class AwaitingAdmissionPageController {
 
         dataSet = dsdService.evaluate(dsd, context);
         model.addAttribute("awaitingAdmissionList", DataSetUtil.simplify(dataSet));
+
+        // add location tag constants
+        model.addAttribute("supportsAdmissionLocationTag", EmrApiConstants.LOCATION_TAG_SUPPORTS_ADMISSION);
+        model.addAttribute("supportsLoginLocationTag", EmrApiConstants.LOCATION_TAG_SUPPORTS_LOGIN);
     }
 
 

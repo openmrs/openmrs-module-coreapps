@@ -1,11 +1,6 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
-    ui.includeCss("coreapps", "adt/inpatient.css")
     ui.includeCss("coreapps", "adt/awaitingAdmission.css")
-    def awaitingAdmissionNumber = 0;
-    if (awaitingAdmissionList != null ){
-        awaitingAdmissionNumber = awaitingAdmissionList.size();
-    }
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -13,51 +8,82 @@
         { label: "${ ui.message("coreapps.app.awaitingAdmission.label")}"}
     ];
 
+    var supportsAdmissionLocationTag = '${supportsAdmissionLocationTag}';
+    var supportsLoginLocationTag = '${supportsLoginLocationTag}';
+
+    // TODO: probably want replace the whole thing with either ngGrid or the new datatable widget
     // TODO: make this more robust--kind of hacky to rely on column index now that it can change
-    var WARD_COLUMN_INDEX = ${ paperRecordIdentifierDefinitionAvailable ? '5' : '4' };
-    var awaitingAdmissionsTable = jq("#awaiting-admission").dataTable();
+    var admitToLocationColumnIndex = ${ paperRecordIdentifierDefinitionAvailable ? '5' : '4' };
+    var currentLocationColumnIndex = ${ paperRecordIdentifierDefinitionAvailable ? '3' : '2' };
 
     jq(document).ready(function() {
-        var ward= "";
+
+        // these variables are updated in the change handler and referenced in the filter added in afnFiltering
+        var admitToLocationFilter = jq("#inpatients-filterByAdmitToLocation select option:selected").text().replace(/'/g, "\\’");
+        var currentLocationFilter = jq("#inpatients-filterByCurrentLocation select option:selected").text().replace(/'/g, "\\’");
+
+        // this whole hack-around is for the problem with filtering with elements that have a single quote
+        // this adds filter that filters based on the current values of the admitToLocationFilter and currentLocationFilter variables
+        // it is triggered when we call the fnDraw() method in the change event handlers below
         jq.fn.dataTableExt.afnFiltering.push(
                 function (oSettings, aData, iDataIndex) {
-                    var currentWard = aData[WARD_COLUMN_INDEX];
-                    currentWard = currentWard.replace(/'/g, "\\’");
-                    if (ward.length < 1 ){
-                        return true;
-                    }else if (currentWard.match(new RegExp(ward)) != null ){
-                        return true;
+
+                    // remove single quote
+                    var admitToLocation = aData[admitToLocationColumnIndex].replace(/'/g, "\\’");
+
+                    if (admitToLocationFilter.length > 1) {
+                        if (!admitToLocation.match(new RegExp(admitToLocationFilter))) {
+                            return false;
+                        }
                     }
-                    return false;
+
+                    var currentLocation = aData[currentLocationColumnIndex].replace(/'/g, "\\’");
+
+                    if (currentLocationFilter.length > 1) {
+                        if (!currentLocation.match(new RegExp(currentLocationFilter))) {
+                            return false;
+                        }
+                    }
+
+                    return true;
                 }
         );
-        jq("#inpatients-filterByLocation").change(function(event){
-            var selectedItemId="";
-            jq("select option:selected").each(function(){
-                ward = jq(this).text();
-                ward = ward.replace(/'/g, "\\’");
-                selectedItemId =this.value;
-                if (ward.length > 0) {
-                    jq('#awaiting-admission').dataTable({ "bRetrieve": true }).fnDraw();
-                } else {
-                    jq('#awaiting-admission').dataTable({ "bRetrieve": true }).fnFilter('', WARD_COLUMN_INDEX);
-                }
 
-                jq("#listSize").text(jq('#awaiting-admission').dataTable({ "bRetrieve": true }).fnSettings().fnRecordsDisplay());
-            });
+        // update the admitToLocationFilter and redisplay table when that filter dropdoown is changed
+        jq("#inpatients-filterByAdmitToLocation").change(function(event){
+            admitToLocationFilter = jq("#inpatients-filterByAdmitToLocation select option:selected").text().replace(/'/g, "\\’");
+            jq('#awaiting-admission').dataTable({ "bRetrieve": true }).fnDraw();
         });
+
+        // update the currentLocationFilter and redisplay table when that filter dropdoown is changed
+        jq("#inpatients-filterByCurrentLocation").change(function(event){
+            currentLocationFilter = jq("#inpatients-filterByCurrentLocation select option:selected").text().replace(/'/g, "\\’");
+            jq('#awaiting-admission').dataTable({ "bRetrieve": true }).fnDraw();
+        });
+
     });
+
+
 
 </script>
 
 <h2>${ ui.message("coreapps.app.awaitingAdmission.title") }</h2>
-<strong class="inpatient-count">${ ui.message("coreapps.app.awaitingAdmission.patientCount") }: <span id="listSize">${awaitingAdmissionNumber}</span></strong>
-<div class="inpatient-filter">
+
+<div class="inpatient-current-location-filter">
     ${ ui.includeFragment("uicommons", "field/location", [
-            "id": "inpatients-filterByLocation",
-            "formFieldName": "filterByLocationId",
+            "id": "inpatients-filterByCurrentLocation",
+            "formFieldName": "filterByCurentLocationId",
+            "label": "coreapps.app.awaitingAdmission.filterByCurrent",
+            "withTag": supportsLoginLocationTag
+    ] ) }
+</div>
+
+<div class="inpatient-admitTo-location-filter">
+    ${ ui.includeFragment("uicommons", "field/location", [
+            "id": "inpatients-filterByAdmitToLocation",
+            "formFieldName": "filterByAdmitToLocationId",
             "label": "coreapps.app.awaitingAdmission.filterByAdmittedTo",
-            "withTag": "Admission Location",
+            "withTag": supportsAdmissionLocationTag,
             "initialValue": sessionContext.sessionLocation
     ] ) }
 </div>
