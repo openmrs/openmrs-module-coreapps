@@ -1,7 +1,7 @@
 
 .inpatient-current-location-filter {
   display: inline-block;
-  float: left;
+  float: right;
   margin-top: 5px;
   margin-bottom: 5px;
 }
@@ -14,6 +14,8 @@
 }
 
 #content h2 {
+  display: inline-block;
+  float: left;
   margin-bottom: 0;
 }
 
