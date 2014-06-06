@@ -18,8 +18,39 @@
 
     jq(document).ready(function() {
 
+        var supportsSessionStorage = typeof(Storage) !== "undefined";
+
         // these variables are updated in the change handler and referenced in the filter added in afnFiltering
-        var admitToLocationFilter = jq("#inpatients-filterByAdmitToLocation select option:selected").text().replace(/'/g, "\\’");
+        var admitToLocationFilter;
+        var currentLocationFilter;
+
+        // see if we have values for this filters in session storage
+        if(supportsSessionStorage) {
+            var admitToLocationFilter = sessionStorage.getItem('org.openmrs.module.coreapps.adt.awaitingAdmission.admitToLocationFilter');
+            var currentLocationFilter = sessionStorage.getItem('org.openmrs.module.coreapps.adt.awaitingAdmission.currentLocationFilter');
+
+            if (admitToLocationFilter) {
+                jq("#inpatients-filterByAdmitToLocation select option").each(function (element) {
+                    if (jq(this).text().replace(/'/g, "\\’") === admitToLocationFilter) {
+                        jq(this).attr('selected', true);
+                    }
+                });
+            }
+            if (currentLocationFilter) {
+                jq("#inpatients-filterByCurrentLocation select option").each(function (element) {
+                    if (jq(this).text().replace(/'/g, "\\’") === currentLocationFilter) {
+                        jq(this).attr('selected', true);
+                    }
+                });
+            }
+        }
+        else {
+            // because we default the admit to location to the session location
+            var admitToLocationFilter = jq("#inpatients-filterByAdmitToLocation select option:selected").text().replace(/'/g, "\\’");
+        }
+
+        // these variables are updated in the change handler and referenced in the filter added in afnFiltering
+
         var currentLocationFilter = jq("#inpatients-filterByCurrentLocation select option:selected").text().replace(/'/g, "\\’");
 
         // this whole hack-around is for the problem with filtering with elements that have a single quote
@@ -31,7 +62,7 @@
                     // remove single quote
                     var admitToLocation = aData[admitToLocationColumnIndex].replace(/'/g, "\\’");
 
-                    if (admitToLocationFilter.length > 1) {
+                    if (admitToLocationFilter) {
                         if (!admitToLocation.match(new RegExp(admitToLocationFilter))) {
                             return false;
                         }
@@ -39,7 +70,7 @@
 
                     var currentLocation = aData[currentLocationColumnIndex].replace(/'/g, "\\’");
 
-                    if (currentLocationFilter.length > 1) {
+                    if (currentLocationFilter) {
                         if (!currentLocation.match(new RegExp(currentLocationFilter))) {
                             return false;
                         }
@@ -49,21 +80,25 @@
                 }
         );
 
-        // update the admitToLocationFilter and redisplay table when that filter dropdoown is changed
+        // update the admitToLocationFilter and redisplay table when that filter dropdown is changed
         jq("#inpatients-filterByAdmitToLocation").change(function(event){
             admitToLocationFilter = jq("#inpatients-filterByAdmitToLocation select option:selected").text().replace(/'/g, "\\’");
+            if (supportsSessionStorage) {
+                sessionStorage.setItem('org.openmrs.module.coreapps.adt.awaitingAdmission.admitToLocationFilter', admitToLocationFilter);
+            }
             jq('#awaiting-admission').dataTable({ "bRetrieve": true }).fnDraw();
         });
 
-        // update the currentLocationFilter and redisplay table when that filter dropdoown is changed
+        // update the currentLocationFilter and redisplay table when that filter dropdown is changed
         jq("#inpatients-filterByCurrentLocation").change(function(event){
             currentLocationFilter = jq("#inpatients-filterByCurrentLocation select option:selected").text().replace(/'/g, "\\’");
+            if (supportsSessionStorage) {
+                sessionStorage.setItem('org.openmrs.module.coreapps.adt.awaitingAdmission.currentLocationFilter', currentLocationFilter);
+            }
             jq('#awaiting-admission').dataTable({ "bRetrieve": true }).fnDraw();
         });
 
     });
-
-
 
 </script>
 
@@ -147,8 +182,10 @@
                 def url = task.url.replaceAll('\\{\\{patientId\\}\\}', patientId.toString())
                 url = url.replaceAll('\\{\\{visit.id\\}\\}', visitId.toString())
             %>
-            <a href="/${ contextPath }/${ url }" class="">
-                <i class="${task.icon}"></i> ${ ui.message(task.label) }</a>
+            <p>
+                <a href="/${ contextPath }/${ url }" class="">
+                    <i class="${task.icon}"></i> ${ ui.message(task.label) }</a>
+            </p>
             <% } %>
         </td>
     </tr>
