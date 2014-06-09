@@ -44,14 +44,11 @@
                 });
             }
         }
-        else {
-            // because we default the admit to location to the session location
-            var admitToLocationFilter = jq("#inpatients-filterByAdmitToLocation select option:selected").text().replace(/'/g, "\\’");
+
+        // default the admit to location to the session location if no location in session storage
+        if (!admitToLocationFilter) {
+            admitToLocationFilter = jq("#inpatients-filterByAdmitToLocation select option:selected").text().replace(/'/g, "\\’");
         }
-
-        // these variables are updated in the change handler and referenced in the filter added in afnFiltering
-
-        var currentLocationFilter = jq("#inpatients-filterByCurrentLocation select option:selected").text().replace(/'/g, "\\’");
 
         // this whole hack-around is for the problem with filtering with elements that have a single quote
         // this adds filter that filters based on the current values of the admitToLocationFilter and currentLocationFilter variables
