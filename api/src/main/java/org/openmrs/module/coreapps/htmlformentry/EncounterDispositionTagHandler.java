@@ -72,9 +72,6 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
             dispositions = dispositionService.getDispositions();
         }
 
-        // TODO Mirebalais-specific feature toggle hack--remove this when no longer needed
-        pihFeatureToggleHack(dispositions, featureToggles);
-
         Element dispositionObsGroup = node.getOwnerDocument().createElement("obsgroup");
         dispositionObsGroup.setAttribute("groupingConceptId", emrApiProperties.getEmrApiConceptSource().getName() + ":"
                 + EmrApiConstants.CONCEPT_CODE_DISPOSITION_CONCEPT_SET);
@@ -267,24 +264,4 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         }
     }
 
-    // TODO Mirebalais-specific feature toggle hack--remove this when no longer needed
-    private void pihFeatureToggleHack(List<Disposition> dispositions, FeatureToggleProperties featureToggles) {
-        if (featureToggles.isFeatureEnabled("awaitingAdmission")) {
-            Iterator<Disposition> i = dispositions.iterator();
-            while (i.hasNext()) {
-                if ("transferWithinHospital".equals(i.next().getUuid())) {
-                    i.remove();
-                }
-            }
-        }
-        else {
-            Iterator<Disposition> i = dispositions.iterator();
-            while (i.hasNext()) {
-                String uuid = i.next().getUuid();
-                if ("outpatientTransferWithinHospital".equals(uuid) || "inpatientTransferWithinHospital".equals(uuid)) {
-                    i.remove();
-                }
-            }
-        }
-    }
 }
