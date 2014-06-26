@@ -65,6 +65,10 @@ $green: #51A351;
     cursor: default;
     color: #363463;
   }
+
+  #patient-search-results-table_wrapper {
+     min-height: 0px;
+  }
 }
 
 .search_table_row_highlight{
