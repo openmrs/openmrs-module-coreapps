@@ -154,6 +154,7 @@ function PatientSearchWidget(configuration){
         if(rowCount == 0){
             jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noMatchesFound);
         }
+        gotoFirstPage(); // always return back to the first page when refreshing the table
     }
 
     var isTableEmpty = function(){
@@ -161,6 +162,14 @@ function PatientSearchWidget(configuration){
             return false
         }
         return !dTable || dTable.fnGetNodes().length == 0;
+    }
+
+    var gotoPage = function(pageIndex) {
+        dTable.fnPageChange(pageIndex);
+    }
+
+    var gotoFirstPage = function() {
+        gotoPage(0);
     }
 
     var selectRow = function(selectedRowIndex){
