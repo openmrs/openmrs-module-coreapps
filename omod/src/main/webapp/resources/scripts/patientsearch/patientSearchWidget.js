@@ -37,6 +37,9 @@ function PatientSearchWidget(configuration){
     var initialPatientData = [];
     var initialPatientUuids = [];
     var tableObject = jq('#'+tableId);
+    var performingSearch = false;  // flag to check if we are currently updating the search results
+    var afterSearchResultsUpdated = [];  // stores a set of functions to execute after we update search results (currently we are only using this for the doEnter function)
+
     if(config.initialPatients){
         _.each(config.initialPatients, function(p){
             //only add the uuid since it is only one we need to reference later
@@ -84,6 +87,7 @@ function PatientSearchWidget(configuration){
             }
         })
         .fail(function(jqXHR){
+            performingSearch = false;
             if(!currRequestCount || currRequestCount >= requestCount){
                 jq('#'+tableId).find('td.dataTables_empty').html("<span class='patient-search-error'>"+config.messages.searchError+"</span>");
             }
@@ -128,8 +132,16 @@ function PatientSearchWidget(configuration){
         }
 
         dTable.fnAddData(dataRows);
-
         refreshTable();
+        performingSearch = false;
+
+        // perform any actions that may have been queued up during the action (currently limited to the doEnter action)
+        if (!isTableEmpty()) {
+            _.each(afterSearchResultsUpdated, function(fn) {
+                fn();
+            })
+        }
+        afterSearchResultsUpdated = [];
     }
 
     var refreshTable = function(){
@@ -157,15 +169,28 @@ function PatientSearchWidget(configuration){
     }
 
     var doKeyEnter = function() {
+        // if no rows are currently highlighted..
         if (highlightedKeyboardRowIndex == undefined){
-            prepareForNewSearch();
-            doSearch(input.val());
-            return;
+            if(dTable && dTable.fnGetNodes().length == 1) {
+                // if there is only one row in the result set, automatically select that row
+                // (so that you can scan a patient id and have it automatically  load that patient dashboard)
+                selectRow(0);
+            }
+            else {
+                // otherwise, perform a new search
+                prepareForNewSearch();
+                doSearch(input.val());
+                return;
+            }
         }
+
+        // if there's a highlighted row, select it
         selectRow(highlightedKeyboardRowIndex);
     }
 
     var prepareForNewSearch = function(){
+        // set a flag to denote that we are starting a new search
+        performingSearch = true;
         //if there is any search delay in progress, cancel it
         if(searchDelayTimer != undefined){
             window.clearTimeout(searchDelayTimer);
@@ -403,12 +428,23 @@ function PatientSearchWidget(configuration){
     //catch control keys to stop the cursor in the input box from moving.
     input.keydown(function(event) {
         var kc = event.keyCode;
-        if(kc == 13 ||(_.contains(keyboardNavigationKeys, kc) && !isTableEmpty())) {
+
+        // special handling for the enter key--while for the arrow keys we disregard any keystrokes while performing a search.
+        // we "cache" enter keystrokes so that they will be handled after the search is complete; this is to handle typing
+        // or scanning exact-match patient identifiers without requiring an additional keystroke
+        if (kc == 13) {
+            if (!performingSearch) {
+                doKeyEnter();
+            }
+            else {
+                afterSearchResultsUpdated.push(doKeyEnter)
+            }
+            return false;
+        }
+
+        if((_.contains(keyboardNavigationKeys, kc) && !isTableEmpty())) {
 
             switch(kc) {
-                case 13:
-                    doKeyEnter();
-                    break;
                 case 33:
                     doPageUp();
                     break;
