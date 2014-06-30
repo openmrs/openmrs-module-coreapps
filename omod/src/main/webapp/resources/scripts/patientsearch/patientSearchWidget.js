@@ -2,7 +2,8 @@ function PatientSearchWidget(configuration){
     var defaults = {
         minSearchCharacters: 3,
         searchInputId: 'patient-search',
-        searchResultsDivId: 'patient-search-results'
+        searchResultsDivId: 'patient-search-results',
+        clearButtonId: 'patient-search-clear-button'
     };
 
     var config = jq.extend({}, defaults, configuration);
@@ -24,6 +25,8 @@ function PatientSearchWidget(configuration){
 
     jq('#'+config.searchResultsDivId).append(tableHtml);
     var input = jq('#'+config.searchInputId);
+    var clearButton = jq('#' + config.clearButtonId);
+    var searchResults = jq('#' + config.searchResultsDivId);
     var pageCount = 0;
     var searchResultsData = [];
     var highlightedKeyboardRowIndex;
@@ -92,6 +95,13 @@ function PatientSearchWidget(configuration){
                 jq('#'+tableId).find('td.dataTables_empty').html("<span class='patient-search-error'>"+config.messages.searchError+"</span>");
             }
         });
+    }
+
+    var clearSearch = function() {
+        // do a reset, but also clear the input and hide the search results
+        reset();
+        input.val('');
+        searchResults.hide();
     }
 
     var reset = function(){
@@ -402,6 +412,11 @@ function PatientSearchWidget(configuration){
     });
 
     /***************** SETUP KEYBOARD AND MOUSE EVENT HANDLERS **************/
+
+    // handle the clear button
+    clearButton.click(function(event) {
+        clearSearch();
+    });
 
     input.keyup(function(event) {
         var kc = event.keyCode;

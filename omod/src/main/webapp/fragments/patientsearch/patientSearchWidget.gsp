@@ -46,7 +46,7 @@
 </script>
 
 <form method="get" id="patient-search-form" onsubmit="return false">
-    <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off"/>
+    <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off"/><i id="patient-search-clear-button" class="icon-remove"></i>
 </form>
 
 <div id="patient-search-results"></div>
