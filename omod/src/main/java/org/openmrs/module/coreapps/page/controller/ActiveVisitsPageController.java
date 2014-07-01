@@ -17,6 +17,7 @@ import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -43,6 +44,9 @@ public class ActiveVisitsPageController {
 
 		String patientPageUrl = app.getConfig().get("patientPageUrl").getTextValue();
 		model.addAttribute("patientPageUrl", patientPageUrl);
+
+        // used to determine whether or not we display a link to the patient in the results list
+        model.addAttribute("privilegeFindPatient", CoreAppsConstants.PRIVILEGE_FIND_PATIENT);
 
         return null;
 	}
