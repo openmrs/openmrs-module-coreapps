@@ -101,6 +101,7 @@ function PatientSearchWidget(configuration){
         // do a reset, but also clear the input and hide the search results
         reset();
         input.val('');
+        input.focus();
         searchResults.hide();
     }
 
