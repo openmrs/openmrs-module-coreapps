@@ -97,7 +97,7 @@ public class PatientDashboardPageController {
 		model.addAttribute("patientTabs", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.tabs"));
         model.addAttribute("isNewPatientHeaderEnabled",
                 featureToggleProperties.isFeatureEnabled("enableNewPatientHeader"));
-        model.addAttribute("privilegeFindPatient", CoreAppsConstants.PRIVILEGE_FIND_PATIENT);
+        model.addAttribute("privilegePatientDashboard", CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD);
 
         applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 

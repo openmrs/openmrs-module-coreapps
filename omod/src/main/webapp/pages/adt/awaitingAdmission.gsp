@@ -153,7 +153,7 @@
             <td>${ v.paperRecordIdentifier ? ui.format(v.paperRecordIdentifier) : ''}</td>
         <% } %>
         <td>
-            <% if (sessionContext.currentUser.hasPrivilege(privilegeFindPatient)
+            <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
                     || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
                 <!-- only add link to patient dashboard if user has appropriate privilege -->
                 <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.patientId ]) }">
@@ -161,7 +161,7 @@
 
             ${ ui.format((v.patientFirstName ? v.patientFirstName : '') + " " + (v.patientLastName ? v.patientLastName : '')) }
 
-            <% if (sessionContext.currentUser.hasPrivilege(privilegeFindPatient)
+            <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
                     || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
                 </a>
             <% } %>

@@ -38,7 +38,7 @@
 </script>
 
 
-<% if (sessionContext.currentUser.hasPrivilege(privilegeFindPatient)
+<% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
         || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
 <!-- as a sanity check, don't allow users without find patient privilege to view patient dashboard -->
 

@@ -46,7 +46,7 @@ public class ActiveVisitsPageController {
 		model.addAttribute("patientPageUrl", patientPageUrl);
 
         // used to determine whether or not we display a link to the patient in the results list
-        model.addAttribute("privilegeFindPatient", CoreAppsConstants.PRIVILEGE_FIND_PATIENT);
+        model.addAttribute("privilegePatientDashboard", CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD);
 
         return null;
 	}

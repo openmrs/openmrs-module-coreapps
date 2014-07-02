@@ -128,6 +128,16 @@
 		<description>Able to access the find patient app</description>
 	</privilege>
 
+    <privilege>
+        <name>App: coreapps.patientDashboard</name>
+        <description>Able to access the patient dashboard</description>
+    </privilege>
+
+    <privilege>
+        <name>App: coreapps.findPatient</name>
+        <description>Able to access the find patient app</description>
+    </privilege>
+
 	<privilege>
 		<name>App: coreapps.activeVisits</name>
 		<description>Able to access the active visits app</description>

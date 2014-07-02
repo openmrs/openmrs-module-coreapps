@@ -20,6 +20,7 @@
                 "description" : "Fragment to be added to the Patient Dashboards, may include javascript, css and possibly probably html code"
             }
         ],
-        "contextModel": [ "patientId", "activeVisitId" ]
+        "contextModel": [ "patientId", "activeVisitId" ],
+        "requiredPrivilege": "App: coreapps.patientDashboard"
     }
 ]
