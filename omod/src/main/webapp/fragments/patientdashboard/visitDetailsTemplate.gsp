@@ -8,13 +8,9 @@
     [[ } ]]
     [[ if (canDeleteVisit) { ]]
         <a class="right" id="deleteVisitLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.deleteVisit.label")}</a>
+        <span class="right"> | </span>
     [[ } ]]
-    <% if (featureToggles.isFeatureEnabled("editVisitDates") ) { %>
-        [[ if (canDeleteVisit) { ]]
-            <span class="right"> | </span>
-        [[ } ]]
         <a class="right" id="editVisitDatesLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.editVisitDate.label")}</a>
-    <% } %>
 </div>
 
 <div class="visit-actions [[- stopDatetime ? 'past-visit' : 'active-visit' ]]">

@@ -14,9 +14,6 @@
         }
     ]
 
-    if (!isNewPatientHeaderEnabled) {
-      tabs.add([ id: "contactInfo", label: ui.message("coreapps.patientDashBoard.contactinfo"), provider: "coreapps", fragment: "patientdashboard/contactInfo" ])
-    }
     tabs = tabs.flatten()
 
 	if(!returnUrl) {

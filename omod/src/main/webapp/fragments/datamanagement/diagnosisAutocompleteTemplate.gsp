@@ -16,7 +16,6 @@
                 <small>${ ui.message("emr.consult.synonymFor") }</small>
                 <span data-bind="text: diagnosis().concept.preferredName"></span>
             </span>
-            <% if (featureToggles.isFeatureEnabled("consult_note_confirm_diagnoses")) { %>
             <div class="actions">
                 <label>
                     <input type="checkbox" data-bind="checked: primary"/>
@@ -27,7 +26,6 @@
                     ${ ui.message("emr.Diagnosis.Certainty.CONFIRMED") }
                 </label>
             </div>
-            <% } %>
         </div>
         <i data-bind="click: \$parent.removeDiagnosis" tabindex="-1" class="icon-remove delete-item"></i>
         <input type="hidden" id="diagnosis" name="diagnosis" data-bind="value: valueToSubmit()">

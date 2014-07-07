@@ -54,21 +54,19 @@
             });
         })
 
-        <% if (config.isNewPatientHeaderEnabled) { %>
-            jq("#patient-header-contactInfo").click(function (){
-                var contactInfoDialogDiv = jq("#contactInfoContent");
+        jq("#patient-header-contactInfo").click(function (){
+            var contactInfoDialogDiv = jq("#contactInfoContent");
 
-                if (contactInfoDialogDiv.hasClass('hidden')) {
-                    contactInfoDialogDiv.removeClass('hidden');
-                    jq(this).addClass('expanded');
-                } else {
-                    contactInfoDialogDiv.addClass('hidden');
-                    jq(this).removeClass('expanded');
-                }
+            if (contactInfoDialogDiv.hasClass('hidden')) {
+                contactInfoDialogDiv.removeClass('hidden');
+                jq(this).addClass('expanded');
+            } else {
+                contactInfoDialogDiv.addClass('hidden');
+                jq(this).removeClass('expanded');
+            }
 
-                return false;
-            });
-        <% } %>
+            return false;
+        });
     })
 </script>
 
@@ -100,21 +98,16 @@
                         <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}&returnUrl=${ui.urlEncode(ui.thisUrl())}">${ui.message("general.edit")}</a></small>
                     </span>
                 <% } %>
-                <% if (config.isNewPatientHeaderEnabled) { %>
                 <a href="#" id="patient-header-contactInfo" class="contact-info-label">
                     <span class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
                     <i class="toggle-icon icon-caret-down small"></i>
                     <span class="hide">${ui.message("coreapps.patientHeader.hidecontactinfo")}</span>
                     <i class="toggle-icon icon-caret-up small"></i>
                 </a>
-                <% } %>
             </span>
-            <% if (config.isNewPatientHeaderEnabled) { %>
-                <div class="hidden" id="contactInfoContent">
-                    ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient ]) }
-                </div>
-            <% } %>
-
+            <div class="hidden" id="contactInfoContent">
+                ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient ]) }
+            </div>
         </h1>
         <% if (patient.patient.dead) { %>
             <div class="death-message">
@@ -123,25 +116,20 @@
         <% } %>
         <% if (config.activeVisit) { %>
             <% def visit = config.activeVisit.visit %>
-            <% if (config.isNewPatientHeaderEnabled) { %>
-                <div class="active-visit-started-at-message">
-                    ${ui.message("coreapps.patientHeader.activeVisit.at", config.activeVisitStartDatetime)}
-                </div>
-                <% if (config.activeVisit.admitted) { %>
-                    <div class="active-visit-message">
-                        ${ui.message("coreapps.patientHeader.activeVisit.inpatient", ui.format(config.activeVisit.latestAdtEncounter.location))}
-                    </div>
-                <% } else { %>
-                    <div class="active-visit-message">
-                        ${ui.message("coreapps.patientHeader.activeVisit.outpatient")}
-                    </div>
-                <% } %>
-            <% } else { %>
-            <div class="status-container">
-                <span class="status active"></span>
-                ${ui.message("coreapps.activeVisit")}
+
+            <div class="active-visit-started-at-message">
+                ${ui.message("coreapps.patientHeader.activeVisit.at", config.activeVisitStartDatetime)}
             </div>
+            <% if (config.activeVisit.admitted) { %>
+                <div class="active-visit-message">
+                    ${ui.message("coreapps.patientHeader.activeVisit.inpatient", ui.format(config.activeVisit.latestAdtEncounter.location))}
+                </div>
+            <% } else { %>
+                <div class="active-visit-message">
+                    ${ui.message("coreapps.patientHeader.activeVisit.outpatient")}
+                </div>
             <% } %>
+
         <% } %>
     </div>
 

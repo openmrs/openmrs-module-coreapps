@@ -14,10 +14,6 @@
 
 package org.openmrs.module.coreapps.fragment.controller;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -35,6 +31,9 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ideally you pass in a PatientDomainWrapper as the "patient" config parameter. But if you pass in
@@ -79,8 +78,7 @@ public class PatientHeaderFragmentController {
 		
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
         config.addAttribute("hideEditDemographicsButton", featureToggleProperties.isFeatureEnabled("hideEditPatientDemographicsButton"));
-        config.addAttribute("isNewPatientHeaderEnabled", featureToggleProperties.isFeatureEnabled("enableNewPatientHeader"));
-	}
+    }
 	
 	public class ExtraPatientIdentifierType {
 		
