@@ -1,10 +1,5 @@
 package org.openmrs.module.coreapps.fragment.controller.diagnosis;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import org.openmrs.ConceptSearchResult;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.coreapps.fragment.controller.DiagnosesFragmentController;
@@ -14,6 +9,11 @@ import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.fragment.FragmentModel;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  *
@@ -25,7 +25,7 @@ public class EncounterDiagnosesFragmentController {
                            @FragmentParam(value = "priorDiagnoses", required = false) List<Diagnosis> priorDiagnoses,
                            FragmentModel model) throws Exception {
 
-        // add the exiseting and prior diagnoses (set each attribute to an empty list if no existing/prior so we don't have to worry about handling NPE in the view
+        // add the existing and prior diagnoses (set each attribute to an empty list if no existing/prior so we don't have to worry about handling NPE in the view
         model.addAttribute("jsForExisting", existingDiagnoses != null ? generateJsForDiagnoses(existingDiagnoses, ui) : new ArrayList<String>());
         model.addAttribute("jsForPrior", priorDiagnoses != null ? generateJsForDiagnoses(priorDiagnoses, ui) : new ArrayList<String>());
     }
