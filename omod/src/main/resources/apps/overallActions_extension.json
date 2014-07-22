@@ -29,5 +29,15 @@
         "icon": "icon-link",
         "order": 13,
         "requiredPrivilege": "Task: coreapps.mergeVisits"
+    },
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.relationships",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "link",
+        "label": "coreapps.task.relationships.label",
+        "url": "coreapps/relationships/list.page?patientId={{patientId}}",
+        "icon": "icon-group",
+        "order": 23,
+        "requiredPrivilege": "Task: coreapps.relationships"
     }
 ]
