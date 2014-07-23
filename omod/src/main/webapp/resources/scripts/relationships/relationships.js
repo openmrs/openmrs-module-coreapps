@@ -1,4 +1,4 @@
-angular.module('relationships', ['relationshipTypeService', 'relationshipService', 'personService', 'uicommons.widgets' ]).
+angular.module('relationships', ['relationshipTypeService', 'relationshipService', 'personService', 'uicommons.widget.select-person' ]).
 
     controller('PersonRelationshipsCtrl', ['$scope', 'RelationshipTypeService', 'RelationshipService', 'PersonService', '$modal',
     function($scope, RelationshipTypeService, RelationshipService, PersonService, $modal) {

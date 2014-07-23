@@ -1,13 +1,12 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
 
-    ui.includeJavascript("uicommons", "angular.js")
+    ui.includeJavascript("uicommons", "angular.min.js")
     ui.includeJavascript("uicommons", "angular-resource.min.js")
     ui.includeJavascript("uicommons", "angular-ui/ui-bootstrap-tpls-0.6.0.min.js")
     ui.includeJavascript("uicommons", "services/relationshipService.js")
     ui.includeJavascript("uicommons", "services/relationshipTypeService.js")
     ui.includeJavascript("uicommons", "services/personService.js")
-    ui.includeJavascript("uicommons", "angular-app.js")
     ui.includeJavascript("uicommons", "directives/select-person.js")
     ui.includeJavascript("coreapps", "relationships/relationships.js")
 %>
