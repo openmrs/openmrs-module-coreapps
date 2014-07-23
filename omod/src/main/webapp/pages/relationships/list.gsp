@@ -1,8 +1,9 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
 
-    ui.includeJavascript("uicommons", "angular.min.js")
+    ui.includeJavascript("uicommons", "angular.js")
     ui.includeJavascript("uicommons", "angular-resource.min.js")
+    ui.includeJavascript("uicommons", "angular-common.js")
     ui.includeJavascript("uicommons", "angular-ui/ui-bootstrap-tpls-0.6.0.min.js")
     ui.includeJavascript("uicommons", "services/relationshipService.js")
     ui.includeJavascript("uicommons", "services/relationshipTypeService.js")
