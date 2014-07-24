@@ -13,7 +13,6 @@
     ui.includeJavascript("coreapps", "relationships/relationships.js")
 
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
-    ui.includeCss("uicommons", "styleguide/styleGuide.css")
     ui.includeCss("coreapps", "relationships/list.css")
 %>
 <script type="text/javascript">
