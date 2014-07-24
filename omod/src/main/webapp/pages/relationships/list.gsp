@@ -76,41 +76,41 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
         </div>
     </script>
 
-        <div ng-repeat="relType in relationshipTypes">
-                <h6>
-                    {{ relType.aIsToB }}
-                    <a ng-click="showAddDialog(relType, 'A')">
-                        <i class="icon-plus-sign edit-action"></i>
-                    </a>
-                </h6>
-                <span ng-repeat="rel in relationshipsByType(relType, 'A')" class="relationship">
-                    {{ rel.personA.display }}
-                    <a ng-click="showDeleteDialog(rel)">
-                        <i class="icon-remove delete-action"></i>
-                    </a>
-                </span>
-                <span ng-show="relType.aIsToB == relType.bIsToA" ng-repeat="rel in relationshipsByType(relType, 'B')" class="relationship">
-                    {{ rel.personB.display }}
-                    <a ng-click="showDeleteDialog(rel)">
-                        <i class="icon-remove delete-action"></i>
-                    </a>
-                </span>
+    <div ng-repeat="relType in relationshipTypes">
+        <h6>
+            {{ relType.aIsToB }}
+            <a ng-click="showAddDialog(relType, 'A')">
+                <i class="icon-plus-sign edit-action"></i>
+            </a>
+        </h6>
+        <span ng-repeat="rel in relationshipsByType(relType, 'A')" class="relationship">
+            {{ rel.personA.display }}
+            <a ng-click="showDeleteDialog(rel)">
+                <i class="icon-remove delete-action"></i>
+            </a>
+        </span>
+        <span ng-show="relType.aIsToB == relType.bIsToA" ng-repeat="rel in relationshipsByType(relType, 'B')" class="relationship">
+            {{ rel.personB.display }}
+            <a ng-click="showDeleteDialog(rel)">
+                <i class="icon-remove delete-action"></i>
+            </a>
+        </span>
 
-            <span ng-hide="relType.aIsToB == relType.bIsToA">
-                <h6>
-                    {{ relType.bIsToA }}
-                    <a ng-click="showAddDialog(relType, 'B')">
-                        <i class="icon-plus-sign edit-action"></i>
-                    </a>
-                </h6>
-                <span ng-repeat="rel in relationshipsByType(relType, 'B')" class="relationship">
-                    {{ rel.personB.display }}
-                    <a ng-click="showDeleteDialog(rel)">
-                        <i class="icon-remove delete-action"></i>
-                    </a>
-                </span>
+        <span ng-hide="relType.aIsToB == relType.bIsToA">
+            <h6>
+                {{ relType.bIsToA }}
+                <a ng-click="showAddDialog(relType, 'B')">
+                    <i class="icon-plus-sign edit-action"></i>
+                </a>
+            </h6>
+            <span ng-repeat="rel in relationshipsByType(relType, 'B')" class="relationship">
+                {{ rel.personB.display }}
+                <a ng-click="showDeleteDialog(rel)">
+                    <i class="icon-remove delete-action"></i>
+                </a>
             </span>
-        </div>
+        </span>
+    </div>
 
 </div>
 
