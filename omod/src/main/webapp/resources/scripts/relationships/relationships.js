@@ -1,7 +1,7 @@
-angular.module('relationships', ['relationshipTypeService', 'relationshipService', 'personService', 'uicommons.widget.select-person' ]).
+angular.module('relationships', ['relationshipTypeService', 'relationshipService', 'personService', 'uicommons.widget.select-person', 'ngDialog' ]).
 
-    controller('PersonRelationshipsCtrl', ['$scope', 'RelationshipTypeService', 'RelationshipService', 'PersonService', '$modal',
-    function($scope, RelationshipTypeService, RelationshipService, PersonService, $modal) {
+    controller('PersonRelationshipsCtrl', ['$scope', 'RelationshipTypeService', 'RelationshipService', 'PersonService', '$modal', 'ngDialog',
+    function($scope, RelationshipTypeService, RelationshipService, PersonService, $modal, ngDialog) {
 
         $scope.thisPersonUuid = null;
 
@@ -40,55 +40,42 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
             });
         }
 
-        $scope.addDialogMode = null;
-
-        $scope.addDialogThisLabel = '';
-        $scope.addDialogOtherLabel = '';
-        $scope.otherPerson = null;
-
         $scope.showAddDialog = function(relationshipType, whichSide) {
-            $scope.otherPerson = null;
-            $scope.addDialogMode = {
-                relationshipType: relationshipType,
-                whichSide: whichSide
-            };
-            $scope.addDialogOtherLabel = whichSide == 'A' ? relationshipType.aIsToB : relationshipType.bIsToA;
-            $scope.addDialogThisLabel = whichSide == 'A' ? relationshipType.bIsToA : relationshipType.aIsToB;
-            $('#select-other-person').focus();
+            ngDialog.openConfirm({
+                showClose: false,
+                closeByEscape: true,
+                closeByDocument: true,
+                data: angular.toJson({
+                    otherLabel: whichSide == 'A' ? relationshipType.aIsToB : relationshipType.bIsToA,
+                    thisLabel: whichSide == 'A' ? relationshipType.bIsToA : relationshipType.aIsToB
+                }),
+                template: 'addDialogTemplate'
+            }).then(function(otherPerson) {
+                var relationship = {
+                    relationshipType: relationshipType.uuid,
+                    personA: whichSide == 'A' ? otherPerson.uuid : $scope.thisPersonUuid,
+                    personB: whichSide == 'A' ? $scope.thisPersonUuid : otherPerson.uuid
+                };
+                var created = RelationshipService.createRelationship(relationship);
+                $scope.relationships.push(created);
+            });
+            angular.element('#select-other-person').focus();
         }
-
-        $scope.doAddRelationship = function() {
-            var relationship = {
-                relationshipType: $scope.addDialogMode.relationshipType.uuid,
-                personA: $scope.addDialogMode.whichSide == 'A' ? $scope.otherPerson.uuid : $scope.thisPersonUuid,
-                personB: $scope.addDialogMode.whichSide == 'A' ? $scope.thisPersonUuid : $scope.otherPerson.uuid
-            };
-            var created = RelationshipService.createRelationship(relationship);
-            $scope.relationships.push(created);
-            $scope.otherPerson = null;
-            $scope.addDialogMode = null;
-        }
-
-        $scope.cancelAddRelationship = function() {
-            $scope.otherPerson = null;
-            $scope.addDialogMode = null;
-        }
-
-        $scope.relationshipToDelete = null;
 
         $scope.showDeleteDialog = function(relationship) {
-            $scope.relationshipToDelete = relationship;
-        }
-
-        $scope.doDeleteRelationship = function(relationship) {
-            RelationshipService.deleteRelationship(relationship);
-            $scope.relationships = _.reject($scope.relationships, function(item) {
-                return item.uuid == relationship.uuid;
+            ngDialog.openConfirm({
+                showClose: false,
+                closeByEscape: true,
+                closeByDocument: true,
+                template: 'deleteDialogTemplate',
+                data: angular.toJson({ relationship: relationship }),
+                scope: $scope
+            }).then(function(relationshipToDelete) {
+                RelationshipService.deleteRelationship(relationship);
+                $scope.relationships = _.reject($scope.relationships, function(item) {
+                    return item.uuid == relationship.uuid;
+                });
             });
-            $scope.relationshipToDelete = null;
         }
 
-        $scope.cancelDeleteRelationship = function(relationship) {
-            $scope.relationshipToDelete = null;
-        }
     }]);

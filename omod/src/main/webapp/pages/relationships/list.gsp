@@ -5,11 +5,16 @@
     ui.includeJavascript("uicommons", "angular-resource.min.js")
     ui.includeJavascript("uicommons", "angular-common.js")
     ui.includeJavascript("uicommons", "angular-ui/ui-bootstrap-tpls-0.6.0.min.js")
+    ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
     ui.includeJavascript("uicommons", "services/relationshipService.js")
     ui.includeJavascript("uicommons", "services/relationshipTypeService.js")
     ui.includeJavascript("uicommons", "services/personService.js")
     ui.includeJavascript("uicommons", "directives/select-person.js")
     ui.includeJavascript("coreapps", "relationships/relationships.js")
+
+    ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
+    ui.includeCss("uicommons", "styleguide/styleGuide.css")
+    ui.includeCss("coreapps", "relationships/list.css")
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -20,111 +25,93 @@
     ]
 </script>
 
-<style type="text/css">
-    .relationship {
-        position: relative;
-        border: 1px solid #DADADA;
-        padding: 5px 25px 5px 5px;
-    }
-    .relationship i {
-        position: absolute;
-        right: 0px;
-        cursor: pointer;
-    }
-    .dialog {
-        position: absolute;
-        z-index: 999;
-    }
-    .add-confirm-spacer {
-        min-height: 110px;
-    }
-</style>
-
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ]) }
 
-<h2>${ ui.message("coreapps.task.relationships.label") }</h2>
+<h3>${ ui.message("coreapps.task.relationships.label") }</h3>
 
 <div id="relationships-app" ng-controller="PersonRelationshipsCtrl" ng-init="init('${ patient.patient.uuid }')">
 
-    <div ng-show="addDialogMode" class="dialog" id="add-relationship-dialog">
+    <script type="text/ng-template" id="addDialogTemplate">
         <div class="dialog-header">
-            <%= ui.message("coreapps.relationships.add.header", "{{ addDialogOtherLabel }}") %>
+            <h3><%= ui.message("coreapps.relationships.add.header", "{{ ngDialogData.otherLabel }}") %></h3>
         </div>
         <div class="dialog-content">
             <div>
                 <label>
-                    <%= ui.message("coreapps.relationships.add.choose", "{{ addDialogOtherLabel }}") %>
+                    <%= ui.message("coreapps.relationships.add.choose", "{{ ngDialogData.otherLabel }}") %>
                 </label>
                 <select-person ng-model="otherPerson" exclude-person="${ patient.patient.uuid }" />
             </div>
             <div class="add-confirm-spacer">
                 <div ng-show="otherPerson" >
                     <h3>${ ui.message("coreapps.relationships.add.confirm") }</h3>
-                    <p>{{ addDialogThisLabel }}: ${ ui.format(patient.patient) } ${ ui.message("coreapps.relationships.add.thisPatient") }</p>
-                    <p>{{ addDialogOtherLabel }}: {{ otherPerson.display }}</p>
+                    <p>{{ ngDialogData.thisLabel }}: ${ ui.format(patient.patient) } ${ ui.message("coreapps.relationships.add.thisPatient") }</p>
+                    <p>{{ ngDialogData.otherLabel }}: {{ otherPerson.display }}</p>
                 </div>
             </div>
             <div>
-                <button class="confirm right" ng-disabled="!otherPerson" ng-click="doAddRelationship()">${ ui.message("uicommons.save") }</button>
-                <button class="cancel" ng-click="cancelAddRelationship()">${ ui.message("uicommons.cancel") }</button>
+                <button class="confirm right" ng-disabled="!otherPerson" ng-click="confirm(otherPerson)">${ ui.message("uicommons.save") }</button>
+                <button class="cancel" ng-click="closeThisDialog()">${ ui.message("uicommons.cancel") }</button>
             </div>
         </div>
-    </div>
+    </script>
 
-    <div ng-show="relationshipToDelete" class="dialog" id="delete-relationship-dialog">
-        <div class="dialog-header">${ ui.message("coreapps.relationships.delete.header") }</div>
+    <script type="text/ng-template" id="deleteDialogTemplate">
+        <div class="dialog-header">
+            <h3>${ ui.message("coreapps.relationships.delete.header") }</h3>
+        </div>
         <div class="dialog-content">
             <form>
                 ${ ui.message("coreapps.relationships.delete.title") }
                 <p>
-                    <label>{{ relType(relationshipToDelete).aIsToB }}</label>
-                    {{ relationshipToDelete.personA.display }}
+                    <label>{{ relType(ngDialogData.relationship).aIsToB }}</label>
+                    {{ ngDialogData.relationship.personA.display }}
                 </p>
                 <p>
-                    <label>{{ relType(relationshipToDelete).bIsToA }}</label>
-                    {{ relationshipToDelete.personB.display }}
+                    <label>{{ relType(ngDialogData.relationship).bIsToA }}</label>
+                    {{ ngDialogData.relationship.personB.display }}
                 </p>
-                <button class="confirm right" ng-click="doDeleteRelationship(relationshipToDelete)">${ ui.message("uicommons.delete") }</button>
-                <button class="cancel" ng-click="cancelDeleteRelationship(relationshipToDelete)">${ ui.message("uicommons.cancel") }</button>
+                <button  class="confirm right" ng-click="confirm()">${ ui.message("uicommons.delete") }</button>
+                <button class="cancel" ng-click="closeThisDialog()">${ ui.message("uicommons.cancel") }</button>
             </form>
         </div>
-    </div>
+    </script>
 
-    <form id="existing-relationships">
         <div ng-repeat="relType in relationshipTypes">
-            <p>
-                <label>{{ relType.aIsToB }}</label>
+                <h6>
+                    {{ relType.aIsToB }}
+                    <a ng-click="showAddDialog(relType, 'A')">
+                        <i class="icon-plus-sign edit-action"></i>
+                    </a>
+                </h6>
                 <span ng-repeat="rel in relationshipsByType(relType, 'A')" class="relationship">
                     {{ rel.personA.display }}
                     <a ng-click="showDeleteDialog(rel)">
-                        <i class="small icon-remove"></i>
+                        <i class="icon-remove delete-action"></i>
                     </a>
                 </span>
                 <span ng-show="relType.aIsToB == relType.bIsToA" ng-repeat="rel in relationshipsByType(relType, 'B')" class="relationship">
                     {{ rel.personB.display }}
                     <a ng-click="showDeleteDialog(rel)">
-                        <i class="small icon-remove"></i>
+                        <i class="icon-remove delete-action"></i>
                     </a>
                 </span>
-                <a ng-click="showAddDialog(relType, 'A')">
-                    <i class="small icon-plus-sign"></i>
-                </a>
-            </p>
 
-            <p ng-hide="relType.aIsToB == relType.bIsToA">
-                <label>{{ relType.bIsToA }}</label>
+            <span ng-hide="relType.aIsToB == relType.bIsToA">
+                <h6>
+                    {{ relType.bIsToA }}
+                    <a ng-click="showAddDialog(relType, 'B')">
+                        <i class="icon-plus-sign edit-action"></i>
+                    </a>
+                </h6>
                 <span ng-repeat="rel in relationshipsByType(relType, 'B')" class="relationship">
                     {{ rel.personB.display }}
                     <a ng-click="showDeleteDialog(rel)">
-                        <i class="small icon-remove"></i>
+                        <i class="icon-remove delete-action"></i>
                     </a>
                 </span>
-                <a ng-click="showAddDialog(relType, 'B')">
-                    <i class="small icon-plus-sign"></i>
-                </a>
-            </p>
+            </span>
         </div>
-    </form>
 
 </div>
 
