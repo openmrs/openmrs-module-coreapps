@@ -1,7 +1,7 @@
 angular.module('relationships', ['relationshipTypeService', 'relationshipService', 'personService', 'uicommons.widget.select-person', 'ngDialog' ]).
 
-    controller('PersonRelationshipsCtrl', ['$scope', 'RelationshipTypeService', 'RelationshipService', 'PersonService', '$modal', 'ngDialog',
-    function($scope, RelationshipTypeService, RelationshipService, PersonService, $modal, ngDialog) {
+    controller('PersonRelationshipsCtrl', ['$scope', 'RelationshipTypeService', 'RelationshipService', 'PersonService', 'ngDialog',
+    function($scope, RelationshipTypeService, RelationshipService, PersonService, ngDialog) {
 
         $scope.thisPersonUuid = null;
 
