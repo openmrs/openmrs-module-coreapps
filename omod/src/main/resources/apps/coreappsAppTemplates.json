@@ -47,5 +47,21 @@
                 "defaultValue": "/coreapps/clinicianfacing/patient.page?patientId={{patientId}}"
             }
         ]
+    },
+    {
+        "id": "coreapps.template.relationships",
+        "description": "Lists relationships, and lets you edit them",
+        "configOptions": [
+            {
+                "name": "title",
+                "description": "Label to display (can be a message code)",
+                "defaultValue": "coreapps.task.relationships.label"
+            },
+            {
+                "name": "excludeRelationshipTypes",
+                "description": "List of UUIDs of relationship types not to show",
+                "defaultValue": []
+            }
+        ]
     }
 ]

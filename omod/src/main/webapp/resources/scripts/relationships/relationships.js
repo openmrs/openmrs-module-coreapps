@@ -9,12 +9,17 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
 
         $scope.relationships = [];
 
-        $scope.init = function(personUuid) {
+        $scope.init = function(personUuid, excludeRelationshipTypes) {
             $scope.thisPersonUuid = personUuid;
             RelationshipService.getRelationships({ v: 'default', person: personUuid }).then(function(result) {
                 $scope.relationships = result;
             });
             RelationshipTypeService.getRelationshipTypes({ v: 'default' }).then(function(result) {
+                if (excludeRelationshipTypes) {
+                    result = _.reject(result, function(item) {
+                        return _.contains(excludeRelationshipTypes, item.uuid);
+                    });
+                }
                 $scope.relationshipTypes = result;
             });
         }
@@ -76,6 +81,14 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                     return item.uuid == relationship.uuid;
                 });
             });
+        }
+
+        $scope.goToPerson = function(patientOrPerson) {
+            emr.navigateTo({
+                provider: "coreapps",
+                page: "clinicianfacing/patient",
+                query: { patientId: patientOrPerson.uuid }
+            })
         }
 
     }]);

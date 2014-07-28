@@ -26,9 +26,9 @@
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ]) }
 
-<h3>${ ui.message("coreapps.task.relationships.label") }</h3>
+<h3>${ ui.message(app.config.title.textValue) }</h3>
 
-<div id="relationships-app" ng-controller="PersonRelationshipsCtrl" ng-init="init('${ patient.patient.uuid }')">
+<div id="relationships-app" ng-controller="PersonRelationshipsCtrl" ng-init='init("${ patient.patient.uuid }", ${ ui.toJson(app?.config?.excludeRelationshipTypes) })'>
 
     <script type="text/ng-template" id="addDialogTemplate">
         <div class="dialog-header">
@@ -85,12 +85,18 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
         </h6>
         <span ng-repeat="rel in relationshipsByType(relType, 'A')" class="relationship">
             {{ rel.personA.display }}
+            <a ng-click="goToPerson(rel.personA)">
+                <i class="icon-user small"></i>
+            </a>
             <a ng-click="showDeleteDialog(rel)">
                 <i class="icon-remove delete-action"></i>
             </a>
         </span>
         <span ng-show="relType.aIsToB == relType.bIsToA" ng-repeat="rel in relationshipsByType(relType, 'B')" class="relationship">
             {{ rel.personB.display }}
+            <a ng-click="goToPerson(rel.personB)">
+                <i class="icon-user small"></i>
+            </a>
             <a ng-click="showDeleteDialog(rel)">
                 <i class="icon-remove delete-action"></i>
             </a>
@@ -105,6 +111,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
             </h6>
             <span ng-repeat="rel in relationshipsByType(relType, 'B')" class="relationship">
                 {{ rel.personB.display }}
+                <a ng-click="goToPerson(rel.personB)">
+                    <i class="icon-user small"></i>
+                </a>
                 <a ng-click="showDeleteDialog(rel)">
                     <i class="icon-remove delete-action"></i>
                 </a>

@@ -3,12 +3,10 @@
 .relationship {
   position: relative;
   border: 1px solid $lighterGrey;
-  padding: 3px 25px 3px 3px;
+  padding: 3px;
   margin-left: 10px;
 
   i {
-    position: absolute;
-    right: 0px;
     cursor: pointer;
   }
 }
