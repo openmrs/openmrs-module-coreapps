@@ -23,6 +23,11 @@
                 "name": "showLastViewedPatients",
                 "description": "Whether or not to show a list of the recently-viewed patients for the current user",
                 "defaultValue": true
+            },
+            {
+                "name": "breadcrumbs",
+                "description": "If specified, list of breadcrumbs for this page. (\"label\" will be translated, \"link\" will have /CONTEXTPATH prepended.) If not specified, default breadcrumbs are Home -> translate(label).",
+                "defaultValue": null
             }
         ]
     },
