@@ -21,6 +21,7 @@ import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -70,9 +71,9 @@ public class PatientPageController {
 		model.addAttribute("activeVisit", activeVisit);
 
         AppContextModel contextModel = sessionContext.generateAppContextModel();
-        contextModel.put("patientId", patient.getId());
-		contextModel.put("patientDead", patient.isDead());
+        contextModel.put("patient", new PatientContextModel(patient));
         contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
+        model.addAttribute("appContextModel", contextModel);
 
         List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions", contextModel);
         Collections.sort(overallActions);

@@ -19,8 +19,11 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
+import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
@@ -31,6 +34,7 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
+import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,15 +47,17 @@ public class PatientHeaderFragmentController {
 	
 	public void controller(FragmentConfiguration config, @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
 	                       @SpringBean("baseIdentifierSourceService") IdentifierSourceService identifierSourceService,
+                           @FragmentParam(required = false, value="appContextModel") AppContextModel appContextModel,
 	                       @FragmentParam("patient") Object patient, @InjectBeans PatientDomainWrapper wrapper,
 	                       @SpringBean("adtService") AdtService adtService, UiSessionContext sessionContext,
-                           @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties) {
-		
+                           @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
+                           FragmentModel model) {
+
 		if (patient instanceof Patient) {
 			wrapper.setPatient((Patient) patient);
 			config.addAttribute("patient", wrapper);
 		}
-		
+
 		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");
 		if (activeVisit == null) {
             try {
@@ -61,6 +67,13 @@ public class PatientHeaderFragmentController {
                 // location does not support visits
             }
 		}
+
+        if (appContextModel == null) {
+            AppContextModel contextModel = sessionContext.generateAppContextModel();
+            contextModel.put("patient", new PatientContextModel(wrapper.getPatient()));
+            contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
+            model.addAttribute("appContextModel", contextModel);
+        }
 
         if (activeVisit != null) {
             config.addAttribute("activeVisit", activeVisit);

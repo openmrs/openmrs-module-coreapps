@@ -22,6 +22,7 @@ import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
+import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.event.ApplicationEventService;
@@ -77,10 +78,9 @@ public class PatientDashboardPageController {
 
 
         AppContextModel contextModel = sessionContext.generateAppContextModel();
-        contextModel.put("patientId", patient.getPatientId());
-        contextModel.put("patientDead", patient.isDead());
+        contextModel.put("patient", new PatientContextModel(patient));
         contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
-		model.addAttribute("actionBindings", contextModel);
+		model.addAttribute("appContextModel", contextModel);
 
 		List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions", contextModel);
 		Collections.sort(overallActions);

@@ -8,6 +8,6 @@
                 "description": "Action items to add to the list below the 'General Actions' on the clinician facing patient dashboard"
             }
         ],
-        "contextModel": [ "patientId", "activeVisitId" ]
+        "contextModel": [ "patient", "visit" ]
     }
 ]

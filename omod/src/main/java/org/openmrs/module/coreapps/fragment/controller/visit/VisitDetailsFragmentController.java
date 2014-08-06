@@ -28,6 +28,7 @@ import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
+import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.coreapps.parser.ParseEncounterToJson;
 import org.openmrs.module.emrapi.EmrApiConstants;
@@ -91,8 +92,7 @@ public class VisitDetailsFragmentController {
         simpleObject.put("canDeleteVisit", verifyIfUserHasPermissionToDeleteVisit(visit, authenticatedUser, canDeleteVisit));
 
         AppContextModel contextModel = sessionContext.generateAppContextModel();
-        contextModel.put("patientId", visit.getPatient().getPatientId());
-        contextModel.put("patientDead", visit.getPatient().isDead());
+        contextModel.put("patient", new PatientContextModel(visit.getPatient()));
         contextModel.put("visit", new VisitContextModel(new VisitDomainWrapper(visit, emrApiProperties)));
 
         List<Extension> visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions", contextModel);

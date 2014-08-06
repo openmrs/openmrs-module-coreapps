@@ -7,7 +7,7 @@
         "script": "visit.showQuickVisitCreationDialog({{patientId}})",
         "icon": "icon-check-in",
         "order": -20,
-        "require": "!visit && !patientDead",
+        "require": "!visit && !patient.person.dead",
         "requiredPrivilege": "Task: coreapps.createVisit"
     },
     {

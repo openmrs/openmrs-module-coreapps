@@ -10,6 +10,7 @@ import java.util.Date;
 public class VisitContextModel {
 
     private int id;
+    private String uuid;
     private boolean active;
     private boolean admitted;
     private Long stopDatetimeInMilliseconds;
@@ -17,6 +18,7 @@ public class VisitContextModel {
 
     public VisitContextModel(VisitDomainWrapper visit) {
         this.id = visit.getVisitId();
+        this.uuid = visit.getVisit().getUuid();
         this.active = visit.isOpen();
         this.admitted = visit.isAdmitted();
         this.startDatetimeInMilliseconds = visit.getStartDatetime().getTime();

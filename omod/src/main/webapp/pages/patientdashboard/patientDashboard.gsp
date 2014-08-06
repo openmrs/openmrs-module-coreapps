@@ -45,13 +45,13 @@
     <%   }
     } %>
 
-    ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, activeVisit: activeVisit ]) }
+    ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, activeVisit: activeVisit, appContextModel: appContextModel ]) }
     <div class="actions dropdown">
         <span class="dropdown-name"><i class="icon-cog"></i>${ ui.message("coreapps.actions") }<i class="icon-sort-down"></i></span>
         <ul>
             <% overallActions.each {
                 def url = it.url
-                url = it.url(contextPath, actionBindings, ui.thisUrl())
+                url = it.url(contextPath, appContextModel, ui.thisUrl())
             %>
                 <li>
                     <a href="${ url }"><i class="${ it.icon }"></i>${ ui.message(it.label) }</a>
