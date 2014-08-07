@@ -56,14 +56,12 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
         </div>
         <div class="action-container column">
             <div class="action-section">
-                <% if (activeVisit) {
-                    def contextModel = [ patientId: patient.id, "visit.id": activeVisit.visitId, "visit.active": true, "visit.admitted": activeVisit.admitted ]
-                %>
+                <% if (activeVisit) { %>
                     <ul>
                         <h3>${ ui.message("coreapps.clinicianfacing.activeVisitActions") }</h3>
                         <% visitActions.each { ext -> %>
                             <li>
-                                <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), contextModel, ui.thisUrl())) }" id="${ ext.id }">
+                                <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }">
                                     <i class="${ ext.icon }"></i>
                                     ${ ui.message(ext.label) }
                                 </a>
@@ -74,9 +72,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 <ul>
                     <h3>${ ui.message("coreapps.clinicianfacing.overallActions") }</h3>
                     <%
-                        def contextModel = [ patientId: patient.id ]
                         overallActions.each { ext -> %>
-                            <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), contextModel, ui.thisUrl())) }" id="${ ext.id }">
+                            <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }">
                                 <li>
                                     <i class="${ ext.icon }"></i>
                                     ${ ui.message(ext.label) }

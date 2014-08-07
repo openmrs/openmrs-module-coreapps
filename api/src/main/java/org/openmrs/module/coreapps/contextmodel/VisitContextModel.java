@@ -37,6 +37,10 @@ public class VisitContextModel {
         return id;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
     public boolean isActive() {
         return active;
     }
