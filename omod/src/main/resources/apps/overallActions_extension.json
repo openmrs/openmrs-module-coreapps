@@ -4,7 +4,7 @@
         "extensionPointId": "patientDashboard.overallActions",
         "type": "script",
         "label": "coreapps.task.startVisit.label",
-        "script": "visit.showQuickVisitCreationDialog({{patientId}})",
+        "script": "visit.showQuickVisitCreationDialog({{patient.patientId}})",
         "icon": "icon-check-in",
         "order": -20,
         "require": "!visit && !patient.person.dead",
@@ -25,7 +25,7 @@
         "extensionPointId": "patientDashboard.overallActions",
         "type": "link",
         "label": "coreapps.task.mergeVisits.label",
-        "url": "coreapps/mergeVisits.page?patientId={{patientId}}",
+        "url": "coreapps/mergeVisits.page?patientId={{patient.uuid}}",
         "icon": "icon-link",
         "order": 13,
         "requiredPrivilege": "Task: coreapps.mergeVisits"
