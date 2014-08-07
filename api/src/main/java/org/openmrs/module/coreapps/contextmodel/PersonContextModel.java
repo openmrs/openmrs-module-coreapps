@@ -15,11 +15,11 @@ public class PersonContextModel {
 
     private Date birthdate;
 
-    private Boolean birthdateEstimated;
+    private boolean birthdateEstimated;
 
     private String gender;
 
-    private Boolean dead;
+    private boolean dead;
 
     public PersonContextModel(Person person) {
         this.uuid = person.getUuid();
@@ -37,7 +37,7 @@ public class PersonContextModel {
         return birthdate;
     }
 
-    public Boolean getBirthdateEstimated() {
+    public boolean isBirthdateEstimated() {
         return birthdateEstimated;
     }
 
@@ -45,7 +45,7 @@ public class PersonContextModel {
         return gender;
     }
 
-    public Boolean getDead() {
+    public boolean isDead() {
         return dead;
     }
 
