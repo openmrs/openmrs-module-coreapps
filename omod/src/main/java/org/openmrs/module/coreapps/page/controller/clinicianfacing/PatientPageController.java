@@ -34,6 +34,7 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.Redirect;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,8 +80,13 @@ public class PatientPageController {
         Collections.sort(overallActions);
         model.addAttribute("overallActions", overallActions);
 
-        List<Extension> visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions", contextModel);
-        Collections.sort(visitActions);
+        List<Extension> visitActions;
+        if (activeVisit == null) {
+            visitActions = new ArrayList<Extension>();
+        } else {
+            visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions", contextModel);
+            Collections.sort(visitActions);
+        }
         model.addAttribute("visitActions", visitActions);
 
         List<Extension> includeFragments = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.includeFragments");
