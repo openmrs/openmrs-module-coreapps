@@ -21,7 +21,7 @@
 
         [[ if (_.contains(availableVisitActions, '${task.id}')) { ]]
 
-            <%    def url = task.url(contextPath, appContextModel, ui.thisUrl())
+            <% def url = task.url(contextPath, appContextModel.with("visit", [id: "{{visit.id}}", active: "{{visit.active}}"]), ui.thisUrl())
                 if (task.type != "script") {
                 %>
                 <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { 'visit.id': id, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task">
