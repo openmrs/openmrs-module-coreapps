@@ -94,7 +94,7 @@
                 <% } %>
                 </span>
                 <% if(!config.hideEditDemographicsButton) { %>
-                    <span>
+                    <span class="edit-info">
                         <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}&returnUrl=${ui.urlEncode(ui.thisUrl())}">${ui.message("general.edit")}</a></small>
                     </span>
                 <% } %>
@@ -105,7 +105,7 @@
                     <i class="toggle-icon icon-caret-up small"></i>
                 </a>
             </span>
-            <div class="hidden" id="contactInfoContent">
+            <div class="hidden" id="contactInfoContent" class="contact-info-content">
                 ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient ]) }
             </div>
         </h1>
