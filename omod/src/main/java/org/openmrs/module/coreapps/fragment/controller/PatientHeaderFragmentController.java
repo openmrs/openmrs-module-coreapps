@@ -56,13 +56,15 @@ public class PatientHeaderFragmentController {
 		if (patient instanceof Patient) {
 			wrapper.setPatient((Patient) patient);
 			config.addAttribute("patient", wrapper);
-		}
+		} else {
+            wrapper = (PatientDomainWrapper) patient;
+        }
 
 		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");
 		if (activeVisit == null) {
             try {
                 Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-                activeVisit = adtService.getActiveVisit((Patient) patient, visitLocation);
+                activeVisit = adtService.getActiveVisit(wrapper.getPatient(), visitLocation);
             } catch (IllegalArgumentException ex) {
                 // location does not support visits
             }
