@@ -111,7 +111,7 @@
         </h1>
         <% if (patient.patient.dead) { %>
             <div class="death-message">
-                ${ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate))}
+                ${ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath))}
                 <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.deathInfo", contextModel: appContextModel ]) %>
             </div>
         <% } %>
