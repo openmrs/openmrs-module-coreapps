@@ -25,6 +25,13 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
             ${ ui.includeFragment("coreapps", "clinicianfacing/diagnosisWidget", [ patient: patient ]) }
 
             ${ ui.includeFragment("coreapps", "vitals/mostRecentVitals", [patientId: patient.patient.id]) }
+            
+            <% if (firstColumnFragments) {
+			    firstColumnFragments.each { %>
+			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patientId: patient.patient.id])}
+			<%  }
+			} %>
+
         </div>
         <div class="info-container column">
             <%/*
@@ -53,6 +60,13 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
             </div>
             */%>
             ${ ui.includeFragment("coreapps", "clinicianfacing/visitsSection", [patient: patient]) }
+            
+            <% if (secondColumnFragments) {
+			    secondColumnFragments.each { %>
+			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patientId: patient.patient.id])}
+			<%   }
+			} %>
+			
         </div>
         <div class="action-container column">
             <div class="action-section">

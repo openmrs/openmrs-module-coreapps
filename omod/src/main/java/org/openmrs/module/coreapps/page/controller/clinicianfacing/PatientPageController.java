@@ -92,6 +92,14 @@ public class PatientPageController {
         List<Extension> includeFragments = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.includeFragments");
         Collections.sort(includeFragments);
         model.addAttribute("includeFragments", includeFragments);
+        
+        List<Extension> firstColumnFragments = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.firstColumnFragments");
+        Collections.sort(firstColumnFragments);
+        model.addAttribute("firstColumnFragments", firstColumnFragments);
+        
+        List<Extension> secondColumnFragments = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.secondColumnFragments");
+        Collections.sort(secondColumnFragments);
+        model.addAttribute("secondColumnFragments", secondColumnFragments);
 
         List<Extension> otherActions = appFrameworkService.getExtensionsForCurrentUser(
                 "clinicianFacingPatientDashboard.otherActions", contextModel);
