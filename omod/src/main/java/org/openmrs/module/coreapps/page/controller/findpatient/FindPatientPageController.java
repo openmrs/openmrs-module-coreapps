@@ -35,7 +35,7 @@ public class FindPatientPageController {
         model.addAttribute("showLastViewedPatients", app.getConfig().get("showLastViewedPatients").getBooleanValue());
 
         JsonNode breadcrumbsConfig = app.getConfig().get("breadcrumbs");
-        if (!breadcrumbsConfig.isNull()) {
+        if (breadcrumbsConfig != null && !breadcrumbsConfig.isNull()) {
             ObjectMapper jackson = new ObjectMapper();
             if (!breadcrumbsConfig.isArray()) {
                 throw new IllegalStateException("breadcrumbs defined in " + app + " must be null or an array");
