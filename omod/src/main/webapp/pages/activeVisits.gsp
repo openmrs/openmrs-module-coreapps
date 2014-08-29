@@ -33,16 +33,14 @@
 				<td>${ ui.format(v.visit.patient.patientIdentifier) }</td>
 				<td>
 
-                    <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
-                            || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
+                    <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)) { %>
                     <!-- only add link to patient dashboard if user has appropriate privilege -->
                         <a href="${ ui.urlBind("/" + contextPath + patientPageUrl, [ patientId: v.visit.patient.id ]) }">
                     <% } %>
 
                     ${ ui.format(v.visit.patient) }
 
-                    <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
-                            || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
+                    <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)) { %>
                         </a>
                     <% } %>
                 </td>
