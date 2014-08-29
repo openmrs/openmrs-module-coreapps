@@ -59,17 +59,11 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         VisitDomainWrapper visitDomainWrapper = session.getContext().getVisit() != null
                 ? adtService.wrap((Visit) session.getContext().getVisit()) : null;
 
-        // TODO remove this feature toggle once awaiting admission is toggled one
-        if (featureToggles.isFeatureEnabled("awaitingAdmission")) {
-            if (visitDomainWrapper == null) {
-                dispositions = dispositionService.getDispositions();
-            }
-            else {
-                dispositions = dispositionService.getValidDispositions(visitDomainWrapper);
-            }
+        if (visitDomainWrapper == null) {
+            dispositions = dispositionService.getDispositions();
         }
         else {
-            dispositions = dispositionService.getDispositions();
+            dispositions = dispositionService.getValidDispositions(visitDomainWrapper);
         }
 
         Element dispositionObsGroup = node.getOwnerDocument().createElement("obsgroup");

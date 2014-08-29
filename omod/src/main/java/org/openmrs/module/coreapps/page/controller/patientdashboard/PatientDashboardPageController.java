@@ -18,7 +18,6 @@ import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
-import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
@@ -46,7 +45,6 @@ public class PatientDashboardPageController {
 	                       @SpringBean("orderService") OrderService orderService,
 	                       @SpringBean("adtService") AdtService adtService,
 	                       @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
-                           @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
                            @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
                            UiSessionContext sessionContext) {
 		

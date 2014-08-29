@@ -24,7 +24,6 @@ import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
-import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
@@ -141,7 +140,6 @@ public class VisitDetailsFragmentController {
     }
 
     public FragmentActionResult deleteEncounter(UiUtils ui,
-                                                @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
                                                 @RequestParam("encounterId") Encounter encounter,
                                                 @SpringBean("encounterService") EncounterService encounterService,
                                                 UiSessionContext sessionContext) {
