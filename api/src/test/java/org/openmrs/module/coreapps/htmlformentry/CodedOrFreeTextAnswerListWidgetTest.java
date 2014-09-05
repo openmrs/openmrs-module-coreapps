@@ -76,8 +76,6 @@ public class CodedOrFreeTextAnswerListWidgetTest {
                 "<span class=\"coded-or-free-text-title\">" +
                 "Title" +
                 "</span>\\s*" +
-                "<ol>\\s*" +
-                "</ol>\\s*" +
                 "</div>"));
     }
 
@@ -103,18 +101,35 @@ public class CodedOrFreeTextAnswerListWidgetTest {
                 "<span class=\"coded-or-free-text-title\">\\s*" +
                 "Title\\s*" +
                 "</span>\\s*" +
-                "<ol>\\s*" +
-                "<li>\\s*" +
+                "<br/>\\s*" +
+                "<span class=\"value\">\\s*" +
                 "\"Free text\"\\s*" +
-                "</li>\\s*" +
-                "<li>\\s*" +
+                "</span>\\s*" +
+                "<br/>\\s*" +
                 "<span class=\"coded-or-free-text-between\">\\s*" +
                 "\\(between\\)\\s*" +
                 "</span>\\s*" +
+                "<br/>\\s*" +
+                "<span class=\"value\">\\s*" +
                 "Coded\\s*" +
-                "</li>\\s*" +
-                "</ol>\\s*" +
+                "</span>\\s*" +
                 "</div>"));
+//        assertThat(html, matches("<div class=\"coded-or-free-text-list-widget\">\\s*" +
+//                "<span class=\"coded-or-free-text-title\">\\s*" +
+//                "Title\\s*" +
+//                "</span>\\s*" +
+//                "<ol>\\s*" +
+//                "<li>\\s*" +
+//                "\"Free text\"\\s*" +
+//                "</li>\\s*" +
+//                "<li>\\s*" +
+//                "<span class=\"coded-or-free-text-between\">\\s*" +
+//                "\\(between\\)\\s*" +
+//                "</span>\\s*" +
+//                "Coded\\s*" +
+//                "</li>\\s*" +
+//                "</ol>\\s*" +
+//                "</div>"));
     }
 
     @Test
@@ -125,6 +140,8 @@ public class CodedOrFreeTextAnswerListWidgetTest {
         HashMap<String, Object> expectedConfig = new HashMap<String, Object>();
         expectedConfig.put("formFieldName", context.getFieldName(widget));
         expectedConfig.put("title", "Title");
+        expectedConfig.put("initialValue", null);
+        expectedConfig.put("betweenElements", "(between)");
 
         verify(uiUtils).includeFragment("coreapps", "htmlformentry/codedOrFreeTextAnswerList", expectedConfig);
     }
