@@ -114,7 +114,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		assertThat(parsed.getObs().size(), is(0));
 		assertThat(path(parsed.getDiagnoses(), 0, "question"), is((Object) "coreapps.patientDashBoard.diagnosisQuestion.PRIMARY"));
 		assertThat(path(parsed.getDiagnoses(), 0, "answer"),
-		    is((Object) "(coreapps.Diagnosis.Certainty.PRESUMED) Random Disease"));
+		    is((Object) "(coreapps.Diagnosis.Certainty.PRESUMED) \"Random Disease\""));
 		assertThat(path(parsed.getDiagnoses(), 0, "order"), is((Object) 0));
 	}
 	
