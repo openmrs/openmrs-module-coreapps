@@ -1,0 +1,22 @@
+.selected-answer {
+
+  background-color: white;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px 1px;
+
+  .code {
+    display: inline-block;
+    min-width: 50px;
+  }
+
+  .name {
+    display: inline-block;
+    min-width: 500px;
+  }
+
+  .actions {
+    float: right;
+  }
+
+}

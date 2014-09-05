@@ -15,12 +15,9 @@
 package org.openmrs.module.coreapps.fragment.controller;
 
 import org.apache.commons.beanutils.PropertyUtils;
-
 import org.apache.commons.lang.StringUtils;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptSearchResult;
@@ -137,7 +134,7 @@ public class DiagnosesFragmentController {
      * @throws Exception
      */
     public SimpleObject simplify(ConceptSearchResult result, UiUtils ui, Locale locale) throws Exception {
-        SimpleObject simple = SimpleObject.fromObject(result, ui, "word", "conceptName.id", "conceptName.conceptNameType", "conceptName.name", "concept.id", "concept.conceptMappings.conceptMapType", "concept.conceptMappings.conceptReferenceTerm.code", "concept.conceptMappings.conceptReferenceTerm.name", "concept.conceptMappings.conceptReferenceTerm.conceptSource.name");
+        SimpleObject simple = SimpleObject.fromObject(result, ui, "word", "conceptName.id", "conceptName.uuid", "conceptName.conceptNameType", "conceptName.name", "concept.id", "concept.uuid", "concept.conceptMappings.conceptMapType", "concept.conceptMappings.conceptReferenceTerm.code", "concept.conceptMappings.conceptReferenceTerm.name", "concept.conceptMappings.conceptReferenceTerm.conceptSource.name");
 
         Concept concept = result.getConcept();
         ConceptName conceptName = result.getConceptName();
