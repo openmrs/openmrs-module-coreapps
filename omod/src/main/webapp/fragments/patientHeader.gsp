@@ -30,12 +30,15 @@
         });
 
         jq(".editPatientIdentifier").click(function (event) {
+
+            var patientIdentifierId = jq(event.target).attr('data-patient-identifier-id');
             var identifierTypeId = jq(event.target).attr("data-identifier-type-id");
             var identifierTypeName = jq(event.target).attr("data-identifier-type-name");
             var patientIdentifierValue = jq(event.target).attr("data-patient-identifier-value");
 
             jq("#hiddenIdentifierTypeId").val(identifierTypeId);
             jq("#hiddenInitialIdentifierValue").val(patientIdentifierValue);
+            jq("#hiddenPatientIdentifierId").val(patientIdentifierId);
             jq("#identifierTypeNameSpan").text(identifierTypeName);
             jq("#patientIdentifierValue").val(patientIdentifierValue);
 
@@ -136,30 +139,40 @@
 
     <div class="identifiers">
         <em>${ui.message("coreapps.patientHeader.patientId")}</em>
+
         <% patient.primaryIdentifiers.each { %>
         <span>${it.identifier}</span>
         <% } %>
         <br/>
         <% if (config.extraPatientIdentifierTypes) { %>
-        <% config.extraPatientIdentifierTypes.each { %>
-        <% def extraPatientIdentifier = patient.patient.getPatientIdentifier(it.patientIdentifierType) %>
-        <% if (extraPatientIdentifier) { %>
-            <em>${ui.format(it.patientIdentifierType)}</em>
-            <% if (it.editable) { %>
-                 <span><a class="editPatientIdentifier" data-identifier-type-id="${it.patientIdentifierType.id}" data-identifier-type-name="${ui.format(it.patientIdentifierType)}"
-                    data-patient-identifier-value="${extraPatientIdentifier}" href="#${it.patientIdentifierType.id}">${extraPatientIdentifier}</a></span>
-            <% } else {%>
-                <span>${extraPatientIdentifier}</span>
-            <% } %>
-        <% } else if (it.editable) { %>
-            <em>${ui.format(it.patientIdentifierType)}</em>
-            <span class="add-id"><a class="editPatientIdentifier" data-identifier-type-id="${it.patientIdentifierType.id}"
-            data-identifier-type-name="${ui.format(it.patientIdentifierType)}" data-patient-identifier-value=""
-            href="#${it.patientIdentifierType.id}">${ui.message("coreapps.patient.identifier.add")}</a></span>
-        <% } %>
 
-        <br/>
-        <% } %>
+            <% config.extraPatientIdentifierTypes.each { extraPatientIdentifierType -> %>
+
+                <% def extraPatientIdentifiers = patient.patient.getPatientIdentifiers(extraPatientIdentifierType.patientIdentifierType) %>
+
+                <% if (extraPatientIdentifiers) { %>
+                    <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
+
+                    <% if (extraPatientIdentifierType.editable) { %>
+                        <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
+                             <span><a class="editPatientIdentifier" data-patient-identifier-id="${extraPatientIdentifier.id}" data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
+                                data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}" data-patient-identifier-value="${extraPatientIdentifier}" href="#${extraPatientIdentifierType.patientIdentifierType.id}">${extraPatientIdentifier}</a></span>
+                        <% } %>
+                    <% } else {%>
+                        <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
+                            <span>${extraPatientIdentifier}</span>
+                        <% } %>
+                    <% } %>
+
+                <% } else if (extraPatientIdentifierType.editable) { %>
+                    <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
+                    <span class="add-id"><a class="editPatientIdentifier"  data-patient-identifier-id="" data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
+                    data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}" data-patient-identifier-value=""
+                    href="#${extraPatientIdentifierType.patientIdentifierType.id}">${ui.message("coreapps.patient.identifier.add")}</a></span>
+                <% } %>
+
+            <br/>
+            <% } %>
         <% } %>
     </div>
 
@@ -183,6 +196,7 @@
     </div>
 
     <div class="dialog-content">
+        <input type="hidden" id="hiddenPatientIdentifierId" value=""/>
         <input type="hidden" id="hiddenIdentifierTypeId" value=""/>
         <input type="hidden" id="hiddenInitialIdentifierValue" value=""/>
         <ul>

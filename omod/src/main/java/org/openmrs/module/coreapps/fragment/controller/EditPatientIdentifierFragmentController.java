@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  */
 public class EditPatientIdentifierFragmentController {
-	
+
+    // if a patient identifier id is passed in, assume editing existing, otherwise assume creating new
 	public FragmentActionResult editPatientIdentifier(UiUtils ui,
 	                                                  @RequestParam("patientId") Patient patient,
+                                                      @RequestParam(value = "patientIdentifierId", required = false) PatientIdentifier patientIdentifier,
 	                                                  @RequestParam("identifierTypeId") PatientIdentifierType identifierType,
 	                                                  @RequestParam(value = "identifierValue", required = false) String identifierValue,
 	                                                  @RequestParam(value = "locationId", required = false) Location location,
@@ -31,7 +33,7 @@ public class EditPatientIdentifierFragmentController {
                                                       @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties) {
 		
 		if (patient != null && identifierType != null) {
-			PatientIdentifier patientIdentifier = patient.getPatientIdentifier(identifierType);
+
 			if (patientIdentifier == null && StringUtils.isBlank(identifierValue)) {
 				//nothing to do
 				return new SuccessResult(ui.message("emr.patientDashBoard.editPatientIdentifier.warningMessage"));

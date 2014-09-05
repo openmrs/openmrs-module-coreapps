@@ -30,14 +30,17 @@ function createEditPatientIdentifierDialog(patientId) {
                 emr.getFragmentActionWithCallback('coreapps', 'editPatientIdentifier', 'editPatientIdentifier'
                     , { patientId: patientId,
                         identifierTypeId: jq("#hiddenIdentifierTypeId").val(),
-                        identifierValue: jq("#patientIdentifierValue").val()
+                        identifierValue: jq("#patientIdentifierValue").val(),
+                        patientIdentifierId: jq("#hiddenPatientIdentifierId").val()
                     }
                     , function(data) {
                         emr.successMessage(data.message);
                         editPatientIdentifierDialog.close();
                         var newValue= jq("#patientIdentifierValue").val();
+                        var patientIdentifierId = jq("#hiddenPatientIdentifierId").val();
                         var identifierTypeId = jq("#hiddenIdentifierTypeId").val();
-                        var identifierElement =  jq(".editPatientIdentifier[data-identifier-type-id="+ identifierTypeId  +"]");
+                        var identifierElement = patientIdentifierId ? jq(".editPatientIdentifier[data-patient-identifier-id="+ patientIdentifierId  +"]")
+                            : jq(".editPatientIdentifier[data-identifier-type-id="+ identifierTypeId  +"]");  // we identify the element to update by patient identifier id if it exists (for edit) and otherwise identifier type id (for add)
                         if(newValue.length>0){
                             identifierElement.parents("span:first").removeClass('add-id');
                             identifierElement.attr("data-patient-identifier-value", newValue);
