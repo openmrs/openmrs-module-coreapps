@@ -9,6 +9,7 @@
 %>
 
 <div id="${ config.id }" ng-controller="ListCtrl" ng-init="init('initialValue${ config.id }')">
+
     <script type="text/ng-template" id="searchResultTemplate.html">
         <a>
             <span ng-show="match.model.code">
@@ -18,7 +19,7 @@
                 ${ ui.message("coreapps.consult.nonCoded") }
             </span>
             <strong bind-html-unsafe="match.label | typeaheadHighlight:query"></strong>
-            <span ng-hide="match.model.nameIsPreferred" class="preferred-name">
+            <span ng-hide="match.model.nameIsPreferred || match.model.nonCodedValue" class="preferred-name">
                 <small>${ ui.message("coreapps.consult.synonymFor") }</small>
                 {{ match.model.concept.preferredName }}
             </span>
@@ -28,6 +29,7 @@
     <p data-display-value="{{ displayValue() }}">
         <label>${ config.title }</label>
         <input type="text"
+               autocomplete="off"
                style="min-width: 500px"
                class="require-mouse-exit"
                ng-model="selection"
@@ -61,7 +63,7 @@
                         <strong>
                             {{ item.matchedName }}
                         </strong>
-                        <span ng-hide="item.nameIsPreferred" class="preferred-name">
+                        <span ng-hide="item.nameIsPreferred || item.nonCodedValue" class="preferred-name">
                             <small>${ ui.message("coreapps.consult.synonymFor") }</small>
                             {{ item.concept.preferredName }}
                         </span>

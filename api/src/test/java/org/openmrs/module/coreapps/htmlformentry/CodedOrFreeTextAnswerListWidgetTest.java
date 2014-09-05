@@ -114,22 +114,6 @@ public class CodedOrFreeTextAnswerListWidgetTest {
                 "Coded\\s*" +
                 "</span>\\s*" +
                 "</div>"));
-//        assertThat(html, matches("<div class=\"coded-or-free-text-list-widget\">\\s*" +
-//                "<span class=\"coded-or-free-text-title\">\\s*" +
-//                "Title\\s*" +
-//                "</span>\\s*" +
-//                "<ol>\\s*" +
-//                "<li>\\s*" +
-//                "\"Free text\"\\s*" +
-//                "</li>\\s*" +
-//                "<li>\\s*" +
-//                "<span class=\"coded-or-free-text-between\">\\s*" +
-//                "\\(between\\)\\s*" +
-//                "</span>\\s*" +
-//                "Coded\\s*" +
-//                "</li>\\s*" +
-//                "</ol>\\s*" +
-//                "</div>"));
     }
 
     @Test
