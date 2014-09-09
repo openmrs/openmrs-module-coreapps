@@ -64,7 +64,7 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                 var created = RelationshipService.createRelationship(relationship);
                 $scope.relationships.push(created);
             });
-            angular.element('#select-other-person').focus();
+            angular.element('#select-other-person-input').focus();
         }
 
         $scope.showDeleteDialog = function(relationship) {

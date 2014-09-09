@@ -26,7 +26,7 @@
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ]) }
 
-<h3>${ ui.message(app.config.title.textValue) }</h3>
+<h3>${ ui.message(app ? app.config.title.textValue : "coreapps.task.relationships.label") }</h3>
 
 <div id="relationships-app" ng-controller="PersonRelationshipsCtrl" ng-init='init("${ patient.patient.uuid }", ${ ui.toJson(app?.config?.excludeRelationshipTypes) })'>
 
@@ -39,7 +39,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
                 <label>
                     <%= ui.message("coreapps.relationships.add.choose", "{{ ngDialogData.otherLabel }}") %>
                 </label>
-                <select-person ng-model="otherPerson" exclude-person="${ patient.patient.uuid }" />
+                <select-person ng-model="otherPerson" id="select-other-person" exclude-person="${ patient.patient.uuid }" />
             </div>
             <div class="add-confirm-spacer">
                 <div ng-show="otherPerson" >
