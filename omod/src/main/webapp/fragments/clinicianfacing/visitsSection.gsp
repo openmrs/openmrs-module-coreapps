@@ -6,6 +6,7 @@
     <div class="info-header">
         <i class="icon-calendar"></i>
         <h3>${ ui.message("coreapps.clinicianfacing.visits").toUpperCase() }</h3>
+        <i class="icon-pencil edit-action right" title="${ ui.message("coreapps.edit") }" onclick="location.href='${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id, returnUrl: ui.thisUrl()])}#visits';"></i>
     </div>
     <div class="info-body">
         <% if (recentVisits.isEmpty()) { %>
@@ -25,8 +26,5 @@
             </li>
             <% } %>
         </ul>
-        <a class="view-more" href="${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id, returnUrl: ui.thisUrl()])}#visits">
-            ${ ui.message("coreapps.clinicianfacing.showMoreInfo") } >
-        </a>
     </div>
 </div>
