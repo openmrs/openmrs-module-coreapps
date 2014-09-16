@@ -29,9 +29,10 @@
     <p data-display-value="{{ displayValue() }}">
         <label>${ config.title }</label>
         <input type="text"
+               <% if (config.placeholder) { %> placeholder="${ ui.escapeAttribute(config.placeholder) }" <% } %>
                autocomplete="off"
                style="min-width: 500px"
-               class="require-mouse-exit"
+               class="manual-exit"
                ng-model="selection"
                typeahead="diagnosis as diagnosis.matchedName for diagnosis in searchDiagnoses(\$viewValue)"
                typeahead-on-select="selected(\$item)"

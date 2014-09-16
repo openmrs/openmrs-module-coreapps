@@ -31,7 +31,7 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
 
     private String titleCode;
 
-    private String instructionsCode;
+    private String placeholderCode;
 
     private String betweenElementsCode;
 
@@ -51,6 +51,7 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
 
         String title = translator.translate(localeStr, titleCode);
         String betweenElements = translator.translate(localeStr, betweenElementsCode);
+        String placeholder = translator.translate(localeStr, placeholderCode);
 
         StringBuilder ret = new StringBuilder();
         ret.append("<div class=\"coded-or-free-text-list-widget\">");
@@ -74,6 +75,7 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
             Map<String, Object> fragmentConfig = new HashMap<String, Object>();
             fragmentConfig.put("formFieldName", hiddenInputName);
             fragmentConfig.put("title", title);
+            fragmentConfig.put("placeholder", placeholder);
             fragmentConfig.put("betweenElements", betweenElements);
             fragmentConfig.put("initialValue", initialValueAsJson(initialValue));
             try {
@@ -158,12 +160,12 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
         this.titleCode = titleCode;
     }
 
-    public String getInstructionsCode() {
-        return instructionsCode;
+    public String getPlaceholderCode() {
+        return placeholderCode;
     }
 
-    public void setInstructionsCode(String instructionsCode) {
-        this.instructionsCode = instructionsCode;
+    public void setPlaceholderCode(String placeholderCode) {
+        this.placeholderCode = placeholderCode;
     }
 
     public String getBetweenElementsCode() {

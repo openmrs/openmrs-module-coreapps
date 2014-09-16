@@ -17,6 +17,7 @@ import org.openmrs.ui.framework.UiUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -32,7 +33,7 @@ public class CodedOrFreeTextAnswerListWidgetTest {
     public void setUp() throws Exception {
         widget = new CodedOrFreeTextAnswerListWidget();
         widget.setTitleCode("Title");
-        widget.setInstructionsCode("Instructions");
+        widget.setPlaceholderCode("Instructions");
         widget.setBetweenElementsCode("(between)");
 
         uiUtils = mock(UiUtils.class);
@@ -121,9 +122,10 @@ public class CodedOrFreeTextAnswerListWidgetTest {
         setUpEnter();
         String html = widget.generateHtml(context);
 
-        HashMap<String, Object> expectedConfig = new HashMap<String, Object>();
+        Map<String, Object> expectedConfig = new HashMap<String, Object>();
         expectedConfig.put("formFieldName", context.getFieldName(widget));
         expectedConfig.put("title", "Title");
+        expectedConfig.put("placeholder", "Instructions");
         expectedConfig.put("initialValue", null);
         expectedConfig.put("betweenElements", "(between)");
 

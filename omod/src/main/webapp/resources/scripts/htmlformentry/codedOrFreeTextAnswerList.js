@@ -1,7 +1,7 @@
 angular.module('codedOrFreeTextAnswerList', [ 'ui.bootstrap' ]).
 
-    controller('ListCtrl', ['$scope', '$http', '$timeout',
-    function($scope, $http, $timeout) {
+    controller('ListCtrl', ['$scope', '$http', '$timeout', '$element',
+    function($scope, $http, $timeout, $element) {
 
         var codingSystemToUse = 'ICD-10-WHO';
         var mapTypeOrder = [ "SAME-AS", "NARROWER-THAN" ];
@@ -101,6 +101,7 @@ angular.module('codedOrFreeTextAnswerList', [ 'ui.bootstrap' ]).
         $scope.selected = function(item) {
             $scope.answerList.push(item);
             $scope.selection = null;
+            $element.find('.manual-exit').addClass('do-not-exit-once');
         }
 
         $scope.remove = function(index) {
