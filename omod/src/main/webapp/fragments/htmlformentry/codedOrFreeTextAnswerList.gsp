@@ -26,7 +26,9 @@
         </a>
     </script>
 
-    <p data-display-value="{{ displayValue() }}">
+    <p data-display-value="{{ displayValue() }}" data-value-from="#${ config.id } input[type=hidden]"
+       <% if (config.containerClasses) { %>class="${ ui.escapeAttribute(config.containerClasses) }"<% } %>
+    >
         <label>${ config.title }</label>
         <input type="text"
                <% if (config.placeholder) { %> placeholder="${ ui.escapeAttribute(config.placeholder) }" <% } %>

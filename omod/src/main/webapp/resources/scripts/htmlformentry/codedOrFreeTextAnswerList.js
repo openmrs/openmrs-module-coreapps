@@ -135,7 +135,7 @@ angular.module('codedOrFreeTextAnswerList', [ 'ui.bootstrap' ]).
                 }
                 list.push(obj);
             });
-            return angular.toJson(list);
+            return list.length == 0 ? "" : angular.toJson(list);
         }
 
     }]);

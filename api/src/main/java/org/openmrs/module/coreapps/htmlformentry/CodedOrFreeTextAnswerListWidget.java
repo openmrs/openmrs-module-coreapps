@@ -35,6 +35,8 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
 
     private String betweenElementsCode;
 
+    private String containerClasses;
+
     private List<CodedOrFreeTextAnswer> initialValue;
 
     private UiUtils uiUtils;
@@ -77,6 +79,7 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
             fragmentConfig.put("title", title);
             fragmentConfig.put("placeholder", placeholder);
             fragmentConfig.put("betweenElements", betweenElements);
+            fragmentConfig.put("containerClasses", containerClasses);
             fragmentConfig.put("initialValue", initialValueAsJson(initialValue));
             try {
                 ret.append(uiUtils.includeFragment("coreapps", "htmlformentry/codedOrFreeTextAnswerList", fragmentConfig));
@@ -174,6 +177,14 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
 
     public void setBetweenElementsCode(String betweenElementsCode) {
         this.betweenElementsCode = betweenElementsCode;
+    }
+
+    public String getContainerClasses() {
+        return containerClasses;
+    }
+
+    public void setContainerClasses(String containerClasses) {
+        this.containerClasses = containerClasses;
     }
 
     public void setUiUtils(UiUtils uiUtils) {

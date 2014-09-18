@@ -35,6 +35,7 @@ public class CodedOrFreeTextAnswerListWidgetTest {
         widget.setTitleCode("Title");
         widget.setPlaceholderCode("Instructions");
         widget.setBetweenElementsCode("(between)");
+        widget.setContainerClasses("required");
 
         uiUtils = mock(UiUtils.class);
         widget.setUiUtils(uiUtils);
@@ -128,6 +129,7 @@ public class CodedOrFreeTextAnswerListWidgetTest {
         expectedConfig.put("placeholder", "Instructions");
         expectedConfig.put("initialValue", null);
         expectedConfig.put("betweenElements", "(between)");
+        expectedConfig.put("containerClasses", "required");
 
         verify(uiUtils).includeFragment("coreapps", "htmlformentry/codedOrFreeTextAnswerList", expectedConfig);
     }
