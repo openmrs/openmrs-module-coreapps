@@ -65,7 +65,7 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.9</artifactId>
+            <artifactId>emrapi-api-1.10</artifactId>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
@@ -106,10 +106,9 @@
             <artifactId>appui-api</artifactId>
             <classifier>tests</classifier>
         </dependency>
-
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>htmlformentry-api</artifactId>
+            <artifactId>htmlformentry-api-1.10</artifactId>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
