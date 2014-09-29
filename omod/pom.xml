@@ -71,6 +71,7 @@
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>${project.parent.artifactId}-api</artifactId>
             <version>${project.parent.version}</version>
+            <scope>compile</scope>
         </dependency>
 		
 		<dependency>
@@ -80,8 +81,7 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>appframework-api</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <classifier>tests</classifier>
         </dependency>
 
         <dependency>
@@ -106,7 +106,7 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.9</artifactId>
+            <artifactId>emrapi-api-1.10</artifactId>
         </dependency>
 
         <dependency>
@@ -117,24 +117,19 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>appui-omod</artifactId>
-            <version>${appuiVersion}</version>
             <type>jar</type>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>appui-api</artifactId>
-            <version>${appuiVersion}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <classifier>tests</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <classifier>tests</classifier>
         </dependency>
 
         <dependency>

@@ -40,21 +40,18 @@
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
 			<type>test-jar</type>
-			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 			<type>test-jar</type>
-			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.openmrs.test</groupId>
 			<artifactId>openmrs-test</artifactId>
 			<type>pom</type>
-			<scope>test</scope>
 		</dependency>
 				
 		<!-- End OpenMRS core -->
@@ -68,18 +65,18 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.9</artifactId>
+            <artifactId>emrapi-api-1.10</artifactId>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <classifier>tests</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>providermanagement-api</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -95,35 +92,33 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>serialization.xstream-api</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>calculation-api</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>appui-api</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <classifier>tests</classifier>
         </dependency>
-
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>htmlformentry-api</artifactId>
+            <artifactId>htmlformentry-api-1.10</artifactId>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>htmlformentry-api</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <classifier>tests</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs</groupId>
             <artifactId>event-api</artifactId>
-            <version>2.1</version>
             <type>jar</type>
             <scope>test</scope>
         </dependency>
