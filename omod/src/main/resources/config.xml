@@ -41,7 +41,7 @@
             org.openmrs.module.idgen
         </require_module>
 
-        <require_module version="${webservicesRestVersion}">
+        <require_module version="${webservices.restVersion}">
             org.openmrs.module.webservices.rest
         </require_module>
 
