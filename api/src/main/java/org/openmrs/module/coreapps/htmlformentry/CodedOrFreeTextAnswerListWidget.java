@@ -133,20 +133,20 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
         }
         try {
             List<CodedOrFreeTextAnswer> results = new ArrayList<CodedOrFreeTextAnswer>();
-            ArrayNode array = new ObjectMapper().readValue(submitted[0], ArrayNode.class);
-            ConceptService conceptService = Context.getConceptService();
-            for (JsonNode node : array) {
-                String conceptNameUuid = node.path("ConceptName").getTextValue();
-                String conceptUuid = node.path("Concept").getTextValue();
-                String nonCodedValue = node.path("NonCodedValue").getTextValue();
-                if (conceptNameUuid != null) {
-                    results.add(new CodedOrFreeTextAnswer(conceptService.getConceptNameByUuid(conceptNameUuid)));
-                }
-                else if (conceptUuid != null) {
-                    results.add(new CodedOrFreeTextAnswer(conceptService.getConceptByUuid(conceptUuid)));
-                }
-                else {
-                    results.add(new CodedOrFreeTextAnswer(nonCodedValue));
+            if (StringUtils.isNotEmpty(submitted[0])) {
+                ArrayNode array = new ObjectMapper().readValue(submitted[0], ArrayNode.class);
+                ConceptService conceptService = Context.getConceptService();
+                for (JsonNode node : array) {
+                    String conceptNameUuid = node.path("ConceptName").getTextValue();
+                    String conceptUuid = node.path("Concept").getTextValue();
+                    String nonCodedValue = node.path("NonCodedValue").getTextValue();
+                    if (conceptNameUuid != null) {
+                        results.add(new CodedOrFreeTextAnswer(conceptService.getConceptNameByUuid(conceptNameUuid)));
+                    } else if (conceptUuid != null) {
+                        results.add(new CodedOrFreeTextAnswer(conceptService.getConceptByUuid(conceptUuid)));
+                    } else {
+                        results.add(new CodedOrFreeTextAnswer(nonCodedValue));
+                    }
                 }
             }
             return results;
