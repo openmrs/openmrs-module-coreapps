@@ -134,6 +134,11 @@
     </privilege>
 
     <privilege>
+        <name>App: coreapps.patientVisits</name>
+        <description>Able to access the patient visits screen</description>
+    </privilege>
+
+    <privilege>
         <name>App: coreapps.findPatient</name>
         <description>Able to access the find patient app</description>
     </privilege>

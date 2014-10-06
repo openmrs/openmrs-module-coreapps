@@ -21,13 +21,13 @@
 
         [[ if (_.contains(availableVisitActions, '${task.id}')) { ]]
 
-            <% def url = task.url(contextPath, appContextModel.with("visit", [id: "{{visit.id}}", active: "{{visit.active}}"]), ui.thisUrl())
+            <% def url = task.url(contextPath, appContextModel.with("visit", [id: "{{visit.id}}", uuid: "{{visit.uuid}}", active: "{{visit.active}}"]), ui.thisUrl())
                 if (task.type != "script") {
                 %>
-                <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { 'visit.id': id, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task">
+                <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { 'visit.id': id, 'visit.uuid': uuid, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task">
             <% } else { // script
                 %>
-                <a href="[[= emr.applyContextModel('${ url }', {'visit.id': id})]]" class="button task">
+                <a href="[[= emr.applyContextModel('${ url }', {'visit.id': id, 'visit.uuid': uuid, 'visit.active': stopDatetime == null })]]" class="button task">
             <% } %>
                 <i class="${task.icon}"></i> ${ ui.message(task.label) }</a>
 

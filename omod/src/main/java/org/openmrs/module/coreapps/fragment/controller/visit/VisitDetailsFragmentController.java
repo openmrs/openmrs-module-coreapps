@@ -61,7 +61,7 @@ public class VisitDetailsFragmentController {
 
         ParseEncounterToJson parseEncounterToJson = new ParseEncounterToJson(appFrameworkService, uiUtils, encounterService);
 
-        SimpleObject simpleObject = SimpleObject.fromObject(visit, uiUtils, "id", "location");
+        SimpleObject simpleObject = SimpleObject.fromObject(visit, uiUtils, "id", "uuid", "location");
 
         User authenticatedUser = sessionContext.getCurrentUser();
 
