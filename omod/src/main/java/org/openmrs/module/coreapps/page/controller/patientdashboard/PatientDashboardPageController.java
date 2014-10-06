@@ -16,6 +16,7 @@ package org.openmrs.module.coreapps.page.controller.patientdashboard;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
@@ -47,8 +48,11 @@ public class PatientDashboardPageController {
 	                       @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
                            @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
                            UiSessionContext sessionContext) {
-		
-        if (patient.isVoided() || patient.isPersonVoided()) {
+
+        if (!Context.hasPrivilege(CoreAppsConstants.PRIVILEGE_PATIENT_VISITS)) {
+            return new Redirect("coreapps", "noAccess", "");
+        }
+        else if (patient.isVoided() || patient.isPersonVoided()) {
             return new Redirect("coreapps", "patientdashboard/deletedPatient", "patientId=" + patient.getId());
         }
 
@@ -93,7 +97,6 @@ public class PatientDashboardPageController {
 		Collections.sort(visitActions);
 		model.addAttribute("visitActions", visitActions);
 		model.addAttribute("patientTabs", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.tabs"));
-        model.addAttribute("privilegePatientDashboard", CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD);
 
         applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 

@@ -15,6 +15,7 @@ package org.openmrs.module.coreapps.page.controller;
 
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
@@ -46,7 +47,7 @@ public class ActiveVisitsPageController {
 		model.addAttribute("patientPageUrl", patientPageUrl);
 
         // used to determine whether or not we display a link to the patient in the results list
-        model.addAttribute("privilegePatientDashboard", CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD);
+        model.addAttribute("canViewVisits", Context.hasPrivilege(CoreAppsConstants.PRIVILEGE_PATIENT_VISITS));
 
         return null;
 	}
