@@ -34,6 +34,11 @@ public class FindPatientPageController {
         model.addAttribute("label", app.getConfig().get("label").getTextValue());
         model.addAttribute("showLastViewedPatients", app.getConfig().get("showLastViewedPatients").getBooleanValue());
 
+        String currentUrl = ui.thisUrlWithContextPath();
+        if (currentUrl.charAt(currentUrl.length()-1) == '&') {
+            currentUrl = currentUrl.substring(0, currentUrl.length()-1);
+        }
+
         JsonNode breadcrumbsConfig = app.getConfig().get("breadcrumbs");
         if (breadcrumbsConfig != null && !breadcrumbsConfig.isNull()) {
             ObjectMapper jackson = new ObjectMapper();
@@ -41,7 +46,9 @@ public class FindPatientPageController {
                 throw new IllegalStateException("breadcrumbs defined in " + app + " must be null or an array");
             }
             List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
-            for (JsonNode item : breadcrumbsConfig) {
+            int breadcrumbsConfigSize = breadcrumbsConfig.size() -1;
+            for (int i=0; i <= breadcrumbsConfigSize ; i++) {
+                JsonNode item = breadcrumbsConfig.get(i);
                 Breadcrumb breadcrumb = jackson.convertValue(item, Breadcrumb.class);
 
                 // link needs to have /contextpath prepended
@@ -53,8 +60,13 @@ public class FindPatientPageController {
                 if (breadcrumb.getLabel() != null) {
                     breadcrumb.setLabel(ui.message(breadcrumb.getLabel()));
                 }
+                //if this is the last breadcrumb add the current page URL
+                if (i == breadcrumbsConfigSize ) {
+                    breadcrumb.setLink(currentUrl);
+                }
                 breadcrumbs.add(breadcrumb);
             }
+
             model.addAttribute("breadcrumbs", ui.toJson(breadcrumbs));
         } else {
             model.addAttribute("breadcrumbs", null);

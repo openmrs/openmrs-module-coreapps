@@ -1,5 +1,6 @@
 <%
     config.require("afterSelectedUrl")
+    def breadcrumbOverride = config.breadcrumbOverride ?: ""
 
     ui.includeCss("uicommons", "datatables/dataTables_jui.css")
     ui.includeCss("coreapps", "patientsearch/patientSearchWidget.css")
@@ -23,6 +24,7 @@
             initialPatients : lastViewedPatients,
             minSearchCharacters: ${ config.minSearchCharacters ?: 3 },
             afterSelectedUrl: '${ ui.escapeJs(config.afterSelectedUrl) }',
+            breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }',
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
                 first: '${ ui.message("coreapps.search.first") }',

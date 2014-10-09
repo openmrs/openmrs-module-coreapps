@@ -185,7 +185,7 @@ function PatientSearchWidget(configuration){
 
     var selectRow = function(selectedRowIndex){
         var uuid = searchResultsData[selectedRowIndex].uuid;
-        location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel(config.afterSelectedUrl, { patientId: uuid});
+        location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel(config.afterSelectedUrl + "&breadcrumbOverride={{breadcrumbOverride}}", { patientId: uuid, breadcrumbOverride: config.breadcrumbOverride});
     }
 
     var doKeyEnter = function() {

@@ -20,7 +20,13 @@
 <h2>
 	${ ui.message(heading) }
 </h2>
-
+<% if (breadcrumbs) { %>
+${ ui.includeFragment("coreapps", "patientsearch/patientSearchWidget",
+        [ afterSelectedUrl: afterSelectedUrl,
+          showLastViewedPatients: showLastViewedPatients,
+          breadcrumbOverride: breadcrumbs])}
+<% } else { %>
 ${ ui.includeFragment("coreapps", "patientsearch/patientSearchWidget",
         [ afterSelectedUrl: afterSelectedUrl,
           showLastViewedPatients: showLastViewedPatients ])}
+<% } %>
