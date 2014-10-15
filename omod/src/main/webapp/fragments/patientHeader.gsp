@@ -144,11 +144,11 @@
         <span>${it.identifier}</span>
         <% } %>
         <br/>
-        <% if (config.extraPatientIdentifierTypes) { %>
+        <% if (config.extraPatientIdentifierTypes && config.extraPatientIdentifiersMappedByType) { %>
 
             <% config.extraPatientIdentifierTypes.each { extraPatientIdentifierType -> %>
 
-                <% def extraPatientIdentifiers = patient.patient.getPatientIdentifiers(extraPatientIdentifierType.patientIdentifierType) %>
+                <% def extraPatientIdentifiers = config.extraPatientIdentifiersMappedByType.get(extraPatientIdentifierType.patientIdentifierType) %>
 
                 <% if (extraPatientIdentifiers) { %>
                     <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
