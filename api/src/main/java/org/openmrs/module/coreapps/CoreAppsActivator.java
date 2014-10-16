@@ -21,6 +21,7 @@ import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
+import org.openmrs.module.coreapps.htmlformentry.CodedOrFreeTextObsTagHandler;
 import org.openmrs.module.coreapps.htmlformentry.EncounterDiagnosesTagHandler;
 import org.openmrs.module.coreapps.htmlformentry.EncounterDispositionTagHandler;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -102,6 +103,8 @@ public class CoreAppsActivator extends BaseModuleActivator {
 
             EncounterDispositionTagHandler encounterDispositionTagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService, adtService, featureToggles);
             htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, encounterDispositionTagHandler);
+
+            htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_CODED_OR_FREE_TEXT_OBS_TAG_NAME, new CodedOrFreeTextObsTagHandler());
         }
 
         log.info("Core Apps Module started");

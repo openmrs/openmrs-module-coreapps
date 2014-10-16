@@ -1,0 +1,9 @@
+<htmlform>
+    Date: <encounterDate/>
+    Location: <encounterLocation />
+    Provider: <encounterProvider role="Provider"/>
+
+    Test: <codedOrFreeTextObs codedConceptId="4" nonCodedConceptId="19"/>
+
+    <submit/>
+</htmlform>
