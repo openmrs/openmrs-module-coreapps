@@ -182,8 +182,10 @@
             <% } %>
         </td>
         <td>
+            <!-- TODO is there a better way to do this?  -->
             <% admissionActions.each { task ->
                 def url = task.url.replaceAll('\\{\\{patientId\\}\\}', patientId.toString())
+                url = url.replaceAll('\\{\\{patient.uuid\\}\\}', patientId.toString())   // TODO note that we are using patient id, not uuid--hopefully not a problem
                 url = url.replaceAll('\\{\\{visit.id\\}\\}', visitId.toString())
             %>
             <p>
