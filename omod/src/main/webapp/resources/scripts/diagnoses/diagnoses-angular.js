@@ -40,24 +40,27 @@ var app = angular.module('diagnoses', [])
                 return jq('<li>').append('<a>' + formatted + '</a>').appendTo(ul);
             };
         }
-    });
+    })
 
-function DiagnosesController($scope) {
+    .controller('DiagnosesController', [ '$scope',
+        function DiagnosesController($scope) {
 
-    $scope.encounterDiagnoses = diagnoses.EncounterDiagnoses();
-    $scope.priorDiagnoses = diagnoses.EncounterDiagnoses();
+            $scope.encounterDiagnoses = diagnoses.EncounterDiagnoses();
+            $scope.priorDiagnoses = diagnoses.EncounterDiagnoses();
 
-    $scope.addPriorDiagnoses = function() {
-        $scope.encounterDiagnoses.addDiagnoses(angular.copy($scope.priorDiagnoses.getDiagnoses()));
-    }
+            $scope.addPriorDiagnoses = function() {
+                $scope.encounterDiagnoses.addDiagnoses(angular.copy($scope.priorDiagnoses.getDiagnoses()));
+            }
 
-    $scope.removeDiagnosis = function(diagnosis) {
-        $scope.encounterDiagnoses.removeDiagnosis(diagnosis);
-    };
+            $scope.removeDiagnosis = function(diagnosis) {
+                $scope.encounterDiagnoses.removeDiagnosis(diagnosis);
+            };
 
-    $scope.valueToSubmit = function() {
-        return "[" + _.map($scope.encounterDiagnoses.diagnoses, function(d) {
-            return d.valueToSubmit();
-        }).join(", ") + "]";
-    };
-}
+            $scope.valueToSubmit = function() {
+                return "[" + _.map($scope.encounterDiagnoses.diagnoses, function(d) {
+                    return d.valueToSubmit();
+                }).join(", ") + "]";
+            };
+        }
+    ]);
+
