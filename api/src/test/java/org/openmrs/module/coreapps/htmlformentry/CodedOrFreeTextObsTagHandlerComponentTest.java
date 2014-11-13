@@ -26,6 +26,112 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
     }
 
     @Test
+    public void testBlank() throws Exception {
+        new RegressionTestHelper() {
+
+            @Override
+            public String getFormName() {
+                return "codedOrFreeTextObsForm";
+            }
+
+            @Override
+            public String getXmlDatasetPath() {
+                return "";
+            }
+
+            @Override
+            public Map<String, Object> getFormEntrySessionAttributes() {
+                Map<String, Object> attributes = new HashMap<String, Object>();
+                attributes.put("uiUtils", new TestUiUtils());
+                return attributes;
+            }
+
+            @Override
+            public String[] widgetLabels() {
+                return new String[] { "Date:", "Location:", "Provider:", "Test:" };
+            }
+
+            @Override
+            public void setupRequest(MockHttpServletRequest request, Map<String, String> widgets) {
+                request.addParameter(widgets.get("Date:"), dateAsString(new Date()));
+                request.addParameter(widgets.get("Location:"), "2");
+                request.addParameter(widgets.get("Provider:"), "1");
+                request.addParameter(widgets.get("Test:"), "");
+            }
+
+            @Override
+            public void testResults(SubmissionResults results) {
+                assertThat(results.getEncounterCreated().getAllObs().size(), is(0));
+            }
+        }.run();
+    }
+
+    @Test
+    public void testEditingToBlankVoidsObs() throws Exception {
+        new RegressionTestHelper() {
+
+            @Override
+            public String getFormName() {
+                return "codedOrFreeTextObsForm";
+            }
+
+            @Override
+            public String getXmlDatasetPath() {
+                return "";
+            }
+
+            @Override
+            public Map<String, Object> getFormEntrySessionAttributes() {
+                Map<String, Object> attributes = new HashMap<String, Object>();
+                attributes.put("uiUtils", new TestUiUtils());
+                return attributes;
+            }
+
+            @Override
+            public String[] widgetLabels() {
+                return new String[] { "Date:", "Location:", "Provider:", "Test:" };
+            }
+
+            @Override
+            public void setupRequest(MockHttpServletRequest request, Map<String, String> widgets) {
+                request.addParameter(widgets.get("Date:"), dateAsString(new Date()));
+                request.addParameter(widgets.get("Location:"), "2");
+                request.addParameter(widgets.get("Provider:"), "1");
+                request.addParameter(widgets.get("Test:"), "ConceptName:f74e3673-983b-41e3-b872-56f0e6f7696e");
+            }
+
+            @Override
+            public void testResults(SubmissionResults results) {
+                assertThat(results.getEncounterCreated().getAllObs().size(), is(1));
+            }
+
+            @Override
+            public boolean doEditEncounter() {
+                return true;
+            }
+
+            @Override
+            public String[] widgetLabelsForEdit() {
+                return widgetLabels();
+            }
+
+            @Override
+            public void setupEditRequest(MockHttpServletRequest request, Map<String, String> widgets) {
+                request.addParameter(widgets.get("Date:"), dateAsString(new Date()));
+                request.addParameter(widgets.get("Location:"), "2");
+                request.addParameter(widgets.get("Provider:"), "1");
+                request.addParameter(widgets.get("Test:"), "");
+            }
+
+            @Override
+            public void testEditedResults(SubmissionResults results) {
+                assertThat(results.getEncounterCreated().getAllObs(true).size(), is(1));
+                assertThat(results.getEncounterCreated().getAllObs(false).size(), is(0));
+            }
+        }.run();
+    }
+
+    @Test
     public void testCodedEditedToCoded() throws Exception {
         new RegressionTestHelper() {
 

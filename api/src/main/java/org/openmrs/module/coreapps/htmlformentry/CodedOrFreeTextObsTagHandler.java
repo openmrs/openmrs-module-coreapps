@@ -99,11 +99,12 @@ public class CodedOrFreeTextObsTagHandler extends SubstitutionTagHandler {
         @Override
         public void handleSubmission(FormEntrySession formEntrySession, HttpServletRequest request) {
             CodedOrFreeTextAnswer value = (CodedOrFreeTextAnswer) widget.getValue(formEntrySession.getContext(), request);
-            Concept newConcept = value.getCodedAnswer() != null ? codedConcept : nonCodedConcept;
+            Concept newConcept = value == null ? null : (value.getCodedAnswer() != null ? codedConcept : nonCodedConcept);
+            Object newValue = value == null ? null : value.getValue();
             if (existingObs != null) {
-                formEntrySession.getSubmissionActions().modifyObs(existingObs, newConcept, value.getValue(), null, null);
+                formEntrySession.getSubmissionActions().modifyObs(existingObs, newConcept, newValue, null, null);
             }
-            else {
+            else if (value != null) {
                 formEntrySession.getSubmissionActions().createObs(newConcept, value.getValue(), null, null);
             }
         }
