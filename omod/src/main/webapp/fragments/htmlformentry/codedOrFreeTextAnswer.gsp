@@ -2,7 +2,9 @@
     config.require("formFieldName")
 
     ui.includeJavascript("uicommons", "angular.min.js")
+    ui.includeJavascript("uicommons", "angular-resource.min.js")
     ui.includeJavascript("uicommons", "angular-ui/ui-bootstrap-tpls-0.6.0.min.js")
+    ui.includeJavascript("uicommons", "angular-common.js")
     ui.includeJavascript("uicommons", "services/conceptSearchService.js")
     ui.includeJavascript("uicommons", "directives/coded-or-free-text-answer.js")
     ui.includeJavascript("coreapps", "htmlformentry/codedOrFreeTextAnswer.js")
