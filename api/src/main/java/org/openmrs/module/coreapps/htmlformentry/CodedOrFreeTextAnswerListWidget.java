@@ -14,6 +14,7 @@ import org.openmrs.module.htmlformentry.widget.Widget;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
+import org.openmrs.util.LocaleUtility;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -41,6 +42,8 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
 
     private UiUtils uiUtils;
 
+    private Locale locale = Context.getLocale();
+
     @Override
     public void setInitialValue(Object initialValue) {
         this.initialValue = (List<CodedOrFreeTextAnswer>) initialValue;
@@ -49,7 +52,7 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
     @Override
     public String generateHtml(FormEntryContext context) {
         Translator translator = context.getTranslator();
-        String localeStr = Context.getLocale().toString();
+        String localeStr = locale.toString();
 
         String title = translator.translate(localeStr, titleCode);
         String betweenElements = translator.translate(localeStr, betweenElementsCode);
@@ -67,7 +70,7 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
                         ret.append("<span class=\"coded-or-free-text-between\">").append(betweenElements).append("</span>");
                     }
                     ret.append("<br/>");
-                    ret.append("<span class=\"value\">").append(answer.format(Context.getLocale())).append("</span>");
+                    ret.append("<span class=\"value\">").append(answer.format(locale)).append("</span>");
                     first = false;
                 }
             }
@@ -191,4 +194,7 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
         this.uiUtils = uiUtils;
     }
 
+    public void setLocale(String locale) {
+        this.locale = LocaleUtility.fromSpecification(locale);
+    }
 }
