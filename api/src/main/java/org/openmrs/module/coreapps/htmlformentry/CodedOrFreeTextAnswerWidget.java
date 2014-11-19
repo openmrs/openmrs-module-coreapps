@@ -9,10 +9,12 @@ import org.openmrs.module.htmlformentry.widget.Widget;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
+import org.openmrs.util.LocaleUtility;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class CodedOrFreeTextAnswerWidget implements Widget {
@@ -27,10 +29,12 @@ public class CodedOrFreeTextAnswerWidget implements Widget {
 
     private UiUtils uiUtils;
 
+    private Locale locale = Context.getLocale();
+
     @Override
     public String generateHtml(FormEntryContext context) {
         Translator translator = context.getTranslator();
-        String localeStr = Context.getLocale().toString();
+        String localeStr = locale.toString();
 
         String title = translator.translate(localeStr, titleCode);
         String placeholder = translator.translate(localeStr, placeholderCode);
@@ -38,7 +42,7 @@ public class CodedOrFreeTextAnswerWidget implements Widget {
         StringBuilder ret = new StringBuilder();
         if (context.getMode().equals(FormEntryContext.Mode.VIEW)) {
             if (initialValue != null) {
-                ret.append("<span class=\"value\">" + initialValue.format(Context.getLocale()) + "</span>");
+                ret.append("<span class=\"value\">" + initialValue.format(locale) + "</span>");
             }
         } else {
             String hiddenInputName = context.getFieldName(this);
@@ -150,5 +154,9 @@ public class CodedOrFreeTextAnswerWidget implements Widget {
 
     public void setUiUtils(UiUtils uiUtils) {
         this.uiUtils = uiUtils;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = LocaleUtility.fromSpecification(locale);
     }
 }

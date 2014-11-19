@@ -50,6 +50,9 @@ public class CodedOrFreeTextObsTagHandler extends SubstitutionTagHandler {
         public Element(FormEntrySession session, Map<String, String> attributes) {
             FormEntryContext context = session.getContext();
             widget = new CodedOrFreeTextAnswerWidget();
+            if (attributes.get("locale") != null) {
+                widget.setLocale(attributes.get("locale"));
+            }
             widget.setUiUtils((UiUtils) session.getAttribute("uiUtils"));
             context.registerWidget(widget);
             widget.setTitleCode(attributes.get("titleCode"));
