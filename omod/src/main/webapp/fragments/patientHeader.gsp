@@ -73,7 +73,18 @@
     })
 </script>
 
-<div class="patient-header">
+<div class="patient-header <% if (patient.patient.dead) { %>dead<% } %>">
+
+    <% if (patient.patient.dead) { %>
+        <div class="death-header">
+            <span class="death-message">
+                ${ ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath)) }
+            </span>
+            <span class="death-info-extension">
+                <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.deathInfo", contextModel: appContextModel ]) %>
+            </span>
+        </div>
+    <% } %>
 
     <div class="demographics">
         <h1 class="name">
@@ -112,12 +123,6 @@
                 ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient ]) }
             </div>
         </h1>
-        <% if (patient.patient.dead) { %>
-            <div class="death-message">
-                ${ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath))}
-                <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.deathInfo", contextModel: appContextModel ]) %>
-            </div>
-        <% } %>
         <% if (config.activeVisit) { %>
             <% def visit = config.activeVisit.visit %>
 

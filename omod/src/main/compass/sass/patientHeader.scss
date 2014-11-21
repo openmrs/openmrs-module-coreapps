@@ -14,6 +14,19 @@ $green: #51A351;
   padding: 5px 10px;
   min-height: 60px;
 
+  &.dead {
+    background: #cccccc;
+
+    .death-header {
+      padding: 3px;
+      border: 1px solid $text;
+      border-radius: 2px;
+      font-size: 0.9em;
+      background: #FFFF44;
+      display: inline-block;
+    }
+  }
+
   .demographics {
     display: inline-block;
     position: relative;
@@ -76,13 +89,6 @@ $green: #51A351;
       @extend .colored-message;
 
       border: 1px solid $darkGray;
-    }
-
-    .death-message {
-      @extend .bordered-colored-message;
-
-      background: $error;
-      border-color: $error;
     }
 
     .active-visit-started-at-message {
