@@ -4,6 +4,6 @@
         "extensionPointId": "patientHeader.editPatientDemographics",
         "type": "link",
         "label": "general.edit",
-        "url": "registrationapp/editPatientDemographics.page?patientId={{patient.uuid}}"
+        "url": "registrationapp/editPatientDemographics.page?patientId={{patient.uuid}}&returnUrl=coreapps%2Fclinicianfacing%2Fpatient.page%3FpatientId%3D{{patient.uuid}}"
     }
 ]
