@@ -4,9 +4,6 @@
         "extensionPointId": "patientHeader.editPatientDemographics",
         "type": "link",
         "label": "general.edit",
-        "extensionParams": {
-            "provider": "registrationapp",
-            "fragment": "editPatientDemographics"
-        }
+        "url": "registrationapp/editPatientDemographics.page?patientId={{patient.uuid}}"
     }
 ]
