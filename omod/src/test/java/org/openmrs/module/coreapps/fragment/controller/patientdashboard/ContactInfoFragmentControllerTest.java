@@ -16,6 +16,7 @@ package org.openmrs.module.coreapps.fragment.controller.patientdashboard;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Patient;
+import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 
@@ -23,6 +24,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ContactInfoFragmentControllerTest {
 
@@ -30,12 +32,15 @@ public class ContactInfoFragmentControllerTest {
 
 	FragmentConfiguration config;
 
+	FeatureToggleProperties toggle;
+
 	PatientDomainWrapper wrapper;
 
 	@Before
 	public void before() {
 		controller = new ContactInfoFragmentController();
 		config = new FragmentConfiguration();
+		toggle = mock(FeatureToggleProperties.class);
 		wrapper = mock(PatientDomainWrapper.class);
 	}
 
@@ -46,9 +51,11 @@ public class ContactInfoFragmentControllerTest {
 		config.addAttribute("patient", patient);
 
 		//when
-		controller.controller(config, wrapper);
+		when(toggle.isFeatureEnabled("hideEditPatientContactInfoButton")).thenReturn(true);
+		controller.controller(config, wrapper, toggle);
 
 		//then
+		assertThat((Boolean) config.get("hideEditContactInfoButton"), is(true));
 		assertThat(config.get("patient"), is(instanceOf(PatientDomainWrapper.class)));
 	}
 }
