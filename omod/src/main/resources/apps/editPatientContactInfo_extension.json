@@ -1,9 +1,0 @@
-[
-    {
-        "id": "${project.parent.groupId}.${project.parent.artifactId}.patientHeader.editPatientContactInfo",
-        "extensionPointId": "patientHeader.editPatientContactInfo",
-        "type": "link",
-        "label": "general.edit",
-        "url": "registrationapp/editPatientContactInfo.page?patientId={{patient.uuid}}&appId=referenceapplication.registrationapp.registerPatient&returnUrl=coreapps%2Fclinicianfacing%2Fpatient.page%3FpatientId%3D{{patient.uuid}}"
-    }
-]
