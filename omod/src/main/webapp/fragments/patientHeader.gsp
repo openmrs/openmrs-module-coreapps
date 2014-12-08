@@ -107,11 +107,11 @@
                     ${ui.message("coreapps.unknownAge")}
                 <% } %>
                 </span>
-                <% if(!config.hideEditDemographicsButton) { %>
-                    <span class="edit-info">
-                        <small><a href="/${contextPath}/registrationapp/editPatientDemographics.page?patientId=${patient.patient.id}&returnUrl=${ui.urlEncode(ui.thisUrl())}">${ui.message("general.edit")}</a></small>
-                    </span>
-                <% } %>
+                <span class="edit-info">
+                    <small>
+                        <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientDemographics", contextModel: appContextModel ]) %>
+                    </small>
+                </span>
                 <a href="#" id="patient-header-contactInfo" class="contact-info-label">
                     <span class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
                     <i class="toggle-icon icon-caret-down small"></i>

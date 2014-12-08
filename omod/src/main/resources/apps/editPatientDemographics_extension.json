@@ -1,0 +1,12 @@
+[
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.patientHeader.editPatientDemographics",
+        "extensionPointId": "patientHeader.editPatientDemographics",
+        "type": "link",
+        "label": "general.edit",
+        "extensionParams": {
+            "provider": "registrationapp",
+            "fragment": "editPatientDemographics"
+        }
+    }
+]
