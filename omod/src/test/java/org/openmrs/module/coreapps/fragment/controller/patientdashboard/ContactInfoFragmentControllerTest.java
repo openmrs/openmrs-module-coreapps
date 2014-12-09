@@ -16,6 +16,7 @@ package org.openmrs.module.coreapps.fragment.controller.patientdashboard;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Patient;
+import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -35,12 +36,15 @@ public class ContactInfoFragmentControllerTest {
 
 	PatientDomainWrapper wrapper;
 
+    AppContextModel contextModel;
+
 	@Before
 	public void before() {
 		controller = new ContactInfoFragmentController();
 		config = new FragmentConfiguration();
 		toggle = mock(FeatureToggleProperties.class);
 		wrapper = mock(PatientDomainWrapper.class);
+        contextModel = mock(AppContextModel.class);
 	}
 
 	@Test
@@ -48,7 +52,7 @@ public class ContactInfoFragmentControllerTest {
 		//given
 		Patient patient = new Patient();
 		config.addAttribute("patient", patient);
-
+        config.addAttribute("contextModel", contextModel);
 
 		controller.controller(config, wrapper);
 		assertThat(config.get("patient"), is(instanceOf(PatientDomainWrapper.class)));
