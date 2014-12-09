@@ -24,6 +24,7 @@ public class ContactInfoFragmentController {
 	public void controller(FragmentConfiguration config,
                            @InjectBeans PatientDomainWrapper wrapper) {
 
+        config.require("contextModel");
         config.require("patient");
         Object patient = config.get("patient");
         if (patient instanceof Patient) {

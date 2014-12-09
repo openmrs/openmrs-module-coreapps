@@ -1,5 +1,5 @@
 <%
-    appContextModel.put("returnUrl", ui.thisUrl())
+    config.contextModel.put("returnUrl", ui.thisUrl())
 %>
 
 <div class="contact-info-inline">
@@ -13,7 +13,7 @@
     </span>
     <% if(!config.hideEditDemographicsButton) { %>
     <small class="edit-info" class="left-margin">
-        <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientContactInfo", contextModel: appContextModel ]) %>
+        <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientContactInfo", contextModel: config.contextModel ]) %>
     </small>
     <% } %>
 </div>

@@ -122,7 +122,7 @@
                 </a>
             </span>
             <div class="hidden" id="contactInfoContent" class="contact-info-content">
-                ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient ]) }
+                ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient, contextModel: appContextModel ]) }
             </div>
         </h1>
         <% if (config.activeVisit) { %>

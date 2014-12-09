@@ -1,12 +1,12 @@
 <%
-    appContextModel.put("returnUrl", ui.thisUrl())
+    config.contextModel.put("returnUrl", ui.thisUrl())
 %>
 
 <h3>${ui.message("coreapps.patientDashBoard.contactinfo")}</h3>
 
 <div class="right">
     <small>
-       <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientContactInfo", contextModel: appContextModel ]) %>
+       <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientContactInfo", contextModel: config.contextModel ]) %>
     </small>
 </div>
 
