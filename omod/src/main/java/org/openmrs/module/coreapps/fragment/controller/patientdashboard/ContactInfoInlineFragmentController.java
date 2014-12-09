@@ -15,17 +15,14 @@
 package org.openmrs.module.coreapps.fragment.controller.patientdashboard;
 
 import org.openmrs.Patient;
-import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.annotation.InjectBeans;
-import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 
 public class ContactInfoInlineFragmentController {
 	
 	public void controller(FragmentConfiguration config,
-                           @InjectBeans PatientDomainWrapper wrapper,
-	                       @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties) {
+                           @InjectBeans PatientDomainWrapper wrapper) {
 
         config.require("patient");
         Object patient = config.get("patient");
@@ -34,8 +31,6 @@ public class ContactInfoInlineFragmentController {
             config.addAttribute("patient", wrapper);
         }
 
-        config.addAttribute("hideEditDemographicsButton",
-		    featureToggleProperties.isFeatureEnabled("hideEditPatientDemographicsButton"));
 	}
 	
 }

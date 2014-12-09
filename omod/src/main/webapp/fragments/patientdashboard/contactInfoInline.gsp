@@ -1,3 +1,7 @@
+<%
+    appContextModel.put("returnUrl", ui.thisUrl())
+%>
+
 <div class="contact-info-inline">
     <span>
         ${ ui.format(config.patient.personAddress).replace("\n", ", ")}
@@ -9,7 +13,7 @@
     </span>
     <% if(!config.hideEditDemographicsButton) { %>
     <small class="edit-info" class="left-margin">
-        <a href="/${contextPath}/registrationapp/editPatientContactInfo.page?patientId=${config.patient.patient.id}&appId=referenceapplication.registrationapp.registerPatient&returnUrl=${ui.urlEncode(ui.thisUrl())}">${ui.message("general.edit")}</a>
+        <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientContactInfo", contextModel: appContextModel ]) %>
     </small>
     <% } %>
 </div>

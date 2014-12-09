@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ContactInfoFragmentControllerTest {
 
@@ -45,17 +44,13 @@ public class ContactInfoFragmentControllerTest {
 	}
 
 	@Test
-	public void shouldReturnPatientAndHideEditInfoContactButtonAttributes() {
+	public void shouldReturnPatient() {
 		//given
 		Patient patient = new Patient();
 		config.addAttribute("patient", patient);
 
-		//when
-		when(toggle.isFeatureEnabled("hideEditPatientContactInfoButton")).thenReturn(true);
-		controller.controller(config, wrapper, toggle);
 
-		//then
-		assertThat((Boolean) config.get("hideEditContactInfoButton"), is(true));
+		controller.controller(config, wrapper);
 		assertThat(config.get("patient"), is(instanceOf(PatientDomainWrapper.class)));
 	}
 }

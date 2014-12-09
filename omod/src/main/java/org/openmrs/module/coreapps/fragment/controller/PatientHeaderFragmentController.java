@@ -20,7 +20,6 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
-import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
@@ -50,7 +49,6 @@ public class PatientHeaderFragmentController {
                            @FragmentParam(required = false, value="appContextModel") AppContextModel appContextModel,
 	                       @FragmentParam("patient") Object patient, @InjectBeans PatientDomainWrapper wrapper,
 	                       @SpringBean("adtService") AdtService adtService, UiSessionContext sessionContext,
-                           @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
                            FragmentModel model) {
 
 		if (patient instanceof Patient) {
@@ -93,7 +91,6 @@ public class PatientHeaderFragmentController {
 		
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
         config.addAttribute("extraPatientIdentifiersMappedByType", wrapper.getExtraIdentifiersMappedByType(sessionContext.getSessionLocation()));
-        config.addAttribute("hideEditDemographicsButton", featureToggleProperties.isFeatureEnabled("hideEditPatientDemographicsButton"));
     }
 	
 	public class ExtraPatientIdentifierType {
