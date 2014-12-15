@@ -103,6 +103,14 @@
 		</description>
 	</globalProperty>
 
+    <globalProperty>
+        <property>coreapps.defaultDashboard</property>
+        <defaultValue></defaultValue>
+        <description>
+            If set to "visits", then the old visits dashboard will be used instead of the new clinician-facing dashboard
+        </description>
+    </globalProperty>
+
     <privilege>
         <name>Task: coreapps.endVisit</name>
         <description>Able to end a visit</description>

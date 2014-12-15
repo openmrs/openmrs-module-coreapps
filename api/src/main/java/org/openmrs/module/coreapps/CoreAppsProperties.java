@@ -5,10 +5,6 @@ import org.openmrs.module.emrapi.utils.ModuleProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
 
 /**
  * Properties for this module.
@@ -32,5 +28,10 @@ public class CoreAppsProperties extends ModuleProperties {
 		}
 		return 730; //2 years
 	}
+
+    // TODO remove this and just always default to clinician dashboard once legacy implementations (Mirebalais) move to clinician dashboard
+    public String getDefaultDashboard() {
+        return getGlobalProperty(CoreAppsConstants.GP_DEFAULT_DASHBOARD, false);
+    }
 
 }

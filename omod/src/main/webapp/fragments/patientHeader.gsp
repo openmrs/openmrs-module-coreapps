@@ -51,13 +51,25 @@
 
         });
 
-        jq(".demographics .name").click(function () {
-            emr.navigateTo({
-                provider: 'coreapps',
-                page: 'patientdashboard/patientDashboard',
-                query: { patientId: ${patient.patient.id} }
-            });
-        })
+        // generally clicking on the header should return to the clinician-facing dashboard, but we added this
+        // global property to allow the link to go to the "Visits" dashboard for legacy implementations
+        <% if (!config.defaultDashboard || config.defaultDashboard.toUpperCase() != 'VISITS') { %>
+            jq(".demographics .name").click(function () {
+                emr.navigateTo({
+                    provider: 'coreapps',
+                    page: 'clinicianfacing/patient',
+                    query: { patientId: ${patient.patient.id} }
+                });
+            })
+        <% } else { %>
+            jq(".demographics .name").click(function () {
+                emr.navigateTo({
+                    provider: 'coreapps',
+                    page: 'patientdashboard/patientDashboard',
+                    query: { patientId: ${patient.patient.id} }
+                });
+            })
+        <% } %>
 
         jq("#patient-header-contactInfo").click(function (){
             var contactInfoDialogDiv = jq("#contactInfoContent");
