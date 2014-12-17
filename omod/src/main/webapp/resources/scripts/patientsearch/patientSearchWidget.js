@@ -74,7 +74,7 @@ function PatientSearchWidget(configuration){
                     'patientIdentifier:(uuid,identifier),' +
                     'person:(gender,age,birthdate,birthdateEstimated,personName:(fullName)))';
 
-    var doSearch = function(query, currRequestCount){
+    var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
 
         // set a flag to denote that we are starting a new search
         performingSearch = true;
@@ -89,16 +89,19 @@ function PatientSearchWidget(configuration){
             searchOnIdentifierAndName(query, currRequestCount);
         }
         else {
-            searchOnExactIdentifierMatchThenIdentifierAndName(query, currRequestCount);
+            searchOnExactIdentifierMatchThenIdentifierAndName(query, currRequestCount, autoSelectIfExactIdentifierMatch);
         }
     }
 
-    var searchOnExactIdentifierMatchThenIdentifierAndName = function(query, currRequestCount) {
+    var searchOnExactIdentifierMatchThenIdentifierAndName = function(query, currRequestCount, autoSelectIfExactIdentifierMatch) {
         emr.getJSON(searchUrl, {identifier: query, v: customRep })
             .done(function (data) {
                 // update only if we've got results, and not late (late ajax responses should be ignored not to overwrite the latest)
                 if (data && data.results && data.results.length > 0 && (!currRequestCount || currRequestCount >= requestCount)) {
                     updateSearchResults(data.results);
+                    if (autoSelectIfExactIdentifierMatch && data.results.length == 1) {
+                        selectRow(0);
+                    }
                 }
                 else {
                     searchOnIdentifierAndName(query, currRequestCount);
@@ -220,7 +223,7 @@ function PatientSearchWidget(configuration){
     }
 
     var doKeyEnter = function() {
-        // if no rows are currently highlighted..
+        // if no rows are currently highlighted
         if (highlightedKeyboardRowIndex == undefined){
             if(dTable && dTable.fnGetNodes().length == 1) {
                 // if there is only one row in the result set, automatically select that row
@@ -228,9 +231,9 @@ function PatientSearchWidget(configuration){
                 selectRow(0);
             }
             else {
-                // otherwise, perform a new search
+                // otherwise, perform a new search, triggering it to auto-select if an exact identifier match
                 prepareForNewSearch();
-                doSearch(input.val());
+                doSearch(input.val(), 0, true);
                 return;
             }
         }
