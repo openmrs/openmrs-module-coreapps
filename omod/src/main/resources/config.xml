@@ -111,6 +111,22 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>coreapps.searchDelayShort</property>
+        <defaultValue>300</defaultValue>
+        <description>
+            Default time, in milliseconds, that the patient search waits for an additional keystroke before performed a search
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>coreapps.searchDelayLong</property>
+        <defaultValue>1000</defaultValue>
+        <description>
+            Time, in milliseconds, that the patient search waits for an additional keystroke if only 1 or 2 characters have been entered
+        </description>
+    </globalProperty>
+
     <privilege>
         <name>Task: coreapps.endVisit</name>
         <description>Able to end a visit</description>

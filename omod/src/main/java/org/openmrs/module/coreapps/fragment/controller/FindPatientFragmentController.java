@@ -13,9 +13,6 @@
  */
 package org.openmrs.module.coreapps.fragment.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -29,9 +26,15 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * AJAX search methods for patients
  */
+
+// I don't think this is used anymore and can be removed; the search widget makes REST calls directly
+@Deprecated
 public class FindPatientFragmentController {
 	
 	public List<SimpleObject> search(@RequestParam(value = "q", required = false) String query,

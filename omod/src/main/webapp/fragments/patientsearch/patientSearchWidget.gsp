@@ -25,6 +25,8 @@
             minSearchCharacters: ${ config.minSearchCharacters ?: 3 },
             afterSelectedUrl: '${ ui.escapeJs(config.afterSelectedUrl) }',
             breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }',
+            searchDelayShort: ${ searchDelayShort },
+            searchDelayLong: ${ searchDelayLong },
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
                 first: '${ ui.message("coreapps.search.first") }',

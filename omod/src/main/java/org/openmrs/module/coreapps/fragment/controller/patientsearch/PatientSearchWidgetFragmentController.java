@@ -1,10 +1,13 @@
 package org.openmrs.module.coreapps.fragment.controller.patientsearch;
 
 import org.openmrs.Patient;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.utils.GeneralUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
+import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.util.OpenmrsConstants;
 
@@ -18,13 +21,19 @@ import java.util.List;
 public class PatientSearchWidgetFragmentController {
 
     public void controller(FragmentModel model, UiSessionContext sessionContext,
+                           @SpringBean("adminService") AdministrationService administrationService,
                            @FragmentParam(value = "showLastViewedPatients", required = false) Boolean showLastViewedPatients) {
 
         showLastViewedPatients = showLastViewedPatients != null ? showLastViewedPatients : false;
 
         model.addAttribute("minSearchCharacters",
-                Context.getAdministrationService()
-                        .getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, "1"));
+                administrationService.getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, "1"));
+
+        model.addAttribute("searchDelayShort",
+                administrationService.getGlobalProperty(CoreAppsConstants.GP_SEARCH_DELAY_SHORT, "300"));
+
+        model.addAttribute("searchDelayLong",
+                administrationService.getGlobalProperty(CoreAppsConstants.GP_SEARCH_DELAY_LONG, "1000"));
 
         model.addAttribute("dateFormatter", new SimpleDateFormat("dd-MMM-yyy", Context.getLocale()));
         model.addAttribute("showLastViewedPatients", showLastViewedPatients);

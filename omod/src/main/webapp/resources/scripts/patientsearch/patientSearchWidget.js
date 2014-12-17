@@ -31,8 +31,6 @@ function PatientSearchWidget(configuration){
     var searchResultsData = [];
     var highlightedKeyboardRowIndex;
     var highlightedMouseRowIndex;
-    var searchDelayShort = 300;
-    var searchDelayLong = 1000;
     var searchDelayTimer;
     var requestCount = 0;
     var searchUrl = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/patient';
@@ -77,24 +75,57 @@ function PatientSearchWidget(configuration){
                     'person:(gender,age,birthdate,birthdateEstimated,personName:(fullName)))';
 
     var doSearch = function(query, currRequestCount){
+
+        // set a flag to denote that we are starting a new search
+        performingSearch = true;
+
         jq('#'+tableId).find('td.dataTables_empty').html(spinnerImage);
         if(!jq('#'+config.searchResultsDivId).is(':visible')){
             jq('#'+config.searchResultsDivId).show();
         }
+
         query = jq.trim(query);
+        if (query.indexOf(' ') >= 0) {
+            searchOnIdentifierAndName(query, currRequestCount);
+        }
+        else {
+            searchOnExactIdentifierMatchThenIdentifierAndName(query, currRequestCount);
+        }
+    }
+
+    var searchOnExactIdentifierMatchThenIdentifierAndName = function(query, currRequestCount) {
+        emr.getJSON(searchUrl, {identifier: query, v: customRep })
+            .done(function (data) {
+                // update only if we've got results, and not late (late ajax responses should be ignored not to overwrite the latest)
+                if (data && data.results && data.results.length > 0 && (!currRequestCount || currRequestCount >= requestCount)) {
+                    updateSearchResults(data.results);
+                }
+                else {
+                    searchOnIdentifierAndName(query, currRequestCount);
+                }
+            }).fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnIdentifierAndName = function(query, currRequestCount) {
         emr.getJSON(searchUrl, {q: query, v: customRep })
-        .done(function(data) {
-            //late ajax responses should be ignored not to overwrite the latest
-            if(data && (!currRequestCount || currRequestCount >= requestCount)){
-                updateSearchResults(data.results);
-            }
-        })
-        .fail(function(jqXHR){
-            performingSearch = false;
-            if(!currRequestCount || currRequestCount >= requestCount){
-                jq('#'+tableId).find('td.dataTables_empty').html("<span class='patient-search-error'>"+config.messages.searchError+"</span>");
-            }
-        });
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var failSearch = function() {
+        performingSearch = false;
+        if (!currRequestCount || currRequestCount >= requestCount) {
+            jq('#' + tableId).find('td.dataTables_empty').html("<span class='patient-search-error'>" + config.messages.searchError + "</span>");
+        }
     }
 
     var clearSearch = function() {
@@ -209,8 +240,6 @@ function PatientSearchWidget(configuration){
     }
 
     var prepareForNewSearch = function(){
-        // set a flag to denote that we are starting a new search
-        performingSearch = true;
         //if there is any search delay in progress, cancel it
         if(searchDelayTimer != undefined){
             window.clearTimeout(searchDelayTimer);
@@ -432,9 +461,9 @@ function PatientSearchWidget(configuration){
         if(text.length >= config.minSearchCharacters){
             // force a longer delay since we are going to search on a shorter string
             //or may be the user is still typing more characters
-            var effectiveSearchDelay = searchDelayShort;
+            var effectiveSearchDelay = config.searchDelayShort;
             if(config.minSearchCharacters < 3 && text.length < 3){
-                effectiveSearchDelay = searchDelayLong;
+                effectiveSearchDelay = config.searchDelayLong;
             }
             var currentCount = ++requestCount;
             //wait for a couple of milliseconds, if the user isn't typing anymore chars before triggering search
