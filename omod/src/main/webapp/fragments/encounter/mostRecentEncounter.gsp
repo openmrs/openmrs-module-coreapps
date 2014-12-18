@@ -1,7 +1,7 @@
 <div class="info-section most-recent-encounter">
     <div class="info-header">
         <i class="${ app.icon }"></i>
-        <h3>${ ui.message(app.label) }</h3>
+        <h3>${ ui.message(app.label).toUpperCase() }</h3>
     </div>
     <div class="info-body">
 
