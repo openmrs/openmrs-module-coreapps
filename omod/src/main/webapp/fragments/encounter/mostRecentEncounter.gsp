@@ -1,19 +1,19 @@
 <div class="info-section most-recent-encounter">
     <div class="info-header">
-        <i class="icon-vitals"></i>
-        <h3>${ ui.message("coreapps.clinicianfacing.vitals").toUpperCase() }</h3>
+        <i class="${ app.icon }"></i>
+        <h3>${ ui.message(app.label) }</h3>
     </div>
     <div class="info-body">
 
-        <div id="most-recent-vitals-container" class="in collapse">
+        <div id="most-recent-encounter-container" class="in collapse">
             ${ ui.message(encounter ? "uicommons.loading.placeholder" : "coreapps.clinicianfacing.noneRecorded") }
         </div>
 
         <% if (encounter) { %>
             <script type="text/javascript">
                 emr.getFragmentActionWithCallback("htmlformentryui", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: ${encounter.id} }, function(result) {
-                    jq('#most-recent-vitals-container').html(result.html);
-                    jq('.collapse .title').text('${ ui.escapeJs(ui.message("coreapps.clinicianfacing.lastVitalsDateLabel", ui.formatDatetimePretty(encounter.encounterDatetime))) } ');
+                    jq('#most-recent-encounter-container').html(result.html);
+                    jq('.collapse .title').text('${ ui.escapeJs(ui.message(app.config.get('encounterDateLabel').textValue , ui.formatDatetimePretty(encounter.encounterDatetime))) } ');
                 });
             </script>
         <% } %>

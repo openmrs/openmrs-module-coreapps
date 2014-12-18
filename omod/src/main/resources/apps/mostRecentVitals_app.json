@@ -1,0 +1,24 @@
+[
+  {
+    "id": "coreapps.mostRecentVitals",
+    "description": "coreapps.mostRecentVitals.app.description",
+    "label": "coreapps.clinicianfacing.vitals",
+    "icon": "icon-vitals",
+    "order": 10,
+    "config": {
+        "encounterTypeUuid": "67a71486-1a54-468f-ac3e-7091a9a79584",
+        "encounterDateLabel": "coreapps.clinicianfacing.lastVitalsDateLabel"
+    },
+    "extensions": [
+      {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.clinicianDashboardFirstColumn",
+        "appId": "coreapps.mostRecentVitals",
+        "extensionPointId": "patientDashboard.firstColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "encounter/mostRecentEncounter"
+        }
+      }
+    ]
+  }
+]

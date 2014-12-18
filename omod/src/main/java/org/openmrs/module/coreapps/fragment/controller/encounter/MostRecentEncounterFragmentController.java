@@ -11,13 +11,13 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.coreapps.fragment.controller.vitals;
+package org.openmrs.module.coreapps.fragment.controller.encounter;
 
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
-import org.openmrs.module.coreapps.CoreAppsProperties;
+import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
@@ -25,22 +25,38 @@ import org.openmrs.ui.framework.fragment.FragmentModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MostRecentVitalsFragmentController {
+public class MostRecentEncounterFragmentController {
 	
 	public void controller(FragmentModel model, @FragmentParam("patientId") Patient patient,
-						   @SpringBean CoreAppsProperties coreAppsProperties,
+						   @FragmentParam("app") AppDescriptor app,
 	                       @SpringBean("encounterService") EncounterService encounterService) {
-		
-		Integer encounterId = null;
+
+		if (app.getConfig().path("encounterTypeUuid").isMissingNode()) {
+			throw new IllegalStateException("encounterTypeUuid app config parameter required");
+		}
+
+		if (app.getConfig().path("encounterDateLabel").isMissingNode()) {
+			throw new IllegalStateException("encounterDateLabel app config parameter required");
+		}
+
 		List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
-		encounterTypes.add(encounterService.getEncounterTypeByUuid(coreAppsProperties.getVitalsEncounterTypeUuid()));
+		EncounterType encounterType = encounterService.getEncounterTypeByUuid((app.getConfig().get("encounterTypeUuid").getTextValue()));
+
+		if (encounterType == null) {
+			throw new IllegalStateException("No encounter type with uuid " + app.getConfig().get("encounterTypeUuid").getTextValue());
+		}
+
+		encounterTypes.add(encounterType);
+
 		List<Encounter> encounters = encounterService.getEncounters(patient, null, null, null, null, encounterTypes, null,
 		    null, null, false);
-		
+
+		model.addAttribute("app", app);
+
 		if (encounters.size() > 0) {
             model.addAttribute("encounter", encounters.get(encounters.size() - 1));
 		} else {
-            model.addAttribute("encounter", null);
-        }
+			model.addAttribute("encounter", null);
+		}
 	}
 }

@@ -23,12 +23,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
     <div class="dashboard clear">
         <div class="info-container column">
             ${ ui.includeFragment("coreapps", "clinicianfacing/diagnosisWidget", [ patient: patient ]) }
-
-            ${ ui.includeFragment("coreapps", "vitals/mostRecentVitals", [patientId: patient.patient.id]) }
             
             <% if (firstColumnFragments) {
 			    firstColumnFragments.each { %>
-			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patientId: patient.patient.id])}
+			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [ patientId: patient.patient.id, app: it.appId ])}
 			<%  }
 			} %>
 
