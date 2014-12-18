@@ -29,6 +29,11 @@ public class CoreAppsProperties extends ModuleProperties {
 		return 730; //2 years
 	}
 
+	public String getVitalsEncounterTypeUuid() {
+		String visitEncounterTypeUuid = getGlobalProperty(CoreAppsConstants.GP_VITALS_ENCOUNTER_TYPE_UUID, false);
+		return StringUtils.hasText(visitEncounterTypeUuid) ? visitEncounterTypeUuid : CoreAppsConstants.VITALS_ENCOUNTER_TYPE_UUID;
+	}
+
     // TODO remove this and just always default to clinician dashboard once legacy implementations (Mirebalais) move to clinician dashboard
     public String getDefaultDashboard() {
         return getGlobalProperty(CoreAppsConstants.GP_DEFAULT_DASHBOARD, false);

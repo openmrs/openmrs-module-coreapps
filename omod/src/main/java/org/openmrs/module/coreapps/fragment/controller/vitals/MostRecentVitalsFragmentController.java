@@ -17,7 +17,7 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
-import org.openmrs.module.coreapps.CoreAppsConstants;
+import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
@@ -28,11 +28,12 @@ import java.util.List;
 public class MostRecentVitalsFragmentController {
 	
 	public void controller(FragmentModel model, @FragmentParam("patientId") Patient patient,
+						   @SpringBean CoreAppsProperties coreAppsProperties,
 	                       @SpringBean("encounterService") EncounterService encounterService) {
 		
 		Integer encounterId = null;
 		List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
-		encounterTypes.add(encounterService.getEncounterTypeByUuid(CoreAppsConstants.VITALS_ENCOUNTER_TYPE_UUID));
+		encounterTypes.add(encounterService.getEncounterTypeByUuid(coreAppsProperties.getVitalsEncounterTypeUuid()));
 		List<Encounter> encounters = encounterService.getEncounters(patient, null, null, null, null, encounterTypes, null,
 		    null, null, false);
 		

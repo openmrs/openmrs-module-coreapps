@@ -127,6 +127,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>coreapps.vitalsEncounterTypeUuid</property>
+        <defaultValue>67a71486-1a54-468f-ac3e-7091a9a79584</defaultValue>
+        <description>
+            UUID of the vitals encounter type; used to render the "Vitals" summary info on the dashboard
+        </description>
+    </globalProperty>
+
     <privilege>
         <name>Task: coreapps.endVisit</name>
         <description>Able to end a visit</description>
