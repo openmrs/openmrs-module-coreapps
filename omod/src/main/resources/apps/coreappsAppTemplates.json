@@ -68,5 +68,27 @@
                 "defaultValue": []
             }
         ]
+    },
+    {
+        "id": "coreapps.template.mostRecentEncounter",
+        "description": "Displays the most recent encounter of a specified type",
+        "configOptions": [
+            {
+                "name": "encounterTypeUuid",
+                "description": "UUID of the encounter type",
+                "defaultValue": ""
+            },
+            {
+                "name": "encounterDateLabel",
+                "description": "Message code for displaying last encounter date; code should have substitution element for date--for example 'Last Vitals On: {0}'",
+                "defaultValue": ""
+            },
+            {
+                "name": "definitionUiResource",
+                "description": "ui resource of html form to use when displaying the encounter (optional--if not specified, form associated with encounter is used",
+                "defaultValue": ""
+            }
+        ]
     }
+
 ]

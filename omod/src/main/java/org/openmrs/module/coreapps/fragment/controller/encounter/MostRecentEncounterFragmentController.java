@@ -53,6 +53,13 @@ public class MostRecentEncounterFragmentController {
 
 		model.addAttribute("app", app);
 
+        String definitionUiResource = "";
+        if (!app.getConfig().path("definitionUiResource").isMissingNode()) {
+            definitionUiResource = app.getConfig().get("definitionUiResource").getTextValue();
+        }
+
+        model.addAttribute("definitionUiResource", definitionUiResource);
+
 		if (encounters.size() > 0) {
             model.addAttribute("encounter", encounters.get(encounters.size() - 1));
 		} else {

@@ -1,6 +1,7 @@
 [
   {
     "id": "coreapps.mostRecentVitals",
+    "instanceOf": "coreapps.template.mostRecentEncounter",
     "description": "coreapps.mostRecentVitals.app.description",
     "label": "coreapps.clinicianfacing.vitals",
     "icon": "icon-vitals",

@@ -61,7 +61,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
             
             <% if (secondColumnFragments) {
 			    secondColumnFragments.each { %>
-			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patientId: patient.patient.id])}
+			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patientId: patient.patient.id, app: it.appId ])}
 			<%   }
 			} %>
 			
