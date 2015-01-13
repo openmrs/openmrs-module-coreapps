@@ -13,9 +13,9 @@
     var lastViewedPatients = [];
     <%  if (showLastViewedPatients) {
             lastViewedPatients.each { it -> %>
-    lastViewedPatients.push({uuid:"${ it.uuid }",fullName:"${ it.personName ? it.personName.fullName : '' }",gender:"${ it.gender }",
+    lastViewedPatients.push({uuid:"${ it.uuid }",fullName:"${ it.personName ? ui.escapeJs(it.personName.fullName) : '' }",gender:"${ it.gender }",
         age:"${ it.age ?: '' }", birthdate:"${ it.birthdate ? dateFormatter.format(it.birthdate) : '' }",
-        birthdateEstimated: ${ it.birthdateEstimated }, identifier:"${ it.patientIdentifier ? it.patientIdentifier.identifier : '' }"});
+        birthdateEstimated: ${ it.birthdateEstimated }, identifier:"${ it.patientIdentifier ? ui.escapeJs(it.patientIdentifier.identifier) : '' }"});
     <%      }
         }%>
 
