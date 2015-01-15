@@ -41,7 +41,7 @@
         <uiframeworkVersion>3.3-SNAPSHOT</uiframeworkVersion>
         <emrapiVersion>1.5-SNAPSHOT</emrapiVersion>
         <appuiVersion>1.3-SNAPSHOT</appuiVersion>
-        <idgenVersion>2.9.1</idgenVersion>
+        <idgenVersion>3.0</idgenVersion>
         <webservicesRestVersion>2.7-SNAPSHOT</webservicesRestVersion>
         <uicommonsVersion>1.4-SNAPSHOT</uicommonsVersion>
         <addresshierarchyVersion>2.2.9</addresshierarchyVersion>

@@ -84,13 +84,15 @@ public class PatientHeaderFragmentController {
         }
 		
 		List<ExtraPatientIdentifierType> extraPatientIdentifierTypes = new ArrayList<ExtraPatientIdentifierType>();
-		
+
 		for (PatientIdentifierType type : emrApiProperties.getExtraPatientIdentifierTypes()) {
-			AutoGenerationOption option = identifierSourceService.getAutoGenerationOption(type);
-			extraPatientIdentifierTypes.add(new ExtraPatientIdentifierType(type, option != null ? option
-			        .isManualEntryEnabled() : true));
+			List<AutoGenerationOption> options = identifierSourceService.getAutoGenerationOptions(type);
+            // TODO note that this may allow use to edit a identifier that should not be editable, or vice versa, in the rare case where there are multiple autogeneration
+            // TODO options for a single identifier type (which is possible if you have multiple locations) and the manual entry boolean is different between those two generators
+			extraPatientIdentifierTypes.add(new ExtraPatientIdentifierType(type,
+                    options.size() > 0 ? options.get(0).isManualEntryEnabled() : true));
 		}
-		
+
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
         config.addAttribute("extraPatientIdentifiersMappedByType", wrapper.getExtraIdentifiersMappedByType(sessionContext.getSessionLocation()));
         config.addAttribute("defaultDashboard", coreAppsProperties.getDefaultDashboard());
