@@ -7,6 +7,8 @@
 *.sass-cache
 target
 
+.DS_Store
+
 # Package Files #
 *.jar
 *.war
