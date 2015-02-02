@@ -51,11 +51,8 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                     return false;
                 }
                 if (whichSide == 'A' && item.personB.uuid == $scope.thisPersonUuid) {
-
-
                     return true;
                 } else if (whichSide == 'B' && item.personA.uuid == $scope.thisPersonUuid) {
-
                     return true;
                 }
             });
@@ -90,8 +87,7 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                 closeByDocument: true,
                 template: 'deleteDialogTemplate',
                 data: angular.toJson({ relationship: relationship }),
-                scope: $scope
-                
+                scope: $scope               
             }).then(function(relationshipToDelete) {
                 RelationshipService.deleteRelationship(relationship);
                 $scope.relationships = _.reject($scope.relationships, function(item) {

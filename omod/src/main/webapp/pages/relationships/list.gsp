@@ -97,9 +97,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
         <span ng-show="relType.aIsToB == relType.bIsToA" ng-repeat="rel in relationshipsByType(relType, 'B')" class="relationship">
             {{ rel.personB.display }} /
                 ${ ui.message("coreapps.gender") }:{{personDetails[rel.personB.uuid].gender}}         
-				${ ui.message("coreapps.age") }:{{ personDetails[rel.personB.uuid].age }} 
- 
-            AGE: {{ personDetails[rel.personB.uuid].age }}          
+				${ ui.message("coreapps.age") }:{{ personDetails[rel.personB.uuid].age }}        
             <a ng-click="goToPerson(rel.personB)">
                 <i class="icon-user small"></i>
             </a>
@@ -118,8 +116,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
             <span ng-repeat="rel in relationshipsByType(relType, 'B')" class="relationship">
                 {{ rel.personB.display }} / 
              	   ${ ui.message("coreapps.gender") }:{{personDetails[rel.personB.uuid].gender}}         
-					${ ui.message("coreapps.age") }:{{ personDetails[rel.personB.uuid].age }} 
-                
+					${ ui.message("coreapps.age") }:{{ personDetails[rel.personB.uuid].age }}              
                 <a ng-click="goToPerson(rel.personB)">
                     <i class="icon-user small"></i>
                 </a>
