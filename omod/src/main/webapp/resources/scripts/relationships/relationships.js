@@ -8,11 +8,24 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
         $scope.relationshipTypes = [];
 
         $scope.relationships = [];
+        
+        $scope.personDetails = new Array();
 
         $scope.init = function(personUuid, excludeRelationshipTypes) {
             $scope.thisPersonUuid = personUuid;
             RelationshipService.getRelationships({ v: 'default', person: personUuid }).then(function(result) {
                 $scope.relationships = result;
+                
+                //get datails about the related person
+                for (var i = 0; i < $scope.relationships.length; i++) {               
+					PersonService.getPersonByUUID({uuid: $scope.relationships[i].personA.uuid}).then(function(result) {
+						$scope.personDetails[result.uuid] = result;
+	            			});
+					PersonService.getPersonByUUID({uuid: $scope.relationships[i].personB.uuid}).then(function(result) {
+						$scope.personDetails[result.uuid] = result;
+	                
+	            			});            			
+                }    
             });
             RelationshipTypeService.getRelationshipTypes({ v: 'default' }).then(function(result) {
                 if (excludeRelationshipTypes) {
@@ -38,8 +51,11 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                     return false;
                 }
                 if (whichSide == 'A' && item.personB.uuid == $scope.thisPersonUuid) {
+
+
                     return true;
                 } else if (whichSide == 'B' && item.personA.uuid == $scope.thisPersonUuid) {
+
                     return true;
                 }
             });
@@ -75,6 +91,7 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                 template: 'deleteDialogTemplate',
                 data: angular.toJson({ relationship: relationship }),
                 scope: $scope
+                
             }).then(function(relationshipToDelete) {
                 RelationshipService.deleteRelationship(relationship);
                 $scope.relationships = _.reject($scope.relationships, function(item) {
