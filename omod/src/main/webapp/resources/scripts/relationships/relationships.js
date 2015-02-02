@@ -87,7 +87,7 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                 closeByDocument: true,
                 template: 'deleteDialogTemplate',
                 data: angular.toJson({ relationship: relationship }),
-                scope: $scope               
+                scope: $scope
             }).then(function(relationshipToDelete) {
                 RelationshipService.deleteRelationship(relationship);
                 $scope.relationships = _.reject($scope.relationships, function(item) {
