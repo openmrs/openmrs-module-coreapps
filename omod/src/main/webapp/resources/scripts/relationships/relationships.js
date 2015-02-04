@@ -11,7 +11,7 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
 
         $scope.init = function(personUuid, excludeRelationshipTypes) {
             $scope.thisPersonUuid = personUuid;
-            RelationshipService.getRelationships({ v: 'default', person: personUuid }).then(function(result) {
+            RelationshipService.getRelationships({ v: 'full', person: personUuid }).then(function(result) {
                 $scope.relationships = result;
             });
             RelationshipTypeService.getRelationshipTypes({ v: 'default' }).then(function(result) {
