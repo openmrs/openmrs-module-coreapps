@@ -49,8 +49,11 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
                 </div>
             </div>
             <div>
-                <button class="confirm right" ng-disabled="!otherPerson" ng-click="confirm(otherPerson)">${ ui.message("uicommons.save") }</button>
-                <button class="cancel" ng-click="closeThisDialog()">${ ui.message("uicommons.cancel") }</button>
+                <button class="confirm right" ng-disabled="!otherPerson" ng-click="confirm(otherPerson)">${ ui.message("uicommons.save") }</button>            
+            	<a ng-click="registerPerson()" class="button middle">
+                	<i class="icon-plus-sign"></i> ${ ui.message("referenceapplication.app.registerPatient.label") }
+           		</a>          		
+                <button class="cancel left" ng-click="closeThisDialog()">${ ui.message("uicommons.cancel") }</button>
             </div>
         </div>
     </script>

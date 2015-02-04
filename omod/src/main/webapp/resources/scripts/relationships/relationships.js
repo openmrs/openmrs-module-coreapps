@@ -54,7 +54,8 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                     otherLabel: whichSide == 'A' ? relationshipType.aIsToB : relationshipType.bIsToA,
                     thisLabel: whichSide == 'A' ? relationshipType.bIsToA : relationshipType.aIsToB
                 }),
-                template: 'addDialogTemplate'
+                template: 'addDialogTemplate',
+                scope: $scope
             }).then(function(otherPerson) {
                 var relationship = {
                     relationshipType: relationshipType.uuid,
@@ -90,5 +91,13 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                 query: { patientId: patientOrPerson.uuid }
             })
         }
+    
+        $scope.registerPerson = function() {
+            emr.navigateTo({
+                provider: "registrationapp",
+                page: "registerPatient",
+                query: { appId: "referenceapplication.registrationapp.registerPatient" }
+            })
+        }        
 
     }]);
