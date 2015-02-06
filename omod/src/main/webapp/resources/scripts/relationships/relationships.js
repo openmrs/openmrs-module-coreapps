@@ -90,5 +90,17 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                 query: { patientId: patientOrPerson.uuid }
             })
         }
+    }])
+   .directive('relativeDetails', function() {             
+     return {
+        restrict: 'E',
+		link: function(scope, element, attrs) {
+		           scope.getContentUrl = function() {
+		                return 'relativeDetails.page?personId='+ attrs.person;
+		           }
+		       },
+        template: '<span ng-include="getContentUrl()"></span>'
 
-    }]);
+  };
+});
+  
