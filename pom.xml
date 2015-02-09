@@ -68,6 +68,7 @@
 	            <artifactId>sass</artifactId>
 	            <version>3.2.10</version>
 	            <type>gem</type>
+                <scope>provided</scope>
 	        </dependency>
 		</dependencies>
 	</dependencyManagement>
