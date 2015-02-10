@@ -1,0 +1,19 @@
+[
+    {
+        "id": "coreapps.mergePatients",
+        "instanceOf": "coreapps.template.findPatient",
+        "description": "Basic patient search that goes to the patient dashboard",
+        "order": 2,
+        "extensions": [
+            {
+                "id": "coreapps.activeVisitsHomepageLink",
+                "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+                "type": "link",
+                "label": "coreapps.mergePatientsLong",
+                "url": "coreapps/mergePatients.page?app=coreapps.mergePatients",
+                "icon": "icon-group",
+                "requiredPrivilege": "App: coreapps.mergePatient"
+            }
+        ]
+    }
+]

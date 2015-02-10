@@ -1,0 +1,153 @@
+@import "variables";
+@import "reference";
+
+$darkGray: #666666;
+$green: #51A351;
+
+
+#merge-patient-container {
+  width: 50%;
+  margin: 40px auto;
+  border: 1px solid #EEE;
+  padding: 5px 10px;
+
+  form {
+    
+    p {
+      text-align: left !important;
+      margin-bottom: 10px;
+
+      input {
+        min-width: auto;
+        display: inline-block;
+        max-width: 120px;
+      }
+
+      span {
+        display: inline-block;
+        color: #888;
+      }
+    }
+  }
+}
+
+ .col {
+    float:left; margin:0; width:45%; height:100%;
+ }
+ .col-separator {
+  float:left; margin:0; width:10%;
+ }
+
+ .center {
+   margin-left: auto;
+   margin-right: auto;
+ }
+
+.patient {
+  cursor: pointer;
+  background: #F9F9F9;
+  border: 2px solid #CCC;
+  width: 320px;
+  float: left;
+  @include border-radius(4px);
+  
+  .row {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: #EAEAEA;
+    margin: 1px;
+
+    div {
+      span { display: block }
+    }
+  }
+
+  h3 {
+    font-size: 1.2em;
+    margin: 0
+  }
+
+  &.selected {
+    background: lighten(#EAEAEA, 10%);
+    border-color: #EAEAEA;
+
+    .row {
+      background: #EAEAEA;
+
+      h3 {
+        color: #003F5E;
+      }
+
+      div {
+        color: #FFF;
+      }
+    }
+  }
+}
+
+.address {
+  height:200px;
+}
+
+.identifiers {
+  height: 90px;
+}
+
+h2 {
+  em{
+    display: block;
+  }
+}
+
+.name {
+  height: 90px;
+}
+
+.section-content {
+  padding-left: 1em;
+  padding-bottom: 0.7em;
+}
+
+.spacer {
+  width: 20px;
+}
+
+.separator {
+  display:block;
+  float:left;
+  margin: 30% 0;
+  width:73px;
+}
+
+.person-address {
+  display: inline-block;
+  border-bottom: 1px $darkerGrey solid;
+}
+
+.buttons {
+  display: inline-block;
+}
+
+.messages-container {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    width: 750px;
+    display: inline-block;
+
+  .message {
+    display: inline-block;
+  }
+
+  .message-bold {
+    display: inline-block;
+    padding-bottom: 4px;
+    font-weight: bold;
+  }
+  
+  .message-title {
+    font-size: 22px;
+    display: inline-block;
+    padding-bottom: 6px;
+    font-weight: bold;
+  }
+}
