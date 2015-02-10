@@ -1,6 +1,6 @@
 
 var jq = jQuery;
-function getPatientId(id, hiddenId, fullNameField, callbackFunction) {
+function getPatientById(id, hiddenId, fullNameField, callbackFunction, patientNotFoundMsg) {
     jQuery.ajax({
         url: emr.fragmentActionLink("coreapps", "findPatient", "searchById",  { primaryId: id }),
         dataType: 'json',
@@ -12,7 +12,7 @@ function getPatientId(id, hiddenId, fullNameField, callbackFunction) {
 
             if (id != 0 && data.primaryIdentifiers && data.primaryIdentifiers[0]) {
                 var identifierId = data.primaryIdentifiers[0].identifier;
-                jq("#"+fullNameField).text(data.preferredName.fullName);
+                jq("#" + fullNameField).text(data.preferredName.fullName);
 
             }
         })
@@ -21,7 +21,7 @@ function getPatientId(id, hiddenId, fullNameField, callbackFunction) {
         })
         .error(function(data) {
             jq("#" + hiddenId).val(0);
-            jq("#"+fullNameField).text("NOT FOUND");
+            jq("#" + fullNameField).text(patientNotFoundMsg);
         });
 }
 

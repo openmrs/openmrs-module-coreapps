@@ -78,7 +78,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("coreapps.mergePatientsLong")}", link: '${ui.pageLink("webapps", "mergePatients")}'},
+        { label: "${ ui.message("coreapps.mergePatientsLong")}", link: '${ui.pageLink("coreapps", "mergePatients?app=coreapps.mergePatients")}'},
         { label: "${ ui.message("coreapps.mergePatients.confirmationQuestion")}" }
     ];
 </script>

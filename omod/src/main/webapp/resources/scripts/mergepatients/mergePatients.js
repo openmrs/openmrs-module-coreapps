@@ -7,14 +7,11 @@ jq(function() {
     });
 });
 
-
-
 function checkConfirmButton() {
     var patient1Id = jq("#patient1").val();
     var patient2Id = jq("#patient2").val();
 
-    if( patient1Id > 0 && patient2Id > 0 &&
-        (patient1Id != patient2Id)) {
+    if (patient1Id > 0 && patient2Id > 0 && (patient1Id != patient2Id)) {
         enableButton();
         jq("#confirm-button").focus();
     } else {
@@ -31,8 +28,6 @@ function disableButton() {
     jq("#confirm-button").attr("disabled","disabled");
     jq("#confirm-button").addClass('disabled');
 }
-
-
 
 function completePatientIdField(pId) {
     var patient1Id = jq("#patient1-text");
@@ -61,7 +56,6 @@ function handlePatientRowSelection(action, callback) {
     this.callback = callback;
 
     this.handle = function (row) {
-
         action(row.patientIdentifier.identifier);
     }
 }

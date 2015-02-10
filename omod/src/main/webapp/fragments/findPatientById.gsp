@@ -9,8 +9,9 @@ jq(function() {
 
     function evaluatePrimaryId() {
         var primaryId = jq("#${config.textFieldName}").val();
-        if(primaryId.length > 0){
-            getPatientId(primaryId,"${ config.hiddenFieldName}", "${config.fullNameField}", ${config.callBack});
+        if (primaryId.length > 0) {
+            getPatientById(primaryId,"${ config.hiddenFieldName}", "${config.fullNameField}", ${config.callBack},
+                "${ ui.message("coreapps.mergePatients.patientNotFound") }");
         }
     };
 
@@ -19,17 +20,17 @@ jq(function() {
     });
 
     jq("#${config.textFieldName}").keypress(function(event) {
-        if(event.keyCode == KEYCODE_ENTER){
+        if (event.keyCode == KEYCODE_ENTER) {
           evaluatePrimaryId();
         }
     });
 });
 </script>
 
-    <label>${config.label}</label>
-    <input type="hidden" id="${ config.hiddenFieldName}"  name="${ config.hiddenFieldName}" />
-    <div class="scan-input">
-        <input type="text" id="${ config.textFieldName}" AUTOCOMPLETE="OFF" size="40" placeholder="${  }"/>
-    </div>
-    <br/>
-    <span id="${ config.fullNameField}"></span>
+<label>${config.label}</label>
+<input type="hidden" id="${config.hiddenFieldName}"  name="${config.hiddenFieldName}" />
+<div class="scan-input">
+    <input type="text" id="${config.textFieldName}" AUTOCOMPLETE="OFF" size="40" placeholder="${  }"/>
+</div>
+<br/>
+<span id="${config.fullNameField}"></span>

@@ -67,8 +67,8 @@ public class MergePatientsPageController {
 				throw new IllegalStateException("breadcrumbs defined in " + app + " must be null or an array");
 			}
 			List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
-			int breadcrumbsConfigSize = breadcrumbsConfig.size() -1;
-			for (int i=0; i <= breadcrumbsConfigSize ; i++) {
+			int breadcrumbsConfigSize = breadcrumbsConfig.size() - 1;
+			for (int i=0; i <= breadcrumbsConfigSize; i++) {
 				JsonNode item = breadcrumbsConfig.get(i);
 				Breadcrumb breadcrumb = jackson.convertValue(item, Breadcrumb.class);
 
@@ -76,13 +76,12 @@ public class MergePatientsPageController {
 				if (breadcrumb.getLink() != null) {
 					breadcrumb.setLink("/" + WebConstants.CONTEXT_PATH + breadcrumb.getLink());
 				}
-
 				// label should be a message code
 				if (breadcrumb.getLabel() != null) {
 					breadcrumb.setLabel(ui.message(breadcrumb.getLabel()));
 				}
-				//if this is the last breadcrumb add the current page URL
-				if (i == breadcrumbsConfigSize ) {
+				// if this is the last breadcrumb add the current page URL
+				if (i == breadcrumbsConfigSize) {
 					breadcrumb.setLink(currentUrl);
 				}
 				breadcrumbs.add(breadcrumb);
@@ -196,7 +195,7 @@ public class MergePatientsPageController {
 
         adtService.mergePatients(preferred, notPreferred);
 
-        request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "webapps.mergePatients.success");
+        request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "coreapps.mergePatients.success");
         request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
         return "redirect:" + ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", preferred.getId()));
     }
