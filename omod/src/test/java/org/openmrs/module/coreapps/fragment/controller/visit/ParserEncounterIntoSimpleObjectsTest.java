@@ -339,7 +339,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 			if (obs.getValueCoded() != null) {
 				return obs.getValueCoded().getNames(false).iterator().next().getName();
 			} else if (obs.getValueDate() != null) {
-                return new SimpleDateFormat("dd MMM yyyy hh:mm a").format(obs.getValueDate());
+                return new SimpleDateFormat("dd MMM yyyy hh:mm a", locale).format(obs.getValueDate());
             }
             else {
 				return obs.getValueAsString(locale);

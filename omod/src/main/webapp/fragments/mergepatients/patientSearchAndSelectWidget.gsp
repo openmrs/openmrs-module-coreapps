@@ -1,12 +1,10 @@
 <%
-    config.require("afterSelectedUrl")
     def breadcrumbOverride = config.breadcrumbOverride ?: ""
 
     ui.includeCss("uicommons", "datatables/dataTables_jui.css")
     ui.includeCss("coreapps", "patientsearch/patientSearchWidget.css")
     ui.includeJavascript("uicommons", "datatables/jquery.dataTables.min.js")
     ui.includeJavascript("coreapps", "patientsearch/patientSearchWidget.js")
-    ui.includeJavascript("coreapps", "patientsearch/patientSearchRowSelectionHandler.js")
     ui.includeJavascript("uicommons", "moment.min.js")
 %>
 <script type="text/javascript">
@@ -19,13 +17,8 @@
         birthdateEstimated: ${ it.birthdateEstimated }, identifier:"${ it.patientIdentifier ? ui.escapeJs(it.patientIdentifier.identifier) : '' }"});
     <%      }
         }%>
-    function handlePatientRowSelection() {
-        this.handle = function (row) {
-            var uuid = row.uuid;
-            location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel('${ ui.escapeJs(config.afterSelectedUrl) }', { patientId: uuid, breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }'});
-        }
-    }
-    var handlePatientRowSelection =  new handlePatientRowSelection();
+
+    var handlePatientRowSelection =  new handlePatientRowSelection(completePatientIdField, checkConfirmButton);
     jq(function() {
         var widgetConfig = {
             initialPatients : lastViewedPatients,
@@ -35,6 +28,7 @@
             searchDelayShort: ${ searchDelayShort },
             searchDelayLong: ${ searchDelayLong },
             handleRowSelection: handlePatientRowSelection,
+
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
                 first: '${ ui.message("coreapps.search.first") }',
@@ -50,6 +44,7 @@
                 genderColHeader: '${ ui.message("coreapps.gender") }',
                 ageColHeader: '${ ui.message("coreapps.age") }',
                 birthdateColHeader: '${ ui.message("coreapps.birthdate") }'
+
             }
         };
 
