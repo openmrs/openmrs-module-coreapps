@@ -8,7 +8,7 @@ jq(function() {
     var KEYCODE_ENTER = 13;
 
     function evaluatePrimaryId() {
-        var primaryId = jq("#${config.textFieldName}").val();
+        var primaryId = jq("#${config.textFieldName}").val().trim();
         if (primaryId.length > 0) {
             getPatientById(primaryId,"${ config.hiddenFieldName}", "${config.fullNameField}", ${config.callBack},
                 "${ ui.message("coreapps.mergePatients.patientNotFound") }");
