@@ -6,7 +6,7 @@
         "order": 2,
         "extensions": [
             {
-                "id": "coreapps.activeVisitsHomepageLink",
+                "id": "coreapps.mergePatientsHomepageLink",
                 "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
                 "type": "link",
                 "label": "coreapps.mergePatientsLong",
