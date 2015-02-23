@@ -1,0 +1,24 @@
+[
+    {
+        "id": "coreapps.dataManagementApp",
+        "description": "Data Management App",
+        "extensionPoints": [
+            {
+                "id": "dataManagement.apps",
+                "description": "Apps on the Data Management Home Page"
+            }
+        ],
+        "extensions": [
+            {
+                "id": "coreapps.datamanagement.homepageLink",
+                "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+                "type": "link",
+                "label": "coreapps.app.dataManagement.label",
+                "url": "coreapps/datamanagement/dataManagement.page",
+                "icon": "icon-hdd",
+                "order": 110,
+                "requiredPrivilege": "App: coreapps.dataManagement"
+            }
+        ]
+    }
+]

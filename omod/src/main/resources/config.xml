@@ -172,6 +172,10 @@
 		<description>Able to access the active visits app</description>
 	</privilege>
 
+    <privilege>
+        <name>App: coreapps.dataManagement</name>
+        <description>Able to access data management apps</description>
+    </privilege>
 
 
 </module>
