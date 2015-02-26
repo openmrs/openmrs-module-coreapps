@@ -91,14 +91,17 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         List<Control> controls = new ArrayList<Control>();
 
         String answerConceptIds = "";
-        String answerCodes = "";
+        StringBuilder answerCodes = new StringBuilder();
         Iterator<Disposition> i = dispositions.iterator();
 
         while (i.hasNext()) {
             Disposition disposition = i.next();
 
             answerConceptIds = answerConceptIds + disposition.getConceptCode() + (i.hasNext() ? "," : "");
-            answerCodes = answerCodes + disposition.getName() + (i.hasNext() ? "," : "");
+            answerCodes.append(disposition.getName());
+            if (i.hasNext()) {
+                answerCodes.append(",");
+            }
 
             // determine if there are any additional observations we need to collect for this disposition
             if (disposition.getAdditionalObs() != null && disposition.getAdditionalObs().size() > 0) {
@@ -107,7 +110,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         }
 
         dispositionObs.setAttribute("answerConceptIds", answerConceptIds);
-        dispositionObs.setAttribute("answerCodes", answerCodes);
+        dispositionObs.setAttribute("answerCodes", answerCodes.toString());
 
         if (controls != null && controls.size() > 0) {
             generateControlsElement(dispositionObs, controls);
