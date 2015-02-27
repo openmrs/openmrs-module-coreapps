@@ -1,7 +1,6 @@
 [
     {
         "id": "coreapps.mergePatients",
-        "instanceOf": "coreapps.template.findPatient",
         "description": "Merge patients medical records",
         "order": 1,
         "extensions": [
