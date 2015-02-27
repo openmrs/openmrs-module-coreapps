@@ -85,8 +85,8 @@
             { label: "${ ui.message('coreapps.app.dataManagement.label')}", link: '/' + OPENMRS_CONTEXT_PATH + '/coreapps/datamanagement/dataManagement.page' },
             { label: "${ ui.message('coreapps.mergePatientsLong')}", link: '${ui.pageLink("coreapps", "datamanagement/mergePatients?app=coreapps.mergePatients")}'},
             { label: "${ ui.message('coreapps.mergePatients.confirmationQuestion')}" }
+        ];
     <% } %>
-    ];
 </script>
 
 <form method="post">
