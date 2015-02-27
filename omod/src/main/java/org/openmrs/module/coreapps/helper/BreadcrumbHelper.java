@@ -55,7 +55,7 @@ public class BreadcrumbHelper {
 
     }
 
-    public class Breadcrumb {
+    public static class Breadcrumb {
 
         @JsonProperty
         private String icon;
