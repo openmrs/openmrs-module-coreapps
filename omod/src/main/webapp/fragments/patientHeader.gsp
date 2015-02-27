@@ -198,7 +198,7 @@
     <div class="unknown-patient" style= <%=(!patient.unknownPatient) ? "display:none" : ""%>>
         ${ui.message("coreapps.patient.temporaryRecord")} <br/>
 
-        <form action="/${contextPath}/coreapps/mergePatients.page" method="get">
+        <form action="/${contextPath}/coreapps/datamanagement/mergePatients.page" method="get">
             <input type="hidden" name="app" value="coreapps.mergePatients"/>
             <input type="hidden" name="isUnknownPatient" value="true"/>
             <input type="hidden" name="patient1" value="${patient.patient.id}"/>

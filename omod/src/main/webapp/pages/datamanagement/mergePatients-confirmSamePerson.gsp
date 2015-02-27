@@ -1,6 +1,6 @@
 <%
     ui.decorateWith("appui", "standardEmrPage", [title: ui.message("coreapps.mergePatientsLong")])
-    ui.includeCss("coreapps", "mergePatients.css")
+    ui.includeCss("coreapps", "datamanagement/mergePatients.css")
 %>
 
 <script type="text/javascript">
@@ -76,11 +76,16 @@
 </script>
 
 <script type="text/javascript">
-    var breadcrumbs = [
-        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("coreapps.app.dataManagement.label")}, link: '/' + OPENMRS_CONTEXT_PATH + '/coreapps/dataManagemenet.page' }"}
-        { label: "${ ui.message("coreapps.mergePatientsLong")}", link: '${ui.pageLink("coreapps", "mergePatients?app=coreapps.mergePatients")}'},
-        { label: "${ ui.message("coreapps.mergePatients.confirmationQuestion")}" }
+
+    <% if (breadcrumbs) { %>
+        var breadcrumbs = ${ breadcrumbs };
+    <% } else { %>
+        var breadcrumbs = [
+            { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+            { label: "${ ui.message('coreapps.app.dataManagement.label')}", link: '/' + OPENMRS_CONTEXT_PATH + '/coreapps/datamanagement/dataManagement.page' },
+            { label: "${ ui.message('coreapps.mergePatientsLong')}", link: '${ui.pageLink("coreapps", "datamanagement/mergePatients?app=coreapps.mergePatients")}'},
+            { label: "${ ui.message('coreapps.mergePatients.confirmationQuestion')}" }
+    <% } %>
     ];
 </script>
 

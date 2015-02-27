@@ -6,7 +6,6 @@ $green: #51A351;
 
 
 #merge-patient-container {
-  width: 50%;
   margin: 40px auto;
   border: 1px solid #EEE;
   padding: 5px 10px;
@@ -68,11 +67,11 @@ $green: #51A351;
   }
 
   &.selected {
-    background: lighten(#EAEAEA, 10%);
-    border-color: #EAEAEA;
+    background: lighten($link, 20%);
+    border-color: $link;
 
     .row {
-      background: #EAEAEA;
+      background: $link;
 
       h3 {
         color: #003F5E;

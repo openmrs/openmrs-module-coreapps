@@ -1,6 +1,7 @@
 <%
     ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("coreapps.mergePatientsLong") ])
-    ui.includeJavascript("coreapps", "mergepatients/mergePatients.js")
+    ui.includeCss("coreapps", "datamanagement/mergePatients.css")
+    ui.includeJavascript("coreapps", "datamanagement/mergePatients.js")
 
     def id = ""
     def primaryId = ""
@@ -34,11 +35,16 @@
 </script>
 
 <script type="text/javascript">
-    var breadcrumbs = [
-        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("coreapps.app.dataManagement.label")}, link: '/' + OPENMRS_CONTEXT_PATH + '/coreapps/dataManagemenet.page' }"}
-        { label: "${ ui.message("coreapps.mergePatientsLong")}" }
-    ];
+
+    <% if (breadcrumbs) { %>
+        var breadcrumbs = ${ breadcrumbs };
+    <% } else { %>
+        var breadcrumbs = [
+            { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+            { label: "${ ui.message('coreapps.app.dataManagement.label')}", link: '/' + OPENMRS_CONTEXT_PATH + '/coreapps/datamanagement/dataManagement.page' },
+            { label: "${ ui.message('coreapps.mergePatientsLong')}" }
+        ];
+    <% } %>
 
 </script>
 

@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.coreapps.page.controller;
+package org.openmrs.module.coreapps.page.controller.datamanagement;
 
 import org.openmrs.Patient;
 import org.openmrs.module.appframework.domain.AppDescriptor;
@@ -53,16 +53,16 @@ public class MergePatientsPageController {
         if (patient1 != null && patient2 == null && isUnknownPatient) {
             wrapper1.setPatient(patient1);
             pageModel.addAttribute("patient1", wrapper1);
-            return "mergePatients-chooseRecords";
+            return "datamanagement/mergePatients-chooseRecords";
         }
 
         if (patient1 == null && patient2 == null) {
-            return "mergePatients-chooseRecords";
+            return "datamanagement/mergePatients-chooseRecords";
         }
 
         if (patient1.equals(patient2)) {
 			//request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "emr.mergePatients.error.samePatient");
-            return "mergePatients-chooseRecords";
+            return "datamanagement/mergePatients-chooseRecords";
         }
 
         wrapper1.setPatient(patient1);
@@ -72,7 +72,7 @@ public class MergePatientsPageController {
         pageModel.addAttribute("patient2", wrapper2);
         pageModel.addAttribute("overlappingVisits", wrapper1.hasOverlappingVisitsWith(patient2));
 
-        return "mergePatients-confirmSamePerson";
+        return "datamanagement/mergePatients-confirmSamePerson";
 
     }
 
@@ -92,7 +92,7 @@ public class MergePatientsPageController {
         notPreferredWrapper.setPatient(notPreferred);
 
         if (preferredWrapper.isUnknownPatient() && !notPreferredWrapper.isUnknownPatient()){
-			request.getSession().setAttribute("emr.errorMessage", ui.message("coreapps.mergePatients.error.unknownPatient"));
+			request.getSession().setAttribute("emr.errorMessage", ui.message("coreapps.mergePatients.unknownPatient.error"));
 
             preferredWrapper.setPatient(patient1);
             notPreferredWrapper.setPatient(patient2);
@@ -105,7 +105,7 @@ public class MergePatientsPageController {
             params.put("patient2", notPreferred);
             params.put("isUnknownPatient", isUnknownPatient);
 
-            return "redirect:" + ui.pageLink("coreapps","mergePatients", params);
+            return "redirect:" + ui.pageLink("coreapps","datamanagement/mergePatients", params);
         }
 
         adtService.mergePatients(preferred, notPreferred);

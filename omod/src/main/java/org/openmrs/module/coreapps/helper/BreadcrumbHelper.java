@@ -13,14 +13,14 @@ import java.util.List;
 
 public class BreadcrumbHelper {
 
-    public static final void addBreadcrumbsIfDefinedInApp(AppDescriptor app, PageModel model, UiUtils ui) {
+    public static void addBreadcrumbsIfDefinedInApp(AppDescriptor app, PageModel model, UiUtils ui) {
 
         String currentUrl = ui.thisUrlWithContextPath();
         if (currentUrl.charAt(currentUrl.length()-1) == '&') {
             currentUrl = currentUrl.substring(0, currentUrl.length()-1);
         }
 
-        JsonNode breadcrumbsConfig = app.getConfig() != null ? app.getConfig().get("breadcrumbs") : null;
+        JsonNode breadcrumbsConfig = (app != null && app.getConfig() != null) ? app.getConfig().get("breadcrumbs") : null;
         if (breadcrumbsConfig != null && !breadcrumbsConfig.isNull()) {
             ObjectMapper jackson = new ObjectMapper();
             if (!breadcrumbsConfig.isArray()) {

@@ -9,7 +9,7 @@
                 "extensionPointId": "dataManagement.apps",
                 "type": "link",
                 "label": "coreapps.mergePatientsLong",
-                "url": "coreapps/mergePatients.page?app=coreapps.mergePatients",
+                "url": "coreapps/datamanagement/mergePatients.page?app=coreapps.mergePatients",
                 "icon": "icon-group",
                 "requiredPrivilege": "App: coreapps.mergePatient"
             }
