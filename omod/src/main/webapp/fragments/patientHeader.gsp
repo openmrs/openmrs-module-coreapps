@@ -87,7 +87,7 @@
     })
 </script>
 
-<div class="patient-header <% if (patient.patient.dead) { %>dead<% } %>">
+<div class="patient-header<% if (patient.patient.dead) { %>dead<% } %>">
 
     <% if (patient.patient.dead) { %>
         <div class="death-header">
