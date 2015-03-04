@@ -99,7 +99,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleConte
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:", "Disposition:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Disposition:", "Encounter Type:" };
             }
 
 
@@ -135,7 +135,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleConte
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:", "Disposition:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Disposition:", "Encounter Type:" };
             }
 
             @Override
@@ -143,6 +143,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleConte
                 request.setParameter(widgets.get("Date:"), dateAsString(date));
                 request.setParameter(widgets.get("Location:"), "2");
                 request.setParameter(widgets.get("Provider:"), "1");
+                request.setParameter(widgets.get("Encounter Type:"), "1");
                 request.setParameter(widgets.get("Disposition:"), randomDisposition.getConceptId().toString());
                 request.setParameter("w10", "1");    // hack, manually reference the widget the location
             }
@@ -153,6 +154,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleConte
                 results.assertEncounterCreated();
                 results.assertProvider(1);
                 results.assertLocation(2);
+                results.assertEncounterType(1);
                 results.assertObsGroupCreatedCount(1);
                 results.assertObsGroupCreated(dispositionDescriptor.getDispositionSetConcept().getConceptId(),
                         dispositionDescriptor.getDispositionConcept().getId(), randomDisposition,

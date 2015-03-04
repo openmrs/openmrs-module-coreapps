@@ -48,7 +48,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:", "Test:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Test:", "Encounter Type:" };
             }
 
             @Override
@@ -57,6 +57,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
                 request.addParameter(widgets.get("Location:"), "2");
                 request.addParameter(widgets.get("Provider:"), "1");
                 request.addParameter(widgets.get("Test:"), "");
+                request.addParameter(widgets.get("Encounter Type:"), "1");
             }
 
             @Override
@@ -89,7 +90,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:", "Test:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Test:", "Encounter Type:" };
             }
 
             @Override
@@ -98,6 +99,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
                 request.addParameter(widgets.get("Location:"), "2");
                 request.addParameter(widgets.get("Provider:"), "1");
                 request.addParameter(widgets.get("Test:"), "ConceptName:f74e3673-983b-41e3-b872-56f0e6f7696e");
+                request.addParameter(widgets.get("Encounter Type:"), "1");
             }
 
             @Override
@@ -121,6 +123,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
                 request.addParameter(widgets.get("Location:"), "2");
                 request.addParameter(widgets.get("Provider:"), "1");
                 request.addParameter(widgets.get("Test:"), "");
+                request.addParameter(widgets.get("Encounter Type:"), "1");
             }
 
             @Override
@@ -154,7 +157,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:", "Test:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Test:", "Encounter Type:"};
             }
 
             @Override
@@ -163,6 +166,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
                 request.addParameter(widgets.get("Location:"), "2");
                 request.addParameter(widgets.get("Provider:"), "1");
                 request.addParameter(widgets.get("Test:"), "ConceptName:f74e3673-983b-41e3-b872-56f0e6f7696e");
+                request.addParameter(widgets.get("Encounter Type:"), "1");
             }
 
             @Override
@@ -187,6 +191,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
                 request.addParameter(widgets.get("Location:"), "2");
                 request.addParameter(widgets.get("Provider:"), "1");
                 request.addParameter(widgets.get("Test:"), "Concept:32d3611a-6699-4d52-823f-b4b788bac3e3");
+                request.addParameter(widgets.get("Encounter Type:"), "1");
             }
 
             @Override
@@ -222,7 +227,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:", "Test:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Test:", "Encounter Type:"};
             }
 
             @Override
@@ -231,6 +236,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
                 request.addParameter(widgets.get("Location:"), "2");
                 request.addParameter(widgets.get("Provider:"), "1");
                 request.addParameter(widgets.get("Test:"), "NonCoded:This is a test");
+                request.addParameter(widgets.get("Encounter Type:"), "1");
             }
 
             @Override
@@ -255,6 +261,7 @@ public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContext
                 request.addParameter(widgets.get("Location:"), "2");
                 request.addParameter(widgets.get("Provider:"), "1");
                 request.addParameter(widgets.get("Test:"), "Concept:32d3611a-6699-4d52-823f-b4b788bac3e3");
+                request.addParameter(widgets.get("Encounter Type:"), "1");
             }
 
             @Override

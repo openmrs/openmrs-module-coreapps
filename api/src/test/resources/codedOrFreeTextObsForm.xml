@@ -2,7 +2,7 @@
     Date: <encounterDate/>
     Location: <encounterLocation />
     Provider: <encounterProvider role="Provider"/>
-
+	Encounter Type: <encounterType />
     Test: <codedOrFreeTextObs codedConceptId="4" nonCodedConceptId="19"/>
 
     <submit/>

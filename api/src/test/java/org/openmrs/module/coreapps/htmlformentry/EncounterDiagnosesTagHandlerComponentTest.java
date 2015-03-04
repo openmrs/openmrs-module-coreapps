@@ -14,6 +14,10 @@
 
 package org.openmrs.module.coreapps.htmlformentry;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
@@ -51,10 +56,6 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.ui.framework.page.PageAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
 
 /**
  *
@@ -127,7 +128,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleContext
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Encounter Type:" };
             }
 
             @Override
@@ -135,6 +136,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleContext
                 request.setParameter(widgets.get("Date:"), dateAsString(date));
                 request.setParameter(widgets.get("Location:"), "2");
                 request.setParameter(widgets.get("Provider:"), "1");
+                request.setParameter(widgets.get("Encounter Type:"), "1");
                 request.setParameter("encounterDiagnoses", jsonToSubmit);
             }
 
@@ -144,6 +146,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleContext
                 results.assertEncounterCreated();
                 results.assertProvider(1);
                 results.assertLocation(2);
+                results.assertEncounterType(1);
                 results.assertObsCreatedCount(1);
                 results.assertObsGroupCreated(dmd.getDiagnosisSetConcept().getConceptId(),
                         dmd.getDiagnosisCertaintyConcept().getId(), dmd.getConceptFor(Diagnosis.Certainty.PRESUMED),
@@ -162,6 +165,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleContext
         final Concept malaria = conceptService.getConcept(11);
         final Patient patient = patientService.getPatient(8);
         final Encounter existingEncounter = new Encounter();
+        existingEncounter.setEncounterType(new EncounterType(1));
         existingEncounter.setPatient(patient);
         existingEncounter.setEncounterDatetime(date);
         existingEncounter.setLocation(locationService.getLocation(2));
@@ -223,7 +227,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleContext
 
             @Override
             public String[] widgetLabelsForEdit() {
-                return new String[] { "Date:", "Location:", "Provider:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Encounter Type:" };
             }
 
             @Override
@@ -231,6 +235,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleContext
                 request.setParameter(widgets.get("Date:"), dateAsString(date));
                 request.setParameter(widgets.get("Location:"), "2");
                 request.setParameter(widgets.get("Provider:"), "1");
+                request.setParameter(widgets.get("Encounter Type:"), "1");
                 request.setParameter("encounterDiagnoses", jsonToSubmit);
             };
 

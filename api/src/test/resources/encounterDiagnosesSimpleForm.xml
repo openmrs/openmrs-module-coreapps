@@ -2,8 +2,10 @@
     Date: <encounterDate/>
     Location: <encounterLocation />
     Provider: <encounterProvider role="Provider"/>
-
+	
     <encounterDiagnoses/>
+    
+	Encounter Type: <encounterType />
 
     <submit/>
 </htmlform>
