@@ -53,7 +53,7 @@ function PatientSearchWidget(configuration){
                 bdate = "&nbsp;&nbsp; "+bdate;
             }
             initialData.push([p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
-                p.fullName, p.gender, p.age, bdate]);
+                p.name, p.gender, p.age, bdate]);
         });
         searchResultsData = initialPatientData;
     }
@@ -72,7 +72,7 @@ function PatientSearchWidget(configuration){
     var keyboardControlKeys = [16,17,18,20,27,35,36,37,39,91,93,224];
     var customRep = 'custom:(uuid,' +
                     'patientIdentifier:(uuid,identifier),' +
-                    'person:(gender,age,birthdate,birthdateEstimated,personName:(fullName)))';
+                    'person:(gender,age,birthdate,birthdateEstimated,personName))';
 
     var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
 
@@ -167,7 +167,7 @@ function PatientSearchWidget(configuration){
                     identifier = patient.patientIdentifier.identifier+
                         " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
                 }
-                dataRows.push([identifier, patient.person.personName.fullName,
+                dataRows.push([identifier, patient.person.personName.display,
                     patient.person.gender, patient.person.age, birthdate]);
             });
         }else if(config.initialPatients){

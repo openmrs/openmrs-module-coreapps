@@ -75,7 +75,7 @@ public class FindPatientFragmentController {
 		PersonName name = patient.getPersonName();
 		SimpleObject preferredName = SimpleObject.fromObject(name, ui, "givenName", "middleName", "familyName",
 		    "familyName2");
-		preferredName.put("fullName", name.getFullName());
+		preferredName.put("name", ui.format(name));
 		
 		PatientIdentifierType primaryIdentifierType = emrApiProperties.getPrimaryIdentifierType();
 		List<PatientIdentifier> primaryIdentifiers = patient.getPatientIdentifiers(primaryIdentifierType);
