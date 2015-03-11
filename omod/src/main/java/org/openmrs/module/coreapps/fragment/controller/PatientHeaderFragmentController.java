@@ -117,25 +117,25 @@ public class PatientHeaderFragmentController {
         // note that the assumption is one one field per "line", otherwise the labels that appear under each field may not render properly
         try {
             for (List<Map<String, String>> line : lines) {
-                String addressLabel = "";
-                String addressLine = "";
+                String nameLabel = "";
+                String nameLine = "";
                 Boolean hasToken = false;
                 for (Map<String, String> lineToken : line) {
                     if (lineToken.get("isToken").equals(layoutToken)) {
                         String tokenValue = BeanUtils.getProperty(personName, lineToken.get("codeName"));
-                        addressLabel = nameTemplate.getNameMappings().get(lineToken.get("codeName"));
+                        nameLabel = nameTemplate.getNameMappings().get(lineToken.get("codeName"));
                         if (StringUtils.isNotBlank(tokenValue)) {
                             hasToken = true;
-                            addressLine += tokenValue;
+                            nameLine += tokenValue;
                         }
                     }
                     else {
-                        addressLine += lineToken.get("displayText");
+                        nameLine += lineToken.get("displayText");
                     }
                 }
                 // only display a line if there's a token within it we've been able to resolve
-                if (StringUtils.isNotBlank(addressLine) && hasToken) {
-                    nameFields.put(addressLabel, addressLine);
+                if (StringUtils.isNotBlank(nameLine) && hasToken) {
+                    nameFields.put(nameLabel, nameLine);
                 }
             }
             return nameFields;
