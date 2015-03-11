@@ -18,7 +18,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" ,
+        { label: "${ ui.format(patient.patient) }" ,
             link: '${ui.pageLink("coreapps", "clinicianfacing/patient", [patientId: patient.patient.id])}'},
         { label: "${ ui.escapeJs(ui.message("coreapps.task.relationships.label")) }" }
     ]

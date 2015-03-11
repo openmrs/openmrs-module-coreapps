@@ -1,5 +1,6 @@
 <%
     def patient = config.patient
+    def patientNames = config.patientNames
 
     def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy hh:mm a")
 
@@ -102,8 +103,9 @@
 
     <div class="demographics">
         <h1 class="name">
-            <span>${ui.format(patient.patient.familyName)},<em>${ui.message("coreapps.patientHeader.familyname")}</em></span>
-            <span>${ui.format(patient.patient.givenName)}<em>${ui.message("coreapps.patientHeader.givenname")}</em></span>
+            <% patientNames?.each { %>
+                <span>${ it.value }<em>${ui.message(it.key)}</em></span>
+            <% } %>
             &nbsp;
             <span class="gender-age">
                 <span>${ui.message("coreapps.gender." + patient.gender)}&nbsp;</span>

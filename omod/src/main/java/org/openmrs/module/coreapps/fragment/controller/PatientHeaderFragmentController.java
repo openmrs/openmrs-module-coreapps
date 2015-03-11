@@ -14,11 +14,17 @@
 
 package org.openmrs.module.coreapps.fragment.controller;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonName;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.layout.web.name.NameSupport;
+import org.openmrs.layout.web.name.NameTemplate;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
@@ -37,7 +43,9 @@ import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ideally you pass in a PatientDomainWrapper as the "patient" config parameter. But if you pass in
@@ -56,6 +64,7 @@ public class PatientHeaderFragmentController {
 		if (patient instanceof Patient) {
 			wrapper.setPatient((Patient) patient);
 			config.addAttribute("patient", wrapper);
+            config.addAttribute("patientNames", getNames(((Patient) patient).getPersonName()));
 		} else {
             wrapper = (PatientDomainWrapper) patient;
         }
@@ -96,6 +105,45 @@ public class PatientHeaderFragmentController {
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
         config.addAttribute("extraPatientIdentifiersMappedByType", wrapper.getExtraIdentifiersMappedByType(sessionContext.getSessionLocation()));
         config.addAttribute("defaultDashboard", coreAppsProperties.getDefaultDashboard());
+    }
+
+    private Map<String,String> getNames(PersonName personName) {
+
+        Map<String, String> nameFields = new LinkedHashMap<String, String>();
+        NameTemplate nameTemplate = NameSupport.getInstance().getDefaultLayoutTemplate();
+        List<List<Map<String, String>>> lines = nameTemplate.getLines();
+        String layoutToken = nameTemplate.getLayoutToken();
+
+        // note that the assumption is one one field per "line", otherwise the labels that appear under each field may not render properly
+        try {
+            for (List<Map<String, String>> line : lines) {
+                String addressLabel = "";
+                String addressLine = "";
+                Boolean hasToken = false;
+                for (Map<String, String> lineToken : line) {
+                    if (lineToken.get("isToken").equals(layoutToken)) {
+                        String tokenValue = BeanUtils.getProperty(personName, lineToken.get("codeName"));
+                        addressLabel = nameTemplate.getNameMappings().get(lineToken.get("codeName"));
+                        if (StringUtils.isNotBlank(tokenValue)) {
+                            hasToken = true;
+                            addressLine += tokenValue;
+                        }
+                    }
+                    else {
+                        addressLine += lineToken.get("displayText");
+                    }
+                }
+                // only display a line if there's a token within it we've been able to resolve
+                if (StringUtils.isNotBlank(addressLine) && hasToken) {
+                    nameFields.put(addressLabel, addressLine);
+                }
+            }
+            return nameFields;
+        }
+        catch (Exception e) {
+            throw new APIException("Unable to generate name fields for patient header", e);
+        }
+
     }
 	
 	public class ExtraPatientIdentifierType {
