@@ -6,9 +6,13 @@
     <div class="info-header">
         <i class="${ app.icon }"></i>
         <h3>${ ui.message(app.label).toUpperCase() }</h3>
-        <i class="icon-pencil edit-action right" title="${ ui.message("coreapps.edit") }"
-           onclick="location.href='${ui.pageLink("htmlformentryui", "htmlform/editHtmlFormWithStandardUi",
-           [patientId: encounter.patient.id, encounterId: encounter.id, definitionUiResource: definitionUiResource, returnUrl: returnUrl ])}';"></i>
+
+        <% if (encounter) { %>
+            <i class="icon-pencil edit-action right" title="${ ui.message("coreapps.edit") }"
+               onclick="location.href='${ui.pageLink("htmlformentryui", "htmlform/editHtmlFormWithStandardUi",
+               [patientId: encounter.patient.id, encounterId: encounter.id, definitionUiResource: definitionUiResource, returnUrl: returnUrl ])}';"></i>
+        <% } %>
+
     </div>
     <div class="info-body">
 
