@@ -59,7 +59,7 @@
                     // remove single quote
                     var admitToLocation = aData[admitToLocationColumnIndex].replace(/'/g, "\\’");
 
-                    if (admitToLocationFilter && /^\s*$/.test(admitToLocationFilter)) {   // if admitToLocation not null or blank string
+                    if (admitToLocationFilter && !(/^\s*$/.test(admitToLocationFilter))) {   // if admitToLocation not null or blank string
                         if (!admitToLocation.match(new RegExp(admitToLocationFilter))) {
                             return false;
                         }
@@ -67,7 +67,7 @@
 
                     var currentLocation = aData[currentLocationColumnIndex].replace(/'/g, "\\’");
 
-                    if (currentLocationFilter && /^\s*$/.test(currentLocationFilter)) {   // if currentLocation not null or blank string
+                    if (currentLocationFilter && !(/^\s*$/.test(currentLocationFilter))) {   // if currentLocation not null or blank string
                         if (!currentLocation.match(new RegExp(currentLocationFilter))) {
                             return false;
                         }
