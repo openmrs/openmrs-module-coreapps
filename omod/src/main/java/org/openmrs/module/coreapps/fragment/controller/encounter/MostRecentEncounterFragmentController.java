@@ -65,5 +65,7 @@ public class MostRecentEncounterFragmentController {
 		} else {
 			model.addAttribute("encounter", null);
 		}
+
+        model.addAttribute("editable", app.getConfig().get("editable").getBooleanValue());
 	}
 }

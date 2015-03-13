@@ -7,7 +7,7 @@
         <i class="${ app.icon }"></i>
         <h3>${ ui.message(app.label).toUpperCase() }</h3>
 
-        <% if (encounter) { %>
+        <% if (encounter && editable) { %>
             <i class="icon-pencil edit-action right" title="${ ui.message("coreapps.edit") }"
                onclick="location.href='${ui.pageLink("htmlformentryui", "htmlform/editHtmlFormWithStandardUi",
                [patientId: encounter.patient.id, encounterId: encounter.id, definitionUiResource: definitionUiResource, returnUrl: returnUrl ])}';"></i>
