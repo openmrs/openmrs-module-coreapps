@@ -68,5 +68,11 @@ public class MostRecentEncounterFragmentController {
 
         model.addAttribute("editable", app.getConfig().get("editable") != null ?
                 app.getConfig().get("editable").getBooleanValue() : false);
+        model.addAttribute("editIcon", app.getConfig().get("edit-icon") != null ?
+                app.getConfig().get("edit-icon").getTextValue() : null);
+        model.addAttribute("editProvider", app.getConfig().get("edit-provider") != null ?
+                app.getConfig().get("edit-provider").getTextValue() : null);
+        model.addAttribute("editFragment", app.getConfig().get("edit-fragment") != null ?
+                app.getConfig().get("edit-fragment").getTextValue() : null);
 	}
 }
