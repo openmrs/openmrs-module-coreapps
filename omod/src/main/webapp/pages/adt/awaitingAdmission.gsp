@@ -59,7 +59,7 @@
                     // remove single quote
                     var admitToLocation = aData[admitToLocationColumnIndex].replace(/'/g, "\\’");
 
-                    if (admitToLocationFilter) {
+                    if (admitToLocationFilter && jq.trim(admitToLocationFilter).length != 0) {  // add the jq.trim so that we ignore the single &nbsp; that is the text for the "empty" option of the dropdown widget
                         if (!admitToLocation.match(new RegExp(admitToLocationFilter))) {
                             return false;
                         }
@@ -67,7 +67,7 @@
 
                     var currentLocation = aData[currentLocationColumnIndex].replace(/'/g, "\\’");
 
-                    if (currentLocationFilter) {
+                    if (currentLocationFilter && jq.trim(currentLocationFilter).length != 0) {   // add the jq.trim so that we ignore the single &nbsp; that is the text for the "empty" option of the dropdown widget
                         if (!currentLocation.match(new RegExp(currentLocationFilter))) {
                             return false;
                         }
