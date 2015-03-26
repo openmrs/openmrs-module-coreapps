@@ -21,7 +21,7 @@
         unknownPatient("${id}", "${primaryId}",  "${fullName}", ${isUnknownPatient});
 
         function unknownPatient(id, primaryId, fullName, isUnknownPatient) {
-            if(id>0 && isUnknownPatient) {
+            if( id>0 ) {
                 jq("#patient1").val(id);
                 jq("#patient1-text").val(primaryId);
                 jq("#full-name-field").text(fullName);

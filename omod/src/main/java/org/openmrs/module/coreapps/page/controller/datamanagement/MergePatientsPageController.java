@@ -50,7 +50,7 @@ public class MergePatientsPageController {
         pageModel.addAttribute("isUnknownPatient", isUnknownPatient);
         BreadcrumbHelper.addBreadcrumbsIfDefinedInApp(app, pageModel, ui);
 
-        if (patient1 != null && patient2 == null && isUnknownPatient) {
+        if (patient1 != null && patient2 == null ) {
             wrapper1.setPatient(patient1);
             pageModel.addAttribute("patient1", wrapper1);
             return "datamanagement/mergePatients-chooseRecords";
