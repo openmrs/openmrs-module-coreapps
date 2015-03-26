@@ -16,7 +16,7 @@
                 "label": "coreapps.app.dataManagement.label",
                 "url": "coreapps/datamanagement/dataManagement.page",
                 "icon": "icon-hdd",
-                "order": 110,
+                "order": 89,
                 "requiredPrivilege": "App: coreapps.dataManagement"
             }
         ]
