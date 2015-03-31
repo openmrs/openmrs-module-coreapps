@@ -6,7 +6,6 @@
     ui.includeCss("coreapps", "patientsearch/patientSearchWidget.css")
     ui.includeJavascript("uicommons", "datatables/jquery.dataTables.min.js")
     ui.includeJavascript("coreapps", "patientsearch/patientSearchWidget.js")
-    ui.includeJavascript("coreapps", "patientsearch/patientSearchRowSelectionHandler.js")
     ui.includeJavascript("uicommons", "moment.min.js")
 %>
 <script type="text/javascript">
