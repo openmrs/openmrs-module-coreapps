@@ -40,6 +40,7 @@ function PatientSearchWidget(configuration){
     var tableObject = jq('#'+tableId);
     var performingSearch = false;  // flag to check if we are currently updating the search results
     var afterSearchResultsUpdated = [];  // stores a set of functions to execute after we update search results (currently we are only using this for the doEnter function)
+    var lastQuery = null;
 
     if(config.initialPatients){
         _.each(config.initialPatients, function(p){
@@ -78,6 +79,7 @@ function PatientSearchWidget(configuration){
 
         // set a flag to denote that we are starting a new search
         performingSearch = true;
+        lastQuery = query;
 
         jq('#'+tableId).find('td.dataTables_empty').html(spinnerImage);
         if(!jq('#'+config.searchResultsDivId).is(':visible')){
@@ -217,8 +219,9 @@ function PatientSearchWidget(configuration){
         gotoPage(0);
     }
 
-    var selectRow = function(selectedRowIndex){
-        config.handleRowSelection.handle(searchResultsData[selectedRowIndex]);
+    var selectRow = function(selectedRowIndex) {
+        var widgetData = { lastQuery: lastQuery };
+        config.handleRowSelection.handle(searchResultsData[selectedRowIndex], widgetData);
     }
 
     var doKeyEnter = function() {
@@ -520,4 +523,13 @@ function PatientSearchWidget(configuration){
 
         return true;
     });
+
+
+    /***************** Do initial search if one is specified **************/
+
+    if (config.doInitialSearch) {
+        doSearch(config.doInitialSearch);
+        // For some reason without this the cursor is at position 0 of the input, i.e. before the initial value
+        input[0].selectionStart = input.val().length;
+    }
 }

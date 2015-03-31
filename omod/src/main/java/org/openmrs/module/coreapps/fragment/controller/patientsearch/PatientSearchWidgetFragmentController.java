@@ -1,5 +1,6 @@
 package org.openmrs.module.coreapps.fragment.controller.patientsearch;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -11,6 +12,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.util.OpenmrsConstants;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -21,8 +23,10 @@ import java.util.List;
 public class PatientSearchWidgetFragmentController {
 
     public void controller(FragmentModel model, UiSessionContext sessionContext,
+                           HttpServletRequest request,
                            @SpringBean("adminService") AdministrationService administrationService,
-                           @FragmentParam(value = "showLastViewedPatients", required = false) Boolean showLastViewedPatients) {
+                           @FragmentParam(value = "showLastViewedPatients", required = false) Boolean showLastViewedPatients,
+                           @FragmentParam(value = "initialSearchFromParameter", required = false) String searchByParam) {
 
         showLastViewedPatients = showLastViewedPatients != null ? showLastViewedPatients : false;
 
@@ -37,6 +41,12 @@ public class PatientSearchWidgetFragmentController {
 
         model.addAttribute("dateFormatter", new SimpleDateFormat("dd-MMM-yyy", Context.getLocale()));
         model.addAttribute("showLastViewedPatients", showLastViewedPatients);
+
+        String doInitialSearch = null;
+        if (searchByParam != null && StringUtils.isNotEmpty(request.getParameter(searchByParam))) {
+            doInitialSearch = request.getParameter(searchByParam);
+        }
+        model.addAttribute("doInitialSearch", doInitialSearch);
 
         if (showLastViewedPatients) {
             List<Patient> patients = GeneralUtils.getLastViewedPatients(sessionContext.getCurrentUser());

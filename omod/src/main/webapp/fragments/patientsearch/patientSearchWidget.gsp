@@ -11,7 +11,7 @@
 <script type="text/javascript">
 
     var lastViewedPatients = [];
-    <%  if (showLastViewedPatients) {
+    <%  if (showLastViewedPatients && !doInitialSearch) {
             lastViewedPatients.each { it -> %>
     lastViewedPatients.push({uuid:"${ it.uuid }",name:"${ it.personName ? ui.escapeJs(ui.format(it.personName)) : '' }",gender:"${ it.gender }",
         age:"${ it.age ?: '' }", birthdate:"${ it.birthdate ? dateFormatter.format(it.birthdate) : '' }",
@@ -27,13 +27,14 @@
     var handlePatientRowSelection =  new handlePatientRowSelection();
     jq(function() {
         var widgetConfig = {
-            initialPatients : lastViewedPatients,
+            initialPatients: lastViewedPatients,
+            doInitialSearch: ${ doInitialSearch ? "\"" + ui.escapeJs(doInitialSearch) + "\"" : "null" },
             minSearchCharacters: ${ config.minSearchCharacters ?: 3 },
             afterSelectedUrl: '${ ui.escapeJs(config.afterSelectedUrl) }',
             breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }',
             searchDelayShort: ${ searchDelayShort },
             searchDelayLong: ${ searchDelayLong },
-            handleRowSelection: handlePatientRowSelection,
+            handleRowSelection: ${ config.rowSelectionHandler ?: "handlePatientRowSelection" },
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
                 first: '${ ui.message("coreapps.search.first") }',
@@ -57,7 +58,7 @@
 </script>
 
 <form method="get" id="patient-search-form" onsubmit="return false">
-    <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off"/><i id="patient-search-clear-button" class="small icon-remove-sign"></i>
+    <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off" <% if (doInitialSearch) { %>value="${doInitialSearch}"<% } %>/><i id="patient-search-clear-button" class="small icon-remove-sign"></i>
 </form>
 
 <div id="patient-search-results"></div>
