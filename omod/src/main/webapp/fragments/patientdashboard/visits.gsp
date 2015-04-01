@@ -57,7 +57,7 @@
 
     <%  def visits = patient.allVisitsUsingWrappers
         visits.eachWithIndex { wrapper, idx ->
-            def primaryDiagnoses = wrapper.primaryDiagnoses
+            def primaryDiagnoses = wrapper.getUniqueDiagnoses(true, false)
     %>
     <li class="menu-item viewVisitDetails" data-visit-id="${wrapper.visit.visitId}">
         <span class="menu-date">
