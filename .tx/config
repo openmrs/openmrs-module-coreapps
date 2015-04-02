@@ -7,3 +7,4 @@ source_lang = en
 trans.fr = api/src/main/resources/messages_fr.properties
 trans.ht = api/src/main/resources/messages_ht.properties
 trans.pt = api/src/main/resources/messages_pt.properties
+trans.de = api/src/main/resources/messages_de.properties
