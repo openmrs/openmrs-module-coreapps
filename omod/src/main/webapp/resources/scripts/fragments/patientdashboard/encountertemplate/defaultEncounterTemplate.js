@@ -19,7 +19,8 @@ $(function() {
         var patientId = $(event.target).attr("data-patient-id");
         var editUrl = $(event.target).attr("data-edit-url");
         if (editUrl) {
-            editUrl = editUrl.replace("{{patientId}}", patientId).replace("{{encounterId}}", encounterId);
+            editUrl = editUrl.replace("{{patientId}}", patientId).replace("{{patient.uuid}}", patientId)
+                .replace("{{encounterId}}", encounterId).replace("{{encounter.id}}", encounterId);
             emr.navigateTo({ applicationUrl: editUrl });
         } else {
             emr.navigateTo({
