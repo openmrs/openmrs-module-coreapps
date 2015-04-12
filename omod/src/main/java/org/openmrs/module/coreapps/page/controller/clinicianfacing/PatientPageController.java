@@ -19,6 +19,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
+import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
@@ -43,6 +44,7 @@ import java.util.List;
 public class PatientPageController {
 	
 	public Object controller(@RequestParam("patientId") Patient patient, PageModel model,
+	                         @RequestParam(required = false, value = "app") AppDescriptor app,
 	                         @InjectBeans PatientDomainWrapper patientDomainWrapper,
 	                         @SpringBean("adtService") AdtService adtService,
 	                         @SpringBean("visitService") VisitService visitService,
@@ -61,7 +63,8 @@ public class PatientPageController {
 		
 		patientDomainWrapper.setPatient(patient);
 		model.addAttribute("patient", patientDomainWrapper);
-		
+		model.addAttribute("app", app);
+
 		Location visitLocation = null;
 		try {
 			visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());

@@ -35,7 +35,7 @@
 
                     <% if (canViewVisits) { %>
                     <!-- only add link to patient dashboard if user has appropriate privilege -->
-                        <a href="${ ui.urlBind("/" + contextPath + patientPageUrl, [ patientId: v.visit.patient.id ]) }">
+                        <a href="${ ui.urlBind("/" + contextPath + patientPageUrl, [ patientId: v.visit.patient.id, "visit.uuid": v.visit.uuid ]) }">
                     <% } %>
 
                     ${ ui.format(v.visit.patient) }

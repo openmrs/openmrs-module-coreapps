@@ -1,5 +1,4 @@
 <%
-    def recentVisits = config.recentVisits
     def patient = config.patient
 %>
 <div class="info-section">
@@ -11,13 +10,13 @@
         <% } %>
     </div>
     <div class="info-body">
-        <% if (recentVisits.isEmpty()) { %>
+        <% if (recentVisitsWithLinks.isEmpty()) { %>
         ${ui.message("coreapps.none")}
         <% } %>
         <ul>
-            <% recentVisits.each{ %>
+            <% recentVisitsWithLinks.each { it, url -> %>
             <li class="clear">
-                <a href="${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id, visitId: it.visitId])}#visits" class="visit-link">
+                <a href="${url}" class="visit-link">
                     ${ ui.formatDatePretty(it.startDatetime) }
                     <% if(it.stopDatetime && !it.startDatetime.format("yyyy/MM/dd").equals(it.stopDatetime.format("yyyy/MM/dd"))){ %> - ${ ui.formatDatePretty(it.stopDatetime) }<% } %>
                 </a>
