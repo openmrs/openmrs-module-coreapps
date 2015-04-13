@@ -31,6 +31,11 @@
 
     jq(function(){
         jq(".tabs").tabs();
+
+        // make sure we reload the page if the location is changes; this custom event is emitted by by the location selector in the header
+        jq(document).on('sessionLocationChanged', function() {
+            window.location.reload();
+        });
     });
 
     var patient = { id: ${ patient.id } };
