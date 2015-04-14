@@ -12,6 +12,9 @@ jq(function() {
         if (primaryId.length > 0) {
             getPatientById(primaryId,"${ config.hiddenFieldName}", "${config.fullNameField}", ${config.callBack},
                 "${ ui.message("coreapps.mergePatients.patientNotFound") }");
+        } else {
+        	//If the field is blank simply trigger callback.
+        	${config.callBack}();
         }
     };
 

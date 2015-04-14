@@ -74,14 +74,6 @@
             ] )}
         </p>
         
-        <script type="text/javascript">
-        	jq(function() {
-        		//Reset values when loading the page in case back button has been used.
-        		jq("#patient1").val(0);
-        		jq("#patient2").val(0);
-        	});
-        </script>
-        
         <p class="right">
             <input class="cancel" type="button" id="cancel-button" value="${ ui.message("emr.cancel") }"/>
 

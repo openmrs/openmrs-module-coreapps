@@ -8,10 +8,15 @@ jq(function() {
 });
 
 function checkConfirmButton() {
+    //Check if IDs are known
     var patient1Id = jq("#patient1").val();
     var patient2Id = jq("#patient2").val();
 
-    if (patient1Id > 0 && patient2Id > 0 && (patient1Id != patient2Id)) {
+    //Check if input fields are not blank
+    var patient1Text = jq("#patient1-text").val().trim();
+    var patient2Text = jq("#patient2-text").val().trim();
+    
+    if (patient1Id > 0 && patient2Id > 0 && (patient1Id != patient2Id) && patient1Text.length > 0 && patient2Text.length > 0) {
         enableButton();
         jq("#confirm-button").focus();
     } else {
