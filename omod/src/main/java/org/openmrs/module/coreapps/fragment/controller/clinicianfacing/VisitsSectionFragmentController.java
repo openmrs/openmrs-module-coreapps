@@ -60,15 +60,24 @@ public class VisitsSectionFragmentController {
 
 		AppDescriptor app = (AppDescriptor) pageModel.get("app");
 		String visitUrl = null;
+		String visitsUrl = null;
 		if (app != null) {
 			try {
 				visitUrl = app.getConfig().get("visitUrl").getTextValue();
 			} catch (Exception ex) { }
+			try {
+				visitsUrl = app.getConfig().get("visitsUrl").getTextValue();
+			} catch (Exception ex) { }
 		}
 		if (visitUrl == null) {
-			visitUrl = "coreapps/patientdashboard/patientDashboard?patientId={{patient.uuid}}&visitId={{visit.id}}#visits";
+			visitUrl = "coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}&visitId={{visit.id}}#visits";
 		}
 		visitUrl = "/" + ui.contextPath() + "/" + visitUrl;
+		if (visitsUrl == null) {
+			visitsUrl = "coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}#visits";
+		}
+		visitsUrl = "/" + ui.contextPath() + "/" + visitsUrl;
+		model.addAttribute("visitsUrl", templateFactory.handlebars(visitsUrl, contextModel));
 
 		List<VisitDomainWrapper> recentVisits = patientWrapper.getAllVisitsUsingWrappers();
 		if (recentVisits.size() > 5) {

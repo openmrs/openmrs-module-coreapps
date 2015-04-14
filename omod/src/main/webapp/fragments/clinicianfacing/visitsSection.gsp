@@ -6,7 +6,9 @@
         <i class="icon-calendar"></i>
         <h3>${ ui.message("coreapps.clinicianfacing.visits").toUpperCase() }</h3>
         <% if (context.hasPrivilege("App: coreapps.patientVisits")) { %>
-            <i class="icon-share-alt edit-action right" title="${ ui.message("coreapps.edit") }" onclick="location.href='${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id])}#visits';"></i>
+            <a href="${visitsUrl}" class="right">
+                <i class="icon-share-alt edit-action" title="${ ui.message("coreapps.edit") }"></i>
+            </a>
         <% } %>
     </div>
     <div class="info-body">
