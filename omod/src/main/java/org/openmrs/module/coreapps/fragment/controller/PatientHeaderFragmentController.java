@@ -63,11 +63,11 @@ public class PatientHeaderFragmentController {
 
 		if (patient instanceof Patient) {
 			wrapper.setPatient((Patient) patient);
-			config.addAttribute("patient", wrapper);
-            config.addAttribute("patientNames", getNames(((Patient) patient).getPersonName()));
 		} else {
             wrapper = (PatientDomainWrapper) patient;
         }
+        config.addAttribute("patient", wrapper);
+        config.addAttribute("patientNames", getNames(wrapper.getPersonName()));
 
 		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");
 		if (activeVisit == null) {
