@@ -1,10 +1,8 @@
 <%
     def elementId = ui.randomId('most-recent-encounter-container') + "-"
-    def returnUrl = config.returnUrl ?: ""
     def editIcon = editIcon ?: "icon-pencil"
     def editProvider = editProvider ?: "htmlformentryui"
     def editFragment = editFragment ?: "htmlform/editHtmlFormWithStandardUi"
-
 %>
 <div class="info-section most-recent-encounter">
     <div class="info-header">

@@ -13,11 +13,15 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.encounter;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.node.ObjectNode;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
 import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.ui.framework.SimpleObject;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
@@ -29,6 +33,7 @@ public class MostRecentEncounterFragmentController {
 	
 	public void controller(FragmentModel model, @FragmentParam("patientId") Patient patient,
 						   @FragmentParam("app") AppDescriptor app,
+						   UiUtils ui,
 	                       @SpringBean("encounterService") EncounterService encounterService) {
 
 		if (app.getConfig().path("encounterTypeUuid").isMissingNode()) {
@@ -66,13 +71,23 @@ public class MostRecentEncounterFragmentController {
 			model.addAttribute("encounter", null);
 		}
 
-        model.addAttribute("editable", app.getConfig().get("editable") != null ?
-                app.getConfig().get("editable").getBooleanValue() : false);
-        model.addAttribute("editIcon", app.getConfig().get("edit-icon") != null ?
-                app.getConfig().get("edit-icon").getTextValue() : null);
-        model.addAttribute("editProvider", app.getConfig().get("edit-provider") != null ?
-                app.getConfig().get("edit-provider").getTextValue() : null);
-        model.addAttribute("editFragment", app.getConfig().get("edit-fragment") != null ?
-                app.getConfig().get("edit-fragment").getTextValue() : null);
+        model.addAttribute("editable", app.getConfig().get("editable") != null ? app.getConfig().get("editable").getBooleanValue() : false);
+        model.addAttribute("editIcon", app.getConfig().get("edit-icon") != null ? app.getConfig().get("edit-icon").getTextValue() : null);
+        model.addAttribute("editProvider", app.getConfig().get("edit-provider") != null ? app.getConfig().get("edit-provider").getTextValue() : null);
+        model.addAttribute("editFragment", app.getConfig().get("edit-fragment") != null ? app.getConfig().get("edit-fragment").getTextValue() : null);
+
+		String returnUrl = getNodeValue(app.getConfig(), "returnUrl", null);
+		if (StringUtils.isBlank(returnUrl)) {
+			String returnProvider = getNodeValue(app.getConfig(), "returnProvider", null);
+			String returnPage = getNodeValue(app.getConfig(), "returnPage", null);
+			if (StringUtils.isNotBlank(returnProvider) && StringUtils.isNotBlank(returnPage)) {
+				returnUrl = ui.pageLink(returnProvider, returnPage, SimpleObject.create("patientId", patient.getId()));
+			}
+		}
+		model.addAttribute("returnUrl", returnUrl);
+	}
+
+	private String getNodeValue(ObjectNode node, String attribute, String defaultValue) {
+		return node.get(attribute) != null ? node.get(attribute).getTextValue() : defaultValue;
 	}
 }
