@@ -24,6 +24,7 @@ import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
+import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.util.ArrayList;
@@ -31,9 +32,9 @@ import java.util.List;
 
 public class MostRecentEncounterFragmentController {
 	
-	public void controller(FragmentModel model, @FragmentParam("patientId") Patient patient,
+	public void controller(FragmentConfiguration config, FragmentModel model, UiUtils ui,
+						   @FragmentParam("patientId") Patient patient,
 						   @FragmentParam("app") AppDescriptor app,
-						   UiUtils ui,
 	                       @SpringBean("encounterService") EncounterService encounterService) {
 
 		if (app.getConfig().path("encounterTypeUuid").isMissingNode()) {
@@ -76,7 +77,10 @@ public class MostRecentEncounterFragmentController {
         model.addAttribute("editProvider", app.getConfig().get("edit-provider") != null ? app.getConfig().get("edit-provider").getTextValue() : null);
         model.addAttribute("editFragment", app.getConfig().get("edit-fragment") != null ? app.getConfig().get("edit-fragment").getTextValue() : null);
 
-		String returnUrl = getNodeValue(app.getConfig(), "returnUrl", null);
+		String returnUrl = config.getAttribute("returnUrl") != null ? config.getAttribute("returnUrl").toString() : null;
+		if (StringUtils.isBlank(returnUrl)) {
+			returnUrl = getNodeValue(app.getConfig(), "returnUrl", null);
+		}
 		if (StringUtils.isBlank(returnUrl)) {
 			String returnProvider = getNodeValue(app.getConfig(), "returnProvider", null);
 			String returnPage = getNodeValue(app.getConfig(), "returnPage", null);
