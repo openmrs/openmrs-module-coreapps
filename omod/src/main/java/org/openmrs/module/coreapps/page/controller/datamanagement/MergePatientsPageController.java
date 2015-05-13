@@ -15,10 +15,14 @@
 package org.openmrs.module.coreapps.page.controller.datamanagement;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.openmrs.Patient;
+import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.module.appframework.template.TemplateFactory;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.helper.BreadcrumbHelper;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
@@ -50,6 +54,11 @@ public class MergePatientsPageController {
         pageModel.addAttribute("patient1", null);
         pageModel.addAttribute("patient2", null);
         pageModel.addAttribute("isUnknownPatient", isUnknownPatient);
+        if (StringUtils.isBlank(returnUrl)){
+            if (app.getConfig().get("dashboardUrl") != null ) {
+                returnUrl = app.getConfig().get("dashboardUrl").getTextValue();
+            }
+        }
         pageModel.addAttribute("returnUrl", returnUrl);
 
         BreadcrumbHelper.addBreadcrumbsIfDefinedInApp(app, pageModel, ui);
@@ -90,6 +99,8 @@ public class MergePatientsPageController {
                        @RequestParam(required = false, value = "returnUrl") String returnUrl,
                        @InjectBeans PatientDomainWrapper preferredWrapper,
                        @InjectBeans PatientDomainWrapper notPreferredWrapper,
+                       @SpringBean("appframeworkTemplateFactory") TemplateFactory templateFactory,
+                       UiSessionContext sessionContext,
                        @SpringBean("adtService") AdtService adtService) {
         Patient notPreferred = patient1.equals(preferred) ? patient2 : patient1;
 
@@ -120,11 +131,13 @@ public class MergePatientsPageController {
         String provider = "coreapps";
         String fragment = "patientdashboard/patientDashboard";
         if (StringUtils.isNotBlank(returnUrl)) {
-            int dotIndex = returnUrl.indexOf(".");
-            provider = returnUrl.substring(0, dotIndex);
-            fragment = returnUrl.substring(dotIndex + 1);
+            AppContextModel contextModel = sessionContext.generateAppContextModel();
+            contextModel.put("patientId", preferred.getId());
+            returnUrl = templateFactory.handlebars(returnUrl, contextModel);
+        } else {
+            returnUrl = ui.pageLink(provider, fragment, SimpleObject.create("patientId", preferred.getId()));
         }
-        return "redirect:" + ui.pageLink(provider, fragment, SimpleObject.create("patientId", preferred.getId()));
+        return "redirect:" + returnUrl;
     }
 
 }
