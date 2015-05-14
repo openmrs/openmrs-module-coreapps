@@ -15,14 +15,12 @@
 package org.openmrs.module.coreapps.page.controller.datamanagement;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonNode;
 import org.openmrs.Patient;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.template.TemplateFactory;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.appui.UiSessionContext;
-import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.helper.BreadcrumbHelper;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
@@ -33,9 +31,9 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 
 public class MergePatientsPageController {
 
@@ -43,7 +41,6 @@ public class MergePatientsPageController {
                     @RequestParam(required = false, value = "patient2") Patient patient2,
                     @RequestParam(value = "isUnknownPatient", defaultValue = "false") boolean isUnknownPatient,
 					@RequestParam("app") AppDescriptor app,
-                    @RequestParam(required = false, value = "returnUrl") String returnUrl,
                     @InjectBeans PatientDomainWrapper wrapper1,
                     @InjectBeans PatientDomainWrapper wrapper2,
                     HttpServletRequest request,
@@ -54,12 +51,6 @@ public class MergePatientsPageController {
         pageModel.addAttribute("patient1", null);
         pageModel.addAttribute("patient2", null);
         pageModel.addAttribute("isUnknownPatient", isUnknownPatient);
-        if (StringUtils.isBlank(returnUrl)){
-            if (app.getConfig().get("dashboardUrl") != null ) {
-                returnUrl = app.getConfig().get("dashboardUrl").getTextValue();
-            }
-        }
-        pageModel.addAttribute("returnUrl", returnUrl);
 
         BreadcrumbHelper.addBreadcrumbsIfDefinedInApp(app, pageModel, ui);
 
@@ -96,9 +87,9 @@ public class MergePatientsPageController {
                        @RequestParam("patient2") Patient patient2,
                        @RequestParam("preferred") Patient preferred,
                        @RequestParam(value = "isUnknownPatient", defaultValue = "false") boolean isUnknownPatient,
-                       @RequestParam(required = false, value = "returnUrl") String returnUrl,
                        @InjectBeans PatientDomainWrapper preferredWrapper,
                        @InjectBeans PatientDomainWrapper notPreferredWrapper,
+                       @RequestParam("app") AppDescriptor app,
                        @SpringBean("appframeworkTemplateFactory") TemplateFactory templateFactory,
                        UiSessionContext sessionContext,
                        @SpringBean("adtService") AdtService adtService) {
@@ -130,6 +121,11 @@ public class MergePatientsPageController {
         request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
         String provider = "coreapps";
         String fragment = "patientdashboard/patientDashboard";
+        String returnUrl = null;
+        if (app.getConfig().get("dashboardUrl") != null ) {
+            returnUrl = app.getConfig().get("dashboardUrl").getTextValue();
+        }
+
         if (StringUtils.isNotBlank(returnUrl)) {
             AppContextModel contextModel = sessionContext.generateAppContextModel();
             contextModel.put("patientId", preferred.getId());
