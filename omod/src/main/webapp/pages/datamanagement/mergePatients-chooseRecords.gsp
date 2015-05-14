@@ -53,9 +53,6 @@
     <h4>${ ui.message("coreapps.mergePatients.enterIds") }</h4>
     <form>
         <input type="hidden" name="app" value="coreapps.mergePatients"/>
-        <% if (returnUrl != null && returnUrl.size() > 0 ) { %>
-            <input type="hidden" name="returnUrl" value="${returnUrl}"/>
-        <% } %>
         <input type= "hidden" name= "isUnknownPatient" value= "${isUnknownPatient}"/>
         
         <p>
