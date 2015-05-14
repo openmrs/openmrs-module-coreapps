@@ -29,7 +29,7 @@
                         { encounterId: ${encounter.id}, definitionUiResource: '${ definitionUiResource }' },
                             function(result) {
                                 jq('#${elementId}').html(result.html);
-                                var displayEncounterDate = jq('#displayEncounterDate').val();
+                                var displayEncounterDate = jq('#${elementId}').find('#displayEncounterDate').val();
                                 if (displayEncounterDate != "false") {
                                     // TODO: this method to the display the title seems a little brittle--replaces the first element in the form with class 'title'
                                     jq('#${elementId} .title:first').text('${ ui.escapeJs(ui.message(app.config.get('encounterDateLabel').textValue , ui.formatDatetimePretty(encounter.encounterDatetime))) } ');
