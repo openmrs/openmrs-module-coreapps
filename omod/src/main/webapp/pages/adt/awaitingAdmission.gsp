@@ -65,10 +65,11 @@
                         }
                     }
 
-                    var currentLocation = aData[currentLocationColumnIndex].replace(/'/g, "\\’");
+                    // remove single quote, everything after the <br> (datetime), and trim leading and trailing whitespace
+                    var currentLocation = jq.trim(aData[currentLocationColumnIndex].replace(/'/g, "\\’").split('<br>')[0]);
 
                     if (currentLocationFilter && jq.trim(currentLocationFilter).length != 0) {   // add the jq.trim so that we ignore the single &nbsp; that is the text for the "empty" option of the dropdown widget
-                        if (!currentLocation != currentLocationFilter) {
+                        if (currentLocation != currentLocationFilter) {
                             return false;
                         }
                     }
