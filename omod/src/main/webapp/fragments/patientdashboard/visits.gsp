@@ -69,14 +69,17 @@
                 (${ ui.message("coreapps.patientDashBoard.activeSince")} ${timeFormat.format(wrapper.visit.startDatetime)})
             <% } %>
         </span>
-        <span class="menu-title">
-            <i class="icon-stethoscope"></i>
-            <% if (primaryDiagnoses) { %>
-                ${ formatDiagnoses(primaryDiagnoses) }
-            <% } else { %>
-                ${ ui.message("coreapps.patientDashBoard.noDiagnosis")}
-            <% } %>
-        </span>
+
+        <% if (primaryDiagnoses != null) { %>  <!-- if primary diagnosis is null, don't display box at all, if empty, display "no diagnosis" message -->
+            <span class="menu-title">
+                <i class="icon-stethoscope"></i>
+                <% if (!primaryDiagnoses.empty) { %>
+                    ${ formatDiagnoses(primaryDiagnoses) }
+                <% }  else { %>
+                    ${ ui.message("coreapps.patientDashBoard.noDiagnosis")}
+                <% } %>
+            </span>
+        <% } %>
         <span class="arrow-border"></span>
         <span class="arrow"></span>
     </li>
