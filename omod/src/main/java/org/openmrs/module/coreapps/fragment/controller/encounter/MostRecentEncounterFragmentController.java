@@ -58,6 +58,7 @@ public class MostRecentEncounterFragmentController {
 		    null, null, false);
 
 		model.addAttribute("app", app);
+        model.addAttribute("patient", patient);
 
         String definitionUiResource = "";
         if (!app.getConfig().path("definitionUiResource").isMissingNode()) {
@@ -71,6 +72,11 @@ public class MostRecentEncounterFragmentController {
 		} else {
 			model.addAttribute("encounter", null);
 		}
+
+        model.addAttribute("creatable", app.getConfig().get("creatable") != null ? app.getConfig().get("creatable").getBooleanValue() : false);
+        model.addAttribute("createIcon", app.getConfig().get("create-icon") != null ? app.getConfig().get("create-icon").getTextValue() : null);
+        model.addAttribute("createProvider", app.getConfig().get("create-provider") != null ? app.getConfig().get("create-provider").getTextValue() : null);
+        model.addAttribute("createFragment", app.getConfig().get("create-fragment") != null ? app.getConfig().get("create-fragment").getTextValue() : null);
 
         model.addAttribute("editable", app.getConfig().get("editable") != null ? app.getConfig().get("editable").getBooleanValue() : false);
         model.addAttribute("editIcon", app.getConfig().get("edit-icon") != null ? app.getConfig().get("edit-icon").getTextValue() : null);

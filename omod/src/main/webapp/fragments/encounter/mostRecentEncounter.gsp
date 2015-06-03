@@ -1,8 +1,14 @@
 <%
     def elementId = ui.randomId('most-recent-encounter-container') + "-"
+
     def editIcon = editIcon ?: "icon-pencil"
     def editProvider = editProvider ?: "htmlformentryui"
     def editFragment = editFragment ?: "htmlform/editHtmlFormWithStandardUi"
+
+    def createIcon = createIcon ?: "icon-pencil"
+    def createProvider = createProvider ?: "htmlformentryui"
+    def createFragment = createFragment ?: "htmlform/enterHtmlFormWithStandardUi"
+
 %>
 <div class="info-section most-recent-encounter">
     <div class="info-header">
@@ -12,7 +18,11 @@
         <% if (encounter && editable) { %>
             <i class="${editIcon} edit-action right" title="${ ui.message("coreapps.edit") }"
                onclick="location.href='${ui.pageLink(editProvider, editFragment,
-               [patientId: encounter.patient.id, encounterId: encounter.id, definitionUiResource: definitionUiResource, returnUrl: returnUrl ])}';"></i>
+               [patientId: patient.id, encounterId: encounter.id, definitionUiResource: definitionUiResource, returnUrl: returnUrl ])}';"></i>
+        <% } else if (creatable) { %>
+            <i class="${createIcon} edit-action right" title="${ ui.message("coreapps.add") }"
+               onclick="location.href='${ui.pageLink(createProvider, createFragment,
+                   [patientId: patient.id, definitionUiResource: definitionUiResource, returnUrl: returnUrl ])}';"></i>
         <% } %>
 
     </div>
