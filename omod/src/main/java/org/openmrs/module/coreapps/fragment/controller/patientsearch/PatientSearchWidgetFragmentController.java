@@ -12,9 +12,9 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.util.OpenmrsConstants;
 
-import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Fragment controller for patient search widget; sets the min # of search characters based on global property,
@@ -39,7 +39,7 @@ public class PatientSearchWidgetFragmentController {
         model.addAttribute("searchDelayLong",
                 administrationService.getGlobalProperty(CoreAppsConstants.GP_SEARCH_DELAY_LONG, "1000"));
 
-        model.addAttribute("dateFormatter", new SimpleDateFormat("dd-MMM-yyy", Context.getLocale()));
+        model.addAttribute("dateFormatter", new SimpleDateFormat("dd MMM yyyy", Context.getLocale()));
         model.addAttribute("showLastViewedPatients", showLastViewedPatients);
 
         String doInitialSearch = null;

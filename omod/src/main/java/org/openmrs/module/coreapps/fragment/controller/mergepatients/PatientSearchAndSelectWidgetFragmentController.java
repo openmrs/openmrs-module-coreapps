@@ -35,7 +35,7 @@ public class PatientSearchAndSelectWidgetFragmentController {
         model.addAttribute("searchDelayLong",
                 administrationService.getGlobalProperty(CoreAppsConstants.GP_SEARCH_DELAY_LONG, "1000"));
 
-        model.addAttribute("dateFormatter", new SimpleDateFormat("dd-MMM-yyy", Context.getLocale()));
+        model.addAttribute("dateFormatter", new SimpleDateFormat("dd MMM yyyy", Context.getLocale()));
         model.addAttribute("showLastViewedPatients", showLastViewedPatients);
 
         if (showLastViewedPatients) {

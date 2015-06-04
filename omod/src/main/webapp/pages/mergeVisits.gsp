@@ -8,7 +8,7 @@
     ui.includeJavascript("uicommons", "bootstrap-collapse.js")
     ui.includeJavascript("uicommons", "bootstrap-transition.js")
 
-    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy")
+    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy", org.openmrs.api.context.Context.getLocale() )
     def visits = patient.allVisitsUsingWrappers
     def visitsIndex = ""
     if (visits  != null ){

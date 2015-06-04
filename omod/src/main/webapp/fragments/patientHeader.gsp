@@ -2,7 +2,7 @@
     def patient = config.patient
     def patientNames = config.patientNames
 
-    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy hh:mm a")
+    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy hh:mm a", org.openmrs.api.context.Context.getLocale() )
 
     ui.includeCss("coreapps", "patientHeader.css")
     ui.includeJavascript("coreapps", "patientdashboard/patient.js")

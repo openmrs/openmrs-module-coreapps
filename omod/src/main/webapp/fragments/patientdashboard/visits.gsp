@@ -1,6 +1,6 @@
 <%
-    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy")
-    def timeFormat = new java.text.SimpleDateFormat("hh:mm a")
+    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy", org.openmrs.api.context.Context.getLocale() )
+    def timeFormat = new java.text.SimpleDateFormat("hh:mm a", org.openmrs.api.context.Context.getLocale() )
     def editDateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
 
     def formatDiagnoses = {
