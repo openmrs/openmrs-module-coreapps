@@ -157,7 +157,7 @@ function PatientSearchWidget(configuration){
             _.each(searchResultsData, function(patient) {
                 var birthdate = '';
                 if(patient.person.birthdate){
-                    birthdate = moment(patient.person.birthdate).format('DD-MMM-YYYY');
+                    birthdate = moment(patient.person.birthdate).format('DD MMM YYYY');
                     if( patient.person.birthdateEstimated ){
                         birthdate = "~ "+birthdate;
                     }else{
