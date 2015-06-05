@@ -16,13 +16,11 @@ package org.openmrs.module.coreapps.fragment.controller;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
-import org.openmrs.api.context.Context;
 import org.openmrs.layout.web.name.NameSupport;
 import org.openmrs.layout.web.name.NameTemplate;
 import org.openmrs.module.appframework.context.AppContextModel;
@@ -36,6 +34,7 @@ import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.idgen.AutoGenerationOption;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -59,6 +58,7 @@ public class PatientHeaderFragmentController {
                            @FragmentParam(required = false, value="appContextModel") AppContextModel appContextModel,
 	                       @FragmentParam("patient") Object patient, @InjectBeans PatientDomainWrapper wrapper,
 	                       @SpringBean("adtService") AdtService adtService, UiSessionContext sessionContext,
+                           UiUtils uiUtils,
                            FragmentModel model) {
 
 		if (patient instanceof Patient) {
@@ -88,8 +88,7 @@ public class PatientHeaderFragmentController {
 
         if (activeVisit != null) {
             config.addAttribute("activeVisit", activeVisit);
-            config.addAttribute("activeVisitStartDatetime",
-                    DateFormatUtils.format(activeVisit.getStartDatetime(), "dd MMM yyyy hh:mm a", Context.getLocale()));
+            config.addAttribute("activeVisitStartDatetime", uiUtils.format(activeVisit.getStartDatetime()));
         }
 		
 		List<ExtraPatientIdentifierType> extraPatientIdentifierTypes = new ArrayList<ExtraPatientIdentifierType>();

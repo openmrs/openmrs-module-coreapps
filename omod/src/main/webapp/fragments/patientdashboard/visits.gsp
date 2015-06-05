@@ -1,5 +1,5 @@
 <%
-    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy", org.openmrs.api.context.Context.getLocale() )
+
     def timeFormat = new java.text.SimpleDateFormat("hh:mm a", org.openmrs.api.context.Context.getLocale() )
     def editDateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
 
@@ -62,9 +62,9 @@
     <li class="menu-item viewVisitDetails" data-visit-id="${wrapper.visit.visitId}">
         <span class="menu-date">
             <i class="icon-time"></i>
-            ${dateFormat.format(wrapper.visit.startDatetime)}
-            <% if(wrapper.visit.stopDatetime != null) { %>
-                - ${dateFormat.format(wrapper.visit.stopDatetime)}
+            ${ui.format(wrapper.startDate)}
+            <% if(wrapper.stopDate != null) { %>
+                - ${ui.format(wrapper.stopDate)}
             <% } else { %>
                 (${ ui.message("coreapps.patientDashBoard.activeSince")} ${timeFormat.format(wrapper.visit.startDatetime)})
             <% } %>

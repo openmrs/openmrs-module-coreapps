@@ -6,6 +6,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.utils.GeneralUtils;
+import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
@@ -35,7 +36,8 @@ public class PatientSearchAndSelectWidgetFragmentController {
         model.addAttribute("searchDelayLong",
                 administrationService.getGlobalProperty(CoreAppsConstants.GP_SEARCH_DELAY_LONG, "1000"));
 
-        model.addAttribute("dateFormatter", new SimpleDateFormat("dd MMM yyyy", Context.getLocale()));
+        model.addAttribute("dateFormatter", new SimpleDateFormat(administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATE_FORMAT),
+                Context.getLocale()));
         model.addAttribute("showLastViewedPatients", showLastViewedPatients);
 
         if (showLastViewedPatients) {
