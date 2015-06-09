@@ -3,7 +3,9 @@ function PatientSearchWidget(configuration){
         minSearchCharacters: 3,
         searchInputId: 'patient-search',
         searchResultsDivId: 'patient-search-results',
-        clearButtonId: 'patient-search-clear-button'
+        clearButtonId: 'patient-search-clear-button',
+        dateFormat: 'DD MMM YYYY',
+        locale: 'en'
     };
 
     var config = jq.extend({}, defaults, configuration);
@@ -157,7 +159,7 @@ function PatientSearchWidget(configuration){
             _.each(searchResultsData, function(patient) {
                 var birthdate = '';
                 if(patient.person.birthdate){
-                    birthdate = moment(patient.person.birthdate).format('DD MMM YYYY');
+                    birthdate = moment(patient.person.birthdate).locale(configuration.locale).format(configuration.dateFormat);
                     if( patient.person.birthdateEstimated ){
                         birthdate = "~ "+birthdate;
                     }else{
