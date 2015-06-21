@@ -75,21 +75,7 @@ public class CoreAppsActivator extends BaseModuleActivator {
 	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
-		log.info("Core Apps Module refreshed");
-	}
-	
-	/**
-	 * @see ModuleActivator#willStart()
-	 */
-	public void willStart() {
-		log.info("Starting Core Apps Module");
-	}
-	
-	/**
-	 * @see ModuleActivator#started()
-	 */
-	public void started() {
-        ConceptService conceptService = Context.getConceptService();
+		ConceptService conceptService = Context.getConceptService();
         EmrApiProperties emrApiProperties = Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class);
         DispositionService dispositionService = Context.getRegisteredComponent("dispositionService", DispositionService.class);
         AdtService adtService = Context.getRegisteredComponent("adtService", AdtService.class);
@@ -106,7 +92,21 @@ public class CoreAppsActivator extends BaseModuleActivator {
 
             htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_CODED_OR_FREE_TEXT_OBS_TAG_NAME, new CodedOrFreeTextObsTagHandler());
         }
-
+        
+		log.info("Core Apps Module refreshed");
+	}
+	
+	/**
+	 * @see ModuleActivator#willStart()
+	 */
+	public void willStart() {
+		log.info("Starting Core Apps Module");
+	}
+	
+	/**
+	 * @see ModuleActivator#started()
+	 */
+	public void started() {
         log.info("Core Apps Module started");
     }
 	
