@@ -10,7 +10,7 @@
     def createFragment = createFragment ?: "htmlform/enterHtmlFormWithStandardUi"
 
 %>
-<div class="info-section most-recent-encounter">
+<div id="${ app.id ? app.id.replaceAll('\\.','-') : '' }" class="info-section most-recent-encounter">
     <div class="info-header">
         <i class="${ app.icon }"></i>
         <h3>${ ui.message(app.label).toUpperCase() }</h3>
