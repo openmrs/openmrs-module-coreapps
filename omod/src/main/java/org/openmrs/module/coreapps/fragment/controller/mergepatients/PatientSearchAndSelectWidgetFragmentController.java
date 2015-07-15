@@ -14,6 +14,7 @@ import org.openmrs.util.OpenmrsConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Fragment controller for patient search widget; sets the min # of search characters based on global property,
@@ -38,6 +39,7 @@ public class PatientSearchAndSelectWidgetFragmentController {
 
         model.addAttribute("dateFormatJS", "DD MMM YYYY");   // TODO really should be driven by global property, but currently we only have a property for the java date format
         model.addAttribute("locale", Context.getLocale().getLanguage());
+        model.addAttribute("defaultLocale", new Locale(administrationService.getGlobalProperty((OpenmrsConstants.GLOBAL_PROPERTY_DEFAULT_LOCALE), "en")).getLanguage());
         model.addAttribute("dateFormatter", new SimpleDateFormat(administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATE_FORMAT),
                 Context.getLocale()));
         model.addAttribute("showLastViewedPatients", showLastViewedPatients);

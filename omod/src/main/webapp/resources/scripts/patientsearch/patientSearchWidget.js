@@ -5,7 +5,8 @@ function PatientSearchWidget(configuration){
         searchResultsDivId: 'patient-search-results',
         clearButtonId: 'patient-search-clear-button',
         dateFormat: 'DD MMM YYYY',
-        locale: 'en'
+        locale: 'en',
+        defaultLocale: 'en'
     };
 
     var config = jq.extend({}, defaults, configuration);
@@ -159,7 +160,7 @@ function PatientSearchWidget(configuration){
             _.each(searchResultsData, function(patient) {
                 var birthdate = '';
                 if(patient.person.birthdate){
-                    birthdate = moment(patient.person.birthdate).locale(configuration.locale).format(configuration.dateFormat);
+                    birthdate = moment(patient.person.birthdate).locale([configuration.locale, configuration.defaultLocale, 'en']).format(configuration.dateFormat);  // Creole not currently supported by moment() and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
                     if( patient.person.birthdateEstimated ){
                         birthdate = "~ "+birthdate;
                     }else{

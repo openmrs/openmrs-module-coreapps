@@ -30,6 +30,7 @@
             handleRowSelection: handlePatientRowSelection,
             dateFormat: '${ dateFormatJS }',
             locale: '${ locale }',
+            defaultLocale: '${ defaultLocale }',
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
                 first: '${ ui.message("coreapps.search.first") }',
