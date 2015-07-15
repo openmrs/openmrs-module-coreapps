@@ -45,6 +45,10 @@ function PatientSearchWidget(configuration){
     var afterSearchResultsUpdated = [];  // stores a set of functions to execute after we update search results (currently we are only using this for the doEnter function)
     var lastQuery = null;
 
+    // set the locale for Moment.js
+    // Creole not currently supported by Moment and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
+    moment.locale([configuration.locale, configuration.defaultLocale, 'en']);
+
     if(config.initialPatients){
         _.each(config.initialPatients, function(p){
             //only add the uuid since it is only one we need to reference later
@@ -160,7 +164,7 @@ function PatientSearchWidget(configuration){
             _.each(searchResultsData, function(patient) {
                 var birthdate = '';
                 if(patient.person.birthdate){
-                    birthdate = moment(patient.person.birthdate).locale([configuration.locale, configuration.defaultLocale, 'en']).format(configuration.dateFormat);  // Creole not currently supported by moment() and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
+                    birthdate = moment(patient.person.birthdate).format(configuration.dateFormat);
                     if( patient.person.birthdateEstimated ){
                         birthdate = "~ "+birthdate;
                     }else{
