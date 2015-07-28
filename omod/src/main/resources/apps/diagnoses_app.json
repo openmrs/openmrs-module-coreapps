@@ -1,0 +1,19 @@
+[
+  {
+    "id": "coreapps.diagnoses",
+    "label": "coreapps.clinicianfacing.diagnoses",
+    "icon": "icon-diagnosis",
+    "order": 1,
+    "extensions": [
+      {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.diagnoses.clinicianDashboardFirstColumn",
+        "appId": "coreapps.diagnoses",
+        "extensionPointId": "patientDashboard.firstColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "clinicianfacing/diagnosisWidget"
+        }
+      }
+    ]
+  }
+]

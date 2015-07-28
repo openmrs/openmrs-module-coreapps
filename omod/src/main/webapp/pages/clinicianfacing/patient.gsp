@@ -22,11 +22,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 <div class="container">
     <div class="dashboard clear">
         <div class="info-container column">
-            ${ ui.includeFragment("coreapps", "clinicianfacing/diagnosisWidget", [ patient: patient ]) }
-            
             <% if (firstColumnFragments) {
 			    firstColumnFragments.each { %>
-			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [ patientId: patient.patient.id, app: it.appId ])}
+			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [ patient: patient, patientId: patient.patient.id, app: it.appId ])}
 			<%  }
 			} %>
 
@@ -57,11 +55,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 </div>
             </div>
             */%>
-            ${ ui.includeFragment("coreapps", "clinicianfacing/visitsSection", [patient: patient]) }
             
             <% if (secondColumnFragments) {
 			    secondColumnFragments.each { %>
-			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patientId: patient.patient.id, app: it.appId ])}
+			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patient: patient, patientId: patient.patient.id, app: it.appId ])}
 			<%   }
 			} %>
 			
