@@ -52,7 +52,7 @@
 
         jq(".demographics .name").click(function () {
             emr.navigateTo({
-                url: "${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: patient.patient.id ] ) }"
+                url: "${ ui.urlBind("/" + contextPath + config.dashboardUrl, [ patientId: patient.patient.id ] ) }"
             });
         })
 
