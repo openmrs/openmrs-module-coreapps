@@ -29,9 +29,14 @@ public class CoreAppsProperties extends ModuleProperties {
 		return 730; //2 years
 	}
 
-    // TODO remove this and just always default to clinician dashboard once legacy implementations (Mirebalais) move to clinician dashboard
-    public String getDefaultDashboard() {
-        return getGlobalProperty(CoreAppsConstants.GP_DEFAULT_DASHBOARD, false);
+    public String getDashboardUrl() {
+        String url = getGlobalProperty(CoreAppsConstants.GP_DASHBOARD_URL, false);
+        if (!StringUtils.hasText(url)) {
+            return "/coreapps/clinicianfacing/patient.page?patientId={{patientId}}&app=pih.app.clinicianDashboard";
+        }
+        else {
+            return url;
+        }
     }
 
 }

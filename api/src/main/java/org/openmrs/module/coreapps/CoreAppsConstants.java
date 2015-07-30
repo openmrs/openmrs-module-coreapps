@@ -4,7 +4,7 @@ public class CoreAppsConstants {
 
     public static final String GP_DEFAULT_PATIENT_IDENTIFIER_LOCATION = "coreapps.defaultPatientIdentifierLocation";
 
-    public static final String GP_DEFAULT_DASHBOARD = "coreapps.defaultDashboard";
+    public static final String GP_DASHBOARD_URL = "coreapps.dashboardUrl";
 
     public static final String GP_SEARCH_DELAY_SHORT = "coreapps.searchDelayShort";
     public static final String GP_SEARCH_DELAY_LONG = "coreapps.searchDelayLong";
@@ -24,4 +24,7 @@ public class CoreAppsConstants {
 	public static final String GP_RECENT_DIAGNOSIS_PERIOD_IN_DAYS = "coreapps.recentDiagnosisPeriodInDays";
 
     public static final String ENCOUNTER_TEMPLATE_EXTENSION = "org.openmrs.referenceapplication.encounterTemplate";
+
+    @Deprecated  // no longer used, to override set coreapps.dashboardUrl instead
+    public static final String GP_DEFAULT_DASHBOARD = "coreapps.defaultDashboard";
 }

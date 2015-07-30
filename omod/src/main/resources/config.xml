@@ -112,10 +112,10 @@
 	</globalProperty>
 
     <globalProperty>
-        <property>coreapps.defaultDashboard</property>
-        <defaultValue></defaultValue>
+        <property>coreapps.dashboardUrl</property>
+        <defaultValue>/coreapps/clinicianfacing/patient.page?patientId={{patientId}}&amp;app=pih.app.clinicianDashboard</defaultValue>
         <description>
-            If set to "visits", then the old visits dashboard will be used instead of the new clinician-facing dashboard
+            Allows one to override the default dashboard url
         </description>
     </globalProperty>
 

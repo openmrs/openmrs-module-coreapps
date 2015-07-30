@@ -24,6 +24,7 @@ import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
+import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -52,6 +53,7 @@ public class PatientPageController {
 	                         @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                              @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
                              @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
+                             @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
 	                         UiSessionContext sessionContext) {
 
         if (!Context.hasPrivilege(CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD)) {
@@ -113,6 +115,8 @@ public class PatientPageController {
                 "clinicianFacingPatientDashboard.otherActions", contextModel);
         Collections.sort(otherActions);
         model.addAttribute("otherActions", otherActions);
+
+        model.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
 
         applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 

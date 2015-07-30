@@ -103,7 +103,7 @@ public class PatientHeaderFragmentController {
 
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
         config.addAttribute("extraPatientIdentifiersMappedByType", wrapper.getExtraIdentifiersMappedByType(sessionContext.getSessionLocation()));
-        config.addAttribute("defaultDashboard", coreAppsProperties.getDefaultDashboard());
+        config.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
     }
 
     private Map<String,String> getNames(PersonName personName) {

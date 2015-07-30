@@ -15,6 +15,7 @@ package org.openmrs.module.coreapps;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.GlobalProperty;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
@@ -107,6 +108,13 @@ public class CoreAppsActivator extends BaseModuleActivator {
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
+
+        // purge old global property no longer used
+        GlobalProperty defaultDashboard = Context.getAdministrationService().getGlobalPropertyObject(CoreAppsConstants.GP_DEFAULT_DASHBOARD);
+        if (defaultDashboard != null) {
+            Context.getAdministrationService().purgeGlobalProperty(defaultDashboard);
+        }
+
         log.info("Core Apps Module started");
     }
 	
@@ -116,7 +124,7 @@ public class CoreAppsActivator extends BaseModuleActivator {
 	public void willStop() {
 		log.info("Stopping Core Apps Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#stopped()
 	 */
