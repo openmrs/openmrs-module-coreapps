@@ -36,7 +36,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<distro.groupId>org.openmrs.distro</distro.groupId>
         <distro.artifactId>referenceapplication</distro.artifactId>
-        <distro.version>LATEST</distro.version>
+        <distro.version>2.3-SNAPSHOT</distro.version>
         <appframeworkVersion>2.1</appframeworkVersion>
         <uiframeworkVersion>3.3.1</uiframeworkVersion>
         <emrapiVersion>1.6</emrapiVersion>
