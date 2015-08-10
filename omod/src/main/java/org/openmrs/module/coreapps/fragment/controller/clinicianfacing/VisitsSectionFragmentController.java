@@ -87,7 +87,8 @@ public class VisitsSectionFragmentController {
 		Map<VisitDomainWrapper, String> recentVisitsWithLinks = new LinkedHashMap<VisitDomainWrapper, String>();
 		for (VisitDomainWrapper recentVisit : recentVisits) {
 			contextModel.put("visit", new VisitContextModel(recentVisit));
-			recentVisitsWithLinks.put(recentVisit, templateFactory.handlebars(visitUrl, contextModel));
+            // since the "recentVisit" isn't part of the context module, we bind it first to the visit url, before doing the handlebars binding against the context
+			recentVisitsWithLinks.put(recentVisit, templateFactory.handlebars(ui.urlBind(visitUrl, recentVisit.getVisit()), contextModel));
 		}
 
 		model.addAttribute("recentVisitsWithLinks", recentVisitsWithLinks);

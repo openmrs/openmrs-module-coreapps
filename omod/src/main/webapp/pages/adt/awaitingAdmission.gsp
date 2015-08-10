@@ -154,9 +154,11 @@
             <td>${ v.paperRecordIdentifier ? ui.format(v.paperRecordIdentifier) : ''}</td>
         <% } %>
         <td>
+            <!-- only add link to patient dashboard if user has appropriate privilege -->
             <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)) { %>
-                <!-- only add link to patient dashboard if user has appropriate privilege -->
-                <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.patientId ]) }">
+                <!-- Note we support links that contain either newer way of referencing ("patient={{patient.uuid}}") or old ("patientId={{pateintId}}") -->
+                <!-- TODO: fix this so it actually passed in a UUID, not an ID, for patient and visit -->
+                <a href="${ ui.urlBind("/" + contextPath + patientPageUrl, [ "patient.uuid": patientId, patientId: patientId, "visit.uuid": visitId, "visit.id": visitId ]) }">
             <% } %>
 
             ${ ui.format((v.patientFirstName ? v.patientFirstName : '') + " " + (v.patientLastName ? v.patientLastName : '')) }
