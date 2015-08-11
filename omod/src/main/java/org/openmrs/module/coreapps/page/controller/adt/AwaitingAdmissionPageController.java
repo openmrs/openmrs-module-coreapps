@@ -7,6 +7,7 @@ import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.coreapps.CoreAppsConstants;
+import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.adt.reporting.query.AwaitingAdmissionVisitQuery;
 import org.openmrs.module.reporting.common.SortCriteria;
@@ -23,7 +24,6 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,9 +32,9 @@ public class AwaitingAdmissionPageController {
     private final Log log = LogFactory.getLog(getClass());
 
     public void get(PageModel model,
-                    @RequestParam("app") AppDescriptor app,
                     @SpringBean AllDefinitionLibraries libraries,
                     @SpringBean DataSetDefinitionService dsdService,
+                    @SpringBean CoreAppsProperties coreAppsProperties,
                     @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService) throws EvaluationException {
 
         EvaluationContext context = new EvaluationContext();
@@ -108,9 +108,10 @@ public class AwaitingAdmissionPageController {
         // used to determine whether or not we display a link to the patient in the results list
         model.addAttribute("privilegePatientDashboard", CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD);
 
-        String patientPageUrl = app.getConfig().get("patientPageUrl").getTextValue();
+        AppDescriptor app = appFrameworkService.getApp(CoreAppsConstants.AWAITING_ADMISSION);
+        String patientPageUrl = app.getConfig().get("patientPageUrl") != null
+                ? app.getConfig().get("patientPageUrl").getTextValue() : coreAppsProperties.getDashboardUrl();
         model.addAttribute("patientPageUrl", patientPageUrl);
     }
-
 
 }

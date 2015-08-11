@@ -25,6 +25,8 @@ public class CoreAppsConstants {
 
     public static final String ENCOUNTER_TEMPLATE_EXTENSION = "org.openmrs.referenceapplication.encounterTemplate";
 
+    public static final String AWAITING_ADMISSION = "coreapps.app.awaitingAdmission";
+
     @Deprecated  // no longer used, to override set coreapps.dashboardUrl instead
     public static final String GP_DEFAULT_DASHBOARD = "coreapps.defaultDashboard";
 }
