@@ -39,4 +39,15 @@ public class CoreAppsProperties extends ModuleProperties {
         }
     }
 
+    public String getDashboardUrlWithoutQueryParams() {
+        String url = getGlobalProperty(CoreAppsConstants.GP_DASHBOARD_URL, false);
+        if (!StringUtils.hasText(url)) {
+            return "/coreapps/clinicianfacing/patient.page";
+        }
+        else {
+            return url.substring(0, url.indexOf("?"));
+        }
+
+    }
+
 }
