@@ -1,7 +1,22 @@
 var visit = visit || {};
 
-visit.reloadPageWithoutVisitId = function() {
-    window.location.search = window.location.search.replace(/visitId=[^\&]*/g, "");
+visit.visitPageUrl = "/coreapps/patientdashboard/patientDashboard.page?patientId={{patientId}}";
+
+visit.patientId;
+
+
+visit.setVisitPageUrl = function (url) {
+    // we strip off any visit component,
+    visit.visitPageUrl = url.replace(/visitId=[^\&]*/g, "").replace(/visit.id=[^\&]*/g, "").replace(/visit.visitId=[^\&]*/g, "");
+}
+
+visit.setPatientId = function(patientId) {
+    visit.patientId = patientId;
+}
+
+visit.loadVisitPage = function(patientId) {
+    // note that the replace strips off any visit component
+    window.location = emr.urlBind(visit.visitPageUrl, { patientId: patientId, "patient.id": patientId });
 }
 
 visit.quickVisitCreationDialog = null;
@@ -14,9 +29,9 @@ visit.createQuickVisitCreationDialog = function(patientId) {
                     { patientId: visit.patientId, locationId: sessionLocationModel.id() },
                     function(data) {
                         jq('#quick-visit-creation-dialog' + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled')
-                        visit.reloadPageWithoutVisitId();
+                        visit.loadVisitPage();
                     },function(err){
-                        visit.reloadPageWithoutVisitId();
+                        visit.loadVisitPage();
                     });
             },
             cancel: function() {
@@ -45,7 +60,7 @@ visit.createEndVisitDialog = function() {
                     , { visitId: visit.visitId}
                     , function(data) {
                         visit.endVisitDialog.close();
-                        visit.reloadPageWithoutVisitId();
+                        visit.loadVisitPage();
                     },function(err){
                         emr.handleError(err);
                         visit.endVisitDialog.close();

@@ -50,4 +50,16 @@ public class CoreAppsProperties extends ModuleProperties {
 
     }
 
+    public String getVisitPageUrl() {
+        String url = getGlobalProperty(CoreAppsConstants.GP_VISIT_PAGE_URL, false);
+        if (!StringUtils.hasText(url)) {
+            return "/coreapps/patientdashboard/patientDashboard.page?patientId={{patientId}}&amp;visitId={{visit.id}}";
+        }
+        else {
+            return url;
+        }
+
+    }
+
+
 }
