@@ -15,10 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 public class RetrospectiveVisitFragmentController {
 
@@ -54,7 +54,7 @@ public class RetrospectiveVisitFragmentController {
                     ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
             request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
-            return SimpleObject.create("success", true, "search", "?patientId=" + patient.getId() + "&visitId=" + createdVisit.getVisit().getId());
+            return SimpleObject.create("success", true, "id", createdVisit.getVisit().getId().toString(), "uuid", createdVisit.getVisit().getUuid());
         }
         catch (ExistingVisitDuringTimePeriodException e) {
 
@@ -66,7 +66,7 @@ public class RetrospectiveVisitFragmentController {
                 for (VisitDomainWrapper visit : visits) {
                     simpleVisits.add(SimpleObject.create("startDate", ui.format(new DateTime(visit.getVisit().getStartDatetime()).toDateMidnight().toDate()),
                             "stopDate", ui.format(new DateTime(visit.getVisit().getStopDatetime()).toDateMidnight().toDate()),
-                            "id", visit.getVisit().getId()));
+                            "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));
                 }
             }
 

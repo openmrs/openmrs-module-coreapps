@@ -5,16 +5,16 @@ visit.reloadPageWithoutVisitId = function() {
 }
 
 visit.quickVisitCreationDialog = null;
-visit.createQuickVisitCreationDialog = function(patientId) {
+visit.createQuickVisitCreationDialog = function() {
     visit.quickVisitCreationDialog = emr.setupConfirmationDialog({
         selector: '#quick-visit-creation-dialog',
         actions: {
             confirm: function() {
                 emr.getFragmentActionWithCallback('coreapps', 'visit/quickVisit', 'create',
                     { patientId: visit.patientId, locationId: sessionLocationModel.id() },
-                    function(data) {
-                        jq('#quick-visit-creation-dialog' + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled')
-                        visit.reloadPageWithoutVisitId();
+                    function(v) {
+                        jq('#quick-visit-creation-dialog' + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
+                        visit.goToReturnUrl(visit.patientId, v);
                     },function(err){
                         visit.reloadPageWithoutVisitId();
                     });
@@ -80,7 +80,7 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
                     function(data) {
                         if (data.success) {
                             jq('#retrospective-visit-creation-dialog .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
-                            window.location.search = data.search;
+                            visit.goToReturnUrl(patientId, data);
                         }
                         else {
                            // display the past visits within the existing visits dialog (which we open below)
@@ -97,7 +97,7 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
                                     	visit.retrospectiveVisitExistingVisitsDialog.close();
                                     	jq('.viewVisitDetails').filter('[data-visit-Id=' + v.id + ']').click();
 									} else {
-										window.location = visit.contextPath + "/coreapps/patientdashboard/patientDashboard.page?patientId=" + patientId + "&visitId=" + v.id + "#visits";
+                                        visit.goToReturnUrl(patientId, v);
 									}
                                 });
 
@@ -142,6 +142,10 @@ visit.createRetrospectiveVisitExistingVisitsDialog = function() {
     });
 }
 
+visit.goToReturnUrl = function(patientId, v) {
+    emr.navigateTo({ applicationUrl: emr.applyContextModel("/coreapps/patientdashboard/patientDashboard.page?patientId={{patientId}}&visitId={{visitId}}", { patientId: patientId, visitId: v.id }) });
+}
+
 var editVisitDialogs = [];
 function showEditVisitDateDialog(visitId) {
     if (!editVisitDialogs[visitId]) {
@@ -153,6 +157,7 @@ function showEditVisitDateDialog(visitId) {
                     $.getJSON(url, $('#edit-visit-dates-dialog-form-' + visitId).serialize()).success(function(data) {
                             if (data.success) {
                                 jq('#edit-visit-dates-dialog-form-' + visitId + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
+                                // TODO Do we need to update this to specify return url, or is this link only going  to ever be used from the old visits view? 
                                 window.location.search = data.search;
                             }
                         }
