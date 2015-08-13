@@ -80,7 +80,8 @@ public class RetrospectiveVisitFragmentControllerTest {
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         assertTrue((Boolean) result.get("success"));
-        assertThat((String) result.get("search"), is("?patientId=1&visitId=1"));
+        assertThat((String) result.get("id"), is(visit.getId().toString()));
+        assertThat((String) result.get("uuid"), is(visit.getUuid()));
     }
 
     @Test
@@ -107,7 +108,8 @@ public class RetrospectiveVisitFragmentControllerTest {
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         assertTrue((Boolean) result.get("success"));
-        assertThat((String) result.get("search"), is("?patientId=1&visitId=1"));
+        assertThat((String) result.get("id"), is(visit.getId().toString()));
+        assertThat((String) result.get("uuid"), is(visit.getUuid()));
     }
 
     @Test
@@ -136,7 +138,7 @@ public class RetrospectiveVisitFragmentControllerTest {
         List<SimpleObject> result = (List<SimpleObject>) controller.create(adtService, patient, location, startDate, null, request, ui);
 
         assertThat(result.size(), is(1));
-        assertThat(result.get(0).toJson(), is("{\"startDate\":\"someDate\",\"stopDate\":\"someDate\",\"id\":null}"));
+        assertThat(result.get(0).toJson(), is("{\"startDate\":\"someDate\",\"stopDate\":\"someDate\",\"id\":null,\"uuid\":\"" + conflictingVisit.getUuid() + "\"}"));
     }
 
 
