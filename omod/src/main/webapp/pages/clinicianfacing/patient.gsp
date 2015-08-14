@@ -22,7 +22,7 @@
 
 <% if(includeFragments){
     includeFragments.each{ %>
-        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment)}
+        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, it.extensionParams.fragmentConfig)}
 <%   }
 } %>
 
