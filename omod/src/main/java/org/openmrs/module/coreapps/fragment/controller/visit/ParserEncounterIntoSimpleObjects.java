@@ -102,6 +102,14 @@ public class ParserEncounterIntoSimpleObjects {
                 parsedObs.getObs().add(parseObs(obs, locale));
             }
 		}
+
+        // just sort the obs by obsId--not perfect, but a decent "natural" object
+        Collections.sort(parsedObs.getObs(), new Comparator<SimpleObject>() {
+            @Override
+            public int compare(SimpleObject o1, SimpleObject o2) {
+                return (Integer) o1.get("obsId") < (Integer) o2.get("obsId") ? -1 : 1;
+            }
+        });
 		
 		Collections.sort(parsedObs.getDiagnoses(), new Comparator<SimpleObject>() {
 			
