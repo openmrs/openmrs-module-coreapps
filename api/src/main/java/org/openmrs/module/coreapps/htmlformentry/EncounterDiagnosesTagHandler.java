@@ -31,6 +31,7 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
 
     private AdtService adtService;
 
+    private UiUtils uiUtils;
 
     public EmrApiProperties getEmrApiProperties() {
         return emrApiProperties;
@@ -56,12 +57,19 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
         this.adtService = adtService;
     }
 
+    public UiUtils getUiUtils() {
+        return uiUtils;
+    }
+
+    public void setUiUtils(UiUtils uiUtils) {
+        this.uiUtils = uiUtils;
+    }
+
     @Override
     protected String getSubstitution(FormEntrySession session, FormSubmissionController controller, Map<String, String> attributes) throws BadFormDesignException {
-        UiUtils uiUtils = (UiUtils) session.getAttribute("uiUtils");
 
         EncounterDiagnosesElement element = new EncounterDiagnosesElement();
-        element.setUiUtils(uiUtils);
+        element.setUiUtils(session.getAttribute("uiUtils") != null ? (UiUtils) session.getAttribute("uiUtils") : uiUtils);  // pull from the session if available, otherwise fall back to basic ui utils
         element.setRequired("true".equals(attributes.get("required")));
         element.setSelectedDiagnosesTarget(attributes.get("selectedDiagnosesTarget"));
         element.setEmrApiProperties(emrApiProperties);
