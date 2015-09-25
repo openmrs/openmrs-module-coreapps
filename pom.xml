@@ -39,7 +39,7 @@
         <distro.version>2.3-SNAPSHOT</distro.version>
         <appframeworkVersion>2.1</appframeworkVersion>
         <uiframeworkVersion>3.4</uiframeworkVersion>
-        <emrapiVersion>1.11-SNAPSHOT</emrapiVersion>
+        <emrapiVersion>1.11.1</emrapiVersion>
         <appuiVersion>1.3</appuiVersion>
         <idgenVersion>3.0</idgenVersion>
         <webservicesRestVersion>2.8</webservicesRestVersion>
