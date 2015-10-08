@@ -107,7 +107,7 @@
                     ${ui.message("coreapps.unknownAge")}
                 <% } %>
                 </span>
-                <span class="edit-info">
+                <span id="contact-info-edit" class="edit-info">
                     <small>
                         <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientDemographics", contextModel: appContextModel ]) %>
                     </small>
