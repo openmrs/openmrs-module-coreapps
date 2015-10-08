@@ -10,7 +10,7 @@
     </small>
 </div>
 
-<div id="contact-info-edit" class="contact-info">
+<div id="edit-contact-info" class="contact-info">
     <div>
         <strong>${ ui.message("coreapps.person.address")}: </strong><br />
         <div class="left-margin">${ ui.format(config.patient.personAddress).replace("\n", "<br />") }</div>
