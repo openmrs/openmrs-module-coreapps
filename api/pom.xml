@@ -65,11 +65,11 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.10</artifactId>
+            <artifactId>emrapi-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.11</artifactId>
+            <artifactId>emrapi-api-1.10</artifactId>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
@@ -80,7 +80,6 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>providermanagement-api</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -96,13 +95,11 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>serialization.xstream-api</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>calculation-api</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
