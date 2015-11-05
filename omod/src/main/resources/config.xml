@@ -120,6 +120,22 @@
     </globalProperty>
 
     <globalProperty>
+        <property>coreapps.visitsPageUrl</property>
+        <defaultValue>/coreapps/patientdashboard/patientDashboard.page?patientId={{patientId}}&#35;visits</defaultValue>
+        <description>
+            Allows one to override the default general patient visits page
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>coreapps.visitsPageWithSpecificVisitUrl</property>
+        <defaultValue>/coreapps/patientdashboard/patientDashboard.page?patientId={{patientId}}&amp;visitId={{visit.id}}&#35;</defaultValue>
+        <description>
+            Allows one to override the default page that displays the details of a specific patient visit
+        </description>
+    </globalProperty>
+
+    <globalProperty>
         <property>coreapps.searchDelayShort</property>
         <defaultValue>300</defaultValue>
         <description>

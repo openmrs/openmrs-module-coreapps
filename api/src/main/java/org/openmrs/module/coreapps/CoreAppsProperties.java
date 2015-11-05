@@ -50,4 +50,24 @@ public class CoreAppsProperties extends ModuleProperties {
 
     }
 
+    public String getVisitsPageUrl() {
+        String url = getGlobalProperty(CoreAppsConstants.GP_VISITS_PAGE_URL, false);
+        if (!StringUtils.hasText(url)) {
+            return "/coreapps/patientdashboard/patientDashboard.page?patientId={{patientId}}#visits";
+        }
+        else {
+            return url;
+        }
+    }
+
+    public String getVisitsPageWithSpecificVisitUrl() {
+        String url = getGlobalProperty(CoreAppsConstants.GP_VISITS_PAGE_WITH_SPECIFIC_URL, false);
+        if (!StringUtils.hasText(url)) {
+            return "/coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}&visitId={{visit.id}}#visits";
+        }
+        else {
+            return url;
+        }
+    }
+
 }
