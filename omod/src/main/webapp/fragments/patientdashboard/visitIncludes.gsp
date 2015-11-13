@@ -57,7 +57,7 @@
                 ${ ui.message("coreapps.startDate.label") }
             </label>
             <%  def visitEndTime = new Date()
-                if (patient.patient.dead) {
+                if (patient.patient.deathDate) {
                   visitEndTime = patient.patient.deathDate
                 }
             %>
