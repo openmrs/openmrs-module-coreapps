@@ -21,11 +21,11 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
-import org.openmrs.layout.web.name.NameSupport;
-import org.openmrs.layout.web.name.NameTemplate;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
+import org.openmrs.module.coreapps.NameSupportCompatibility;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -108,10 +108,11 @@ public class PatientHeaderFragmentController {
 
     private Map<String,String> getNames(PersonName personName) {
 
+    	NameSupportCompatibility nameSupport = Context.getRegisteredComponent("coreapps.NameSupportCompatibility", NameSupportCompatibility.class);
+    	
         Map<String, String> nameFields = new LinkedHashMap<String, String>();
-        NameTemplate nameTemplate = NameSupport.getInstance().getDefaultLayoutTemplate();
-        List<List<Map<String, String>>> lines = nameTemplate.getLines();
-        String layoutToken = nameTemplate.getLayoutToken();
+        List<List<Map<String, String>>> lines = nameSupport.getLines();
+        String layoutToken = nameSupport.getLayoutToken();
 
         // note that the assumption is one one field per "line", otherwise the labels that appear under each field may not render properly
         try {
@@ -122,7 +123,7 @@ public class PatientHeaderFragmentController {
                 for (Map<String, String> lineToken : line) {
                     if (lineToken.get("isToken").equals(layoutToken)) {
                         String tokenValue = BeanUtils.getProperty(personName, lineToken.get("codeName"));
-                        nameLabel = nameTemplate.getNameMappings().get(lineToken.get("codeName"));
+                        nameLabel = nameSupport.getNameMappings().get(lineToken.get("codeName"));
                         if (StringUtils.isNotBlank(tokenValue)) {
                             hasToken = true;
                             nameLine += tokenValue;

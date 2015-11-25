@@ -19,7 +19,9 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.module.coreapps.EncounterServiceCompatibility;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
@@ -54,7 +56,8 @@ public class MostRecentEncounterFragmentController {
 
 		encounterTypes.add(encounterType);
 
-		List<Encounter> encounters = encounterService.getEncounters(patient, null, null, null, null, encounterTypes, null,
+		EncounterServiceCompatibility service = Context.getRegisteredComponent("coreapps.EncounterServiceCompatibility", EncounterServiceCompatibility.class);
+		List<Encounter> encounters = service.getEncounters(Context.getEncounterService(), patient, null, null, null, null, encounterTypes, null,
 		    null, null, false);
 
 		model.addAttribute("app", app);
