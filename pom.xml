@@ -3,7 +3,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>coreapps</artifactId>
-	<version>1.8</version>
+	<version>1.9-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Core Apps Module</name>
 	<description>Provides apps for performing the common tasks</description>
@@ -24,7 +24,7 @@
 		<connection>scm:git:git@github.com:openmrs/openmrs-module-coreapps.git</connection>
 		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-coreapps.git</developerConnection>
 		<url>https://github.com/openmrs/openmrs-module-coreapps</url>
-    <tag>1.8</tag>
+    <tag>HEAD</tag>
   </scm>
 
 	<modules>
