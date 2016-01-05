@@ -23,6 +23,8 @@ import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
+import org.openmrs.module.appframework.domain.Extension;
+import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.NameSupportCompatibility;
@@ -42,6 +44,7 @@ import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +60,7 @@ public class PatientHeaderFragmentController {
 	                       @SpringBean("baseIdentifierSourceService") IdentifierSourceService identifierSourceService,
                            @FragmentParam(required = false, value="appContextModel") AppContextModel appContextModel,
 	                       @FragmentParam("patient") Object patient, @InjectBeans PatientDomainWrapper wrapper,
+	                       @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
 	                       @SpringBean("adtService") AdtService adtService, UiSessionContext sessionContext,
                            UiUtils uiUtils,
                            FragmentModel model) {
@@ -90,7 +94,15 @@ public class PatientHeaderFragmentController {
             config.addAttribute("activeVisit", activeVisit);
             config.addAttribute("activeVisitStartDatetime", uiUtils.format(activeVisit.getStartDatetime()));
         }
-		
+
+        List<Extension> firstLineFragments = appFrameworkService.getExtensionsForCurrentUser("patientHeader.firstLineFragments");
+        Collections.sort(firstLineFragments);
+        model.addAttribute("firstLineFragments", firstLineFragments);
+
+        List<Extension> secondLineFragments = appFrameworkService.getExtensionsForCurrentUser("patientHeader.secondLineFragments");
+        Collections.sort(secondLineFragments);
+        model.addAttribute("secondLineFragments", secondLineFragments);
+
 		List<ExtraPatientIdentifierType> extraPatientIdentifierTypes = new ArrayList<ExtraPatientIdentifierType>();
 
 		for (PatientIdentifierType type : emrApiProperties.getExtraPatientIdentifierTypes()) {
