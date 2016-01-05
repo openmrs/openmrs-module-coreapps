@@ -15,6 +15,7 @@ public class VisitContextModel {
     private boolean admitted;
     private Long stopDatetimeInMilliseconds;
     private Long startDatetimeInMilliseconds;
+    private Date stopDatetime;
 
     public VisitContextModel(VisitDomainWrapper visit) {
         this.id = visit.getVisitId();
@@ -24,6 +25,7 @@ public class VisitContextModel {
         this.startDatetimeInMilliseconds = visit.getStartDatetime().getTime();
 
         Date stopDatetime = visit.getStopDatetime();
+        this.stopDatetime = stopDatetime;
 
         if(stopDatetime!=null){
             this.stopDatetimeInMilliseconds = stopDatetime.getTime();
@@ -57,4 +59,7 @@ public class VisitContextModel {
         return startDatetimeInMilliseconds;
     }
 
+    public Date getStopDatetime() {
+        return stopDatetime;
+    }
 }

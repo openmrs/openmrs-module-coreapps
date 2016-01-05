@@ -3,9 +3,11 @@ package org.openmrs.module.coreapps.page.controller.adt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.coreapps.CoreAppsConstants;
+import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.adt.reporting.query.AwaitingAdmissionVisitQuery;
 import org.openmrs.module.reporting.common.SortCriteria;
@@ -32,6 +34,7 @@ public class AwaitingAdmissionPageController {
     public void get(PageModel model,
                     @SpringBean AllDefinitionLibraries libraries,
                     @SpringBean DataSetDefinitionService dsdService,
+                    @SpringBean CoreAppsProperties coreAppsProperties,
                     @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService) throws EvaluationException {
 
         EvaluationContext context = new EvaluationContext();
@@ -104,7 +107,11 @@ public class AwaitingAdmissionPageController {
 
         // used to determine whether or not we display a link to the patient in the results list
         model.addAttribute("privilegePatientDashboard", CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD);
-    }
 
+        AppDescriptor app = appFrameworkService.getApp(CoreAppsConstants.AWAITING_ADMISSION);
+        String patientPageUrl = app.getConfig().get("patientPageUrl") != null
+                ? app.getConfig().get("patientPageUrl").getTextValue() : coreAppsProperties.getDashboardUrl();
+        model.addAttribute("patientPageUrl", patientPageUrl);
+    }
 
 }

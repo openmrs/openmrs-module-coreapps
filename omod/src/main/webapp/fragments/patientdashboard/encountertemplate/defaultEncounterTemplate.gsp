@@ -69,7 +69,7 @@
 
     {{ _.each(orders, function(order) { }}
         <p>
-            <small>${ ui.message("coreapps.patientDashBoard.accessionNumber")}</small><span>{{- order.accessionNumber }}</span>
+            <small>${ ui.message("coreapps.patientDashBoard.orderNumber")}</small><span>{{- order.orderNumber }}</span>
         </p>
         <p>
             <small>${ ui.message("coreapps.patientDashBoard.order")}</small><span>{{- order.concept }}</span>

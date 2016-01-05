@@ -2,29 +2,27 @@
 def patient = config.patient
     def patientNames = config.patientNames
 
-        def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy hh:mm a")
+    ui.includeCss("coreapps", "patientHeader.css")
+    ui.includeJavascript("coreapps", "patientdashboard/patient.js")
 
-            ui.includeCss("coreapps", "patientHeader.css")
-            ui.includeJavascript("coreapps", "patientdashboard/patient.js")
-
-            appContextModel.put("returnUrl", ui.thisUrl())
-            %>
+    appContextModel.put("returnUrl", ui.thisUrl())
+%>
 
 
-            <script type="text/javascript">
-                var addMessage = "${ ui.message("coreapps.patient.identifier.add") }";
-                jq(document).ready(function () {
-                    createEditPatientIdentifierDialog(${patient.id});
-                    jq("#patientIdentifierValue").keyup(function(event){
-                        var oldValue = jq("#patientIdentifierValue").val();
-                        var newValue = jq("#hiddenInitialIdentifierValue").val();
-                        if(oldValue==newValue){
-                            jq('.confirm').attr("disabled", "disabled");
-                            jq('.confirm').addClass("disabled");
-                        }else{
-                            jq('.confirm').removeAttr("disabled");
-                            jq('.confirm').removeClass("disabled");
-                            if(event.keyCode == 13){
+<script type="text/javascript">
+    var addMessage = "${ ui.message("coreapps.patient.identifier.add") }";
+    jq(document).ready(function () {
+        createEditPatientIdentifierDialog(${patient.id});
+        jq("#patientIdentifierValue").keyup(function(event){
+            var oldValue = jq("#patientIdentifierValue").val();
+            var newValue = jq("#hiddenInitialIdentifierValue").val();
+            if(oldValue==newValue){
+                jq('.confirm').attr("disabled", "disabled");
+                jq('.confirm').addClass("disabled");
+            }else{
+                jq('.confirm').removeAttr("disabled");
+                jq('.confirm').removeClass("disabled");
+                if(event.keyCode == 13){
                     //ENTER key has been pressed
                     jq('#confirmIdentifierId').click();
                 }
@@ -52,26 +50,11 @@ def patient = config.patient
 
                     });
 
-        // generally clicking on the header should return to the clinician-facing dashboard, but we added this
-        // global property to allow the link to go to the "Visits" dashboard for legacy implementations
-        <% if (!config.defaultDashboard || config.defaultDashboard.toUpperCase() != 'VISITS') { %>
-            jq(".demographics .name").click(function () {
-                emr.navigateTo({
-                    provider: 'coreapps',
-                    page: 'clinicianfacing/patient',
-                    query: { patientId: ${patient.patient.id} }
-                });
-            })
-            <% } else { %>
-                jq(".demographics .name").click(function () {
-                    emr.navigateTo({
-                        provider: 'coreapps',
-                        page: 'patientdashboard/patientDashboard',
-                        query: { patientId: ${patient.patient.id} }
-                    });
-                })
-                <% } %>
-
+        jq(".demographics .name").click(function () {
+            emr.navigateTo({
+                url: "${ ui.urlBind("/" + contextPath + config.dashboardUrl, [ patientId: patient.patient.id ] ) }"
+            });
+        })
                 jq("#patient-header-contactInfo").click(function (){
                     var contactInfoDialogDiv = jq("#contactInfoContent");
 
@@ -123,7 +106,7 @@ def patient = config.patient
                     ${ui.message("coreapps.unknownAge")}
                     <% } %>
                 </span>
-                <span class="edit-info">
+                <span id="edit-patient-demographics" class="edit-info">
                     <small>
                         <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientDemographics", contextModel: appContextModel ]) %>
                     </small>

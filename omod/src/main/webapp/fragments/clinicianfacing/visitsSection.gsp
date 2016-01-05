@@ -4,7 +4,7 @@
 <div class="info-section">
     <div class="info-header">
         <i class="icon-calendar"></i>
-        <h3>${ ui.message("coreapps.clinicianfacing.visits").toUpperCase() }</h3>
+        <h3>${ ui.message("coreapps.clinicianfacing.recentVisits").toUpperCase() }</h3>
         <% if (context.hasPrivilege("App: coreapps.patientVisits")) { %>
             <a href="${visitsUrl}" class="right">
                 <i class="icon-share-alt edit-action" title="${ ui.message("coreapps.edit") }"></i>

@@ -6,7 +6,7 @@
     ui.includeCss("coreapps", "patientsearch/patientSearchWidget.css")
     ui.includeJavascript("uicommons", "datatables/jquery.dataTables.min.js")
     ui.includeJavascript("coreapps", "patientsearch/patientSearchWidget.js")
-    ui.includeJavascript("uicommons", "moment.min.js")
+    ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 %>
 <script type="text/javascript">
 
@@ -35,6 +35,9 @@
             searchDelayShort: ${ searchDelayShort },
             searchDelayLong: ${ searchDelayLong },
             handleRowSelection: ${ config.rowSelectionHandler ?: "handlePatientRowSelection" },
+            dateFormat: '${ dateFormatJS }',
+            locale: '${ locale }',
+            defaultLocale: '${ defaultLocale }',
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
                 first: '${ ui.message("coreapps.search.first") }',

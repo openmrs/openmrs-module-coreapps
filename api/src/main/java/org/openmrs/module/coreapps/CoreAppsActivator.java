@@ -15,6 +15,7 @@ package org.openmrs.module.coreapps;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.GlobalProperty;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
@@ -28,6 +29,8 @@ import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
+import org.openmrs.ui.framework.BasicUiUtils;
+import org.openmrs.ui.framework.UiUtils;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -56,11 +59,12 @@ public class CoreAppsActivator extends BaseModuleActivator {
      * @param emrApiProperties
      * @return
      */
-    public static EncounterDiagnosesTagHandler setupEncounterDiagnosesTagHandler(ConceptService conceptService, AdtService adtService, EmrApiProperties emrApiProperties) {
+    public static EncounterDiagnosesTagHandler setupEncounterDiagnosesTagHandler(ConceptService conceptService, AdtService adtService, EmrApiProperties emrApiProperties, UiUtils uiUtils) {
         EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = new EncounterDiagnosesTagHandler();
         encounterDiagnosesTagHandler.setEmrApiProperties(emrApiProperties);
         encounterDiagnosesTagHandler.setConceptService(conceptService);
         encounterDiagnosesTagHandler.setAdtService(adtService);
+        encounterDiagnosesTagHandler.setUiUtils(uiUtils);
         return encounterDiagnosesTagHandler;
     }
 
@@ -75,6 +79,25 @@ public class CoreAppsActivator extends BaseModuleActivator {
 	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
+		ConceptService conceptService = Context.getConceptService();
+        EmrApiProperties emrApiProperties = Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class);
+        DispositionService dispositionService = Context.getRegisteredComponent("dispositionService", DispositionService.class);
+        AdtService adtService = Context.getRegisteredComponent("adtService", AdtService.class);
+        UiUtils uiUtils = Context.getRegisteredComponent("uiUtils", BasicUiUtils.class);
+        FeatureToggleProperties featureToggles = Context.getRegisteredComponent("featureToggles", FeatureToggleProperties.class);
+
+        if (ModuleFactory.isModuleStarted("htmlformentry")) {
+            HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
+
+            EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, emrApiProperties, uiUtils);
+            htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
+
+            EncounterDispositionTagHandler encounterDispositionTagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService, adtService, featureToggles);
+            htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, encounterDispositionTagHandler);
+
+            htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_CODED_OR_FREE_TEXT_OBS_TAG_NAME, new CodedOrFreeTextObsTagHandler());
+        }
+        
 		log.info("Core Apps Module refreshed");
 	}
 	
@@ -89,22 +112,11 @@ public class CoreAppsActivator extends BaseModuleActivator {
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
-        ConceptService conceptService = Context.getConceptService();
-        EmrApiProperties emrApiProperties = Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class);
-        DispositionService dispositionService = Context.getRegisteredComponent("dispositionService", DispositionService.class);
-        AdtService adtService = Context.getRegisteredComponent("adtService", AdtService.class);
-        FeatureToggleProperties featureToggles = Context.getRegisteredComponent("featureToggles", FeatureToggleProperties.class);
 
-        if (ModuleFactory.isModuleStarted("htmlformentry")) {
-            HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
-
-            EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, emrApiProperties);
-            htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
-
-            EncounterDispositionTagHandler encounterDispositionTagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService, adtService, featureToggles);
-            htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, encounterDispositionTagHandler);
-
-            htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_CODED_OR_FREE_TEXT_OBS_TAG_NAME, new CodedOrFreeTextObsTagHandler());
+        // purge old global property no longer used
+        GlobalProperty defaultDashboard = Context.getAdministrationService().getGlobalPropertyObject(CoreAppsConstants.GP_DEFAULT_DASHBOARD);
+        if (defaultDashboard != null) {
+            Context.getAdministrationService().purgeGlobalProperty(defaultDashboard);
         }
 
         log.info("Core Apps Module started");
@@ -116,7 +128,7 @@ public class CoreAppsActivator extends BaseModuleActivator {
 	public void willStop() {
 		log.info("Stopping Core Apps Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#stopped()
 	 */

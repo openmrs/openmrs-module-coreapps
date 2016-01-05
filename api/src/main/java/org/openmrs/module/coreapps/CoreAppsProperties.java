@@ -29,9 +29,45 @@ public class CoreAppsProperties extends ModuleProperties {
 		return 730; //2 years
 	}
 
-    // TODO remove this and just always default to clinician dashboard once legacy implementations (Mirebalais) move to clinician dashboard
-    public String getDefaultDashboard() {
-        return getGlobalProperty(CoreAppsConstants.GP_DEFAULT_DASHBOARD, false);
+    public String getDashboardUrl() {
+        String url = getGlobalProperty(CoreAppsConstants.GP_DASHBOARD_URL, false);
+        if (!StringUtils.hasText(url)) {
+            return "/coreapps/clinicianfacing/patient.page?patientId={{patientId}}&app=pih.app.clinicianDashboard";
+        }
+        else {
+            return url;
+        }
+    }
+
+    public String getDashboardUrlWithoutQueryParams() {
+        String url = getGlobalProperty(CoreAppsConstants.GP_DASHBOARD_URL, false);
+        if (!StringUtils.hasText(url)) {
+            return "/coreapps/clinicianfacing/patient.page";
+        }
+        else {
+            return url.substring(0, url.indexOf("?"));
+        }
+
+    }
+
+    public String getVisitsPageUrl() {
+        String url = getGlobalProperty(CoreAppsConstants.GP_VISITS_PAGE_URL, false);
+        if (!StringUtils.hasText(url)) {
+            return "/coreapps/patientdashboard/patientDashboard.page?patientId={{patientId}}#visits";
+        }
+        else {
+            return url;
+        }
+    }
+
+    public String getVisitsPageWithSpecificVisitUrl() {
+        String url = getGlobalProperty(CoreAppsConstants.GP_VISITS_PAGE_WITH_SPECIFIC_URL, false);
+        if (!StringUtils.hasText(url)) {
+            return "/coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}&visitId={{visit.id}}#visits";
+        }
+        else {
+            return url;
+        }
     }
 
 }

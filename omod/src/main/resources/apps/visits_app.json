@@ -1,0 +1,19 @@
+[
+  {
+    "id": "coreapps.visits",
+    "label": "coreapps.clinicianfacing.visits",
+    "icon": "icon-calendar",
+    "order": 1,
+    "extensions": [
+      {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.vitals.clinicianDashboardSecondColumn",
+        "appId": "coreapps.visits",
+        "extensionPointId": "patientDashboard.secondColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "clinicianfacing/visitsSection"
+        }
+      }
+    ]
+  }
+]

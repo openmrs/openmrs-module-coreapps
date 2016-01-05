@@ -52,7 +52,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
         <h1>${ ui.message("coreapps.vitals.confirmPatientQuestion") }</h1>
 
         <div id="actions">
-            <button class="confirm big right">
+            <button id="coreapps-vitals-confirm" class="confirm big right">
                 <i class="icon-arrow-right"></i>
                 ${ ui.message("coreapps.vitals.confirm.yes") }
             </button>

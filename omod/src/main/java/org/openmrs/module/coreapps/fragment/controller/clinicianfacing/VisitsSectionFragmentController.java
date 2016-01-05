@@ -18,6 +18,7 @@ import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.template.TemplateFactory;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
@@ -44,6 +45,7 @@ public class VisitsSectionFragmentController {
 						   UiUtils ui,
 						   UiSessionContext sessionContext,
 						   @SpringBean("appframeworkTemplateFactory") TemplateFactory templateFactory,
+                           @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
 						   @InjectBeans PatientDomainWrapper patientWrapper) {
 		config.require("patient");
 		Object patient = config.get("patient");
@@ -59,25 +61,31 @@ public class VisitsSectionFragmentController {
 		contextModel.put("patient", new PatientContextModel(patientWrapper.getPatient()));
 
 		AppDescriptor app = (AppDescriptor) pageModel.get("app");
-		String visitUrl = null;
-		String visitsUrl = null;
+		String visitsPageWithSpecificVisitUrl = null;
+		String visitsPageUrl = null;
 		if (app != null) {
 			try {
-				visitUrl = app.getConfig().get("visitUrl").getTextValue();
+				visitsPageWithSpecificVisitUrl = app.getConfig().get("visitUrl").getTextValue();
 			} catch (Exception ex) { }
 			try {
-				visitsUrl = app.getConfig().get("visitsUrl").getTextValue();
+				visitsPageUrl = app.getConfig().get("visitsUrl").getTextValue();
 			} catch (Exception ex) { }
 		}
-		if (visitUrl == null) {
-			visitUrl = "coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}&visitId={{visit.id}}#visits";
+        if (visitsPageWithSpecificVisitUrl == null) {
+            visitsPageWithSpecificVisitUrl = coreAppsProperties.getVisitsPageWithSpecificVisitUrl();
+        }
+        if (visitsPageWithSpecificVisitUrl == null) {
+			visitsPageWithSpecificVisitUrl = "coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}&visitId={{visit.id}}#visits";
 		}
-		visitUrl = "/" + ui.contextPath() + "/" + visitUrl;
-		if (visitsUrl == null) {
-			visitsUrl = "coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}#visits";
+		visitsPageWithSpecificVisitUrl = "/" + ui.contextPath() + "/" + visitsPageWithSpecificVisitUrl;
+        if (visitsPageUrl == null) {
+            visitsPageUrl = coreAppsProperties.getVisitsPageUrl();
+        }
+        if (visitsPageUrl == null) {
+			visitsPageUrl = "coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}#visits";
 		}
-		visitsUrl = "/" + ui.contextPath() + "/" + visitsUrl;
-		model.addAttribute("visitsUrl", templateFactory.handlebars(visitsUrl, contextModel));
+		visitsPageUrl = "/" + ui.contextPath() + "/" + visitsPageUrl;
+		model.addAttribute("visitsUrl", templateFactory.handlebars(visitsPageUrl, contextModel));
 
 		List<VisitDomainWrapper> recentVisits = patientWrapper.getAllVisitsUsingWrappers();
 		if (recentVisits.size() > 5) {
@@ -87,7 +95,8 @@ public class VisitsSectionFragmentController {
 		Map<VisitDomainWrapper, String> recentVisitsWithLinks = new LinkedHashMap<VisitDomainWrapper, String>();
 		for (VisitDomainWrapper recentVisit : recentVisits) {
 			contextModel.put("visit", new VisitContextModel(recentVisit));
-			recentVisitsWithLinks.put(recentVisit, templateFactory.handlebars(visitUrl, contextModel));
+            // since the "recentVisit" isn't part of the context module, we bind it first to the visit url, before doing the handlebars binding against the context
+			recentVisitsWithLinks.put(recentVisit, templateFactory.handlebars(ui.urlBind(visitsPageWithSpecificVisitUrl, recentVisit.getVisit()), contextModel));
 		}
 
 		model.addAttribute("recentVisitsWithLinks", recentVisitsWithLinks);

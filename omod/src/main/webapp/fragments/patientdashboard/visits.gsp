@@ -1,6 +1,6 @@
 <%
-    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy")
-    def timeFormat = new java.text.SimpleDateFormat("hh:mm a")
+
+    def timeFormat = new java.text.SimpleDateFormat("hh:mm a", org.openmrs.api.context.Context.getLocale() )
     def editDateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
 
     def formatDiagnoses = {
@@ -62,21 +62,24 @@
     <li class="menu-item viewVisitDetails" data-visit-id="${wrapper.visit.visitId}">
         <span class="menu-date">
             <i class="icon-time"></i>
-            ${dateFormat.format(wrapper.visit.startDatetime)}
-            <% if(wrapper.visit.stopDatetime != null) { %>
-                - ${dateFormat.format(wrapper.visit.stopDatetime)}
+            ${ui.format(wrapper.startDate)}
+            <% if(wrapper.stopDate != null) { %>
+                - ${ui.format(wrapper.stopDate)}
             <% } else { %>
                 (${ ui.message("coreapps.patientDashBoard.activeSince")} ${timeFormat.format(wrapper.visit.startDatetime)})
             <% } %>
         </span>
-        <span class="menu-title">
-            <i class="icon-stethoscope"></i>
-            <% if (primaryDiagnoses) { %>
-                ${ formatDiagnoses(primaryDiagnoses) }
-            <% } else { %>
-                ${ ui.message("coreapps.patientDashBoard.noDiagnosis")}
-            <% } %>
-        </span>
+
+        <% if (primaryDiagnoses != null) { %>  <!-- if primary diagnosis is null, don't display box at all, if empty, display "no diagnosis" message -->
+            <span class="menu-title">
+                <i class="icon-stethoscope"></i>
+                <% if (!primaryDiagnoses.empty) { %>
+                    ${ formatDiagnoses(primaryDiagnoses) }
+                <% }  else { %>
+                    ${ ui.message("coreapps.patientDashBoard.noDiagnosis")}
+                <% } %>
+            </span>
+        <% } %>
         <span class="arrow-border"></span>
         <span class="arrow"></span>
     </li>

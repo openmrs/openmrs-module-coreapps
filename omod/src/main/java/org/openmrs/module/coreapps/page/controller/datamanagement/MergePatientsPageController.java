@@ -14,8 +14,11 @@
 
 package org.openmrs.module.coreapps.page.controller.datamanagement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Patient;
+import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.module.appframework.template.TemplateFactory;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.helper.BreadcrumbHelper;
@@ -28,9 +31,9 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 
 public class MergePatientsPageController {
 
@@ -48,6 +51,7 @@ public class MergePatientsPageController {
         pageModel.addAttribute("patient1", null);
         pageModel.addAttribute("patient2", null);
         pageModel.addAttribute("isUnknownPatient", isUnknownPatient);
+
         BreadcrumbHelper.addBreadcrumbsIfDefinedInApp(app, pageModel, ui);
 
         if (patient1 != null && patient2 == null ) {
@@ -85,6 +89,9 @@ public class MergePatientsPageController {
                        @RequestParam(value = "isUnknownPatient", defaultValue = "false") boolean isUnknownPatient,
                        @InjectBeans PatientDomainWrapper preferredWrapper,
                        @InjectBeans PatientDomainWrapper notPreferredWrapper,
+                       @RequestParam("app") AppDescriptor app,
+                       @SpringBean("appframeworkTemplateFactory") TemplateFactory templateFactory,
+                       UiSessionContext sessionContext,
                        @SpringBean("adtService") AdtService adtService) {
         Patient notPreferred = patient1.equals(preferred) ? patient2 : patient1;
 
@@ -112,7 +119,21 @@ public class MergePatientsPageController {
 
         request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "coreapps.mergePatients.success");
         request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
-        return "redirect:" + ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", preferred.getId()));
+        String provider = "coreapps";
+        String fragment = "patientdashboard/patientDashboard";
+        String returnUrl = null;
+        if (app.getConfig().get("dashboardUrl") != null ) {
+            returnUrl = app.getConfig().get("dashboardUrl").getTextValue();
+        }
+
+        if (StringUtils.isNotBlank(returnUrl)) {
+            AppContextModel contextModel = sessionContext.generateAppContextModel();
+            contextModel.put("patientId", preferred.getId());
+            returnUrl = templateFactory.handlebars(returnUrl, contextModel);
+        } else {
+            returnUrl = ui.pageLink(provider, fragment, SimpleObject.create("patientId", preferred.getId()));
+        }
+        return "redirect:" + returnUrl;
     }
 
 }

@@ -12,7 +12,7 @@
     },
     "extensions": [
       {
-        "id": "${project.parent.groupId}.${project.parent.artifactId}.clinicianDashboardFirstColumn",
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
         "appId": "coreapps.mostRecentVitals",
         "extensionPointId": "patientDashboard.firstColumnFragments",
         "extensionParams": {

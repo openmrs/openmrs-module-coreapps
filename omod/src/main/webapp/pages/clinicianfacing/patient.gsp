@@ -5,14 +5,24 @@
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         { label: "${ ui.escapeJs(ui.format(patient.patient)) }" ,
-        link: '${ui.pageLink("coreapps", "clinicianfacing/patient", [patientId: patient.patient.id])}'}
-    ]
+            link: '${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: patient.patient.id ] ) }'}
+    ];
+
+    jq(function(){
+        jq(".tabs").tabs();
+
+        // make sure we reload the page if the location is changes; this custom event is emitted by by the location selector in the header
+        jq(document).on('sessionLocationChanged', function() {
+            window.location.reload();
+        });
+    });
+
     var patient = { id: ${ patient.id } };
 </script>
 
 <% if(includeFragments){
     includeFragments.each{ %>
-        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment)}
+        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, it.extensionParams.fragmentConfig)}
 <%   }
 } %>
 
@@ -22,11 +32,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 <div class="container">
     <div class="dashboard clear">
         <div class="info-container column">
-            ${ ui.includeFragment("coreapps", "clinicianfacing/diagnosisWidget", [ patient: patient ]) }
-            
             <% if (firstColumnFragments) {
 			    firstColumnFragments.each { %>
-			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [ patientId: patient.patient.id, app: it.appId ])}
+			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [ patient: patient, patientId: patient.patient.id, app: it.appId ])}
 			<%  }
 			} %>
 
@@ -57,11 +65,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 </div>
             </div>
             */%>
-            ${ ui.includeFragment("coreapps", "clinicianfacing/visitsSection", [patient: patient]) }
             
             <% if (secondColumnFragments) {
 			    secondColumnFragments.each { %>
-			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patientId: patient.patient.id, app: it.appId ])}
+			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patient: patient, patientId: patient.patient.id, app: it.appId ])}
 			<%   }
 			} %>
 			

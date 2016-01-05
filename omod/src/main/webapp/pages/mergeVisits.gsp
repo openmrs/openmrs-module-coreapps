@@ -8,7 +8,6 @@
     ui.includeJavascript("uicommons", "bootstrap-collapse.js")
     ui.includeJavascript("uicommons", "bootstrap-transition.js")
 
-    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy")
     def visits = patient.allVisitsUsingWrappers
     def visitsIndex = ""
     if (visits  != null ){
@@ -114,11 +113,11 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
         <tr id="visit-${ visitId }">
             <td width="8%"><input type="checkbox" name="mergeVisits" value="${ visitId }" id="mergeVisit-${ visitId }" class="selectVisit" data-visit-id="${ visitId }"/></td>
             <td width="14%">
-                ${dateFormat.format(wrapper.visit.startDatetime)}
+                ${ui.format(wrapper.startDate)}
             </td>
             <td width="14%">
-                <% if(wrapper.visit.stopDatetime != null) { %>
-                    ${dateFormat.format(wrapper.visit.stopDatetime)}
+                <% if(wrapper.stopDate != null) { %>
+                    ${ui.format(wrapper.stopDate)}
                 <% } %>
             </td>
             <td width="64%">

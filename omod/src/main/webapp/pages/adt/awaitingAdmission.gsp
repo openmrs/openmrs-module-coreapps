@@ -60,15 +60,16 @@
                     var admitToLocation = aData[admitToLocationColumnIndex].replace(/'/g, "\\’");
 
                     if (admitToLocationFilter && jq.trim(admitToLocationFilter).length != 0) {  // add the jq.trim so that we ignore the single &nbsp; that is the text for the "empty" option of the dropdown widget
-                        if (!admitToLocation.match(new RegExp(admitToLocationFilter))) {
+                        if (admitToLocation != admitToLocationFilter) {
                             return false;
                         }
                     }
 
-                    var currentLocation = aData[currentLocationColumnIndex].replace(/'/g, "\\’");
+                    // remove single quote, everything after the <br> (datetime), and trim leading and trailing whitespace
+                    var currentLocation = jq.trim(aData[currentLocationColumnIndex].replace(/'/g, "\\’").split('<br>')[0]);
 
                     if (currentLocationFilter && jq.trim(currentLocationFilter).length != 0) {   // add the jq.trim so that we ignore the single &nbsp; that is the text for the "empty" option of the dropdown widget
-                        if (!currentLocation.match(new RegExp(currentLocationFilter))) {
+                        if (currentLocation != currentLocationFilter) {
                             return false;
                         }
                     }
@@ -153,9 +154,11 @@
             <td>${ v.paperRecordIdentifier ? ui.format(v.paperRecordIdentifier) : ''}</td>
         <% } %>
         <td>
+            <!-- only add link to patient dashboard if user has appropriate privilege -->
             <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)) { %>
-                <!-- only add link to patient dashboard if user has appropriate privilege -->
-                <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.patientId ]) }">
+                <!-- Note we support links that contain either newer way of referencing ("patient={{patient.uuid}}") or old ("patientId={{pateintId}}") -->
+                <!-- TODO: fix this so it actually passed in a UUID, not an ID, for patient and visit -->
+                <a href="${ ui.urlBind("/" + contextPath + patientPageUrl, [ "patient.uuid": patientId, patientId: patientId, "visit.uuid": visitId, "visit.id": visitId ]) }">
             <% } %>
 
             ${ ui.format((v.patientFirstName ? v.patientFirstName : '') + " " + (v.patientLastName ? v.patientLastName : '')) }

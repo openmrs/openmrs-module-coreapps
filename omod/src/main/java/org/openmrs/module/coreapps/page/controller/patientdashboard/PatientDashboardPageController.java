@@ -22,6 +22,7 @@ import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
+import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -41,11 +42,12 @@ public class PatientDashboardPageController {
 
     public Object controller(@RequestParam("patientId") Patient patient,
 	                       @RequestParam(value = "tab", defaultValue = "visits") String selectedTab,
-						   @RequestParam(value = "returnUrl", required = false) String returnUrl, PageModel model,
+						   PageModel model,
 	                       @InjectBeans PatientDomainWrapper patientDomainWrapper,
 	                       @SpringBean("orderService") OrderService orderService,
 	                       @SpringBean("adtService") AdtService adtService,
 	                       @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
+                           @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
                            @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
                            UiSessionContext sessionContext) {
 
@@ -57,7 +59,6 @@ public class PatientDashboardPageController {
         }
 
 		patientDomainWrapper.setPatient(patient);
-		model.addAttribute("returnUrl", returnUrl);
 		model.addAttribute("patient", patientDomainWrapper);
 		model.addAttribute("selectedTab", selectedTab);
 
@@ -97,6 +98,8 @@ public class PatientDashboardPageController {
 		Collections.sort(visitActions);
 		model.addAttribute("visitActions", visitActions);
 		model.addAttribute("patientTabs", appFrameworkService.getExtensionsForCurrentUser("patientDashboard.tabs"));
+
+        model.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
 
         applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 

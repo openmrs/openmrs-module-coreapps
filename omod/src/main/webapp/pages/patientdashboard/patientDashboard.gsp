@@ -18,15 +18,12 @@
 
     tabs = tabs.flatten()
 
-	if(!returnUrl) {
-		returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.patient.id])
-	}
-
 %>
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.escapeJs(ui.format(patient.patient)) }" , link: '${ui.escapeJs(returnUrl)}'}
+        { label: "${ ui.escapeJs(ui.format(patient.patient)) }" ,
+            link: '${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: patient.patient.id ] ) }'}
     ];
 
     jq(function(){
@@ -44,7 +41,7 @@
 
 <% if (includeFragments) {
     includeFragments.each { %>
-        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment) }
+        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, it.extensionParams.fragmentConfig) }
 <%  }
 } %>
 

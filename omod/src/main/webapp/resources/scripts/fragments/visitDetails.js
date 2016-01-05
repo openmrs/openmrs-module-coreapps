@@ -14,7 +14,7 @@ function loadTemplates (visitId, patientId) {
             visitDetailsSection.show();
 
             $('#editVisitDatesLink').click(function() {
-                showEditVisitDateDialog($(this).data('visit-id'));
+                visit.showEditVisitDateDialog($(this).data('visit-id'));
                 return false;
             });
             $('#deleteVisitLink').click(function() {

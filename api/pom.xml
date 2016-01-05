@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>coreapps</artifactId>
-		<version>1.6</version>
+		<version>1.9-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>coreapps-api</artifactId>
@@ -61,22 +61,33 @@
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>appframework-api</artifactId>
+            <scope>provided</scope>
 		</dependency>
-
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>emrapi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api-1.10</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>emrapi-api-1.11</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
             <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>providermanagement-api</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -92,13 +103,11 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>serialization.xstream-api</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>calculation-api</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

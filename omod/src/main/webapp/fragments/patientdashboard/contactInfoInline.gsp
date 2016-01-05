@@ -12,7 +12,7 @@
         <em>${ ui.message("coreapps.person.telephoneNumber")}</em>
     </span>
     <% if(!config.hideEditDemographicsButton) { %>
-    <small class="edit-info" class="left-margin">
+    <small id="contact-info-inline-edit" class="edit-info" class="left-margin">
         <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientContactInfo", contextModel: config.contextModel ]) %>
     </small>
     <% } %>

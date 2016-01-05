@@ -1,7 +1,7 @@
 <div class="info-section">
     <div class="info-header">
         <i class="icon-diagnosis"></i>
-        <h3>${ ui.message("coreapps.clinicianfacing.diagnosis").toUpperCase() }</h3>
+        <h3>${ ui.message("coreapps.clinicianfacing.diagnoses").toUpperCase() }</h3>
     </div>
     <div class="info-body">
 		<% if (!config.recentDiagnoses) { %>

@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.openmrs.Encounter;
 import org.openmrs.User;
 import org.openmrs.Visit;
@@ -21,7 +20,6 @@ import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.VisitService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
@@ -70,11 +68,10 @@ public class VisitDetailsFragmentController {
         Date startDatetime = visit.getStartDatetime();
         Date stopDatetime = visit.getStopDatetime();
 
-        simpleObject.put("startDatetime", DateFormatUtils.format(startDatetime, "dd MMM yyyy hh:mm a", Context.getLocale()));
+        simpleObject.put("startDatetime", uiUtils.format(startDatetime));
 
         if (stopDatetime != null) {
-            simpleObject.put("stopDatetime",
-                    DateFormatUtils.format(stopDatetime, "dd MMM yyyy hh:mm a", Context.getLocale()));
+            simpleObject.put("stopDatetime", uiUtils.format(stopDatetime));
         } else {
             simpleObject.put("stopDatetime", null);
         }

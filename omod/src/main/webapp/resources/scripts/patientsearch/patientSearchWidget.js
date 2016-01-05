@@ -3,7 +3,10 @@ function PatientSearchWidget(configuration){
         minSearchCharacters: 3,
         searchInputId: 'patient-search',
         searchResultsDivId: 'patient-search-results',
-        clearButtonId: 'patient-search-clear-button'
+        clearButtonId: 'patient-search-clear-button',
+        dateFormat: 'DD MMM YYYY',
+        locale: 'en',
+        defaultLocale: 'en'
     };
 
     var config = jq.extend({}, defaults, configuration);
@@ -41,6 +44,10 @@ function PatientSearchWidget(configuration){
     var performingSearch = false;  // flag to check if we are currently updating the search results
     var afterSearchResultsUpdated = [];  // stores a set of functions to execute after we update search results (currently we are only using this for the doEnter function)
     var lastQuery = null;
+
+    // set the locale for Moment.js
+    // Creole not currently supported by Moment and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
+    moment.locale([configuration.locale, configuration.defaultLocale, 'en']);
 
     if(config.initialPatients){
         _.each(config.initialPatients, function(p){
@@ -157,7 +164,7 @@ function PatientSearchWidget(configuration){
             _.each(searchResultsData, function(patient) {
                 var birthdate = '';
                 if(patient.person.birthdate){
-                    birthdate = moment(patient.person.birthdate).format('DD-MMM-YYYY');
+                    birthdate = moment(patient.person.birthdate).format(configuration.dateFormat);
                     if( patient.person.birthdateEstimated ){
                         birthdate = "~ "+birthdate;
                     }else{

@@ -9,7 +9,13 @@
         // initialize the dialogs used when creating a retrospective visit
         visit.createRetrospectiveVisitDialog(${patient.id});
         visit.createRetrospectiveVisitExistingVisitsDialog();
+
 		visit.contextPath = "/${contextPath}";
+
+        // override returnUrl if specified
+        <% if (config?.patientVisitsPage) { %>
+            visit.returnUrl = "${config.patientVisitsPage}";
+        <% } %>
 
         jq(function(){
             // TODO: for retrospective visits dialog, hack to set the end date when selecting a start date
@@ -51,7 +57,7 @@
                 ${ ui.message("coreapps.startDate.label") }
             </label>
             <%  def visitEndTime = new Date()
-                if (patient.patient.dead) {
+                if (patient.patient.deathDate) {
                   visitEndTime = patient.patient.deathDate
                 }
             %>

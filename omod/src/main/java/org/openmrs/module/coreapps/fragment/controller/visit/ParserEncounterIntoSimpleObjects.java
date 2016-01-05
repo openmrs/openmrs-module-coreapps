@@ -26,6 +26,8 @@ import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,14 +57,31 @@ public class ParserEncounterIntoSimpleObjects {
 	
 	public List<SimpleObject> parseOrders() {
 		List<SimpleObject> orders = new ArrayList<SimpleObject>();
-		
+
+        // hacky reflection to allow core 1.9 compatibility, which doesn't support order.orderNumber
+        Method getOrderNumber = null;
+        for (Method m :  new Order().getClass().getMethods()) {
+            if (m.getName().equals("getOrderNumber")) {
+                getOrderNumber = m;
+                break;
+            }
+        }
+
 		for (Order order : encounter.getOrders()) {
-			orders.add(SimpleObject.create("concept", uiUtils.format(order.getConcept()),
-                    "accessionNumber", uiUtils.format(order.getAccessionNumber())));
-		}
+            try {
+                orders.add(SimpleObject.create("concept", uiUtils.format(order.getConcept()),
+                        "orderNumber", uiUtils.format(getOrderNumber != null ? getOrderNumber.invoke(order) : order.getAccessionNumber()))); // prior to 1.10 we display accession number, 1.10+ we display order number
+            }
+            // fail softly for now
+            catch (IllegalAccessException e) {
+            }
+            catch (InvocationTargetException e) {
+            }
+        }
+
 		return orders;
 	}
-	
+
 	public ParsedObs parseObservations(Locale locale) {
 		DiagnosisMetadata diagnosisMetadata = emrApiProperties.getDiagnosisMetadata();
 		DispositionDescriptor dispositionDescriptor = null;
@@ -83,6 +102,14 @@ public class ParserEncounterIntoSimpleObjects {
                 parsedObs.getObs().add(parseObs(obs, locale));
             }
 		}
+
+        // just sort the obs by obsId--not perfect, but a decent "natural" object
+        Collections.sort(parsedObs.getObs(), new Comparator<SimpleObject>() {
+            @Override
+            public int compare(SimpleObject o1, SimpleObject o2) {
+                return (Integer) o1.get("obsId") < (Integer) o2.get("obsId") ? -1 : 1;
+            }
+        });
 		
 		Collections.sort(parsedObs.getDiagnoses(), new Comparator<SimpleObject>() {
 			
