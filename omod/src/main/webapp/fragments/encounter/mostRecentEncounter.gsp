@@ -41,8 +41,13 @@
                                 jq('#${elementId}').html(result.html);
                                 var displayEncounterDate = jq('#${elementId}').find('#displayEncounterDate').val();
                                 if (displayEncounterDate != "false") {
-                                    // TODO: this method to the display the title seems a little brittle--replaces the first element in the form with class 'title'
-                                    jq('#${elementId} .title:first').text('${ ui.escapeJs(ui.message(app.config.get('encounterDateLabel').textValue , ui.formatDatetimePretty(encounter.encounterDatetime))) } ');
+                                    // insert the header in the special "most-recent-encounter-title" if it exists, otherwise to the first title element)
+                                    if (jq('#${elementId} #most-recent-encounter-title').length) {
+                                        jq('#${elementId} #most-recent-encounter-title').text('${ ui.escapeJs(ui.message(app.config.get('encounterDateLabel').textValue , ui.formatDatetimePretty(encounter.encounterDatetime))) } ').show();
+                                    }
+                                    else {
+                                        jq('#${elementId} .title:first').text('${ ui.escapeJs(ui.message(app.config.get('encounterDateLabel').textValue , ui.formatDatetimePretty(encounter.encounterDatetime))) } ');
+                                    }
                                 }
                             });
             </script>
