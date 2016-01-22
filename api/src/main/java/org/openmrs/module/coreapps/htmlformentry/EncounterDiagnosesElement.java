@@ -14,18 +14,6 @@
 
 package org.openmrs.module.coreapps.htmlformentry;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
@@ -35,6 +23,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Visit;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
@@ -53,6 +42,19 @@ import org.openmrs.module.htmlformentry.widget.ErrorWidget;
 import org.openmrs.module.htmlformentry.widget.HiddenFieldWidget;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -89,11 +91,11 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 for (Diagnosis diagnosis : existingDiagnoses) {
                     sb.append("<p><small>");
                     // question (e.g. "Primary diagnosis")
-                    sb.append(uiUtils.message("coreapps.patientDashBoard.diagnosisQuestion." + diagnosis.getOrder()));
+                    sb.append(message("coreapps.patientDashBoard.diagnosisQuestion." + diagnosis.getOrder()));
                     sb.append("</small><span>");
                     // answer (e.g. "(Confirmed) Malaria [code]")
-                    sb.append("(" + uiUtils.message("coreapps.Diagnosis.Certainty." + diagnosis.getCertainty()) + ") ");
-                    sb.append(diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(), conceptSourcesForDiagnosisSearch));
+                    sb.append("(" + message("coreapps.Diagnosis.Certainty." + diagnosis.getCertainty()) + ") ");
+                    sb.append(diagnosis.getDiagnosis().formatWithCode(getLocale(), conceptSourcesForDiagnosisSearch));
                     sb.append("</span></p>");
                 }
             }
@@ -161,7 +163,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                     }
                 }
                 if (!foundPrimary) {
-                    return Collections.singleton(new FormSubmissionError(hiddenDiagnoses, uiUtils.message("coreapps.encounterDiagnoses.error.primaryRequired")));
+                    return Collections.singleton(new FormSubmissionError(hiddenDiagnoses, message("coreapps.encounterDiagnoses.error.primaryRequired")));
                 }
             }
         } catch (IOException e) {
@@ -249,8 +251,13 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         return existingDiagnosisObs;
     }
 
-
-    private List<Diagnosis> getExistingDiagnoses(FormEntryContext context, DiagnosisMetadata diagnosisMetadata) {
+    /**
+     * only visible for testing
+     * @param context
+     * @param diagnosisMetadata
+     * @return
+     */
+    List<Diagnosis> getExistingDiagnoses(FormEntryContext context, DiagnosisMetadata diagnosisMetadata) {
         List<Diagnosis> diagnoses = new ArrayList<Diagnosis>();
         Map<Integer, Obs> existing = getExistingDiagnosisObs(context, diagnosisMetadata);
         if (existing != null) {
@@ -329,5 +336,28 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     public String getSelectedDiagnosesTarget() {
         return selectedDiagnosesTarget;
+    }
+
+    /**
+     * In case you are viewing a form with this element on it from the legacy UI, don't use UiUtils to format
+     * @param code
+     * @return
+     */
+    String message(String code) {
+        if (uiUtils != null) {
+            return uiUtils.message(code);
+        }
+        else {
+            return Context.getMessageSourceService().getMessage(code);
+        }
+    }
+
+    private Locale getLocale() {
+        if (uiUtils != null) {
+            return uiUtils.getLocale();
+        }
+        else {
+            return Context.getLocale();
+        }
     }
 }
