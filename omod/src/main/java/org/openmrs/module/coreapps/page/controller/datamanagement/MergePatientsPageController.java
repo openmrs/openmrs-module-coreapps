@@ -122,7 +122,7 @@ public class MergePatientsPageController {
         String provider = "coreapps";
         String fragment = "patientdashboard/patientDashboard";
         String returnUrl = null;
-        if (app.getConfig().get("dashboardUrl") != null ) {
+        if (app.getConfig() != null && app.getConfig().get("dashboardUrl") != null ) {
             returnUrl = app.getConfig().get("dashboardUrl").getTextValue();
         }
 
