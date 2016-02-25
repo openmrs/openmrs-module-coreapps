@@ -43,7 +43,6 @@ import org.openmrs.module.htmlformentry.widget.HiddenFieldWidget;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,6 +54,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -247,6 +247,13 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                     existingDiagnosisObs.put(candidate.getObsId(), candidate);
                 }
             }
+
+            // remove any diagnoses found from existingObsInGroups
+            // TODO do we need to remove from existingObs as well?
+            for (Obs existingDiagnosis : existingDiagnosisObs.values()) {
+                context.getExistingObsInGroups().remove(existingDiagnosis);
+            }
+
         }
         return existingDiagnosisObs;
     }
