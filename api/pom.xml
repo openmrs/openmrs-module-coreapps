@@ -131,6 +131,18 @@
             <type>jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs</groupId>
+            <artifactId>event-api-1.x</artifactId>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs</groupId>
+            <artifactId>event-api-2.x</artifactId>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
 
         <!-- End OpenMRS modules -->
 		
