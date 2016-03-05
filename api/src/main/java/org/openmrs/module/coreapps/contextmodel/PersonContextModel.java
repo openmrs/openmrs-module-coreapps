@@ -1,8 +1,8 @@
 package org.openmrs.module.coreapps.contextmodel;
 
-import org.openmrs.Person;
-
 import java.util.Date;
+
+import org.openmrs.Person;
 
 /**
  * A very simple view of a person, suitable for use in an app contextModel.
@@ -21,12 +21,15 @@ public class PersonContextModel {
 
     private boolean dead;
 
+    private int age;
+
     public PersonContextModel(Person person) {
         this.uuid = person.getUuid();
         this.birthdate = person.getBirthdate();
         this.birthdateEstimated = person.getBirthdateEstimated();
         this.gender = person.getGender();
         this.dead = person.getDead();
+        this.age = person.getAge();
     }
 
     public String getUuid() {
@@ -48,5 +51,7 @@ public class PersonContextModel {
     public boolean isDead() {
         return dead;
     }
+
+    public int getAge() {return age; }
 
 }
