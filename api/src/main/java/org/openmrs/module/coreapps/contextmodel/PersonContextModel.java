@@ -52,6 +52,8 @@ public class PersonContextModel {
         return dead;
     }
 
-    public int getAge() {return age; }
+    public int getAge() {
+        return age;
+    }
 
 }
