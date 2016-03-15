@@ -149,7 +149,7 @@
         <span>${it.identifier}</span>
         <% } %>
         <br/>
-        <% if (config.extraPatientIdentifierTypes && config.extraPatientIdentifiersMappedByType) { %>
+        <% if (config.extraPatientIdentifierTypes) { %>
 
             <% config.extraPatientIdentifierTypes.each { extraPatientIdentifierType -> %>
 
