@@ -33,6 +33,8 @@ import org.openmrs.ui.framework.page.PageModel;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.openmrs.Location;
+import org.openmrs.module.emrapi.adt.AdtService;
 
 /**
  * Supports the containing PageModel having an "app" property whose config defines a "visitUrl" property
@@ -46,7 +48,7 @@ public class VisitsSectionFragmentController {
 						   UiSessionContext sessionContext,
 						   @SpringBean("appframeworkTemplateFactory") TemplateFactory templateFactory,
                            @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
-						   @InjectBeans PatientDomainWrapper patientWrapper) {
+						   @InjectBeans PatientDomainWrapper patientWrapper, @SpringBean("adtService") AdtService adtService) {
 		config.require("patient");
 		Object patient = config.get("patient");
 
@@ -74,8 +76,11 @@ public class VisitsSectionFragmentController {
         if (visitsPageWithSpecificVisitUrl == null) {
             visitsPageWithSpecificVisitUrl = coreAppsProperties.getVisitsPageWithSpecificVisitUrl();
         }
-        if (visitsPageWithSpecificVisitUrl == null) {
-			visitsPageWithSpecificVisitUrl = "coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}&visitId={{visit.id}}#visits";
+        if (visitsPageUrl == null) {
+			visitsPageUrl = "coreapps/patientdashboard/patientDashboard.page?patientId="+patientWrapper.getPatient().getUuid();
+			Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+                        VisitDomainWrapper activeVisit = adtService.getActiveVisit(patientWrapper.getPatient(), visitLocation);
+			visitsPageUrl += (activeVisit != null) ? "&visitId="+activeVisit.getVisit().getId()+"#visits" : "#visits";
 		}
 		visitsPageWithSpecificVisitUrl = "/" + ui.contextPath() + "/" + visitsPageWithSpecificVisitUrl;
         if (visitsPageUrl == null) {
