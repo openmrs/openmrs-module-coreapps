@@ -131,7 +131,7 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
 	<input type="hidden" name="returnUrl" value="${ returnUrl }" />
 
     <div>
-        <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }" onclick="javascript:window.location='${ returnUrl }'" />
+        <input type="button" class="cancel" value="${ ui.message("coreapps.return") }" onclick="javascript:window.location='${ returnUrl }'" />
         <input type="submit" id="mergeVisitsBtn" class="confirm" value="${ ui.message("coreapps.task.mergeVisits.mergeSelectedVisits") }" />
     </div>
 </form>
