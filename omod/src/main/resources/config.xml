@@ -171,6 +171,11 @@
 		<description>Able to merge visits</description>
 	</privilege>
 
+    <privilege>
+        <name>Task: coreapps.deletePatient</name>
+        <description>Able to delete a patient</description>
+    </privilege>
+
 	<privilege>
 		<name>App: coreapps.findPatient</name>
 		<description>Able to access the find patient app</description>
@@ -200,6 +205,7 @@
         <name>App: coreapps.dataManagement</name>
         <description>Able to access data management apps</description>
     </privilege>
+    
     <privilege>
         <name>App: coreapps.mergePatient</name>
         <description>Able to access the merge patient app</description>

@@ -29,5 +29,15 @@
         "icon": "icon-link",
         "order": 13,
         "requiredPrivilege": "Task: coreapps.mergeVisits"
+    },
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.deletePatient",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "script",
+        "label": "coreapps.task.deletePatient.label",
+        "script": "delPatient.showDeletePatientCreationDialog(&#x27;{{patient.uuid}}&#x27;)",
+        "icon": "icon-remove",
+        "order": 25,
+        "requiredPrivilege": "Task: coreapps.deletePatient"
     }
 ]
