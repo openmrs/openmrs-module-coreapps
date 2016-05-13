@@ -27,6 +27,7 @@
 } %>
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, activeVisit: activeVisit, appContextModel: appContextModel ]) }
+${ ui.includeJavascript("coreapps", "custom/deletePatient.js") }
 
 <div class="clear"></div>
 <div class="container">

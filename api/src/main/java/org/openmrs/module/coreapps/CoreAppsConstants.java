@@ -22,7 +22,8 @@ public class CoreAppsConstants {
     public static final String PRIVILEGE_PATIENT_VISITS = "App: coreapps.patientVisits";
 	public static final String PRIVILEGE_START_VISIT = "Task: coreapps.createVisit";
 	public static final String PRIVILEGE_END_VISIT = "Task: coreapps.endVisit";
-
+    public static final String PRIVILEGE_DELETE_PATIENT = "Task: coreapps.deletePatient";
+    
 	public static final String GP_RECENT_DIAGNOSIS_PERIOD_IN_DAYS = "coreapps.recentDiagnosisPeriodInDays";
 
     public static final String ENCOUNTER_TEMPLATE_EXTENSION = "org.openmrs.referenceapplication.encounterTemplate";
