@@ -1,7 +1,16 @@
 package org.openmrs.module.coreapps.parser;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterProvider;
+import org.openmrs.EncounterRole;
+import org.openmrs.EncounterType;
+import org.openmrs.Provider;
+import org.openmrs.User;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.Extension;
@@ -11,10 +20,6 @@ import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class ParseEncounterToJson {
 
@@ -37,6 +42,8 @@ public class ParseEncounterToJson {
         SimpleObject simpleEncounter = SimpleObject.fromObject(new EncounterDomainWrapper(encounter), uiUtils, "encounterId",
                 "location", "encounterDatetime", "encounterProviders.provider", "voided", "form");
 
+        // UUID is not provided by EncounterDomainWrapper, adding it here.
+        simpleEncounter.put("uuid", encounter.getUuid());
         // manually set the date and time components so we can control how we format them
         simpleEncounter.put("encounterDate",
                 DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy", Context.getLocale()));
