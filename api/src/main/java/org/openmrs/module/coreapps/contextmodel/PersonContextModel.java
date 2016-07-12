@@ -23,6 +23,8 @@ public class PersonContextModel {
 
     private Integer age;
 
+    private Date deathdate;
+
     public PersonContextModel(Person person) {
         this.uuid = person.getUuid();
         this.birthdate = person.getBirthdate();
@@ -30,6 +32,7 @@ public class PersonContextModel {
         this.gender = person.getGender();
         this.dead = person.getDead();
         this.age = person.getAge();
+        this.deathdate = person.getDeathDate();
     }
 
     public String getUuid() {
@@ -54,6 +57,10 @@ public class PersonContextModel {
 
     public Integer getAge() {
         return age;
+    }
+
+    public Date getDeathdate() {
+        return deathdate;
     }
 
 }
