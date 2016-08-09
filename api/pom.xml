@@ -67,22 +67,26 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
             <scope>provided</scope>
+            <version>${emrapi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api-1.10</artifactId>
             <scope>provided</scope>
+            <version>${emrapi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api-1.11</artifactId>
             <scope>provided</scope>
+            <version>${emrapi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
+            <version>${emrapi.version}</version>
         </dependency>
 
         <dependency>
