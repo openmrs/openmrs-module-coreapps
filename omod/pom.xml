@@ -140,6 +140,12 @@
             <artifactId>appui-omod</artifactId>
             <version>${appui.version}</version>
             <type>jar</type>
+            <exclusions>
+	         	<exclusion>
+	         		<artifactId>appui-api</artifactId>
+	         		<groupId>org.openmrs.module</groupId>
+	         	</exclusion>
+	         </exclusions>
         </dependency>
 
         <dependency>
