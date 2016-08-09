@@ -137,12 +137,6 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>appui-api</artifactId>
-            <version>${appui.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
             <artifactId>appui-omod</artifactId>
             <version>${appui.version}</version>
             <type>jar</type>
