@@ -40,6 +40,7 @@
         <distro.artifactId>referenceapplication</distro.artifactId>
         <distro.version>2.4</distro.version>
         <emrapi.version>1.17-SNAPSHOT</emrapi.version>
+        <appui.version>1.6-SNAPSHOT</appui.version>
 	</properties>
 
 	<dependencyManagement>
