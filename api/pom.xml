@@ -118,6 +118,7 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>appui-api</artifactId>
             <classifier>tests</classifier>
+            <version>1.6-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
