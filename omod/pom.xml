@@ -127,10 +127,12 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
+            <version>${emrapi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api-1.10</artifactId>
+            <version>${emrapi.version}</version>
         </dependency>
 
         <dependency>
@@ -154,6 +156,7 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
             <classifier>tests</classifier>
+            <version>${emrapi.version}</version>
         </dependency>
 
         <dependency>
