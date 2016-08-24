@@ -88,7 +88,7 @@
     <div class="demographics">
         <h1 class="name">
             <% patientNames?.each { %>
-                <span class="${ it.key }">${ it.value }<em>${ui.message(it.key)}</em></span>
+                <span><span class="${ it.key.replace('.', '-') }">${ it.value }</span><em>${ui.message(it.key)}</em></span>
             <% } %>
             &nbsp;
             <span class="gender-age">
