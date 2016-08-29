@@ -7,7 +7,7 @@
 		<% if (!config.recentDiagnoses) { %>
 		${ ui.message("coreapps.none") }
 		<% } else { %>
-        <ul id="coreapps-diagnosesList">
+        <ul>
             <% config.recentDiagnoses.each { %>
             <li>
             <% if(it.diagnosis.nonCodedAnswer) { %>
