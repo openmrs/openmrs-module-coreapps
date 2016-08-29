@@ -1,4 +1,4 @@
-<div class="info-section">
+<div id="coreapps-diagnosesList" class="info-section">
     <div class="info-header">
         <i class="icon-diagnosis"></i>
         <h3>${ ui.message("coreapps.clinicianfacing.diagnoses").toUpperCase() }</h3>
