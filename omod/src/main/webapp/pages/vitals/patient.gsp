@@ -6,7 +6,7 @@
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         { label: "${ ui.message("referenceapplication.app.capturevitals.title") }", link: "${ ui.pageLink("coreapps", "findpatient/findPatient", [app: "referenceapplication.vitals"]) }" },
-        { label: "${ ui.escapeJs(ui.format(patient.patient)) }" , link: '${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.id])}'},
+        { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" , link: '${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.id])}'},
     ];
 </script>
 

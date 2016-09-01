@@ -88,7 +88,7 @@
     <div class="demographics">
         <h1 class="name">
             <% patientNames?.each { %>
-                <span><span class="${ it.key.replace('.', '-') }">${ ui.escapeJs(it.value) }</span><em>${ui.message(it.key)}</em></span>
+                <span><span class="${ it.key.replace('.', '-') }">${ ui.escapeJs(ui.encodeHtmlContent(it.value)) }</span><em>${ui.message(it.key)}</em></span>
             <% } %>
             &nbsp;
             <span class="gender-age">
@@ -208,7 +208,7 @@
         <ul>
             <li class="info">
                 <span>${ui.message("coreapps.patient")}</span>
-                <h5>${ui.escapeJs(ui.format(patient.patient))}</h5>
+                <h5>${ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient)))}</h5>
             </li>
             <li class="info">
                 <span id="identifierTypeNameSpan"></span>

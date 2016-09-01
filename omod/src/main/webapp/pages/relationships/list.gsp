@@ -18,7 +18,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.escapeJs(ui.format(patient.patient)) }" ,
+        { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" ,
             link: '${ui.pageLink("coreapps", "clinicianfacing/patient", [patientId: patient.patient.id])}'},
         { label: "${ ui.escapeJs(ui.message("coreapps.task.relationships.label")) }" }
     ]
@@ -44,7 +44,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
             <div class="add-confirm-spacer">
                 <div ng-show="otherPerson" >
                     <h3>${ ui.message("coreapps.relationships.add.confirm") }</h3>
-                    <p>{{ ngDialogData.thisLabel }}: ${ ui.escapeJs(ui.format(patient.patient)) } ${ ui.message("coreapps.relationships.add.thisPatient") }</p>
+                    <p>{{ ngDialogData.thisLabel }}: ${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) } ${ ui.message("coreapps.relationships.add.thisPatient") }</p>
                     <p>{{ ngDialogData.otherLabel }}: {{ otherPerson.display }}</p>
                 </div>
             </div>
