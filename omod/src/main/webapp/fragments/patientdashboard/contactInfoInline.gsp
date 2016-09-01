@@ -8,7 +8,9 @@
         <em>${ ui.message("coreapps.person.address")}</em>
     </span>
     <span class="left-margin">
-        ${config.patient.telephoneNumber ?: ''}
+        <span id="coreapps-telephoneNumber">
+            ${config.patient.telephoneNumber ?: ''}
+        </span>
         <em>${ ui.message("coreapps.person.telephoneNumber")}</em>
     </span>
     <% if(!config.hideEditDemographicsButton) { %>
