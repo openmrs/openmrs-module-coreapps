@@ -13,9 +13,9 @@
     var lastViewedPatients = [];
     <%  if (showLastViewedPatients && !doInitialSearch) {
             lastViewedPatients.each { it -> %>
-    lastViewedPatients.push({uuid:"${ it.uuid }",name:"${ it.personName ? ui.escapeJs(ui.format(it.personName)) : '' }",gender:"${ it.gender }",
+    lastViewedPatients.push({uuid:"${ it.uuid }",name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",gender:"${ it.gender }",
         age:"${ it.age ?: '' }", birthdate:"${ it.birthdate ? dateFormatter.format(it.birthdate) : '' }",
-        birthdateEstimated: ${ it.birthdateEstimated }, identifier:"${ it.patientIdentifier ? ui.escapeJs(it.patientIdentifier.identifier) : '' }"});
+        birthdateEstimated: ${ it.birthdateEstimated }, identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }"});
     <%      }
         }%>
     function handlePatientRowSelection() {
