@@ -10,7 +10,7 @@
     if (patient1 != null) {
          id = patient1.patient.id
          primaryId = patient1.primaryIdentifiers.collect{ it.identifier }.join(',')
-         fullName =  ui.escapeJs(ui.format(patient1.patient))
+         fullName =  ui.encodeHtmlContent(ui.format(patient1.patient))
     }
 
 %>

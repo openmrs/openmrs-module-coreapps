@@ -44,7 +44,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
             <div class="add-confirm-spacer">
                 <div ng-show="otherPerson" >
                     <h3>${ ui.message("coreapps.relationships.add.confirm") }</h3>
-                    <p>{{ ngDialogData.thisLabel }}: ${ ui.escapeJs(ui.format(patient.patient)) } ${ ui.message("coreapps.relationships.add.thisPatient") }</p>
+                    <p>{{ ngDialogData.thisLabel }}: ${ ui.encodeHtmlContent(ui.format(patient.patient)) } ${ ui.message("coreapps.relationships.add.thisPatient") }</p>
                     <p>{{ ngDialogData.otherLabel }}: {{ otherPerson.display }}</p>
                 </div>
             </div>
