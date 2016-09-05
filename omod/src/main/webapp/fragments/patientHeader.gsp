@@ -113,7 +113,7 @@
                     </small>
                 </span>
                 <a href="#" id="patient-header-contactInfo" class="contact-info-label">
-                    <span class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
+                    <span id="coreapps-showContactInfo" class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
                     <i class="toggle-icon icon-caret-down small"></i>
                     <span class="hide">${ui.message("coreapps.patientHeader.hidecontactinfo")}</span>
                     <i class="toggle-icon icon-caret-up small"></i>
