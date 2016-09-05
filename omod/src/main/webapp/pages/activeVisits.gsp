@@ -30,7 +30,7 @@
 			def latest = v.lastEncounter
 		%>
 			<tr id="visit-${ v.visit.id }">
-				<td>${ ui.format(v.visit.patient.patientIdentifier) }</td>
+				<td>${ ui.encodeHtmlContent(ui.format(v.visit.patient.patientIdentifier)) }</td>
 				<td>
 
                     <% if (canViewVisits) { %>
@@ -38,7 +38,7 @@
                         <a href="${ ui.urlBind("/" + contextPath + patientPageUrl, v.visit) }">
                     <% } %>
 
-                    ${ ui.format(v.visit.patient) }
+                    ${ ui.encodeHtmlContent(ui.format(v.visit.patient)) }
 
                     <% if (canViewVisits) { %>
                         </a>
@@ -47,16 +47,16 @@
 				<td>
                     <% if (checkIn) { %>
                         <small>
-                            ${ ui.format(checkIn.location) } @ ${ ui.format(checkIn.encounterDatetime) }
+                            ${ ui.encodeHtmlContent(ui.format(checkIn.location)) } @ ${ ui.format(checkIn.encounterDatetime) }
                         </small>
                     <% } %>
 				</td>
 				<td>
                     <% if (latest) { %>
-                        ${ ui.format(latest.encounterType) }
+                        ${ ui.encodeHtmlContent(ui.format(latest.encounterType)) }
                         <br/>
                         <small>
-                            ${ ui.format(latest.location) } @ ${ ui.format(latest.encounterDatetime) }
+                            ${ ui.encodeHtmlContent(ui.format(latest.location)) } @ ${ ui.format(latest.encounterDatetime) }
                         </small>
 
                     <% } %>
