@@ -1,0 +1,26 @@
+[
+  {
+    "id": "owa.conceptdictionary",
+    "description": "Concept OWA Dictionary",
+    "order": 0,
+    "extensions": [
+      {
+        "id": "owa.conceptdictionary.adminGroup",
+        "extensionPointId": "org.openmrs.module.adminui.adminGroups",
+        "type": "group",
+        "label": "Concepts",
+        "icon": "icon-book"
+      },
+      {
+        "id": "owa.conceptdictionary.adminLink",
+        "extensionPointId": "org.openmrs.module.adminui.adminLinks",
+        "type": "link",
+        "label": "Manage Concept Dictionary",
+        "url": "owa/conceptdictionary/index.html",
+        "extensionParams": {
+          "group": "owa.conceptdictionary.adminGroup"
+        }
+      }
+    ]
+  }
+]
