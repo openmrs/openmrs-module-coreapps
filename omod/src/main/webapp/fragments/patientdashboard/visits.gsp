@@ -89,7 +89,7 @@
             visitId: wrapper.visit.visitId,
             endDateUpperLimit: idx == 0 ? editDateFormat.format(new Date()) : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx - 1].startDatetime, -1)),
             endDateLowerLimit: editDateFormat.format(wrapper.mostRecentEncounter == null ? wrapper.startDatetime : wrapper.mostRecentEncounter.encounterDatetime),
-            startDateLowerLimit: idx + 1 == visits.size ? null : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx + 1].stopDatetime, 1)),
+            startDateLowerLimit: (idx + 1 == visits.size || visits[idx + 1].stopDatetime == null) ? null : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx + 1].stopDatetime, 1)),
             startDateUpperLimit: wrapper.oldestEncounter == null && wrapper.stopDatetime == null ? editDateFormat.format(new Date()) : editDateFormat.format(wrapper.oldestEncounter == null ? wrapper.stopDatetime : wrapper.oldestEncounter.encounterDatetime),
             defaultStartDate: wrapper.startDatetime,
             defaultEndDate: wrapper.stopDatetime
