@@ -22,7 +22,7 @@ import org.openmrs.layout.address.AddressTemplate;
 import org.springframework.stereotype.Component;
 
 @Component("coreapps.AddressSupportCompatibility")
-@OpenmrsProfile(openmrsPlatformVersion = "2.0.*")
+@OpenmrsProfile(openmrsPlatformVersion = "2.0")
 public class AddressSupportCompatibility2_0 implements AddressSupportCompatibility {
 
 	@Override

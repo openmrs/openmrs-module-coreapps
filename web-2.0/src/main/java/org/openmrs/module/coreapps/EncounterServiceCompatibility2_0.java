@@ -32,7 +32,7 @@ import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 import org.springframework.stereotype.Component;
 
 @Component("coreapps.EncounterServiceCompatibility")
-@OpenmrsProfile(openmrsPlatformVersion = "2.0.*")
+@OpenmrsProfile(openmrsPlatformVersion = "2.0")
 public class EncounterServiceCompatibility2_0 implements EncounterServiceCompatibility {
 
 	@Override
