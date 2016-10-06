@@ -113,7 +113,7 @@
 
     <globalProperty>
         <property>coreapps.dashboardUrl</property>
-        <defaultValue>/coreapps/clinicianfacing/patient.page?patientId={{patientId}}&amp;app=pih.app.clinicianDashboard</defaultValue>
+        <defaultValue>/coreapps/clinicianfacing/patient.page?patientId={{patientId}}</defaultValue>
         <description>
             Allows one to override the default dashboard url
         </description>
