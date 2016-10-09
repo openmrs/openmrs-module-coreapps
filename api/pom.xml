@@ -61,32 +61,22 @@
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>appframework-api</artifactId>
-            <scope>provided</scope>
 		</dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
-            <scope>provided</scope>
-            <version>${emrapi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api-1.10</artifactId>
-            <scope>provided</scope>
-            <version>${emrapi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api-1.11</artifactId>
-            <scope>provided</scope>
-            <version>${emrapi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api</artifactId>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-            <version>${emrapi.version}</version>
+            <artifactId>emrapi-api-1.12</artifactId>
         </dependency>
 
         <dependency>
@@ -108,6 +98,21 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>serialization.xstream-api</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>serialization.xstream-api-1.9</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>serialization.xstream-api-1.10</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>serialization.xstream-api-2.0</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
@@ -116,36 +121,33 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>appui-api</artifactId>
-            <classifier>tests</classifier>
-            <version>${appui.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
             <artifactId>htmlformentry-api-1.10</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>htmlformentry-api</artifactId>
-            <classifier>tests</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs</groupId>
             <artifactId>event-api</artifactId>
-            <type>jar</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs</groupId>
             <artifactId>event-api-1.x</artifactId>
-            <type>jar</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs</groupId>
             <artifactId>event-api-2.x</artifactId>
-            <type>jar</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>appui-api</artifactId>
+            <classifier>tests</classifier>
+            <version>${appuiVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>emrapi-api</artifactId>
+            <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
 

@@ -98,11 +98,6 @@
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>appframework-api</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>appframework-api</artifactId>
-            <classifier>tests</classifier>
-        </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
@@ -127,19 +122,18 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
-            <version>${emrapi.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api-1.10</artifactId>
-            <version>${emrapi.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>appui-omod</artifactId>
-            <version>${appui.version}</version>
+            <version>${appuiVersion}</version>
             <type>jar</type>
+            <scope>provided</scope>
             <exclusions>
 	         	<exclusion>
 	         		<artifactId>appui-api</artifactId>
@@ -152,19 +146,27 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>appui-api</artifactId>
             <classifier>tests</classifier>
-            <version>${appui.version}</version>
+            <version>${appuiVersion}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
             <classifier>tests</classifier>
-            <version>${emrapi.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>idgen-api</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>appframework-api</artifactId>
+            <classifier>tests</classifier>
+            <version>${appframeworkVersion}</version>
+            <scope>test</scope>
         </dependency>
 						
 		<!-- End OpenMRS modules -->
