@@ -32,7 +32,7 @@ public class CoreAppsProperties extends ModuleProperties {
     public String getDashboardUrl() {
         String url = getGlobalProperty(CoreAppsConstants.GP_DASHBOARD_URL, false);
         if (!StringUtils.hasText(url)) {
-            return "/coreapps/clinicianfacing/patient.page?patientId={{patientId}}&app=pih.app.clinicianDashboard";
+            return "/coreapps/clinicianfacing/patient.page?patientId={{patientId}}";
         }
         else {
             return url;
