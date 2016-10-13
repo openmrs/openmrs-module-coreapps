@@ -119,6 +119,13 @@ public class CoreAppsActivator extends BaseModuleActivator {
             Context.getAdministrationService().purgeGlobalProperty(defaultDashboard);
         }
 
+        // to replace '/coreapps/clinicianfacing/patient.page?patientId={{patientId}}&amp;app=pih.app.clinicianDashboard'
+        GlobalProperty dashboardUrl = Context.getAdministrationService().getGlobalPropertyObject(CoreAppsConstants.GP_DASHBOARD_URL);
+        if (dashboardUrl != null) {
+            dashboardUrl.setPropertyValue("/coreapps/clinicianfacing/patient.page?patientId={{patientId}}");
+            Context.getAdministrationService().saveGlobalProperty(dashboardUrl);
+        }
+
         log.info("Core Apps Module started");
     }
 	
