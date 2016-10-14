@@ -253,6 +253,26 @@
                         <tagNameFormat>@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
+				<plugin>
+					<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+					<artifactId>maven-java-formatter-plugin</artifactId>
+					<version>0.3</version>
+					<configuration>
+						<compilerSource>${javaCompilerVersion}</compilerSource>
+						<compilerCompliance>${javaCompilerVersion}</compilerCompliance>
+						<compilerTargetPlatform>${javaCompilerVersion}</compilerTargetPlatform>
+						<configFile>eclipse/OpenMRSFormatter.xml</configFile>
+						<overrideConfigCompilerVersion>true</overrideConfigCompilerVersion>
+						<lineEnding>CRLF</lineEnding>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.openmrs.tools</groupId>
+							<artifactId>openmrs-tools</artifactId>
+							<version>${project.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
             </plugins>
 		</pluginManagement>
 	</build>
