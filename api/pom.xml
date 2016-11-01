@@ -1,155 +1,150 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.openmrs.module</groupId>
-		<artifactId>coreapps</artifactId>
-		<version>1.8-SNAPSHOT</version>
-	</parent>
+  <parent>
+    <groupId>org.openmrs.module</groupId>
+    <artifactId>coreapps</artifactId>
+    <version>1.7.1-SNAPSHOT</version>
+  </parent>
 
-	<artifactId>coreapps-api</artifactId>
-	<packaging>jar</packaging>
-	<name>Core Apps Module API</name>
-	<description>API project for CoreApps</description>
+  <artifactId>coreapps-api</artifactId>
+  <packaging>jar</packaging>
+  <name>Core Apps Module API</name>
+  <description>API project for CoreApps</description>
 
-	<dependencies>
-	
-		<!-- 
-		Add other dependencies from parent's pom:
-		<dependency>
-			<groupId>org.other.library</groupId> 
-			<artifactId>library-name</artifactId>
-		</dependency> 
-		-->
-		
-		<!-- Begin OpenMRS core -->
-		
-		<dependency>
-			<groupId>org.openmrs.api</groupId>
-			<artifactId>openmrs-api</artifactId>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.openmrs.web</groupId>
-			<artifactId>openmrs-web</artifactId>
-			<type>jar</type>
-		</dependency>
-				
-		<dependency>
-			<groupId>org.openmrs.api</groupId>
-			<artifactId>openmrs-api</artifactId>
-			<type>test-jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.openmrs.web</groupId>
-			<artifactId>openmrs-web</artifactId>
-			<type>test-jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.openmrs.test</groupId>
-			<artifactId>openmrs-test</artifactId>
-			<type>pom</type>
-		</dependency>
-				
-		<!-- End OpenMRS core -->
-			
-		<!-- Begin OpenMRS modules -->
-			
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>appframework-api</artifactId>
-            <scope>provided</scope>
-		</dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.10</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.11</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api</artifactId>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
+  <dependencies>
+    
+    <!-- Begin OpenMRS core -->
+    
+    <dependency>
+      <groupId>org.openmrs.api</groupId>
+      <artifactId>openmrs-api</artifactId>
+      <type>jar</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.openmrs.web</groupId>
+      <artifactId>openmrs-web</artifactId>
+      <type>jar</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.openmrs.api</groupId>
+      <artifactId>openmrs-api</artifactId>
+      <type>test-jar</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.openmrs.web</groupId>
+      <artifactId>openmrs-web</artifactId>
+      <type>test-jar</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.openmrs.test</groupId>
+      <artifactId>openmrs-test</artifactId>
+      <type>pom</type>
+    </dependency>
+    
+    <!-- End OpenMRS core -->
+    
+    <!-- Begin OpenMRS modules -->
+    
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>appframework-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>emrapi-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>emrapi-api-1.10</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>emrapi-api-1.11</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>providermanagement-api</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>providermanagement-api</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>uiframework-api</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>uiframework-api</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>reporting-api</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>reporting-api</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>serialization.xstream-api</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>serialization.xstream-api</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>serialization.xstream-api-1.9</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>serialization.xstream-api-1.10</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>calculation-api</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>calculation-api</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>appui-api</artifactId>
-            <classifier>tests</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>htmlformentry-api-1.10</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>htmlformentry-api</artifactId>
-            <classifier>tests</classifier>
-        </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>htmlformentry-api-1.10</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.openmrs</groupId>
-            <artifactId>event-api</artifactId>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.openmrs</groupId>
+      <artifactId>event-api</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>appui-api</artifactId>
+      <classifier>tests</classifier>
+      <version>${appuiVersion}</version>
+      <scope>test</scope>
+    </dependency>
 
-        <!-- End OpenMRS modules -->
-		
-	</dependencies>
-	
-	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>emrapi-api</artifactId>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
 
-		<testResources>
-			<testResource>
-				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
-			</testResource>
-		</testResources>
-	</build>
+    <!-- End OpenMRS modules -->
+    
+  </dependencies>
+  
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+  </build>
 
 </project>
