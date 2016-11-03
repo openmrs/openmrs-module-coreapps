@@ -151,6 +151,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>coreapps.patientDashboardEncounterBatchSize</property>
+        <defaultValue>25</defaultValue>
+        <description>
+            Maximum number of encounters to be loaded at once on the patient dashboard.
+        </description>
+    </globalProperty>
+
     <privilege>
         <name>Task: coreapps.endVisit</name>
         <description>Able to end a visit</description>
