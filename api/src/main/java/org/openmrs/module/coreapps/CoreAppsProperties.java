@@ -69,5 +69,8 @@ public class CoreAppsProperties extends ModuleProperties {
             return url;
         }
     }
-
+    
+    public Integer getPatientDashboardEncounterCount() {
+       return getIntegerByGlobalProperty(CoreAppsConstants.GP_PATIENTDASHBOARD_ENCOUNTER_COUNT);
+    }
 }
