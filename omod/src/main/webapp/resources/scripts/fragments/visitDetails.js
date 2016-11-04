@@ -41,7 +41,7 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount) {
                         });
                     });
                 }
-                if (data.encounters.length > encounterCount) {  // Showing the 'next' button
+                if (data.encounters.length >= encounterCount) {  // Showing the 'next' button
                     $('#visit-paging-buttons').css('visibility', 'visible');
                     $('#visit-paging-button-next').css('visibility', 'visible');
                     $('#visit-paging-button-next').click(function() {

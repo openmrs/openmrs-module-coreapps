@@ -36,6 +36,7 @@
     });
 
     var patient = { id: ${ patient.id } };
+    var encounterCount = ${ encounterCount };    // This variable will be reused in visits.gsp
 </script>
 
 

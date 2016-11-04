@@ -53,9 +53,8 @@
         <% if (param.fromEncounter != null) { %>
             fromEncounter = ${ param.fromEncounter };
         <% } %>
-        var encounterCount = 1000;
         <% if (param.encounterCount != null) { %>
-            encounterCount = ${ param.encounterCount };
+            encounterCount = ${ param.encounterCount }; // This variable is defined in patientdashboard/patientDashboard.gsp
         <% } %>
         loadTemplates(visitId, ${ patient.id }, fromEncounter, encounterCount);
     });

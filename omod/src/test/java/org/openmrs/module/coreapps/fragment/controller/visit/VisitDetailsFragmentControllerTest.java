@@ -17,10 +17,12 @@ import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,8 +53,10 @@ import org.openmrs.module.appui.TestUiUtils;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.CoreAppsProperties;
+import org.openmrs.module.coreapps.parser.ParseEncounterToJson;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
@@ -66,10 +70,10 @@ public class VisitDetailsFragmentControllerTest {
 
    @Test
    public void shouldReturnEncountersForVisit() throws ParseException {
-      
+
       CoreAppsProperties coreAppsProperties = mock(CoreAppsProperties.class);
-      when(coreAppsProperties.getPatientDashboardEncounterBatchSize()).thenReturn(25);
-      
+      when(coreAppsProperties.getPatientDashboardEncounterCount()).thenReturn(100);
+
       UiSessionContext sessionContext = mock(UiSessionContext.class);
       User authenticatedUser = new User();
       when(sessionContext.getCurrentUser()).thenReturn(authenticatedUser);
@@ -192,7 +196,6 @@ public class VisitDetailsFragmentControllerTest {
       };
    }
 
-
    private List<Extension> generateMockEncounterTemplateExtensions() {
       Extension extension = new Extension();
 
@@ -208,5 +211,38 @@ public class VisitDetailsFragmentControllerTest {
       extension.setExtensionParams(extensionParams);
 
       return Collections.singletonList(extension);
+   }
+   
+   @Test
+   public void shouldReturnEncounterWithinBoundaries() {
+      ParseEncounterToJson parseEncounterToJson = mock(ParseEncounterToJson.class);
+      when(parseEncounterToJson.createEncounterJSON(any(User.class), any(Encounter.class))).thenReturn(new SimpleObject());
+      VisitDomainWrapper visitWrapper = mock(VisitDomainWrapper.class);
+      when(visitWrapper.getSortedEncounters()).thenReturn(getTestEncounterList(100));
+      
+      VisitDetailsFragmentController controller = new VisitDetailsFragmentController();
+      List<SimpleObject> encounters;
+      
+      encounters = controller.getEncounterListAsJson(parseEncounterToJson, visitWrapper, new User(), 0, 50);
+      assertThat(encounters.size(), is(50));
+      
+      encounters = controller.getEncounterListAsJson(parseEncounterToJson, visitWrapper, new User(), 50, 50);
+      assertThat(encounters.size(), is(50));
+      
+      encounters = controller.getEncounterListAsJson(parseEncounterToJson, visitWrapper, new User(), 0, 200);
+      assertThat(encounters.size(), is(100));
+      
+      encounters = controller.getEncounterListAsJson(parseEncounterToJson, visitWrapper, new User(), 99, 25);
+      assertThat(encounters.size(), is(1));
+      
+      encounters = controller.getEncounterListAsJson(parseEncounterToJson, visitWrapper, new User(), 100, 25);
+      assertThat(encounters.isEmpty(), is(true));
+   }
+
+   private List<Encounter> getTestEncounterList(int size) {
+      List<Encounter> encounters = new ArrayList<Encounter>();
+      for (int i = 0; i < size; i++)
+         encounters.add(new Encounter());
+      return encounters;
    }
 }

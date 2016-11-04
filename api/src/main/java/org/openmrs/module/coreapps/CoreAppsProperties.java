@@ -70,7 +70,7 @@ public class CoreAppsProperties extends ModuleProperties {
         }
     }
     
-    public Integer getPatientDashboardEncounterBatchSize() {
-       return getIntegerByGlobalProperty(CoreAppsConstants.GP_PATIENTDASHBOARD_ENCOUNTER_BATCH_SIZE);
+    public Integer getPatientDashboardEncounterCount() {
+       return getIntegerByGlobalProperty(CoreAppsConstants.GP_PATIENTDASHBOARD_ENCOUNTER_COUNT);
     }
 }

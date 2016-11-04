@@ -11,7 +11,7 @@ public class CoreAppsConstants {
     public static final String GP_SEARCH_DELAY_SHORT = "coreapps.searchDelayShort";
     public static final String GP_SEARCH_DELAY_LONG = "coreapps.searchDelayLong";
     
-    public static final String GP_PATIENTDASHBOARD_ENCOUNTER_BATCH_SIZE = "coreapps.patientDashboardEncounterBatchSize";
+    public static final String GP_PATIENTDASHBOARD_ENCOUNTER_COUNT = "coreapps.patientDashboardEncounterCount";
 
     public static final String HTMLFORMENTRY_CODED_OR_FREE_TEXT_OBS_TAG_NAME = "codedOrFreeTextObs";
     public static final String HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME = "encounterDiagnoses";

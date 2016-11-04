@@ -50,9 +50,9 @@ import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class VisitDetailsFragmentController {
-   
+
    protected List<SimpleObject> cachedEncounters = new ArrayList<SimpleObject>();
-   
+
    public SimpleObject getVisitDetails(@SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
          @InjectBeans CoreAppsProperties coreAppsProperties,
          @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
@@ -61,7 +61,13 @@ public class VisitDetailsFragmentController {
          @RequestParam(value="fromEncounter", required=false) Integer encounterIndex,
          @RequestParam(value="encounterCount", required=false) Integer encounterCount,
          UiUtils uiUtils,
-         UiSessionContext sessionContext) throws ParseException {
+         UiSessionContext sessionContext) throws ParseException
+   {
+      if (encounterIndex == null)
+         encounterIndex = 0;
+      if (encounterCount == null) {
+         encounterCount = coreAppsProperties.getPatientDashboardEncounterCount();
+      }
 
       ParseEncounterToJson parseEncounterToJson = new ParseEncounterToJson(appFrameworkService, uiUtils, encounterService);
 
@@ -84,10 +90,7 @@ public class VisitDetailsFragmentController {
 
       VisitDomainWrapper visitWrapper = new VisitDomainWrapper(visit, emrApiProperties);
 
-      List<SimpleObject> encounters = new ArrayList<SimpleObject>();
-      for (Encounter encounter : visitWrapper.getSortedEncounters()) {
-         encounters.add(parseEncounterToJson.createEncounterJSON(authenticatedUser, encounter));
-      }
+      List<SimpleObject> encounters = getEncounterListAsJson(parseEncounterToJson, visitWrapper, authenticatedUser, encounterIndex, encounterCount);
       simpleObject.put("encounters", encounters);
 
       simpleObject.put("admitted", visitWrapper.isAdmitted());
@@ -102,6 +105,31 @@ public class VisitDetailsFragmentController {
       simpleObject.put("availableVisitActions", convertVisitActionsToSimpleObject(visitActions));
 
       return simpleObject;
+   }
+
+   /*
+    * http://stackoverflow.com/a/31003453/321797
+    */
+   public static <T> List<T> safeSubList(List<T> list, int fromIndex, int toIndex) {
+      int size = list.size();
+      if (fromIndex >= size || toIndex <= 0 || fromIndex >= toIndex) {
+         return Collections.emptyList();
+      }
+
+      fromIndex = Math.max(0, fromIndex);
+      toIndex = Math.min(size, toIndex);
+
+      return list.subList(fromIndex, toIndex);
+   }
+
+   protected List<SimpleObject> getEncounterListAsJson(ParseEncounterToJson parseEncounterToJson, VisitDomainWrapper visitWrapper, User authenticatedUser, int encounterIndex, int encounterCount) {
+      List<Encounter> sortedEncounters = safeSubList(visitWrapper.getSortedEncounters(), encounterIndex, encounterCount + encounterIndex);
+
+      List<SimpleObject> encounterJson = new ArrayList<SimpleObject>();
+      for (Encounter encounter : sortedEncounters) {
+         encounterJson.add(parseEncounterToJson.createEncounterJSON(authenticatedUser, encounter));
+      }
+      return encounterJson;
    }
 
    private List<String> convertVisitActionsToSimpleObject(List<Extension> visitActions) {
