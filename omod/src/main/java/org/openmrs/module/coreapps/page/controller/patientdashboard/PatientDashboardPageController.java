@@ -101,6 +101,8 @@ public class PatientDashboardPageController {
 
       model.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
 
+      model.addAttribute("encounterCount", coreAppsProperties.getPatientDashboardEncounterCount());
+
       applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 
       return null;

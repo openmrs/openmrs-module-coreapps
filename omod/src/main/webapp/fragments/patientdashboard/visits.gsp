@@ -49,7 +49,14 @@
         <% } else if (activeVisit != null) { %>
             visitId = ${ activeVisit.visit.id };
         <% } %>
-        loadTemplates(visitId, ${ patient.id });
+        var fromEncounter = 0;
+        <% if (param.fromEncounter != null) { %>
+            fromEncounter = ${ param.fromEncounter };
+        <% } %>
+        <% if (param.encounterCount != null) { %>
+            encounterCount = ${ param.encounterCount }; // This variable is defined in patientdashboard/patientDashboard.gsp
+        <% } %>
+        loadTemplates(visitId, ${ patient.id }, fromEncounter, encounterCount);
     });
 </script>
 
@@ -104,21 +111,32 @@
     <% } %>
 </ul>
 
-<div id="visit-details" class="main-content">
-    <% if (patient.patient.dead) { %>
-        <h4>${ ui.message('coreapps.noActiveVisit') }</h4>
-        <p class="spaced">${ ui.message('coreapps.deadPatient.description') }</p>
-    <% } else if (!activeVisit) { %>
-        <h4>${ ui.message('coreapps.noActiveVisit') }</h4>
-        <p class="spaced">${ ui.message('coreapps.noActiveVisit.description') }</p>
-        <% if (sessionContext.userContext.hasPrivilege("Task: coreapps.createVisit")) { %>
-            <p class="spaced">
-                <a id="noVisitShowVisitCreationDialog" href="javascript:visit.showQuickVisitCreationDialog(${patient.id})" class="button task">
-                    <i class="icon-check-in small"></i>${ ui.message("coreapps.task.startVisit.label") }
-                </a>
-            </p>
+<div class="main-content">
+    <div id="visit-details">
+        <% if (patient.patient.dead) { %>
+            <h4>${ ui.message('coreapps.noActiveVisit') }</h4>
+            <p class="spaced">${ ui.message('coreapps.deadPatient.description') }</p>
+        <% } else if (!activeVisit) { %>
+            <h4>${ ui.message('coreapps.noActiveVisit') }</h4>
+            <p class="spaced">${ ui.message('coreapps.noActiveVisit.description') }</p>
+            <% if (sessionContext.userContext.hasPrivilege("Task: coreapps.createVisit")) { %>
+                <p class="spaced">
+                    <a id="noVisitShowVisitCreationDialog" href="javascript:visit.showQuickVisitCreationDialog(${patient.id})" class="button task">
+                        <i class="icon-check-in small"></i>${ ui.message("coreapps.task.startVisit.label") }
+                    </a>
+                </p>
+            <% } %>
         <% } %>
-    <% } %>
+    </div>
+
+    <div id="visit-paging-buttons" style="width: 75%; visibility: hidden;">
+        <button id="visit-paging-button-prev" class="left" style="visibility: hidden">
+            <i class=" icon-arrow-left icon-1x"></i>${ ui.message("coreapps.search.previous") }
+        </button>
+        <button id="visit-paging-button-next" class="right" style="visibility: hidden">
+            ${ ui.message("coreapps.search.next") }<i class=" icon-arrow-right icon-1x"></i>
+        </button>
+    </div>
 </div>
 
 <div id="delete-encounter-dialog" class="dialog" style="display: none">

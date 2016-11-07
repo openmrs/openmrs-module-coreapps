@@ -151,6 +151,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>coreapps.patientDashboardEncounterCount</property>
+        <defaultValue>100</defaultValue>
+        <description>
+            Maximum number of encounters to be loaded and displayed at once on the patient dashboard.
+        </description>
+    </globalProperty>
+
     <privilege>
         <name>Task: coreapps.endVisit</name>
         <description>Able to end a visit</description>
