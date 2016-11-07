@@ -13,6 +13,12 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.openmrs.Encounter;
 import org.openmrs.User;
 import org.openmrs.Visit;
@@ -41,162 +47,155 @@ import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 public class VisitDetailsFragmentController {
 
 
 
-    public SimpleObject getVisitDetails(@SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
-                                        @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
-                                        @SpringBean("encounterService") EncounterService encounterService,
-                                        @RequestParam("visitId") Visit visit, UiUtils uiUtils,
-                                        UiSessionContext sessionContext) throws ParseException {
+   public SimpleObject getVisitDetails(@SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
+         @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
+         @SpringBean("encounterService") EncounterService encounterService,
+         @RequestParam("visitId") Visit visit, UiUtils uiUtils,
+         UiSessionContext sessionContext) throws ParseException
+   {
+      ParseEncounterToJson parseEncounterToJson = new ParseEncounterToJson(appFrameworkService, uiUtils, encounterService);
 
-        ParseEncounterToJson parseEncounterToJson = new ParseEncounterToJson(appFrameworkService, uiUtils, encounterService);
+      SimpleObject simpleObject = SimpleObject.fromObject(visit, uiUtils, "id", "uuid", "location");
 
-        SimpleObject simpleObject = SimpleObject.fromObject(visit, uiUtils, "id", "uuid", "location");
+      User authenticatedUser = sessionContext.getCurrentUser();
 
-        User authenticatedUser = sessionContext.getCurrentUser();
+      boolean canDeleteVisit = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_VISIT);
 
-        boolean canDeleteVisit = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_VISIT);
+      Date startDatetime = visit.getStartDatetime();
+      Date stopDatetime = visit.getStopDatetime();
 
-        Date startDatetime = visit.getStartDatetime();
-        Date stopDatetime = visit.getStopDatetime();
+      simpleObject.put("startDatetime", uiUtils.format(startDatetime));
 
-        simpleObject.put("startDatetime", uiUtils.format(startDatetime));
+      if (stopDatetime != null) {
+         simpleObject.put("stopDatetime", uiUtils.format(stopDatetime));
+      } else {
+         simpleObject.put("stopDatetime", null);
+      }
 
-        if (stopDatetime != null) {
-            simpleObject.put("stopDatetime", uiUtils.format(stopDatetime));
-        } else {
-            simpleObject.put("stopDatetime", null);
-        }
+      VisitDomainWrapper visitWrapper = new VisitDomainWrapper(visit, emrApiProperties);
 
-        VisitDomainWrapper visitWrapper = new VisitDomainWrapper(visit, emrApiProperties);
+      List<SimpleObject> encounters = new ArrayList<SimpleObject>();
+      for (Encounter encounter : visitWrapper.getSortedEncounters()) {
+         encounters.add(parseEncounterToJson.createEncounterJSON(authenticatedUser, encounter));
+      }
+      simpleObject.put("encounters", encounters);
 
-        List<SimpleObject> encounters = new ArrayList<SimpleObject>();
-        for (Encounter encounter : visitWrapper.getSortedEncounters()) {
-            encounters.add(parseEncounterToJson.createEncounterJSON(authenticatedUser, encounter));
-        }
-        simpleObject.put("encounters", encounters);
+      simpleObject.put("admitted", visitWrapper.isAdmitted());
+      simpleObject.put("canDeleteVisit", verifyIfUserHasPermissionToDeleteVisit(visit, authenticatedUser, canDeleteVisit));
 
-        simpleObject.put("admitted", visitWrapper.isAdmitted());
-        simpleObject.put("canDeleteVisit", verifyIfUserHasPermissionToDeleteVisit(visit, authenticatedUser, canDeleteVisit));
+      AppContextModel contextModel = sessionContext.generateAppContextModel();
+      contextModel.put("patient", new PatientContextModel(visit.getPatient()));
+      contextModel.put("visit", new VisitContextModel(new VisitDomainWrapper(visit, emrApiProperties)));
 
-        AppContextModel contextModel = sessionContext.generateAppContextModel();
-        contextModel.put("patient", new PatientContextModel(visit.getPatient()));
-        contextModel.put("visit", new VisitContextModel(new VisitDomainWrapper(visit, emrApiProperties)));
+      List<Extension> visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions", contextModel);
+      Collections.sort(visitActions);
+      simpleObject.put("availableVisitActions", convertVisitActionsToSimpleObject(visitActions));
 
-        List<Extension> visitActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.visitActions", contextModel);
-        Collections.sort(visitActions);
-        simpleObject.put("availableVisitActions", convertVisitActionsToSimpleObject(visitActions));
+      return simpleObject;
+   }
 
-        return simpleObject;
-    }
+   private List<String> convertVisitActionsToSimpleObject(List<Extension> visitActions) {
 
-    private List<String> convertVisitActionsToSimpleObject(List<Extension> visitActions) {
+      // just convert to a list of ids as strings
+      List<String> visitActionsSimple = new ArrayList<String>();
 
-        // just convert to a list of ids as strings
-        List<String> visitActionsSimple = new ArrayList<String>();
+      for (Extension visitAction : visitActions) {
+         visitActionsSimple.add(visitAction.getId());
+      }
 
-        for (Extension visitAction : visitActions) {
-            visitActionsSimple.add(visitAction.getId());
-        }
+      return visitActionsSimple;
+   }
 
-        return visitActionsSimple;
-    }
+   private boolean verifyIfUserHasPermissionToDeleteVisit(Visit visit, User authenticatedUser, boolean canDeleteVisit) {
+      VisitDomainWrapper visitDomainWrapper = new VisitDomainWrapper(visit);
+      if ( visitDomainWrapper.hasEncounters() ){
+         // allowed to delete only empty visits
+         return false;
+      }
+      boolean userParticipatedInVisit = visitDomainWrapper.verifyIfUserIsTheCreatorOfVisit(authenticatedUser);
+      return canDeleteVisit || userParticipatedInVisit;
+   }
 
-    private boolean verifyIfUserHasPermissionToDeleteVisit(Visit visit, User authenticatedUser, boolean canDeleteVisit) {
-        VisitDomainWrapper visitDomainWrapper = new VisitDomainWrapper(visit);
-        if ( visitDomainWrapper.hasEncounters() ){
-            // allowed to delete only empty visits
-            return false;
-        }
-        boolean userParticipatedInVisit = visitDomainWrapper.verifyIfUserIsTheCreatorOfVisit(authenticatedUser);
-        return canDeleteVisit || userParticipatedInVisit;
-    }
+   public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
+         @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
+         @SpringBean("locationService") LocationService locationService,
+         @SpringBean("dispositionService") DispositionService dispositionService,
+         UiUtils uiUtils) {
 
-    public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
-                                            @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
-                                            @SpringBean("locationService") LocationService locationService,
-                                            @SpringBean("dispositionService") DispositionService dispositionService,
-                                            UiUtils uiUtils) {
+      ParserEncounterIntoSimpleObjects parserEncounter = new ParserEncounterIntoSimpleObjects(encounter, uiUtils,
+            emrApiProperties, locationService, dispositionService);
 
-        ParserEncounterIntoSimpleObjects parserEncounter = new ParserEncounterIntoSimpleObjects(encounter, uiUtils,
-                emrApiProperties, locationService, dispositionService);
+      ParsedObs parsedObs = parserEncounter.parseObservations(uiUtils.getLocale());
+      List<SimpleObject> orders = parserEncounter.parseOrders();
 
-        ParsedObs parsedObs = parserEncounter.parseObservations(uiUtils.getLocale());
-        List<SimpleObject> orders = parserEncounter.parseOrders();
+      return SimpleObject.create("observations", parsedObs.getObs(), "orders", orders, "diagnoses",
+            parsedObs.getDiagnoses(), "dispositions", parsedObs.getDispositions());
+   }
 
-        return SimpleObject.create("observations", parsedObs.getObs(), "orders", orders, "diagnoses",
-                parsedObs.getDiagnoses(), "dispositions", parsedObs.getDispositions());
-    }
+   public FragmentActionResult deleteEncounter(UiUtils ui,
+         @RequestParam("encounterId") Encounter encounter,
+         @SpringBean("encounterService") EncounterService encounterService,
+         UiSessionContext sessionContext) {
 
-    public FragmentActionResult deleteEncounter(UiUtils ui,
-                                                @RequestParam("encounterId") Encounter encounter,
-                                                @SpringBean("encounterService") EncounterService encounterService,
-                                                UiSessionContext sessionContext) {
+      if (encounter != null) {
+         User authenticatedUser = sessionContext.getCurrentUser();
+         boolean canDelete = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_ENCOUNTER);
+         if (verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete)) {
+            encounterService.voidEncounter(encounter, "delete encounter");
+            encounterService.saveEncounter(encounter);
+         } else {
+            return new FailureResult(ui.message("coreapps.patientDashBoard.deleteEncounter.notAllowed"));
+         }
+      }
+      return new SuccessResult(ui.message("coreapps.patientDashBoard.deleteEncounter.successMessage"));
+   }
 
-        if (encounter != null) {
-            User authenticatedUser = sessionContext.getCurrentUser();
-            boolean canDelete = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_ENCOUNTER);
-            if (verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete)) {
-                encounterService.voidEncounter(encounter, "delete encounter");
-                encounterService.saveEncounter(encounter);
-            } else {
-                return new FailureResult(ui.message("coreapps.patientDashBoard.deleteEncounter.notAllowed"));
-            }
-        }
-        return new SuccessResult(ui.message("coreapps.patientDashBoard.deleteEncounter.successMessage"));
-    }
+   public FragmentActionResult deleteVisit(UiUtils ui,
+         @RequestParam("visitId") Visit visit,
+         @SpringBean("visitService") VisitService visitService,
+         UiSessionContext sessionContext) {
 
-    public FragmentActionResult deleteVisit(UiUtils ui,
-                                                @RequestParam("visitId") Visit visit,
-                                                @SpringBean("visitService") VisitService visitService,
-                                                UiSessionContext sessionContext) {
+      if (visit != null ) {
+         User authenticatedUser = sessionContext.getCurrentUser();
+         boolean canDeleteVisit = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_VISIT);
+         if (verifyIfUserHasPermissionToDeleteVisit(visit, authenticatedUser, canDeleteVisit)) {
+            visitService.voidVisit(visit, "delete visit");
+            visitService.saveVisit(visit);
+         } else {
+            return new FailureResult(ui.message("emr.patientDashBoard.deleteVisit.notAllowed"));
+         }
+      }
+      return new SuccessResult(ui.message("coreapps.task.deleteVisit.successMessage"));
+   }
 
-        if (visit != null ) {
-            User authenticatedUser = sessionContext.getCurrentUser();
-            boolean canDeleteVisit = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_VISIT);
-            if (verifyIfUserHasPermissionToDeleteVisit(visit, authenticatedUser, canDeleteVisit)) {
-                visitService.voidVisit(visit, "delete visit");
-                visitService.saveVisit(visit);
-            } else {
-                return new FailureResult(ui.message("emr.patientDashBoard.deleteVisit.notAllowed"));
-            }
-        }
-        return new SuccessResult(ui.message("coreapps.task.deleteVisit.successMessage"));
-    }
+   public FragmentActionResult endVisit(UiUtils ui,
+         @RequestParam("visitId") Visit visit,
+         @SpringBean("visitService") VisitService visitService,
+         UiSessionContext sessionContext)
+   {
+      User currentUser = sessionContext.getCurrentUser();
+      if (currentUser == null || !currentUser.hasPrivilege(CoreAppsConstants.PRIVILEGE_END_VISIT)) {
+         return new FailureResult(ui.message("coreapps.task.endVisit.notAllowed"));
+      }
 
-	public FragmentActionResult endVisit(UiUtils ui,
-											@RequestParam("visitId") Visit visit,
-											@SpringBean("visitService") VisitService visitService,
-											UiSessionContext sessionContext) {
-		User currentUser = sessionContext.getCurrentUser();
-		if (currentUser == null || !currentUser.hasPrivilege(CoreAppsConstants.PRIVILEGE_END_VISIT)) {
-			return new FailureResult(ui.message("coreapps.task.endVisit.notAllowed"));
-		}
+      if (visit != null ) {
+         try {
+            visitService.endVisit(visit, new Date());
+         } catch (APIAuthenticationException e) {
+            return new FailureResult(ui.message("coreapps.task.endVisit.notAllowed"));
+         }
+      }
+      return new SuccessResult(ui.message("coreapps.task.endVisit.successMessage"));
+   }
 
-		if (visit != null ) {
-			try {
-				visitService.endVisit(visit, new Date());
-			} catch (APIAuthenticationException e) {
-				return new FailureResult(ui.message("coreapps.task.endVisit.notAllowed"));
-			}
-		}
-		return new SuccessResult(ui.message("coreapps.task.endVisit.successMessage"));
-	}
-
-    private boolean verifyIfUserHasPermissionToDeleteAnEncounter(Encounter encounter, User authenticatedUser,
-                                                                   boolean canDelete) {
-        EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
-        boolean userParticipatedInEncounter = encounterDomainWrapper.participatedInEncounter(authenticatedUser);
-        return canDelete || userParticipatedInEncounter;
-    }
-
-
+   private boolean verifyIfUserHasPermissionToDeleteAnEncounter(Encounter encounter, User authenticatedUser,
+         boolean canDelete) {
+      EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
+      boolean userParticipatedInEncounter = encounterDomainWrapper.participatedInEncounter(authenticatedUser);
+      return canDelete || userParticipatedInEncounter;
+   }
 }
