@@ -19,6 +19,8 @@ import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.VisitType;
+import org.openmrs.api.VisitService;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -28,6 +30,7 @@ import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 
 import java.util.Date;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -50,13 +53,16 @@ public class QuickVisitFragmentControllerTest {
 	private UiSessionContext emrContext;
 	
 	private AdtService adtService;
-	
+
+	private VisitService visitService;
+
 	@Before
 	public void setUp() {
 		controller = new QuickVisitFragmentController();
 		uiUtils = mock(UiUtils.class);
 		emrContext = mock(UiSessionContext.class);
 		adtService = mock(AdtService.class);
+		visitService = mock(VisitService.class);
 	}
 	
 	@Test
@@ -77,7 +83,7 @@ public class QuickVisitFragmentControllerTest {
 
         when(adtService.ensureVisit(eq(patient), any(Date.class), eq(visitLocation))).thenReturn(visit);
 
-		FragmentActionResult result = controller.create(adtService, patient, visitLocation,
+		FragmentActionResult result = controller.create(adtService, patient, visitLocation, null,
 		    uiUtils, emrContext, request);
 
 		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
@@ -86,7 +92,40 @@ public class QuickVisitFragmentControllerTest {
 
 	}
 
-    @Test
+	@Test
+	public void shouldCreateNewVisitWithVisitType() throws Exception {
+		Patient patient = new Patient();
+		Location visitLocation = new Location();
+
+		String successMessage = "Success message";
+		String formattedPatient = "Patient name";
+		when(uiUtils.format(patient)).thenReturn(formattedPatient);
+		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
+
+		HttpSession session = mock(HttpSession.class);
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		when(request.getSession()).thenReturn(session);
+
+		Visit visit = createVisit();
+
+		List<VisitType> visitTypes = visitService.getAllVisitTypes();
+		VisitType visitType = null;
+		if(visitTypes.size() > 0){
+			visitType = visitTypes.get(0);
+		}
+
+		when(adtService.ensureVisit(eq(patient), any(Date.class), eq(visitLocation))).thenReturn(visit);
+
+		FragmentActionResult result = controller.create(adtService, patient, visitLocation, visitType,
+				uiUtils, emrContext, request);
+
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+		assertThat(result, is(CoreMatchers.any(FragmentActionResult.class)));
+
+	}
+
+	@Test
     public void shouldFailIfActiveVisitAlreadyExists() throws Exception {
 
         Patient patient = new Patient();
@@ -98,7 +137,7 @@ public class QuickVisitFragmentControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getSession()).thenReturn(session);
 
-        FragmentActionResult result = controller.create(adtService, patient, visitLocation,
+        FragmentActionResult result = controller.create(adtService, patient, visitLocation, null,
                 uiUtils, emrContext, request);
 
         assertThat(result, is(instanceOf(FailureResult.class)));

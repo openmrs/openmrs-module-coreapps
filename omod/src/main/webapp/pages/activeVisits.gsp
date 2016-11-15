@@ -1,6 +1,10 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
+    ui.includeJavascript("coreapps", "visit/jquery.dataTables.js")
+    ui.includeJavascript("coreapps", "visit/filterTable.js")
+    ui.includeCss("coreapps", "visit/visits.css")
 %>
+
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
@@ -9,6 +13,23 @@
 </script>
 
 <h3>${ ui.message("coreapps.activeVisits.title") }</h3>
+<p id="filter-tags" class="filters">
+    ${ui.message("Filters")}
+    <% visitTypesWithAttr.each { type, attr -> %>
+    <span class="filter disabled" value="${type.id}"/>
+    <script type="text/javascript">
+        jq(document).ready(function () {
+            if ('${attr.color}' != null) {
+                jq("#visittype-tag-${type.id}.tag").css("background",'${attr.color}');
+            }
+        })
+    </script>
+    <span id="visittype-tag-${type.id}" class="tag ${attr.shortName}" style="cursor:pointer;" >
+        ${ui.format(type.name)}
+    </span>
+    </span>
+    <% } %>
+</p>
 
 <table id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
 	<thead>
@@ -17,6 +38,7 @@
 			<th>${ ui.message("coreapps.person.name") }</th>
 			<th>${ ui.message("coreapps.activeVisits.checkIn") }</th>
 			<th>${ ui.message("coreapps.activeVisits.lastSeen") }</th>
+            <th>${ ui.message("coreapps.retrospectiveCheckin.visitType.label") }</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -61,6 +83,19 @@
 
                     <% } %>
 				</td>
+                <td>
+                    <% if (v.visit.visitType) { %>
+                        <% visitsWithAttr.each { visitId, attr -> %>
+                        <% if (visitId   == v.visit.id) { %>
+                            <span style="display:none">${v.visit.visitType.id}</span>
+                            <span id="visittype-tag-${attr.shortName}" style="background: ${attr.color}" class="tag" >
+                                ${ui.format(v.visit.visitType)}
+                            </span>
+                        <% } %>
+                    <% } %>
+                    <br/>
+                    <% } %>
+                </td>
 			</tr>
 		<% } %>
 	</tbody>

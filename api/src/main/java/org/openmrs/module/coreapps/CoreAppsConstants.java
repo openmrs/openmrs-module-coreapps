@@ -33,4 +33,11 @@ public class CoreAppsConstants {
 
    @Deprecated  // no longer used, to override set coreapps.dashboardUrl instead
    public static final String GP_DEFAULT_DASHBOARD = "coreapps.defaultDashboard";
+
+    // a JSON like object property to set visit types order
+    public final static String VISIT_TYPES_ORDER_PROPERTY = "coreapps.visit.visittype.order";
+
+    public final static String VISIT_TYPE_COLORS = "coreapps.visitTypeColors";
+
+    public final static String TRANSFER_ENCOUNTER_TYPE_UUID = "coreapps.transferEncounterUuid";
 }
