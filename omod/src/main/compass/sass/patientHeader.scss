@@ -74,36 +74,6 @@ $green: #51A351;
         top: -15px;
       }
     }
-
-    .colored-message {
-      @include horizontal-list;
-
-      color: white;
-      padding: 2px 4px;
-      border-radius: 1px;
-      margin-top: 4px;
-      font-size: 0.8em;
-    }
-
-    .bordered-colored-message {
-      @extend .colored-message;
-
-      border: 1px solid $darkGray;
-    }
-
-    .active-visit-started-at-message {
-      @extend .bordered-colored-message;
-
-      background: $green;
-      border-color: $green;
-    }
-
-    .active-visit-message {
-      @extend .bordered-colored-message;
-
-      background: $darkGray;
-      border-color: $darkGray;
-    }
   }
 
   .contact-info-label {
@@ -173,6 +143,40 @@ $green: #51A351;
       }
     }
 
+  }
+
+  .colored-message {
+    @include horizontal-list;
+
+    color: white;
+    padding: 2px 4px;
+    border-radius: 1px;
+    margin-top: 4px;
+    font-size: 0.8em;
+  }
+
+  .bordered-colored-message {
+    @extend .colored-message;
+
+    border: 1px solid $darkGray;
+  }
+
+  .active-visit-started-at-message {
+    @extend .bordered-colored-message;
+
+    background: $green;
+    border-color: $green;
+  }
+
+  .active-visit-message {
+    @extend .bordered-colored-message;
+
+    background: $darkGray;
+    border-color: $darkGray;
+  }
+
+  .secondLineFragments {
+    clear: both;
   }
 }
 

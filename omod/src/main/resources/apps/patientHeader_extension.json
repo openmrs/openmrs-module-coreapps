@@ -1,0 +1,10 @@
+[
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.patientHeader.secondLineFragments.activeVisitStatus",
+        "extensionPointId": "patientHeader.secondLineFragments",
+        "extensionParams": {
+            "provider": "${project.parent.artifactId}",
+            "fragment": "patientheader/activeVisitStatus"
+        }
+    }
+]

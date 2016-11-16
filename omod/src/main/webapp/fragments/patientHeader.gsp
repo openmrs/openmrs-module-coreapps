@@ -119,27 +119,18 @@
                     <i class="toggle-icon icon-caret-up small"></i>
                 </a>
             </span>
+
+            <div class="firstLineFragments">
+                <% firstLineFragments.each { %>
+                    ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patient: config.patient])}
+                <% } %>
+            </div>
+
             <div class="hidden" id="contactInfoContent" class="contact-info-content">
                 ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient, contextModel: appContextModel ]) }
             </div>
         </h1>
-        <% if (config.activeVisit) { %>
-            <% def visit = config.activeVisit.visit %>
 
-            <div class="active-visit-started-at-message">
-                ${ui.message("coreapps.patientHeader.activeVisit.at", config.activeVisitStartDatetime)}
-            </div>
-            <% if (config.activeVisit.admitted) { %>
-                <div class="active-visit-message">
-                    ${ui.message("coreapps.patientHeader.activeVisit.inpatient", ui.format(config.activeVisit.latestAdtEncounter.location))}
-                </div>
-            <% } else { %>
-                <div class="active-visit-message">
-                    ${ui.message("coreapps.patientHeader.activeVisit.outpatient")}
-                </div>
-            <% } %>
-
-        <% } %>
     </div>
 
     <div class="identifiers">
@@ -191,6 +182,12 @@
             <input type="submit" id="merge-button"
                    value="${ui.message("coreapps.mergePatients.mergeIntoAnotherPatientRecord.button")}"/>
         </form>
+    </div>
+
+    <div class="secondLineFragments">
+        <% secondLineFragments.each { %>
+            ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patient: config.patient])}
+        <% } %>
     </div>
 
     <div class="close"></div>
