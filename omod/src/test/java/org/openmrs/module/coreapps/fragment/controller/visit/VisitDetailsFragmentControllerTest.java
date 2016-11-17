@@ -127,6 +127,7 @@ public class VisitDetailsFragmentControllerTest {
       encounter.getEncounterProviders().add(secondaryEncounterProvider);   // add secondary provider so that it is the one that is "arbitrarily" returned first
       encounter.getEncounterProviders().add(primaryEncounterProvider);
       encounter.setCreator(authenticatedUser);
+      encounter.setDateCreated(new Date());
 
       visit.addEncounter(encounter);
 
