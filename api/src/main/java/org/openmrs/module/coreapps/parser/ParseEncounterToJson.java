@@ -49,7 +49,20 @@ public class ParseEncounterToJson {
                 DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy", Context.getLocale()));
         simpleEncounter.put("encounterTime",
                 DateFormatUtils.format(encounter.getEncounterDatetime(), "hh:mm a", Context.getLocale()));
-
+    
+        // do the same for other date fields
+        simpleEncounter.put("dateCreated",
+                DateFormatUtils.format(encounter.getDateCreated(), "dd MMM yyyy", Context.getLocale()));
+        simpleEncounter.put("creator", uiUtils.format(encounter.getCreator()));
+        
+        if (encounter.getDateChanged() != null) {
+            simpleEncounter.put("dateChanged",
+                    DateFormatUtils.format(encounter.getDateChanged(), "dd MMM yyyy", Context.getLocale()));
+        }
+    
+        if (encounter.getChangedBy() != null) {
+            simpleEncounter.put("changedBy", uiUtils.format(encounter.getChangedBy()));
+        }
         EncounterType encounterType = encounter.getEncounterType();
         simpleEncounter.put("encounterType",
                 SimpleObject.create("uuid", encounterType.getUuid(), "name", uiUtils.format(encounterType)));

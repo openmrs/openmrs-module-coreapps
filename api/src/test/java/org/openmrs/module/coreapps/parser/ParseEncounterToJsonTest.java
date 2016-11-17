@@ -144,6 +144,7 @@ public class ParseEncounterToJsonTest {
         EncounterType encounterType = new EncounterType();
         encounterType.setUuid("encounterTypeUuid");
         encounter.setEncounterType(encounterType);
+        encounter.setDateCreated(new Date());
         return encounter;
     }
 
