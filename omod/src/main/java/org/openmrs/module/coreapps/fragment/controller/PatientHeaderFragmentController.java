@@ -28,6 +28,7 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
+import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
@@ -58,6 +59,7 @@ public class PatientHeaderFragmentController {
                            @FragmentParam(required = false, value="appContextModel") AppContextModel appContextModel,
 	                       @FragmentParam("patient") Object patient, @InjectBeans PatientDomainWrapper wrapper,
 	                       @SpringBean("adtService") AdtService adtService, UiSessionContext sessionContext,
+						   @SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper,
                            UiUtils uiUtils,
                            FragmentModel model) {
 
@@ -101,6 +103,13 @@ public class PatientHeaderFragmentController {
                     options.size() > 0 ? options.get(0).isManualEntryEnabled() : true));
 		}
 
+		String color = "";
+		if(activeVisit != null){
+			color = (String) visitTypeHelper.getVisitTypeColorAndShortName(
+					activeVisit.getVisit().getVisitType()).get("color");
+		}
+
+		model.addAttribute("visitAttributeColor", color);
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
         config.addAttribute("extraPatientIdentifiersMappedByType", wrapper.getExtraIdentifiersMappedByType(sessionContext.getSessionLocation()));
         config.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());

@@ -22,8 +22,7 @@ visit.createQuickVisitCreationDialog = function() {
         selector: '#quick-visit-creation-dialog',
         actions: {
             confirm: function() {
-                emr.getFragmentActionWithCallback('coreapps', 'visit/quickVisit', 'create',
-                    { patientId: visit.patientId, locationId: sessionLocationModel.id() },
+                emr.getFragmentActionWithCallback('coreapps', 'visit/quickVisit', 'create', visit.buildVisitTypeAttributeParams(),
                     function(v) {
                         jq('#quick-visit-creation-dialog' + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
                         visit.goToReturnUrl(visit.patientId, v);
@@ -140,13 +139,42 @@ visit.showEditVisitDateDialog = function(visitId) {
                             }
                         }
                     );
-                    return false;
                 }
             }
 
         });
     }
     editVisitDialogs[visitId].show();
+}
+
+/**
+ * Functions used to edit visits (uses EditVisitFragmentController)
+ */
+visit.showEditVisitDialog = function(visitId) {
+    var editVisitDialog = emr.setupConfirmationDialog({
+        selector: '#edit-visit-dialog-' + visitId,
+        actions: {
+            confirm: function() {
+                if(visitId !== undefined){
+                    var url = emr.fragmentActionLink("coreapps", "visit/quickVisit", "update");
+                    jq.getJSON(url, visit.buildVisitTypeAttributeParams(visitId)).success(function(data) {
+		                    if(data.success) {
+			                    jq('#edit-visit-dialog-form-' + visitId + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
+			                    // TODO Do we need to update this to specify return url, or is this link only going  to ever be used from the old visits view?
+			                    window.location.search = data.search;
+		                    }
+	                    }
+                    );
+                }
+
+                return false;
+            },
+            cancel: function() {
+                editVisitDialog.close();
+            }
+        }
+    });
+    editVisitDialog.show();
 }
 
 /**
@@ -191,4 +219,79 @@ visit.goToReturnUrl = function(patientId, v) {
         { patientId: patientId, visitId: v.id,
             'patient.patientId': patientId, 'visit.visitId': v.id,
             'patient.uuid': patientId, 'visit.uuid': v.id }) });
+}
+
+visit.getCodedConcepts = function(conceptId, elementName, selectedValue, visitId){
+    jQuery.ajax({
+        url: emr.fragmentActionLink("coreapps", "visit/quickVisit", "getConceptAnswers",   { conceptId: conceptId }),
+        dataType: 'json',
+        type: 'POST'
+    }).success(function(data) {
+        var options;
+        if(visitId !== undefined && visitId !== null){
+            options = jq("#edit-visit-dialog-form-" + visitId + " select[name='" + elementName + "']");
+        } else {
+            options = jq("select[name='" + elementName + "']");
+        }
+
+        options.empty();
+
+        var results = data.results;
+	    options.append(jq("<option>", {"value":'', "text": ''}));
+        jq.each(results, function(key, value){
+            var option = jq("<option>", {"value": value.uuid, "text": value.name});
+	        option.attr('class', 'dialog-drop-down small');
+            if(selectedValue === value.uuid){
+                option.attr('selected', 'selected');
+            }
+            options.append(option);
+        });
+    });
+}
+
+visit.buildVisitTypeAttributeParams = function(visitId){
+    var params = {};
+
+    if(visitId === undefined) {
+        params['patientId'] = visit.patientId;
+        params['locationId'] = sessionLocationModel.id();
+        params['selectedTypeId'] = jq('#visit-visittype-drop-down').find(":selected").val();
+    } else {
+        params['visitId'] = visitId;
+        params['patientId'] = jq('#patientId').val();
+        params['selectedTypeId'] = jq('#selectedTypeId').val();
+    }
+
+    var dateFormat = jq("#dateFormat").val();
+    if(dateFormat != null && dateFormat !== undefined){
+        dateFormat = dateFormat.replace("yyyy", "yy");
+    }
+
+    var formId = '';
+    if(visitId !== undefined && visitId !== null){
+        formId = "#edit-visit-dialog-form-" + visitId;
+    }
+    jq(formId + " input[name^='attribute']").map(function (index, element) {
+        if(element.type === 'radio'){
+            if(element.checked){
+                params[jq(element).attr('name')]  = jq(element).val();
+            }
+        } else if(jq(element).val() !== null && jq(element).val() !== ''){
+            if(element.name.indexOf('date') > -1){
+                var date = new Date(jq(element).val());
+                var formattedDate = jq.datepicker.formatDate(dateFormat, date);
+                var name = element.name.replace('.date', '');
+                params[name]  = formattedDate;
+            } else {
+                params[jq(element).attr('name')]  = jq(element).val();
+            }
+        }
+    });
+
+    // retrieve coded concept values
+    jq(formId + " select[name^='attribute']").map(function (index, element) {
+       params[jq(element).attr('name')] = jq(element).val();
+    });
+
+    return params;
 }
