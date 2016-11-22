@@ -11,7 +11,6 @@
         <form id="edit-visit-dialog-form-${ config.visit.id }">
             <input type="hidden" id="patientId" value="${ config.visit.patient.id }"/>
             <input type="hidden" id="selectedTypeId" />
-            <input type="hidden" id="codedDataTypeId" />
             <input type="hidden" id="dateFormat" value='<%= org.openmrs.api.context.Context.getDateFormat().toPattern().toLowerCase() %>' />
             <table class="left-aligned-th edit-visit-table">
                 <tr>
@@ -67,11 +66,10 @@
                                     useTime: false
                             ])}
                         <% } else if(type.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype'){ %>
-                            <select id="coded-data-types" name="${elementFormName}"
-                                    onchange="visit.setSelectedDropdownValue('codedDataTypeId', this)"></select>
+                            <select id="coded-data-types" name="${elementFormName}"></select>
                             <script>
                                 var conceptId = '${type.datatypeConfig}';
-                                visit.getCodedConcepts(conceptId, '${value}', '${ config.visit.id }');
+                                visit.getCodedConcepts(conceptId, '${elementFormName}', '${value}', '${ config.visit.id }');
                             </script>
                         <% } else { %>
                             <input type="text" size="15" name="${elementFormName}" value="${value}" />

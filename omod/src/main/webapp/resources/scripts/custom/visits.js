@@ -221,7 +221,7 @@ visit.goToReturnUrl = function(patientId, v) {
             'patient.uuid': patientId, 'visit.uuid': v.id }) });
 }
 
-visit.getCodedConcepts = function(conceptId, selectedValue, visitId){
+visit.getCodedConcepts = function(conceptId, elementName, selectedValue, visitId){
     jQuery.ajax({
         url: emr.fragmentActionLink("coreapps", "visit/quickVisit", "getConceptAnswers",   { conceptId: conceptId }),
         dataType: 'json',
@@ -229,10 +229,12 @@ visit.getCodedConcepts = function(conceptId, selectedValue, visitId){
     }).success(function(data) {
         var options;
         if(visitId !== undefined && visitId !== null){
-            options = jq("#edit-visit-dialog-form-" + visitId + " select[id='coded-data-types']");
+            options = jq("#edit-visit-dialog-form-" + visitId + " select[name='" + elementName + "']");
         } else {
-            options = jq("select[id='coded-data-types']");
+            options = jq("select[name='" + elementName + "']");
         }
+
+        options.empty();
 
         var results = data.results;
 	    options.append(jq("<option>", {"value":'', "text": ''}));
@@ -286,18 +288,10 @@ visit.buildVisitTypeAttributeParams = function(visitId){
         }
     });
 
-	// check coded concept value
-	var element = jq('#codedDataTypeId');
-	if(element.val() !== undefined && element.val() !== null){
-		params[element.attr('name')] = element.val();
-	}
+    // retrieve coded concept values
+    jq(formId + " select[name^='attribute']").map(function (index, element) {
+       params[jq(element).attr('name')] = jq(element).val();
+    });
 
     return params;
-}
-
-visit.setSelectedDropdownValue = function (id, element){
-    jq("#" + id).val(element.value);
-    if(element.name !== undefined){
-        jq("#" + id).attr('name', element.name);
-    }
 }

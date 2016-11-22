@@ -133,7 +133,7 @@
 
         <% if (activeVisits) { %>
         <script type="text/javascript">
-            jq("#start-visit-with-visittype-confirm").addClass("disabled");
+            jq("#start-visit-with-visittype-confirm").remove();
         </script>
 
         <p class="dialog-instructions">
@@ -190,11 +190,10 @@
                                 useTime: false,
                         ])}
                         <% } else if(type.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype'){ %>
-                            <select id="coded-data-types" name="attribute.${type.id}.new[0]"
-                                    onchange="visit.setSelectedDropdownValue('codedDataTypeId', this)"></select>
+                            <select id="coded-data-types" name="attribute.${type.id}.new[0]"></select>
                             <script>
                                 var conceptId = '${type.datatypeConfig}';
-                                visit.getCodedConcepts(conceptId);
+                                visit.getCodedConcepts(conceptId, 'attribute.${type.id}.new[0]');
                             </script>
                         <% } else { %>
                             <input type="text" size="17" name="attribute.${type.id}.new[0]"/>
@@ -205,12 +204,10 @@
             <% } %>
         </table>
         <input type="hidden" id="dateFormat" value='<%= org.openmrs.api.context.Context.getDateFormat().toPattern().toLowerCase() %>' />
-        <input type="hidden" id="codedDataTypeId" />
+        <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.format(patient.patient)) }</p>
         <% } %>
 
-        <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.format(patient.patient)) }</p>
-
-        <button class="confirm right">${ ui.message("coreapps.confirm") }<i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i></button>
+        <button id="start-visit-with-visittype-confirm" class="confirm right">${ ui.message("coreapps.confirm") }<i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i></button>
         <button class="cancel">${ ui.message("coreapps.cancel") }</button>
     </div>
 </div>

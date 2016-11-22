@@ -18,7 +18,7 @@
         <ul>
             <% recentVisitsWithLinks.each { it, url -> %>
             <li class="clear">
-                <a id="${it.visit.id}" href="${url}" class="visit-link">
+                <a id="${it.visit.id}" href="${url}/" class="visit-link">
                     <script type="text/javascript">
                         jq("#${it.visit.id}.visit-link").click(function () {
                             window.location.href = "${url}";
