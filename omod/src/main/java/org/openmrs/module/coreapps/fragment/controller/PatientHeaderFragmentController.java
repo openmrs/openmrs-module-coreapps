@@ -24,6 +24,8 @@ import org.openmrs.api.APIException;
 import org.openmrs.layout.web.name.NameSupport;
 import org.openmrs.layout.web.name.NameTemplate;
 import org.openmrs.module.appframework.context.AppContextModel;
+import org.openmrs.module.appframework.domain.Extension;
+import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
@@ -42,6 +44,7 @@ import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +59,7 @@ public class PatientHeaderFragmentController {
                            @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
 	                       @SpringBean("baseIdentifierSourceService") IdentifierSourceService identifierSourceService,
                            @FragmentParam(required = false, value="appContextModel") AppContextModel appContextModel,
+                           @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
 	                       @FragmentParam("patient") Object patient, @InjectBeans PatientDomainWrapper wrapper,
 	                       @SpringBean("adtService") AdtService adtService, UiSessionContext sessionContext,
                            UiUtils uiUtils,
@@ -69,29 +73,21 @@ public class PatientHeaderFragmentController {
         config.addAttribute("patient", wrapper);
         config.addAttribute("patientNames", getNames(wrapper.getPersonName()));
 
-		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");
-		if (activeVisit == null) {
-            try {
-                Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-                activeVisit = adtService.getActiveVisit(wrapper.getPatient(), visitLocation);
-            } catch (IllegalArgumentException ex) {
-                // location does not support visits
-            }
-		}
-
         if (appContextModel == null) {
             AppContextModel contextModel = sessionContext.generateAppContextModel();
             contextModel.put("patient", new PatientContextModel(wrapper.getPatient()));
-            contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
             model.addAttribute("appContextModel", contextModel);
         }
 
-        if (activeVisit != null) {
-            config.addAttribute("activeVisit", activeVisit);
-            config.addAttribute("activeVisitStartDatetime", uiUtils.format(activeVisit.getStartDatetime()));
-        }
+        List<Extension> firstLineFragments = appFrameworkService.getExtensionsForCurrentUser("patientHeader.firstLineFragments");
+        Collections.sort(firstLineFragments);
+        model.addAttribute("firstLineFragments", firstLineFragments);
 		
-		List<ExtraPatientIdentifierType> extraPatientIdentifierTypes = new ArrayList<ExtraPatientIdentifierType>();
+        List<Extension> secondLineFragments = appFrameworkService.getExtensionsForCurrentUser("patientHeader.secondLineFragments");
+        Collections.sort(secondLineFragments);
+        model.addAttribute("secondLineFragments", secondLineFragments);
+
+        List<ExtraPatientIdentifierType> extraPatientIdentifierTypes = new ArrayList<ExtraPatientIdentifierType>();
 
 		for (PatientIdentifierType type : emrApiProperties.getExtraPatientIdentifierTypes()) {
 			List<AutoGenerationOption> options = identifierSourceService.getAutoGenerationOptions(type);
