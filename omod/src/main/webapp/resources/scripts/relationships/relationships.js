@@ -11,7 +11,7 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
 
         $scope.init = function(personUuid, excludeRelationshipTypes) {
             $scope.thisPersonUuid = personUuid;
-            RelationshipService.getRelationships({ v: 'default', person: personUuid }).then(function(result) {
+            RelationshipService.getRelationships({ v: 'full', person: personUuid }).then(function(result) {
                 $scope.relationships = result;
             });
             RelationshipTypeService.getRelationshipTypes({ v: 'default' }).then(function(result) {
@@ -90,5 +90,17 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                 query: { patientId: patientOrPerson.uuid }
             })
         }
+    }])
+   .directive('relativeDetails', function() {             
+     return {
+        restrict: 'E',
+		link: function(scope, element, attrs) {
+		           scope.getContentUrl = function() {
+		                return 'relativeDetails.page?personId='+ attrs.person;
+		           }
+		       },
+        template: '<span ng-include="getContentUrl()"></span>'
 
-    }]);
+  };
+});
+  
