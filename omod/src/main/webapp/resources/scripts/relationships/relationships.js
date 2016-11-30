@@ -52,9 +52,12 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                 closeByDocument: true,
                 data: angular.toJson({
                     otherLabel: whichSide == 'A' ? relationshipType.aIsToB : relationshipType.bIsToA,
-                    thisLabel: whichSide == 'A' ? relationshipType.bIsToA : relationshipType.aIsToB
+                    thisLabel: whichSide == 'A' ? relationshipType.bIsToA : relationshipType.aIsToB,
+                    relationshipType: relationshipType,
+                    whichSide: whichSide
                 }),
-                template: 'addDialogTemplate'
+                template: 'addDialogTemplate',
+                scope: $scope
             }).then(function(otherPerson) {
                 var relationship = {
                     relationshipType: relationshipType.uuid,
@@ -90,5 +93,22 @@ angular.module('relationships', ['relationshipTypeService', 'relationshipService
                 query: { patientId: patientOrPerson.uuid }
             })
         }
-
+    
+        $scope.registerPerson = function(relationshipType,whichSide) {
+			var nameSplit = angular.element('#select-other-person-input').val().split(/\s/);
+			var personToCreate = { 
+				"names": [{"givenName": nameSplit[0],"familyName": nameSplit[1]}],
+				"gender": "unknown" }
+			var created = PersonService.createPerson(personToCreate);
+			created.then(function(otherPerson){
+				    var relationship = {
+	                 	relationshipType: relationshipType.uuid,
+	                   	personA: whichSide == 'A' ? otherPerson.uuid : $scope.thisPersonUuid,
+	                   	personB: whichSide == 'A' ? $scope.thisPersonUuid : otherPerson.uuid
+	                	};
+	                var created = RelationshipService.createRelationship(relationship);
+	                $scope.relationships.push(created);
+			})
+           return true;
+		}
     }]);
