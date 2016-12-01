@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import org.openmrs.Location;
 import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 
 /**
  * Supports the containing PageModel having an "app" property whose config defines a "visitUrl" property
@@ -48,7 +49,8 @@ public class VisitsSectionFragmentController {
 						   UiSessionContext sessionContext,
 						   @SpringBean("appframeworkTemplateFactory") TemplateFactory templateFactory,
                            @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
-						   @InjectBeans PatientDomainWrapper patientWrapper, @SpringBean("adtService") AdtService adtService) {
+						   @InjectBeans PatientDomainWrapper patientWrapper, @SpringBean("adtService") AdtService adtService,
+			               @SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper) {
 		config.require("patient");
 		Object patient = config.get("patient");
 
@@ -104,6 +106,8 @@ public class VisitsSectionFragmentController {
 			recentVisitsWithLinks.put(recentVisit, templateFactory.handlebars(ui.urlBind(visitsPageWithSpecificVisitUrl, recentVisit.getVisit()), contextModel));
 		}
 
+		Map<Integer, Map<String, Object>> recentVisitsWithAttr = visitTypeHelper.getVisitColorAndShortName(recentVisits);
+		model.addAttribute("recentVisitsWithAttr", recentVisitsWithAttr);
 		model.addAttribute("recentVisitsWithLinks", recentVisitsWithLinks);
 	}
 }
