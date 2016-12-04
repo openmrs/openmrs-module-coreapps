@@ -4,12 +4,12 @@
 
 <div class="contact-info-inline">
     <span>
-        ${ ui.format(config.patient.personAddress).replace("\n", ", ")}
+        ${ ui.encodeHtmlContent(ui.format(config.patient.personAddress).replace("\n", ", "))}
         <em>${ ui.message("coreapps.person.address")}</em>
     </span>
     <span class="left-margin">
         <span id="coreapps-telephoneNumber">
-            ${config.patient.telephoneNumber ?: ''}
+            ${ ui.encodeHtmlContent(config.patient.telephoneNumber ?: '') }
         </span>
         <em>${ ui.message("coreapps.person.telephoneNumber")}</em>
     </span>
