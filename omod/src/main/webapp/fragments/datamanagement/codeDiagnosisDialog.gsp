@@ -5,7 +5,7 @@
     def maxResults = 10
     def itemLabelFunction = "nonCodedDiagnosisLabelFunction"
 
-    ui.includeJavascript("uicommons", "knockout-2.1.0.js")
+    ui.includeJavascript("uicommons", "knockout-2.2.1.js")
     ui.includeJavascript("coreapps", "fragments/datamanagement/findDiagnosis.js")
     ui.includeJavascript("coreapps", "fragments/datamanagement/codeDiagnosisDialog.js")
     ui.includeCss("coreapps", "diagnoses/encounterDiagnoses.css")
