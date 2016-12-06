@@ -33,7 +33,7 @@ public class ActiveVisitStatusFragmentController {
 			@SpringBean("adtService") AdtService adtService,
 			UiSessionContext sessionContext, UiUtils uiUtils, FragmentModel model) {
 
-		model.addAttribute("activeVisitStartDatetime", null);
+		config.addAttribute("activeVisitStartDatetime", null);
 
 		Patient patient = pdw.getPatient();
 
@@ -47,8 +47,8 @@ public class ActiveVisitStatusFragmentController {
 			}
 		}
 		if (activeVisit != null) {
-			model.addAttribute("activeVisit", activeVisit);
-			model.addAttribute("activeVisitStartDatetime", uiUtils.format(activeVisit.getStartDatetime()));
+			config.addAttribute("activeVisit", activeVisit);
+			config.addAttribute("activeVisitStartDatetime", uiUtils.format(activeVisit.getStartDatetime()));
 		}
 
 	}
