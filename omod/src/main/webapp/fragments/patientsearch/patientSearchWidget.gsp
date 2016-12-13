@@ -13,9 +13,24 @@
     var lastViewedPatients = [];
     <%  if (showLastViewedPatients && !doInitialSearch) {
             lastViewedPatients.each { it -> %>
-    lastViewedPatients.push({uuid:"${ it.uuid }",name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",gender:"${ it.gender }",
-        age:"${ it.age ?: '' }", birthdate:"${ it.birthdate ? dateFormatter.format(it.birthdate) : '' }",
-        birthdateEstimated: ${ it.birthdateEstimated }, identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }"});
+
+    /* [RA-452]
+    Data pushed to lastViewedPatients must be sanitized with both ui.escapeJs and ui.encodeHtmlContent.
+    - escapeJS because untrusted data is being passed into js code
+    - encodeHtmlContent because data is eventually being displayed on the page
+     */
+    lastViewedPatients.push({
+        uuid:"${ ui.escapeJs(ui.encodeHtmlContent(it.uuid)) }",
+        name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",
+        gender:"${ ui.escapeJs(ui.encodeHtmlContent(it.gender)) }",
+        // it.age is of type int (doesn't need sanitization)
+        age:"${ it.age ?: '' }",
+        birthdate:"${ it.birthdate ? ui.escapeJs(ui.encodeHtmlContent(dateFormatter.format(it.birthdate))) : '' }",
+        // it.birthdateEstimated is of type boolean (doesn't need sanitization)
+        birthdateEstimated: ${ it.birthdateEstimated },
+        identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }"
+    });
+
     <%      }
         }%>
     function handlePatientRowSelection() {
