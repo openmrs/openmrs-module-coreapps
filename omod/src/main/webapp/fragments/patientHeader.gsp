@@ -92,7 +92,7 @@
             <% } %>
             &nbsp;
             <span class="gender-age">
-                <span>${ui.message("coreapps.gender." + patient.gender)}&nbsp;</span>
+                <span>${ui.message("coreapps.gender." + ui.encodeHtml(patient.gender))}&nbsp;</span>
                 <span>
                 <% if (patient.birthdate) { %>
                 <% if (patient.age > 0) { %>
