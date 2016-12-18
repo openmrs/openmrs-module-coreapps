@@ -8,13 +8,16 @@
     ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 %>
 <script type="text/javascript">
-
     var lastViewedPatients = [];
     <%  if (showLastViewedPatients) {
             lastViewedPatients.each { it -> %>
-    lastViewedPatients.push({uuid:"${ it.uuid }",name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",gender:"${ it.gender }",
+    lastViewedPatients.push({
+        uuid:"${ it.uuid }",
+        name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",
+        gender:"${ ui.escapeJs(ui.encodeHtmlContent(it.gender))}",
         age:"${ it.age ?: '' }", birthdate:"${ it.birthdate ? dateFormatter.format(it.birthdate) : '' }",
-        birthdateEstimated: ${ it.birthdateEstimated }, identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }"});
+        birthdateEstimated: ${ it.birthdateEstimated },
+        identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }"});
     <%      }
         }%>
 

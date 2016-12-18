@@ -113,14 +113,14 @@
                     <div class="row name">
                         <h3>${ui.message("coreapps.mergePatients.section.names")}</h3>
                         <% patient1.patient.names.each { %>
-                        <div>${it.familyName}, ${it.givenName}</div>
+                        <div>${ui.encodeHtml(it.familyName)}, ${ui.encodeHtml(it.givenName)}</div>
                         <% } %>
                     </div>
 
                     <div class="row">
                         <h3>${ui.message("coreapps.mergePatients.section.demographics")}</h3>
 
-                        <div>${ui.message("coreapps.gender." + patient1.patient.gender)}${patient1.patient.age ? ", " + ui.message("coreapps.ageYears", patient1.patient.age) : ""}</div>
+                        <div>${ui.message("coreapps.gender." + ui.encodeHtml(patient1.patient.gender))}${patient1.patient.age ? ", " + ui.message("coreapps.ageYears", patient1.patient.age) : ""}</div>
 
                         <div>${ui.message("coreapps.birthdate")}:${ui.format(patient1.patient.birthdate)}</div>
                     </div>
@@ -198,14 +198,14 @@
                     <div class="row name">
                         <h3>${ui.message("coreapps.mergePatients.section.names")}</h3>
                         <% patient2.patient.names.each { %>
-                        <div>${it.familyName}, ${it.givenName}</div>
+                        <div>${ui.encodeHtml(it.familyName)}, ${ui.encodeHtml(it.givenName)}</div>
                         <% } %>
                     </div>
 
                     <div class="row">
                         <h3>${ui.message("coreapps.mergePatients.section.demographics")}</h3>
 
-                        <div>${ui.message("coreapps.gender." + patient2.patient.gender)}${patient2.patient.age ? ", " + ui.message("coreapps.ageYears", patient2.patient.age) : ""}</div>
+                        <div>${ui.message("coreapps.gender." + ui.encodeHtml(patient2.patient.gender))}${patient2.patient.age ? ", " + ui.message("coreapps.ageYears", patient2.patient.age) : ""}</div>
 
                         <div>${ui.message("coreapps.birthdate")}:${ui.format(patient2.patient.birthdate)}</div>
                     </div>
