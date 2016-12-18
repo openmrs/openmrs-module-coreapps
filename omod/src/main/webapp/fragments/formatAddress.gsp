@@ -1,5 +1,5 @@
 <div class="person-address">
     <% lines.each { %>
-        ${ it }<br/>
+        ${ ui.encodeHtml(it) }<br/>
     <% } %>
 </div>
