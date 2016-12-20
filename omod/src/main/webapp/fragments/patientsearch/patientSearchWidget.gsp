@@ -9,6 +9,11 @@
     ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 %>
 <script type="text/javascript">
+    var messages = {};
+    messages["coreapps.age.months"] = "${ ui.message("coreapps.age.months") }";
+    messages["coreapps.age.weeks"] = "${ ui.message("coreapps.age.weeks") }";
+    messages["coreapps.age.days"] = "${ ui.message("coreapps.age.days") }";
+    var dateFormat = '${ dateFormatter.toPattern() }';
     var attributeTypes = [];
     <% listingAttributeTypeNames.each { %>
         attributeTypes.push('${ it }');
@@ -74,8 +79,7 @@
                 genderColHeader: '${ ui.message("coreapps.gender") }',
                 ageColHeader: '${ ui.message("coreapps.age") }',
                 birthdateColHeader: '${ ui.message("coreapps.birthdate") }'
-            },
-            attributeTypeNames: attributeTypes
+            }
         };
 
         new PatientSearchWidget(widgetConfig);

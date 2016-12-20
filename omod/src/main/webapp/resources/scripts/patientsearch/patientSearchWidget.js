@@ -11,7 +11,7 @@ function PatientSearchWidget(configuration){
 
     var config = jq.extend({}, defaults, configuration);
     var attributeHeaders = '';
-    jq.each(config.attributeTypeNames, function(key, value){
+    jq.each(attributeTypes, function(key, value){
         attributeHeaders = attributeHeaders.concat('<th>'+value+'</th>');
     });
     var tableId = 'patient-search-results-table';
@@ -54,20 +54,40 @@ function PatientSearchWidget(configuration){
     // Creole not currently supported by Moment and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
     moment.locale([configuration.locale, configuration.defaultLocale, 'en']);
 
+    function formatAge(originalBirthdateStr){
+        var originalBirthdate = moment(originalBirthdateStr, dateFormat);
+        var age = moment().diff(originalBirthdate, 'months', false);
+        var suffix = messages["coreapps.age.months"];
+        if(age == 0){
+            age = moment().diff(originalBirthdate, 'weeks', false);
+            suffix = messages["coreapps.age.weeks"];
+            if(age == 0){
+                age = moment().diff(originalBirthdate, 'days', false);
+                suffix = messages["coreapps.age.days"];
+            }
+        }
+        return suffix.replace("{0}", age);
+    }
+
     if(config.initialPatients){
         _.each(config.initialPatients, function(p){
             //only add the uuid since it is only one we need to reference later
             initialPatientData.push({uuid: p.uuid});
             initialPatientUuids.push(p.uuid);
+            var originalBirthdateStr = p.birthdate;
             var bdate = p.birthdate;
             if( p.birthdateEstimated == true){
                 bdate = "~ "+bdate;
             }else{
                 bdate = "&nbsp;&nbsp; "+bdate;
             }
+            var age = p.age;
+            if(age == '' && originalBirthdateStr != ''){
+                age = formatAge(originalBirthdateStr);
+            }
             var initialPatient = [p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
-                p.name, p.gender, p.age, bdate];
-            jq.each(config.attributeTypeNames, function(key, attributeTypeName){
+                p.name, p.gender, age, bdate];
+            jq.each(attributeTypes, function(key, attributeTypeName){
                 initialPatient.push(p[attributeTypeName]);
             });
             initialData.push(initialPatient);
@@ -173,6 +193,7 @@ function PatientSearchWidget(configuration){
             searchResultsData = results;
             _.each(searchResultsData, function(patient) {
                 var birthdate = '';
+                var originalBirthdateStr = patient.person.birthdate;
                 if(patient.person.birthdate){
                     birthdate = moment(patient.person.birthdate).format(configuration.dateFormat);
                     if( patient.person.birthdateEstimated ){
@@ -186,14 +207,24 @@ function PatientSearchWidget(configuration){
                     identifier = patient.patientIdentifier.identifier+
                         " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
                 }
+                var age = patient.person.age;
+                if(age == '' && originalBirthdateStr != ''){
+                    age = formatAge(originalBirthdateStr);
+                }
                 var dataRow = [identifier, patient.person.personName.display, patient.person.gender,
-                    patient.person.age, birthdate];
-                jq.each(config.attributeTypeNames, function(index, typeName){
+                    age, birthdate];
+                jq.each(attributeTypes, function(index, typeName){
                     var attributeValue = "";
                     jq.each(patient.attributes, function(index, attribute) {
                         var attrType = attribute.attributeType;
                         if (attrType != null && !attribute.voided && typeName == attrType.name) {
-                            attributeValue = attribute.value;
+                            if(attribute.value != null) {
+                                if(!attribute.value.display) {
+                                    attributeValue = attribute.value;
+                                }else{
+                                    attributeValue = attribute.value.display;
+                                }
+                            }
                             return false;
                         }
                     });
