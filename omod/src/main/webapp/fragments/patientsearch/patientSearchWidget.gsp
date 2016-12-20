@@ -9,7 +9,10 @@
     ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 %>
 <script type="text/javascript">
-
+    var attributeTypes = [];
+    <% listingAttributeTypeNames.each { %>
+        attributeTypes.push('${ it }');
+    <% } %>
     var lastViewedPatients = [];
     <%  if (showLastViewedPatients && !doInitialSearch) {
             lastViewedPatients.each { it -> %>
@@ -19,7 +22,7 @@
     - escapeJS because untrusted data is being passed into js code
     - encodeHtmlContent because data is eventually being displayed on the page
      */
-    lastViewedPatients.push({
+    var patientObj = {
         uuid:"${ ui.escapeJs(ui.encodeHtmlContent(it.uuid)) }",
         name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",
         gender:"${ ui.escapeJs(ui.encodeHtmlContent(it.gender)) }",
@@ -29,8 +32,11 @@
         // it.birthdateEstimated is of type boolean (doesn't need sanitization)
         birthdateEstimated: ${ it.birthdateEstimated },
         identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }"
-    });
-
+    }
+        <% listingAttributeTypeNames.each { attributeName -> %>
+            patientObj["${ attributeName }"] = "${ it.getAttribute(attributeName)?:'' }";
+        <% } %>
+    lastViewedPatients.push(patientObj);
     <%      }
         }%>
     function handlePatientRowSelection() {
@@ -68,7 +74,8 @@
                 genderColHeader: '${ ui.message("coreapps.gender") }',
                 ageColHeader: '${ ui.message("coreapps.age") }',
                 birthdateColHeader: '${ ui.message("coreapps.birthdate") }'
-            }
+            },
+            attributeTypeNames: attributeTypes
         };
 
         new PatientSearchWidget(widgetConfig);

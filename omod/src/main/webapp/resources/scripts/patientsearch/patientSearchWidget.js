@@ -10,6 +10,10 @@ function PatientSearchWidget(configuration){
     };
 
     var config = jq.extend({}, defaults, configuration);
+    var attributeHeaders = '';
+    jq.each(config.attributeTypeNames, function(key, value){
+        attributeHeaders = attributeHeaders.concat('<th>'+value+'</th>');
+    });
     var tableId = 'patient-search-results-table';
     var tableHtml = '<table id="'+tableId+'">'+
                         '<thead>'+
@@ -19,6 +23,7 @@ function PatientSearchWidget(configuration){
                                 '<th>'+config.messages.genderColHeader+'</th>'+
                                 '<th>'+config.messages.ageColHeader+'</th>'+
                                 '<th>'+config.messages.birthdateColHeader+'</th>'+
+                                attributeHeaders+
                             '</tr>'+
                         '</thead>'+
                         '<tbody></tbody>'+
@@ -60,8 +65,12 @@ function PatientSearchWidget(configuration){
             }else{
                 bdate = "&nbsp;&nbsp; "+bdate;
             }
-            initialData.push([p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
-                p.name, p.gender, p.age, bdate]);
+            var initialPatient = [p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
+                p.name, p.gender, p.age, bdate];
+            jq.each(config.attributeTypeNames, function(key, attributeTypeName){
+                initialPatient.push(p[attributeTypeName]);
+            });
+            initialData.push(initialPatient);
         });
         searchResultsData = initialPatientData;
     }
@@ -80,7 +89,8 @@ function PatientSearchWidget(configuration){
     var keyboardControlKeys = [16,17,18,20,27,35,36,37,39,91,93,224];
     var customRep = 'custom:(uuid,' +
                     'patientIdentifier:(uuid,identifier),' +
-                    'person:(gender,age,birthdate,birthdateEstimated,personName))';
+                    'person:(gender,age,birthdate,birthdateEstimated,personName),' +
+                    'attributes:(value,attributeType:(name)))';
 
     var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
 
@@ -176,8 +186,20 @@ function PatientSearchWidget(configuration){
                     identifier = patient.patientIdentifier.identifier+
                         " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
                 }
-                dataRows.push([identifier, patient.person.personName.display,
-                    patient.person.gender, patient.person.age, birthdate]);
+                var dataRow = [identifier, patient.person.personName.display, patient.person.gender,
+                    patient.person.age, birthdate];
+                jq.each(config.attributeTypeNames, function(index, typeName){
+                    var attributeValue = "";
+                    jq.each(patient.attributes, function(index, attribute) {
+                        var attrType = attribute.attributeType;
+                        if (attrType != null && !attribute.voided && typeName == attrType.name) {
+                            attributeValue = attribute.value;
+                            return false;
+                        }
+                    });
+                    dataRow.push(attributeValue);
+                });
+                dataRows.push(dataRow);
             });
         }else if(config.initialPatients){
             //show the recently viewed

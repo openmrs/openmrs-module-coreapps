@@ -1,5 +1,12 @@
 package org.openmrs.module.coreapps.fragment.controller.patientsearch;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
@@ -12,11 +19,6 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.util.OpenmrsConstants;
-
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Fragment controller for patient search widget; sets the min # of search characters based on global property,
@@ -58,6 +60,19 @@ public class PatientSearchWidgetFragmentController {
             List<Patient> patients = GeneralUtils.getLastViewedPatients(sessionContext.getCurrentUser());
             model.addAttribute("lastViewedPatients", patients);
         }
+
+        String listingAttributeTypesStr = administrationService.getGlobalProperty(
+                OpenmrsConstants.GLOBAL_PROPERTY_PATIENT_LISTING_ATTRIBUTES, "");
+        List<String> listingAttributeTypeNames = new ArrayList<String>();
+        if (StringUtils.isNotBlank(listingAttributeTypesStr)) {
+            String[] attTypeNames = StringUtils.split(listingAttributeTypesStr.trim(), ",");
+            for (String name : attTypeNames) {
+                if (StringUtils.isNotBlank(name.trim())) {
+                    listingAttributeTypeNames.add(name.trim());
+                }
+            }
+        }
+        model.addAttribute("listingAttributeTypeNames", listingAttributeTypeNames);
 
     }
 
