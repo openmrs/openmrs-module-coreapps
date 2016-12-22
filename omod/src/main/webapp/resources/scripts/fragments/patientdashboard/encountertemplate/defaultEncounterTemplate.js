@@ -18,16 +18,25 @@ $(function() {
         var encounterId = $(event.target).attr("data-encounter-id");
         var patientId = $(event.target).attr("data-patient-id");
         var editUrl = $(event.target).attr("data-edit-url");
+        var dataMode = $(event.target).attr("data-mode");
         if (editUrl) {
             editUrl = editUrl.replace("{{patientId}}", patientId).replace("{{patient.uuid}}", patientId)
                 .replace("{{encounterId}}", encounterId).replace("{{encounter.id}}", encounterId);
             emr.navigateTo({ applicationUrl: editUrl });
         } else {
-            emr.navigateTo({
-                provider: "htmlformentryui",
-                page: "htmlform/editHtmlFormWithStandardUi",
-                query: { patientId: patientId, encounterId: encounterId }
-            });
+            if ("view" == dataMode) {
+            	emr.navigateTo({
+	                provider: "htmlformentryui",
+	                page: "htmlform/viewEncounterWithHtmlForm",
+	                query: { patient: patientId, encounter: encounterId}
+	            });
+            } else {
+            	emr.navigateTo({
+	                provider: "htmlformentryui",
+	                page: "htmlform/editHtmlFormWithStandardUi",
+	                query: { patientId: patientId, encounterId: encounterId }
+	            });
+            }
         }
     });
 	
