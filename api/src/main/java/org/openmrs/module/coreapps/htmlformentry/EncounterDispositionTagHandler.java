@@ -5,8 +5,9 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.Obs;
 import org.openmrs.Visit;
-import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -16,6 +17,7 @@ import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.htmlformentry.BadFormDesignException;
 import org.openmrs.module.htmlformentry.FormEntrySession;
+import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
 import org.openmrs.module.htmlformentry.handler.AbstractTagHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -49,10 +52,14 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
     private AdtService adtService;
 
-    private FeatureToggleProperties featureToggles;
-
     @Override
     public boolean doStartTag(FormEntrySession session, PrintWriter out, Node parent, Node node) throws BadFormDesignException {
+
+        Set<Obs> exisitingDispositionObsGroup = null;
+        if (session.getContext().getExistingEncounter() != null && session.getContext().getExistingObsInGroups() != null) {
+            exisitingDispositionObsGroup = getObsGroupByGroupingConcept(session.getContext().getExistingObsInGroups(),
+                    HtmlFormEntryUtil.getConcept(EmrApiConstants.EMR_CONCEPT_SOURCE_NAME + ": " + EmrApiConstants.CONCEPT_CODE_DISPOSITION_CONCEPT_SET));
+        }
 
         List<Disposition> dispositions = null;
 
@@ -119,7 +126,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         dispositionObsGroup.appendChild(dispositionObs);
 
         if (controls != null && controls.size() > 0) {
-            generateAdditionalObsElements(dispositionObsGroup, controls);
+            generateAdditionalObsElements(dispositionObsGroup, controls, exisitingDispositionObsGroup);
         }
 
         node.appendChild(dispositionObsGroup);
@@ -142,10 +149,6 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
     public void setAdtService(AdtService adtService) {
         this.adtService = adtService;
-    }
-
-    public void setFeatureToggles(FeatureToggleProperties featureToggles) {
-        this.featureToggles = featureToggles;
     }
 
     private Control buildNewControl(Disposition disposition, List<DispositionObs> additionalObs) {
@@ -178,7 +181,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         dispositionObs.appendChild(controlsElement);
     }
 
-    private void generateAdditionalObsElements(Node dispositionObsGroup, List<Control> controls) {
+    private void generateAdditionalObsElements(Node dispositionObsGroup, List<Control> controls, Set<Obs> existingDispositionObsGroup) {
 
         for (Control control : controls) {
 
@@ -186,7 +189,13 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
                 Element p = dispositionObsGroup.getOwnerDocument().createElement("p");
                 p.setAttribute("id", control.getThenDisplay().get(i));
-                p.setAttribute("style", "display:none;");
+
+                // hide or show depending on whether there is an existing obs associated with the current "thenDisplay" element
+                // this is to make sure that "additional obs" are shown when in view mode
+                // would be better if the HFE control element could handle this explicitly
+                if (existingDispositionObsGroup == null || !hasMemberWithConcept(existingDispositionObsGroup, HtmlFormEntryUtil.getConcept(control.getConceptId().get(i)))) {
+                    p.setAttribute("style", "display:none;");
+                }
 
                 Element label = dispositionObsGroup.getOwnerDocument().createElement("label");
                 Element uimessage = dispositionObsGroup.getOwnerDocument().createElement("uimessage");
@@ -206,6 +215,24 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
                 dispositionObsGroup.appendChild(p);
             }
         }
+    }
+
+    private boolean hasMemberWithConcept(Set<Obs> obsGroup, Concept concept) {
+        for (Obs obs : obsGroup) {
+            if (obs.getConcept().equals(concept)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Set<Obs> getObsGroupByGroupingConcept(Map<Obs,Set<Obs>> existingObsInGroups, Concept groupingConcept) {
+      for (Obs obs : existingObsInGroups.keySet()) {
+          if (obs.getConcept().equals(groupingConcept)) {
+              return existingObsInGroups.get(obs);
+          }
+      }
+      return null;
     }
 
     private class Control {
