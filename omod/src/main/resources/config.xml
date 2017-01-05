@@ -159,6 +159,26 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>coreapps.visitTypeColors</property>
+        <defaultValue></defaultValue>
+        <description>
+            Set visit type colors in JSON-like format. Syntax
+            [
+                {"uuid":"visit_type1_uuid", "color":"red", "shortName":"inpatient"},
+                {"uuid":"visit_type2_uuid", "color":"blue", "shortName":"oper_theater"}
+            ]
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>coreapps.transferEncounterUuid</property>
+        <defaultValue></defaultValue>
+        <description>
+            Set encounter uuid if you would like to create a transfer encounter when visit type is changed
+        </description>
+    </globalProperty>
+
     <privilege>
         <name>Task: coreapps.endVisit</name>
         <description>Able to end a visit</description>

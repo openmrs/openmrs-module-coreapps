@@ -1,6 +1,7 @@
 <%
     ui.includeJavascript("coreapps", "custom/visits.js")
     def editDateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
+    ui.includeCss("coreapps", "visit/visits.css")
 %>
 
 <script type="text/javascript">
@@ -129,9 +130,82 @@
         </h3>
     </div>
     <div class="dialog-content">
-        <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.encodeHtmlContent(ui.format(patient.patient))) }</p>
+        <% if (activeVisits) { %>
+            <script type="text/javascript">
+                jq("#start-visit-with-visittype-confirm").remove();
+            </script>
+            <p class="dialog-instructions">
+                <i class="icon-sign-warning">&#xf071;</i>
+                ${ui.message("coreapps.task.visitType.start.warning", ui.format(patient.patient))}
+            </p>
+            <ul class="list" style="margin-bottom:0px">
+                <% activeVisits.each { activeVisit -> %>
+                    <li>
+                            ${ui.format(activeVisit)}
+                        </li>
+                    <% } %>
+                </ul>
+                <p class="dialog-instructions">
+                    ${ ui.message("coreapps.task.endVisit.warningMessage") }
+                </p>
 
-        <button class="confirm right">${ ui.message("coreapps.confirm") }<i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i></button>
+                <% } else { %>
+                <script type="text/javascript">
+                    jq("#start-visit-with-visittype-confirm").removeClass("disabled");
+                </script>
+
+                <table class="left-aligned-th">
+                    <tr>
+                        <td><label>${ ui.message("coreapps.task.visitType.label") }:</label></td>
+                        <td>
+                            <select id="visit-visittype-drop-down">
+                                <% visitTypes.each { type -> %>
+                                <% if (currentVisitType == type) { %>
+                                    <script type="text/javascript">
+                                        jq("#visit-visittype-drop-down").val(${type.id});
+                                    </script>
+                                <% } %>
+                                <option class="dialog-drop-down small" value ="${type.id}">${ ui.format(type) }</option>
+                                <% } %>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <!-- visit attributes -->
+                    <% visitAttributeTypes.each { type -> %>
+                        <% if(type.retired == false){ %>
+                            <tr>
+                                <td class="info">${type.name}: </td>
+                                <td>
+                                    <% if(type.datatypeClassname == 'org.openmrs.customdatatype.datatype.BooleanDatatype'){ %>
+                                        <input type="radio" value="false" name="attribute.${type.id}.new[0]" /> ${ui.message("False")}
+                                        <input type="radio" value="true" name="attribute.${type.id}.new[0]" />  ${ui.message("True")}
+                                    <% } else if(type.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype'){ %>
+
+                                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                                                        formFieldName: "attribute." + type.id + ".new[0].date",
+                                                        label:"",
+                                                        useTime: false,
+                                                ])}
+                                    <% } else if(type.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype'){ %>
+                                            <select id="coded-data-types" name="attribute.${type.id}.new[0]"></select>
+                                            <script>
+                                                    var conceptId = '${type.datatypeConfig}';
+                                                    visit.getCodedConcepts(conceptId, 'attribute.${type.id}.new[0]');
+                                                </script>
+                                        <% } else { %>
+                                            <input type="text" size="17" name="attribute.${type.id}.new[0]"/>
+                                            <% } %>
+                                        </td>
+                                </tr>
+                        <% } %>
+                    <% } %>
+                </table>
+                <input type="hidden" id="dateFormat" value='<%= org.openmrs.api.context.Context.getDateFormat().toPattern().toLowerCase() %>' />
+                <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.format(patient.patient)) }</p>
+                <% } %>
+
+        <button id="start-visit-with-visittype-confirm" class="confirm right">${ ui.message("coreapps.confirm") }<i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i></button>
         <button class="cancel">${ ui.message("coreapps.cancel") }</button>
     </div>
 </div>

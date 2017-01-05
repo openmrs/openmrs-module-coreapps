@@ -16,9 +16,8 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.Location;
-import org.openmrs.Patient;
-import org.openmrs.Visit;
+import org.openmrs.*;
+import org.openmrs.api.VisitService;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -28,6 +27,7 @@ import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 
 import java.util.Date;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -50,13 +50,16 @@ public class QuickVisitFragmentControllerTest {
 	private UiSessionContext emrContext;
 	
 	private AdtService adtService;
-	
+
+	private VisitService visitService;
+
 	@Before
 	public void setUp() {
 		controller = new QuickVisitFragmentController();
 		uiUtils = mock(UiUtils.class);
 		emrContext = mock(UiSessionContext.class);
 		adtService = mock(AdtService.class);
+		visitService = mock(VisitService.class);
 	}
 	
 	@Test
@@ -77,8 +80,7 @@ public class QuickVisitFragmentControllerTest {
 
         when(adtService.ensureVisit(eq(patient), any(Date.class), eq(visitLocation))).thenReturn(visit);
 
-		FragmentActionResult result = controller.create(adtService, patient, visitLocation,
-		    uiUtils, emrContext, request);
+		FragmentActionResult result = controller.create(adtService, visitService, patient, visitLocation, uiUtils, null, emrContext, request);
 
 		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
 		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
@@ -98,13 +100,316 @@ public class QuickVisitFragmentControllerTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getSession()).thenReturn(session);
 
-        FragmentActionResult result = controller.create(adtService, patient, visitLocation,
-                uiUtils, emrContext, request);
+        FragmentActionResult result = controller.create(adtService, visitService, patient, visitLocation, uiUtils, null, emrContext, request);
 
         assertThat(result, is(instanceOf(FailureResult.class)));
         verify(adtService, never()).ensureVisit(eq(patient), any(Date.class), eq(visitLocation));
     }
 
+    @Test
+    public void shouldCreateNewVisitWithVisitType() throws Exception {
+	    Patient patient = new Patient();
+	    Location visitLocation = new Location();
+
+	    String successMessage = "Success message";
+	    String formattedPatient = "Patient name";
+	    when(uiUtils.format(patient)).thenReturn(formattedPatient);
+	    when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
+
+	    HttpSession session = mock(HttpSession.class);
+	    HttpServletRequest request = mock(HttpServletRequest.class);
+	    when(request.getSession()).thenReturn(session);
+
+	    Visit visit = createVisit();
+
+	    VisitType visitType = new VisitType();
+	    visitType.setId(1);
+	    visitType.setName("Outpatient");
+	    when(visitService.saveVisitType(visitType)).thenReturn(visitType);
+
+	    when(adtService.ensureVisit(eq(patient), any(Date.class), eq(visitLocation))).thenReturn(visit);
+
+	    FragmentActionResult result = controller.create(adtService, visitService, patient, visitLocation, uiUtils, visitType, emrContext, request);
+
+	    verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
+	    verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+	    assertThat(result, is(CoreMatchers.any(FragmentActionResult.class)));
+
+    }
+
+	@Test
+	public void shouldCreateNewVisitWithVisitTypeAndSingleVisitAttribute() throws Exception {
+		Patient patient = new Patient();
+		Location visitLocation = new Location();
+
+		String successMessage = "Success message";
+		String formattedPatient = "Patient name";
+		when(uiUtils.format(patient)).thenReturn(formattedPatient);
+		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
+
+		HttpSession session = mock(HttpSession.class);
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		when(request.getSession()).thenReturn(session);
+
+		Visit visit = createVisit();
+
+		VisitType visitType = new VisitType();
+		visitType.setId(1);
+		visitType.setName("Outpatient");
+		when(visitService.saveVisitType(visitType)).thenReturn(visitType);
+
+		// create a visit attribute type
+		VisitAttributeType visitAttributeType = new VisitAttributeType();
+		visitAttributeType.setVisitAttributeTypeId(1);
+		visitAttributeType.setName("First Visit");
+		visitAttributeType.setDatatypeClassname("org.openmrs.customdatatype.datatype.BooleanDatatype");
+		visitAttributeType.setMinOccurs(0);
+		when(visitService.saveVisitAttributeType(visitAttributeType)).thenReturn(visitAttributeType);
+
+		request.getParameterMap().put("attribute.1.new[0]", "false");
+
+		when(adtService.ensureVisit(eq(patient), any(Date.class), eq(visitLocation))).thenReturn(visit);
+
+		FragmentActionResult result = controller.create(adtService, visitService, patient, visitLocation, uiUtils, visitType, emrContext, request);
+
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+		assertThat(result, is(CoreMatchers.any(FragmentActionResult.class)));
+	}
+
+	@Test
+	public void shouldCreateNewVisitWithVisitTypeAndMultipleVisitAttributes() throws Exception{
+		Patient patient = new Patient();
+		Location visitLocation = new Location();
+
+		String successMessage = "Success message";
+		String formattedPatient = "Patient name";
+		when(uiUtils.format(patient)).thenReturn(formattedPatient);
+		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
+
+		HttpSession session = mock(HttpSession.class);
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		when(request.getSession()).thenReturn(session);
+
+		Visit visit = createVisit();
+
+		VisitType visitType = new VisitType();
+		visitType.setId(1);
+		visitType.setName("Outpatient");
+		when(visitService.saveVisitType(visitType)).thenReturn(visitType);
+
+		// create visit attribute types
+		VisitAttributeType visitAttributeType = new VisitAttributeType();
+		visitAttributeType.setVisitAttributeTypeId(1);
+		visitAttributeType.setName("First Visit");
+		visitAttributeType.setDatatypeClassname("org.openmrs.customdatatype.datatype.BooleanDatatype");
+		visitAttributeType.setMinOccurs(0);
+		when(visitService.saveVisitAttributeType(visitAttributeType)).thenReturn(visitAttributeType);
+
+		VisitAttributeType visitAttributeType2 = new VisitAttributeType();
+		visitAttributeType2.setVisitAttributeTypeId(2);
+		visitAttributeType2.setName("Admission Date");
+		visitAttributeType2.setDatatypeClassname("org.openmrs.customdatatype.datatype.DateDatatype");
+		visitAttributeType2.setMinOccurs(0);
+		when(visitService.saveVisitAttributeType(visitAttributeType2)).thenReturn(visitAttributeType2);
+
+		request.getParameterMap().put("attribute.1.new[0]", "false");
+		request.getParameterMap().put("attribute.2.new[0]", "2016-12-08");
+
+		when(adtService.ensureVisit(eq(patient), any(Date.class), eq(visitLocation))).thenReturn(visit);
+
+		FragmentActionResult result = controller.create(adtService, visitService, patient, visitLocation, uiUtils, visitType, emrContext, request);
+
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+		assertThat(result, is(CoreMatchers.any(FragmentActionResult.class)));
+	}
+
+	@Test
+	public void shouldUpdateVisitWithDifferentVisitType() throws Exception{
+		Patient patient = new Patient();
+		patient.setId(1);
+
+		Location visitLocation = new Location();
+
+		String successMessage = "Success message";
+		String formattedPatient = "Patient name";
+		when(uiUtils.format(patient)).thenReturn(formattedPatient);
+		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
+
+		String updateSuccessMessage = "Update message";
+		when(uiUtils.message("coreapps.visit.updateVisit.successMessage", formattedPatient)).thenReturn(updateSuccessMessage);
+
+		HttpSession session = mock(HttpSession.class);
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		when(request.getSession()).thenReturn(session);
+
+		Visit visit = createVisit();
+		visit.setPatient(patient);
+
+		VisitType visitType = new VisitType();
+		visitType.setId(1);
+		visitType.setName("Inpatient");
+		when(visitService.saveVisitType(visitType)).thenReturn(visitType);
+
+		VisitType visitType2 = new VisitType();
+		visitType2.setId(2);
+		visitType2.setName("Outpatient");
+		when(visitService.saveVisitType(visitType2)).thenReturn(visitType2);
+
+		when(adtService.ensureVisit(eq(patient), any(Date.class), eq(visitLocation))).thenReturn(visit);
+
+		FragmentActionResult result = controller.create(adtService, visitService, patient,
+				visitLocation, uiUtils, visitType, emrContext, request);
+
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+		assertThat(result, is(CoreMatchers.any(FragmentActionResult.class)));
+
+		FragmentActionResult update = controller.update(visitService, patient, visit, visitType2, uiUtils, request);
+
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, updateSuccessMessage);
+		assertThat(update, is(CoreMatchers.any(FragmentActionResult.class)));
+	}
+
+	@Test
+	public void shouldUpdateVisitWithNewVisitAttributes() throws Exception{
+		Patient patient = new Patient();
+		patient.setId(1);
+
+		Location visitLocation = new Location();
+
+		String successMessage = "Success message";
+		String formattedPatient = "Patient name";
+		when(uiUtils.format(patient)).thenReturn(formattedPatient);
+		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
+
+		String updateSuccessMessage = "Update message";
+		when(uiUtils.message("coreapps.visit.updateVisit.successMessage", formattedPatient)).thenReturn(updateSuccessMessage);
+
+		HttpSession session = mock(HttpSession.class);
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		when(request.getSession()).thenReturn(session);
+
+		Visit visit = createVisit();
+		visit.setPatient(patient);
+
+		VisitType visitType = new VisitType();
+		visitType.setId(1);
+		visitType.setName("Outpatient");
+		when(visitService.saveVisitType(visitType)).thenReturn(visitType);
+
+		// create visit attribute types
+		VisitAttributeType visitAttributeType = new VisitAttributeType();
+		visitAttributeType.setVisitAttributeTypeId(1);
+		visitAttributeType.setName("First Visit");
+		visitAttributeType.setDatatypeClassname("org.openmrs.customdatatype.datatype.BooleanDatatype");
+		visitAttributeType.setMinOccurs(0);
+		when(visitService.saveVisitAttributeType(visitAttributeType)).thenReturn(visitAttributeType);
+
+		VisitAttributeType visitAttributeType2 = new VisitAttributeType();
+		visitAttributeType2.setVisitAttributeTypeId(2);
+		visitAttributeType2.setName("Admission Date");
+		visitAttributeType2.setDatatypeClassname("org.openmrs.customdatatype.datatype.DateDatatype");
+		visitAttributeType2.setMinOccurs(0);
+		when(visitService.saveVisitAttributeType(visitAttributeType2)).thenReturn(visitAttributeType2);
+
+		request.getParameterMap().put("attribute.1.new[0]", "false");
+		request.getParameterMap().put("attribute.2.new[0]", "2016-12-08");
+
+		when(adtService.ensureVisit(eq(patient), any(Date.class), eq(visitLocation))).thenReturn(visit);
+
+		FragmentActionResult result = controller.create(adtService, visitService, patient, visitLocation, uiUtils, visitType, emrContext, request);
+
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+		assertThat(result, is(CoreMatchers.any(FragmentActionResult.class)));
+
+		request.getParameterMap().put("attribute.1.existing[1]", "true");
+		request.getParameterMap().put("attribute.2.existing[2]", "2016-12-07");
+
+		FragmentActionResult update = controller.update(visitService, patient, visit, null, uiUtils, request);
+
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, updateSuccessMessage);
+		assertThat(update, is(CoreMatchers.any(FragmentActionResult.class)));
+	}
+
+	@Test
+	public void shouldUpdateVisitWithExistingVisitAttributes() throws Exception{
+		Patient patient = new Patient();
+		patient.setId(1);
+
+		Location visitLocation = new Location();
+
+		String successMessage = "Success message";
+		String formattedPatient = "Patient name";
+		when(uiUtils.format(patient)).thenReturn(formattedPatient);
+		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
+
+		String updateSuccessMessage = "Update message";
+		when(uiUtils.message("coreapps.visit.updateVisit.successMessage", formattedPatient)).thenReturn(updateSuccessMessage);
+
+		HttpSession session = mock(HttpSession.class);
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		when(request.getSession()).thenReturn(session);
+
+		Visit visit = createVisit();
+		visit.setPatient(patient);
+
+		VisitType visitType = new VisitType();
+		visitType.setId(1);
+		visitType.setName("Outpatient");
+		when(visitService.saveVisitType(visitType)).thenReturn(visitType);
+
+		// create visit attribute types
+		VisitAttributeType visitAttributeType = new VisitAttributeType();
+		visitAttributeType.setVisitAttributeTypeId(1);
+		visitAttributeType.setName("First Visit");
+		visitAttributeType.setDatatypeClassname("org.openmrs.customdatatype.datatype.BooleanDatatype");
+		visitAttributeType.setMinOccurs(0);
+		when(visitService.saveVisitAttributeType(visitAttributeType)).thenReturn(visitAttributeType);
+
+		VisitAttributeType visitAttributeType2 = new VisitAttributeType();
+		visitAttributeType2.setVisitAttributeTypeId(2);
+		visitAttributeType2.setName("Admission Date");
+		visitAttributeType2.setDatatypeClassname("org.openmrs.customdatatype.datatype.DateDatatype");
+		visitAttributeType2.setMinOccurs(0);
+		when(visitService.saveVisitAttributeType(visitAttributeType2)).thenReturn(visitAttributeType2);
+
+		VisitAttributeType visitAttributeType3 = new VisitAttributeType();
+		visitAttributeType3.setVisitAttributeTypeId(3);
+		visitAttributeType3.setName("Bed");
+		visitAttributeType3.setDatatypeClassname("org.openmrs.customdatatype.datatype.LongFreeTextDatatype");
+		visitAttributeType3.setMinOccurs(0);
+		when(visitService.saveVisitAttributeType(visitAttributeType3)).thenReturn(visitAttributeType3);
+
+		VisitAttributeType visitAttributeType4 = new VisitAttributeType();
+		visitAttributeType4.setVisitAttributeTypeId(4);
+		visitAttributeType4.setName("Ward");
+		visitAttributeType4.setDatatypeClassname("org.openmrs.customdatatype.datatype.LongFreeTextDatatype");
+		visitAttributeType4.setMinOccurs(0);
+		when(visitService.saveVisitAttributeType(visitAttributeType4)).thenReturn(visitAttributeType4);
+
+		request.getParameterMap().put("attribute.1.new[0]", "false");
+		request.getParameterMap().put("attribute.2.new[0]", "2016-12-08");
+
+		when(adtService.ensureVisit(eq(patient), any(Date.class), eq(visitLocation))).thenReturn(visit);
+
+		FragmentActionResult result = controller.create(adtService, visitService, patient, visitLocation, uiUtils, visitType, emrContext, request);
+
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, successMessage);
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+		assertThat(result, is(CoreMatchers.any(FragmentActionResult.class)));
+
+		request.getParameterMap().put("attribute.3.new[0]", "Bed No.2");
+		request.getParameterMap().put("attribute.4.new[0]", "Male");
+
+		FragmentActionResult update = controller.update(visitService, patient, visit, null, uiUtils, request);
+
+		verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, updateSuccessMessage);
+		assertThat(update, is(CoreMatchers.any(FragmentActionResult.class)));
+
+	}
 
     private Visit createVisit() {
         Visit visit = new Visit();
