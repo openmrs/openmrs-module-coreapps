@@ -106,6 +106,18 @@ public class VisitTypeHelper {
 		return visitTypesOrdered;
 	}
 
+	public List<VisitType> getUnRetiredVisitTypes(){
+		VisitService visitService = Context.getVisitService();
+		List<VisitType> visitTypes = new ArrayList<VisitType>();
+		for(VisitType visitType : visitService.getAllVisitTypes()){
+			if(visitType.getRetired() == false){
+				visitTypes.add(visitType);
+			}
+		}
+
+		return visitTypes;
+	}
+
 	private Map<String, Object> getVisitTypeColorCodes(VisitType visitType){
 		Map<String, Object> colorCode = new HashMap<String, Object>();
 		AdministrationService adminService = Context.getAdministrationService();
