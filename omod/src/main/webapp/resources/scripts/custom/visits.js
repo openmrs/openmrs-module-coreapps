@@ -204,7 +204,7 @@ visit.showEditVisitDialog = function(visitId) {
                     jq.getJSON(url, visit.buildVisitTypeAttributeParams(visitId)).success(function(data) {
                             if(data.success) {
                                 jq('#edit-visit-dialog-form-' + visitId + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
-                                window.location.search = data.search;
+                                window.location.reload();
                             }
                         }
                     );
@@ -293,4 +293,11 @@ visit.buildVisitTypeAttributeParams = function(visitId){
     });
 
     return params;
+}
+
+visit.setSelectedDropdownValue = function (id, element){
+    jq("#" + id).val(element.value);
+    if(element.name !== undefined){
+        jq("#" + id).attr('name', element.name);
+    }
 }
