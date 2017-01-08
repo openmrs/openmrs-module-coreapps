@@ -154,53 +154,55 @@
                     jq("#start-visit-with-visittype-confirm").removeClass("disabled");
                 </script>
 
-                <table class="left-aligned-th">
-                    <tr>
-                        <td><label>${ ui.message("coreapps.task.visitType.label") }:</label></td>
-                        <td>
-                            <select id="visit-visittype-drop-down">
-                                <% visitTypes.each { type -> %>
-                                <% if (currentVisitType == type) { %>
-                                    <script type="text/javascript">
-                                        jq("#visit-visittype-drop-down").val(${type.id});
-                                    </script>
-                                <% } %>
-                                <option class="dialog-drop-down small" value ="${type.id}">${ ui.format(type) }</option>
-                                <% } %>
-                            </select>
-                        </td>
-                    </tr>
-
-                    <!-- visit attributes -->
-                    <% visitAttributeTypes.each { type -> %>
-                        <% if(type.retired == false){ %>
-                            <tr>
-                                <td class="info">${type.name}: </td>
-                                <td>
-                                    <% if(type.datatypeClassname == 'org.openmrs.customdatatype.datatype.BooleanDatatype'){ %>
-                                        <input type="radio" value="false" name="attribute.${type.id}.new[0]" /> ${ui.message("False")}
-                                        <input type="radio" value="true" name="attribute.${type.id}.new[0]" />  ${ui.message("True")}
-                                    <% } else if(type.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype'){ %>
-
-                                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
-                                                        formFieldName: "attribute." + type.id + ".new[0].date",
-                                                        label:"",
-                                                        useTime: false,
-                                                ])}
-                                    <% } else if(type.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype'){ %>
-                                            <select id="coded-data-types" name="attribute.${type.id}.new[0]"></select>
-                                            <script>
-                                                    var conceptId = '${type.datatypeConfig}';
-                                                    visit.getCodedConcepts(conceptId, 'attribute.${type.id}.new[0]');
-                                                </script>
-                                        <% } else { %>
-                                            <input type="text" size="17" name="attribute.${type.id}.new[0]"/>
-                                            <% } %>
-                                        </td>
-                                </tr>
-                        <% } %>
-                    <% } %>
-                </table>
+                <% if (visitTypes.size > 1) { %>
+	                <table class="left-aligned-th">
+	                    <tr>
+	                        <td><label>${ ui.message("coreapps.task.visitType.label") }:</label></td>
+	                        <td>
+	                            <select id="visit-visittype-drop-down">
+	                                <% visitTypes.each { type -> %>
+	                                <% if (currentVisitType == type) { %>
+	                                    <script type="text/javascript">
+	                                        jq("#visit-visittype-drop-down").val(${type.id});
+	                                    </script>
+	                                <% } %>
+	                                <option class="dialog-drop-down small" value ="${type.id}">${ ui.format(type) }</option>
+	                                <% } %>
+	                            </select>
+	                        </td>
+	                    </tr>
+	
+	                    <!-- visit attributes -->
+	                    <% visitAttributeTypes.each { type -> %>
+	                        <% if(type.retired == false){ %>
+	                            <tr>
+	                                <td class="info">${type.name}: </td>
+	                                <td>
+	                                    <% if(type.datatypeClassname == 'org.openmrs.customdatatype.datatype.BooleanDatatype'){ %>
+	                                        <input type="radio" value="false" name="attribute.${type.id}.new[0]" /> ${ui.message("False")}
+	                                        <input type="radio" value="true" name="attribute.${type.id}.new[0]" />  ${ui.message("True")}
+	                                    <% } else if(type.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype'){ %>
+	
+	                                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+	                                                        formFieldName: "attribute." + type.id + ".new[0].date",
+	                                                        label:"",
+	                                                        useTime: false,
+	                                                ])}
+	                                    <% } else if(type.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype'){ %>
+	                                            <select id="coded-data-types" name="attribute.${type.id}.new[0]"></select>
+	                                            <script>
+	                                                    var conceptId = '${type.datatypeConfig}';
+	                                                    visit.getCodedConcepts(conceptId, 'attribute.${type.id}.new[0]');
+	                                                </script>
+	                                        <% } else { %>
+	                                            <input type="text" size="17" name="attribute.${type.id}.new[0]"/>
+	                                            <% } %>
+	                                        </td>
+	                                </tr>
+	                        <% } %>
+	                    <% } %>
+	                </table>
+                <% } %>
                 <input type="hidden" id="dateFormat" value='<%= org.openmrs.api.context.Context.getDateFormat().toPattern().toLowerCase() %>' />
                 <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.format(patient.patient)) }</p>
                 <% } %>
