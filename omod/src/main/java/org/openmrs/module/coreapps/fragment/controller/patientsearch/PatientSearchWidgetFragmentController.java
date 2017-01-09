@@ -48,6 +48,7 @@ public class PatientSearchWidgetFragmentController {
         model.addAttribute("defaultLocale", new Locale(administrationService.getGlobalProperty((OpenmrsConstants.GLOBAL_PROPERTY_DEFAULT_LOCALE), "en")).getLanguage());
         model.addAttribute("dateFormatter", new SimpleDateFormat(administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATE_FORMAT),
                 Context.getLocale()));
+        model.addAttribute("searchWidgetDateFormatter", new SimpleDateFormat("yyyy-MM-dd"));
         model.addAttribute("showLastViewedPatients", showLastViewedPatients);
 
         String doInitialSearch = null;

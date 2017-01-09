@@ -54,17 +54,13 @@ function PatientSearchWidget(configuration){
     // Creole not currently supported by Moment and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
     moment.locale([configuration.locale, configuration.defaultLocale, 'en']);
 
-    function formatAge(originalBirthdateStr){
-        var originalBirthdate = moment(originalBirthdateStr, dateFormat);
-        var age = moment().diff(originalBirthdate, 'months', false);
+    function formatAge(widgetBirthdate){
+        var bdate = moment(widgetBirthdate, dateFormat);
+        var age = moment().diff(bdate, 'months', false);
         var suffix = messages["coreapps.age.months"];
         if(age == 0){
-            age = moment().diff(originalBirthdate, 'weeks', false);
-            suffix = messages["coreapps.age.weeks"];
-            if(age == 0){
-                age = moment().diff(originalBirthdate, 'days', false);
-                suffix = messages["coreapps.age.days"];
-            }
+            age = moment().diff(bdate, 'days', false);
+            suffix = messages["coreapps.age.days"];
         }
         return suffix.replace("{0}", age);
     }
@@ -74,7 +70,7 @@ function PatientSearchWidget(configuration){
             //only add the uuid since it is only one we need to reference later
             initialPatientData.push({uuid: p.uuid});
             initialPatientUuids.push(p.uuid);
-            var originalBirthdateStr = p.birthdate;
+            var widgetBirthdate = p.widgetBirthdate;
             var bdate = p.birthdate;
             if( p.birthdateEstimated == true){
                 bdate = "~ "+bdate;
@@ -82,8 +78,8 @@ function PatientSearchWidget(configuration){
                 bdate = "&nbsp;&nbsp; "+bdate;
             }
             var age = p.age;
-            if(age == '' && originalBirthdateStr != ''){
-                age = formatAge(originalBirthdateStr);
+            if(age == '' && widgetBirthdate != ''){
+                age = formatAge(widgetBirthdate);
             }
             var initialPatient = [p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
                 p.name, p.gender, age, bdate];
@@ -193,7 +189,7 @@ function PatientSearchWidget(configuration){
             searchResultsData = results;
             _.each(searchResultsData, function(patient) {
                 var birthdate = '';
-                var originalBirthdateStr = patient.person.birthdate;
+                var widgetBirthdate = patient.person.birthdate;
                 if(patient.person.birthdate){
                     birthdate = moment(patient.person.birthdate).format(configuration.dateFormat);
                     if( patient.person.birthdateEstimated ){
@@ -208,8 +204,8 @@ function PatientSearchWidget(configuration){
                         " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
                 }
                 var age = patient.person.age;
-                if(age == '' && originalBirthdateStr != ''){
-                    age = formatAge(originalBirthdateStr);
+                if(age == '' && widgetBirthdate != ''){
+                    age = formatAge(widgetBirthdate);
                 }
                 var dataRow = [identifier, patient.person.personName.display, patient.person.gender,
                     age, birthdate];
