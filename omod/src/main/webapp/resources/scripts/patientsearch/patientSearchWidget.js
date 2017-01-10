@@ -10,6 +10,10 @@ function PatientSearchWidget(configuration){
     };
 
     var config = jq.extend({}, defaults, configuration);
+    var attributeHeaders = '';
+    jq.each(attributeTypes, function(key, value){
+        attributeHeaders = attributeHeaders.concat('<th>'+value+'</th>');
+    });
     var tableId = 'patient-search-results-table';
     var tableHtml = '<table id="'+tableId+'">'+
                         '<thead>'+
@@ -19,6 +23,7 @@ function PatientSearchWidget(configuration){
                                 '<th>'+config.messages.genderColHeader+'</th>'+
                                 '<th>'+config.messages.ageColHeader+'</th>'+
                                 '<th>'+config.messages.birthdateColHeader+'</th>'+
+                                attributeHeaders+
                             '</tr>'+
                         '</thead>'+
                         '<tbody></tbody>'+
@@ -49,19 +54,39 @@ function PatientSearchWidget(configuration){
     // Creole not currently supported by Moment and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
     moment.locale([configuration.locale, configuration.defaultLocale, 'en']);
 
+    function formatAge(widgetBirthdate){
+        var bdate = moment(widgetBirthdate, dateFormat);
+        var age = moment().diff(bdate, 'months', false);
+        var suffix = messages["coreapps.age.months"];
+        if(age == 0){
+            age = moment().diff(bdate, 'days', false);
+            suffix = messages["coreapps.age.days"];
+        }
+        return suffix.replace("{0}", age);
+    }
+
     if(config.initialPatients){
         _.each(config.initialPatients, function(p){
             //only add the uuid since it is only one we need to reference later
             initialPatientData.push({uuid: p.uuid});
             initialPatientUuids.push(p.uuid);
+            var widgetBirthdate = p.widgetBirthdate;
             var bdate = p.birthdate;
             if( p.birthdateEstimated == true){
                 bdate = "~ "+bdate;
             }else{
                 bdate = "&nbsp;&nbsp; "+bdate;
             }
-            initialData.push([p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
-                p.name, p.gender, p.age, bdate]);
+            var age = p.age;
+            if(age == '' && widgetBirthdate != ''){
+                age = formatAge(widgetBirthdate);
+            }
+            var initialPatient = [p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
+                p.name, p.gender, age, bdate];
+            jq.each(attributeTypes, function(key, attributeTypeName){
+                initialPatient.push(p[attributeTypeName]);
+            });
+            initialData.push(initialPatient);
         });
         searchResultsData = initialPatientData;
     }
@@ -80,7 +105,8 @@ function PatientSearchWidget(configuration){
     var keyboardControlKeys = [16,17,18,20,27,35,36,37,39,91,93,224];
     var customRep = 'custom:(uuid,' +
                     'patientIdentifier:(uuid,identifier),' +
-                    'person:(gender,age,birthdate,birthdateEstimated,personName))';
+                    'person:(gender,age,birthdate,birthdateEstimated,personName),' +
+                    'attributes:(value,attributeType:(name)))';
 
     var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
 
@@ -163,6 +189,7 @@ function PatientSearchWidget(configuration){
             searchResultsData = results;
             _.each(searchResultsData, function(patient) {
                 var birthdate = '';
+                var widgetBirthdate = patient.person.birthdate;
                 if(patient.person.birthdate){
                     birthdate = moment(patient.person.birthdate).format(configuration.dateFormat);
                     if( patient.person.birthdateEstimated ){
@@ -176,8 +203,30 @@ function PatientSearchWidget(configuration){
                     identifier = patient.patientIdentifier.identifier+
                         " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
                 }
-                dataRows.push([identifier, patient.person.personName.display,
-                    patient.person.gender, patient.person.age, birthdate]);
+                var age = patient.person.age;
+                if(age == '' && widgetBirthdate != ''){
+                    age = formatAge(widgetBirthdate);
+                }
+                var dataRow = [identifier, patient.person.personName.display, patient.person.gender,
+                    age, birthdate];
+                jq.each(attributeTypes, function(index, typeName){
+                    var attributeValue = "";
+                    jq.each(patient.attributes, function(index, attribute) {
+                        var attrType = attribute.attributeType;
+                        if (attrType != null && !attribute.voided && typeName == attrType.name) {
+                            if(attribute.value != null) {
+                                if(!attribute.value.display) {
+                                    attributeValue = attribute.value;
+                                }else{
+                                    attributeValue = attribute.value.display;
+                                }
+                            }
+                            return false;
+                        }
+                    });
+                    dataRow.push(attributeValue);
+                });
+                dataRows.push(dataRow);
             });
         }else if(config.initialPatients){
             //show the recently viewed
