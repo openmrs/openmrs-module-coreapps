@@ -7,7 +7,6 @@ import org.openmrs.Patient;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
-import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
@@ -16,7 +15,6 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,8 +26,6 @@ public class VisitIncludesFragmentController {
 			FragmentModel model,
 			@InjectBeans PatientDomainWrapper wrapper,
 			@SpringBean("adtService") AdtService adtService,
-			@SpringBean("visitService") VisitService visitService,
-			@SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper,
 			UiSessionContext sessionContext){
 
 		config.require("patient");
@@ -43,13 +39,14 @@ public class VisitIncludesFragmentController {
 		}
 
 		model.addAttribute("patient", wrapper);
-		List<VisitType> visitTypes = visitTypeHelper.getUnRetiredVisitTypes();
+		VisitService vs = Context.getVisitService();
+		List<VisitType> visitTypes = vs.getAllVisitTypes(false);
 
 		// send active visits to the view, if any.
-		List<Visit> activeVisits = visitService.getActiveVisitsByPatient(wrapper.getPatient());
+		List<Visit> activeVisits = vs.getActiveVisitsByPatient(wrapper.getPatient());
 
 		// get visit attributes
-		List<VisitAttributeType> visitAttributeTypes = visitService.getAllVisitAttributeTypes();
+		List<VisitAttributeType> visitAttributeTypes = vs.getAllVisitAttributeTypes();
 
 		// get the current visit's visit type, if any active visit at the current visit location
 		VisitDomainWrapper activeVisitWrapper = adtService.getActiveVisit(wrapper.getPatient(), sessionContext.getSessionLocation());
