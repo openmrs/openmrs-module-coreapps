@@ -11,8 +11,6 @@
         <span class="right"> | </span>
     [[ } ]]
         <a class="right" id="editVisitDatesLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.editVisitDate.label")}</a>
-        <span class="right"> | </span>
-        <a class="right" id="editVisitLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.editVisit.label")}</a>
 </div>
 
 <div class="visit-actions [[- stopDatetime ? 'past-visit' : 'active-visit' ]]">

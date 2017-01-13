@@ -42,7 +42,7 @@
 
 <% if (includeFragments) {
     includeFragments.each { %>
-        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [ patient: patient]) }
+        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, it.extensionParams.fragmentConfig) }
 <%  }
 } %>
 

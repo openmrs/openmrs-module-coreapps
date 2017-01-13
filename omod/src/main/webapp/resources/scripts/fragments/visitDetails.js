@@ -24,10 +24,6 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount) {
                     showDeleteVisitDialog($(this).data('visit-id'));
                     return false;
                 });
-                $('#editVisitLink').click(function() {
-                    visit.showEditVisitDialog($(this).data('visit-id'));
-                    return false;
-                });
 
                 if (fromEncounter > 0) {    // Showing the 'previous' button
                     $('#visit-paging-buttons').css('visibility', 'visible');
