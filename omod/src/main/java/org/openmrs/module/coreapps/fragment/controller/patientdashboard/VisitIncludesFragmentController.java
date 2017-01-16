@@ -1,11 +1,12 @@
 package org.openmrs.module.coreapps.fragment.controller.patientdashboard;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.Patient;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.VisitService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -16,7 +17,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -30,10 +31,26 @@ public class VisitIncludesFragmentController {
 			@SpringBean("adtService") AdtService adtService,
 			@SpringBean("visitService") VisitService visitService,
 			@SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper,
-			UiSessionContext sessionContext){
+			UiSessionContext sessionContext,
+			HttpServletRequest request,
+			@SpringBean("patientService")PatientService patientService){
 
-		config.require("patient");
 		Object patient = config.get("patient");
+
+		if(patient == null) {
+			// retrieve patient id from parameter map
+			if(request.getParameter("patientId") != null){
+				String patientId = request.getParameter("patientId");
+				if(patientId != null){
+					if(!NumberUtils.isDigits(patientId)){
+						patient = patientService.getPatientByUuid(patientId);
+					} else {
+						patient = patientService.getPatient(NumberUtils.toInt(patientId));
+					}
+				}
+			}
+		}
+
 		if (patient instanceof Patient) {
 			wrapper.setPatient((Patient) patient);
 		} else if (patient instanceof PatientDomainWrapper) {
