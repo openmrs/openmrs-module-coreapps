@@ -34,4 +34,14 @@ public class CoreAppsConstants {
 
    @Deprecated  // no longer used, to override set coreapps.dashboardUrl instead
    public static final String GP_DEFAULT_DASHBOARD = "coreapps.defaultDashboard";
+
+   // a JSON like object property to set visit types order
+   public final static String VISIT_TYPES_ORDER_PROPERTY = "coreapps.visit.visittype.order";
+
+   public final static String SHOW_VISIT_TYPE_PATIENT_HEADER_SECTION = "coreapps.showVisitTypeOnPatientHeaderSection";
+
+   // Configure the visit type background color as seen on the UI (Patient Header section, Active Visits page).
+   // This is visually helpful when there are multiple visit types.
+   public final static String VISIT_TYPE_COLORS = "coreapps.visitTypeColors";
+   public final static String TRANSFER_ENCOUNTER_TYPE_UUID = "coreapps.transferEncounterUuid";
 }

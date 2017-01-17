@@ -102,6 +102,11 @@
             defaultEndDate: wrapper.stopDatetime
     ]) }
 
+    ${ ui.includeFragment("coreapps", "patientdashboard/editVisit", [
+            visit: wrapper.visit,
+            patient: patient
+    ]) }
+
     <% } %>
 
     <% if(patient.allVisitsUsingWrappers.size == 0) { %>
