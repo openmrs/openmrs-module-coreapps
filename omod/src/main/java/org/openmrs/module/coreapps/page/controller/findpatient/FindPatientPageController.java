@@ -1,9 +1,12 @@
 package org.openmrs.module.coreapps.page.controller.findpatient;
 
+import org.openmrs.api.AdministrationService;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.helper.BreadcrumbHelper;
 import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -28,6 +31,7 @@ public class FindPatientPageController {
         model.addAttribute("heading", app.getConfig().get("heading").getTextValue());
         model.addAttribute("label", app.getConfig().get("label").getTextValue());
         model.addAttribute("showLastViewedPatients", app.getConfig().get("showLastViewedPatients").getBooleanValue());
+		model.addAttribute("showRegistrationLink", app.getConfig().get("showRegistrationLink").getTextValue());
         BreadcrumbHelper.addBreadcrumbsIfDefinedInApp(app, model, ui);
 	}
 

@@ -91,3 +91,8 @@
 </form>
 
 <div id="patient-search-results"></div>
+<%  if (showRegistrationLink ?: false) { %>
+<div>
+${ ui.message("coreapps.findPatient.registerPatient.label") }&nbsp;&nbsp;<a id="patient-search-register-patient" class="button" href="${ui.pageLink("registrationapp", "registerPatient", ["appId": showRegistrationLink])}">${ui.message("registrationapp.registration.label")}</a>
+</div>
+<%  } %>
