@@ -1,6 +1,7 @@
 package org.openmrs.module.coreapps.contextmodel;
 
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.VisitType;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ public class VisitContextModel {
     private boolean admitted;
     private Long stopDatetimeInMilliseconds;
     private Long startDatetimeInMilliseconds;
+    private VisitType visitType;
     private Date stopDatetime;
 
     public VisitContextModel(VisitDomainWrapper visit) {
@@ -23,7 +25,7 @@ public class VisitContextModel {
         this.active = visit.isOpen();
         this.admitted = visit.isAdmitted();
         this.startDatetimeInMilliseconds = visit.getStartDatetime().getTime();
-
+        this.visitType = visit.getVisit().getVisitType();
         Date stopDatetime = visit.getStopDatetime();
         this.stopDatetime = stopDatetime;
 
@@ -50,6 +52,11 @@ public class VisitContextModel {
     public boolean isAdmitted() {
         return admitted;
     }
+    //VisitType getter
+    public VisitType getVisitType() {
+        return visitType;
+    }
+
 
     public Long getStopDatetimeInMilliseconds(){
         return stopDatetimeInMilliseconds;
