@@ -172,9 +172,11 @@
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>uicommons-api</artifactId>
-			<version>${uicommonsVersion}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>providermanagement-api</artifactId>
+		</dependency>
 
 		<!-- End OpenMRS modules -->
 
@@ -185,14 +187,6 @@
             <type>gem</type>
             <scope>provided</scope>
         </dependency>
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>providermanagement-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>providermanagement-api</artifactId>
-		</dependency>
 
 	</dependencies>
 
