@@ -1,0 +1,81 @@
+@import "variables";
+@import "reference";
+
+$fontPath: "../fonts";
+
+/* fix so that the 1000px max size works with bootstrap
+   if the UI changes, we can remove this
+*/
+@media (min-width: 1200px) {
+	.container {
+		width: 970px;
+	}
+}
+
+/* Starting styles for edtriageapp */
+.edtriage-label-red {
+	background-color: #d9534f;
+}
+.edtriage-label-orange {
+	background-color: #f0ad4e;
+}
+.edtriage-label-yellow {
+	background-color: #e8e457;
+}
+.edtriage-label-green {
+	background-color: #5cb85c;
+}
+
+.edtriage-label-score {
+	background-color: #777;
+}
+
+.edtriage-label-white {
+	background-color: #ffffff;
+}
+#add-patient-dialog {
+	width: 650px;
+}
+
+#sticky {
+	padding: 0.5ex;
+	height: 50px;
+	width: 940px;
+	transition: box-shadow 400ms;
+}
+
+#sticky.stick {
+	position: fixed;
+	top: 0;
+	z-index: 2;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.borderless td, .borderless th {
+	border: none;
+}
+
+.edtriage-weight-box{
+	width:75px;
+}
+
+.edtriage-queue-list-item{
+	margin: 10px 0;
+	font-size:12px;
+}
+
+.vitals-and-symptoms-column{
+	width: 200px;
+}
+
+.edtriage-queue-button-column {
+	width:100px;
+}
+
+.edtriage-queue-button {
+	white-space: normal;
+}
+
+#temperatureC, #temperatureF {
+	width: 80px;
+}

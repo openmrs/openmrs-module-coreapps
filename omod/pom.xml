@@ -168,7 +168,14 @@
             <version>${appframeworkVersion}</version>
             <scope>test</scope>
         </dependency>
-						
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>uicommons-api</artifactId>
+			<version>${uicommonsVersion}</version>
+		</dependency>
+
+
 		<!-- End OpenMRS modules -->
 
         <dependency>
@@ -178,6 +185,14 @@
             <type>gem</type>
             <scope>provided</scope>
         </dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>providermanagement-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>providermanagement-api</artifactId>
+		</dependency>
 
 	</dependencies>
 
