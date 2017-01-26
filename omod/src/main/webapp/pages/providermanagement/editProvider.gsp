@@ -1,7 +1,7 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
 
-    ui.includeCss("coreapps", "providermanagement/bootstrap.css")
+    ui.includeCss("coreapps", "bootstrap.css")
 
     ui.includeJavascript("coreapps", "providermanagement/editProvider.js")
 
