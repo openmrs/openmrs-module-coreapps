@@ -13,9 +13,9 @@
     messages["coreapps.age.months"] = "${ ui.message("coreapps.age.months") }";
     messages["coreapps.age.days"] = "${ ui.message("coreapps.age.days") }";
     var dateFormat = 'YYYY-MM-DD';
-    var attributeTypes = [];
+    var listableAttributeTypes = [];
     <% listingAttributeTypeNames.each { %>
-        attributeTypes.push('${ it }');
+        listableAttributeTypes.push('${ it }');
     <% } %>
     var lastViewedPatients = [];
     <%  if (showLastViewedPatients && !doInitialSearch) {
@@ -64,6 +64,7 @@
             dateFormat: '${ dateFormatJS }',
             locale: '${ locale }',
             defaultLocale: '${ defaultLocale }',
+            attributeTypes: listableAttributeTypes,
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
                 first: '${ ui.message("coreapps.search.first") }',

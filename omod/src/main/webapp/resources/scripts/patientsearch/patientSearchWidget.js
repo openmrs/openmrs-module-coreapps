@@ -10,6 +10,7 @@ function PatientSearchWidget(configuration){
     };
 
     var config = jq.extend({}, defaults, configuration);
+    var attributeTypes = config.attributeTypes;
     var attributeHeaders = '';
     jq.each(attributeTypes, function(key, value){
         attributeHeaders = attributeHeaders.concat('<th>'+value+'</th>');
