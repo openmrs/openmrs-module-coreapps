@@ -44,7 +44,7 @@ public class RetrospectiveVisitFragmentController {
             stopDate = new Date();
         }
         else {
-            stopDate = new DateTime(stopDate).withTime(23, 59, 59, 999).toDate();
+            stopDate = new DateTime(stopDate).withTime(23, 59, 59, 000).toDate();
         }
 
         try {

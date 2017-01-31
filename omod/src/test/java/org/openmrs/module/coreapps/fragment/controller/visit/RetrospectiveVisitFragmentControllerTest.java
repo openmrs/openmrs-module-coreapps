@@ -67,7 +67,7 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         // should round to the time components to the start and end of the days, respectively
         Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
-        Date expectedStopDate = new DateTime(2012, 1, 2, 23, 59, 59, 999).toDate();
+        Date expectedStopDate = new DateTime(2012, 1, 2, 23, 59, 59, 000).toDate();
 
         Visit visit = createVisit();
 
@@ -95,7 +95,7 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         // should round to the time components to the start and end of the days, respectively
         Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
-        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59, 999).toDate();
+        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59, 000).toDate();
 
         Visit visit = createVisit();
 
@@ -121,11 +121,11 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         // should round to the time components to the start and end of the days, respectively
         Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
-        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59, 999).toDate();
+        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59, 000).toDate();
 
         Visit conflictingVisit = new Visit();
         conflictingVisit.setStartDatetime(new DateTime(2012, 1, 1, 0, 0, 0,0).toDate());
-        conflictingVisit.setStopDatetime(new DateTime(2012, 1, 3, 0, 0, 0, 999).toDate());
+        conflictingVisit.setStopDatetime(new DateTime(2012, 1, 3, 0, 0, 0, 000).toDate());
 
         when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate))
                 .thenThrow(ExistingVisitDuringTimePeriodException.class);
