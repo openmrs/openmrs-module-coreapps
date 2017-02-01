@@ -24,6 +24,10 @@
     }
     relationshipTypesOptions = relationshipTypesOptions.sort { it.label };
 
+    def assignedSupervisor = null
+    supervisorsForProvider.each {
+        assignedSupervisor = it.givenName + " " + it.familyName
+    }
     def editDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd")
     def  formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
 
@@ -58,6 +62,8 @@
 
         var addPatientDialog = null;
         var removePatientDialog = null;
+        var addSupervisorDialog = null;
+        var supervisors = null;
 
         jq('#patient-search').attr("size", "40");
 
@@ -83,14 +89,26 @@
 
         });
 
+        jq("#add-supervisor-button").click(function(event) {
+            createAddSupervisorDialog();
+            showAddSupervisorDialog();
+            event.preventDefault();
+        });
+
         jq("select[name='providerRole']").on('change', function(event) {
             var roleId = this.value;
+            getSupervisors(parseInt(roleId));
         });
 
         if ('${createAccount}' == 'true') {
             jq("input[name='givenName']").focus();
         } else {
             jq("#add-patient-button").focus();
+        }
+
+        var selectedProviderRole = jq("select[name='providerRole']").val();
+        if ( (selectedProviderRole != null) && (parseInt(selectedProviderRole) > 0) ) {
+            getSupervisors(parseInt(selectedProviderRole));
         }
 
     });
@@ -106,6 +124,43 @@
     width: 650px;
 }
 </style>
+
+<div id="add-supervisor-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("Create Relationship") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="superviseeId" value="${account.person.personId}"/>
+        <input type="hidden" id="supervisorId" value=""/>
+
+        <span>${ ui.message("Assign Supervisor to Provider") }</span>
+
+        <div class="panel-body ">
+            <fieldset>
+                <p>
+                    ${ ui.message("Find Supervisor:") }
+                    <input id="availableSupervisors" value="">
+                </p>
+                <br><br>
+                <p>
+                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                            id: "supevisor-relationshipStartDate",
+                            formFieldName: "supevisor-relationshipStartDate",
+                            label:"Start Date: &nbsp;&nbsp;",
+                            defaultDate: new Date(),
+                            endDate: editDateFormat.format(new Date()),
+                            useTime: false,
+                    ])}
+                </p>
+                <br><br>
+
+            </fieldset>
+
+        </div>
+        <button class="confirm right">${ ui.message("Assign") }</button>
+        <button class="cancel">${ ui.message("Cancel") }</button>
+    </div>
+</div>
 
 <div id="remove-patient-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
@@ -289,6 +344,65 @@
     </div>
 
     <div class="col-sm-8">
+
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Supervisor</h3>
+            </div>
+            <div class="panel-body">
+                <% if (assignedSupervisor != null) { %>
+                    <label>
+                        <i class="icon-search small"></i>
+                        ${ ui.message("Supervisor: ") }
+                    </label>
+                    <input id="availableSupervisors" value="${assignedSupervisor}">
+                <% } else { %>
+                    <a href="">
+                        <button id="add-supervisor-button">${ ui.message("Add Supervisor") }
+                        &nbsp; <i class="icon-plus"></i>
+                        </button>
+                    </a>
+                <% } %>
+                <table class="table table-condensed borderless">
+                    <tbody>
+                    <tr>
+                        <table id="supervisor-list" width="100%" border="1" cellspacing="0" cellpadding="2">
+                            <thead>
+                            <tr>
+                                <th>${ ui.message("Identifier") }</th>
+                                <th>${ ui.message("Name") }</th>
+                                <th>${ ui.message("Start Date") }</th>
+                                <th>${ ui.message("End Date") }</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <% if ((supervisorsForProvider == null) ||
+                                    (supervisorsForProvider != null && supervisorsForProvider.size() == 0)) { %>
+                            <tr>
+                                <td colspan="4">${ ui.message("None") }</td>
+                            </tr>
+                            <% } %>
+                            <% supervisorsForProvider.each { supervisor ->
+
+                            %>
+                            <tr id="patient-${ supervisor.personId }">
+                                <td>${ ui.format(supervisor.personId) }</td>
+                                <td>${ ui.format(supervisor.personName) }</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3 class="panel-title">${ui.message("Active Patients")}</h3>

@@ -32,6 +32,39 @@ function showAddPatientDialog(){
     addPatientDialog.show();
 }
 
+function createAddSupervisorDialog() {
+    addSupervisorDialog = emr.setupConfirmationDialog({
+        selector: '#add-supervisor-dialog',
+        actions: {
+            confirm: function() {
+                var supervisorId = jq("#supervisorId").val();
+                var superviseeId = jq("#superviseeId").val();
+                var relationshipStartDateField = jq("#supevisor-relationshipStartDate-field").val();
+                emr.getFragmentActionWithCallback('providermanagement', 'providerEdit', 'addSupervisor'
+                    , { supervisee: superviseeId,
+                        supervisor: supervisorId,
+                        date: relationshipStartDateField
+                    }
+                    , function(data) {
+                        addSupervisorDialog.close();
+                        window.location.reload();
+                    },function(err){
+                        emr.handleError(err);
+                        addSupervisorDialog.close();
+                    });
+            },
+            cancel: function() {
+                addSupervisorDialog.close();
+            }
+        }
+    });
+}
+
+function showAddSupervisorDialog(){
+    addSupervisorDialog.show();
+    jq("#availableSupervisors").autocomplete("search", "");
+}
+
 function createRemovePatientDialog(providerId, relationshipTypeId, relationshipId) {
     removePatientDialog = emr.setupConfirmationDialog({
         selector: '#remove-patient-dialog',
@@ -61,4 +94,38 @@ function createRemovePatientDialog(providerId, relationshipTypeId, relationshipI
 
 function showRemovePatientDialog(){
     removePatientDialog.show();
+}
+
+function getSupervisors(roleId) {
+    emr.getFragmentActionWithCallback('providermanagement', 'providerSearch', 'getSupervisors'
+        , { roleId: roleId
+        }
+        , function(data) {
+            supervisors = null;
+            supervisors = jq.map(data, function (value, key) {
+               return {
+                   label:  value.givenName + " " + value.familyName,
+                   value: value.personId
+               };
+            });
+
+            if (supervisors.length > 0 ) {
+                jq("#availableSupervisors").autocomplete({
+                    source: supervisors,
+                    minLength: 0,
+                    scroll: true,
+                    focus: function (event, ui ) {
+                        jq("#availableSupervisors").val(ui.item.label);
+                        return false;
+                    },
+                    select: function (event, ui ) {
+                        jq("#availableSupervisors").val(ui.item.label);
+                        jq("#supervisorId").val(ui.item.value);
+                        return false;
+                    }
+                });
+            }
+        }, function(err){
+            emr.handleError(err);
+        });
 }

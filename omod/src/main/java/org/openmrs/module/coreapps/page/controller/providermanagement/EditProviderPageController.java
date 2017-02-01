@@ -94,10 +94,12 @@ public class EditProviderPageController {
         List<ProviderPatientRelationship> patientsHistoryList = new ArrayList<ProviderPatientRelationship>();
         List<RelationshipType> relationshipTypes = new ArrayList<RelationshipType>();
         Set<ProviderAttributeType> providerAttributeTypes = new HashSet<ProviderAttributeType>();
+        List<Person> supervisorsForProvider = null;
 
         Provider provider = account.getProvider();
         if (provider != null ) {
             ProviderRole providerRole = provider.getProviderRole();
+            supervisorsForProvider = providerManagementService.getSupervisorsForProvider(account.getPerson());
             if (providerRole != null && providerRole.getRelationshipTypes() != null) {
                 providerAttributeTypes = providerRole.getProviderAttributeTypes();
                 Set<ProviderAttribute> attributes = provider.getAttributes();
@@ -125,6 +127,7 @@ public class EditProviderPageController {
         model.addAttribute("patientsList", patientsList);
         model.addAttribute("patientsHistoryList", patientsHistoryList);
         model.addAttribute("providerAttributeTypes", providerAttributeTypes);
+        model.addAttribute("supervisorsForProvider", supervisorsForProvider);
     }
 
     public String post(@MethodParam("getAccount") @BindParams AccountDomainWrapper account, BindingResult errors,
