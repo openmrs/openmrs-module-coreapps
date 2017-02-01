@@ -62,7 +62,9 @@ function createAddSupervisorDialog() {
 
 function showAddSupervisorDialog(){
     addSupervisorDialog.show();
-    jq("#availableSupervisors").autocomplete("search", "");
+    if (supervisors.length > 0 ) {
+        jq("#availableSupervisors").autocomplete("search", "");
+    }
 }
 
 function createRemovePatientDialog(providerId, relationshipTypeId, relationshipId) {

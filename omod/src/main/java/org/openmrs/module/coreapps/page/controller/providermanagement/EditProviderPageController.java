@@ -48,15 +48,18 @@ public class EditProviderPageController {
     protected final Log log = LogFactory.getLog(getClass());
 
     class ProviderPatientRelationship {
-        Patient patient = null;
+        Person person = null;
+        String identifier = null;
+        Integer objectId = null;
         Relationship relationship= null;
         RelationshipType relationshipType = null;
 
-        public ProviderPatientRelationship() {
-        }
+        public ProviderPatientRelationship() {}
 
-        public ProviderPatientRelationship(Patient patient, Relationship relationship, RelationshipType relationshipType) {
-            this.patient = patient;
+        public ProviderPatientRelationship(Person person, String identifier, Integer objectId, Relationship relationship, RelationshipType relationshipType) {
+            this.person = person;
+            this.identifier = identifier;
+            this.objectId = objectId;
             this.relationship = relationship;
             this.relationshipType = relationshipType;
         }
@@ -94,12 +97,31 @@ public class EditProviderPageController {
         List<ProviderPatientRelationship> patientsHistoryList = new ArrayList<ProviderPatientRelationship>();
         List<RelationshipType> relationshipTypes = new ArrayList<RelationshipType>();
         Set<ProviderAttributeType> providerAttributeTypes = new HashSet<ProviderAttributeType>();
-        List<Person> supervisorsForProvider = null;
+        List<ProviderPatientRelationship> supervisorsForProvider = new ArrayList<ProviderPatientRelationship>();
+        //List<Provider> supervisorsForProvider = new ArrayList<Provider>();
 
         Provider provider = account.getProvider();
         if (provider != null ) {
             ProviderRole providerRole = provider.getProviderRole();
-            supervisorsForProvider = providerManagementService.getSupervisorsForProvider(account.getPerson());
+            List<Person> supervisors = providerManagementService.getSupervisorsForProvider(account.getPerson());
+            for (Person supervisor : supervisors) {
+                List<Provider> providersByPerson = providerManagementService.getProvidersByPerson(supervisor, true);
+                if (providersByPerson !=null && providersByPerson.size() > 0) {
+                    RelationshipType supervisorRelationshipType = providerManagementService.getSupervisorRelationshipType();
+                    Relationship supervisorRelationship = null;
+                    Provider supervisorProvider = providersByPerson.get(0);
+                    List<Relationship> relationships = Context.getPersonService().getRelationships(supervisor,
+                            provider.getPerson(), supervisorRelationshipType, null);
+                    if (relationships != null && relationships.size() > 0 ){
+                        supervisorRelationship = relationships.get(0);
+                    }
+                    supervisorsForProvider.add(new ProviderPatientRelationship(
+                            supervisorProvider.getPerson(),
+                            supervisorProvider.getIdentifier(),
+                            supervisor.getId(),
+                            supervisorRelationship, supervisorRelationshipType));
+                }
+            }
             if (providerRole != null && providerRole.getRelationshipTypes() != null) {
                 providerAttributeTypes = providerRole.getProviderAttributeTypes();
                 Set<ProviderAttribute> attributes = provider.getAttributes();
@@ -112,10 +134,21 @@ public class EditProviderPageController {
                         relationshipTypes.add(relationshipType);
                         for (Relationship relationship : providerManagementService.getPatientRelationshipsForProvider(provider.getPerson(), relationshipType, null)) {
                             if (relationship.getPersonB().isPatient()) {
+                                Patient temp = patientService.getPatient(relationship.getPersonB().getId());
                                 if (relationship.getEndDate() == null) {
-                                    patientsList.add(new ProviderPatientRelationship(patientService.getPatient(relationship.getPersonB().getId()), relationship, relationshipType));
+                                    patientsList.add(new ProviderPatientRelationship(
+                                            temp,
+                                            temp.getPatientIdentifier().getIdentifier(),
+                                            temp.getPatientId(),
+                                            relationship,
+                                            relationshipType));
                                 } else {
-                                    patientsHistoryList.add(new ProviderPatientRelationship(patientService.getPatient(relationship.getPersonB().getId()), relationship, relationshipType));
+                                    patientsHistoryList.add(new ProviderPatientRelationship(
+                                            temp,
+                                            temp.getPatientIdentifier().getIdentifier(),
+                                            temp.getPatientId(),
+                                            relationship,
+                                            relationshipType));
                                 }
                             }
                         }

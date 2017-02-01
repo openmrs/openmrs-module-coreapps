@@ -26,7 +26,7 @@
 
     def assignedSupervisor = null
     supervisorsForProvider.each {
-        assignedSupervisor = it.givenName + " " + it.familyName
+        assignedSupervisor = it.person.personName
     }
     def editDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd")
     def  formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
@@ -351,54 +351,46 @@
             </div>
             <div class="panel-body">
                 <% if (assignedSupervisor != null) { %>
-                    <label>
-                        <i class="icon-search small"></i>
-                        ${ ui.message("Supervisor: ") }
-                    </label>
-                    <input id="availableSupervisors" value="${assignedSupervisor}">
-                <% } else { %>
+                    <table class="table table-condensed borderless">
+                        <tbody>
+                        <tr>
+                            <table id="supervisor-list" width="100%" border="1" cellspacing="0" cellpadding="2">
+                                <thead>
+                                <tr>
+                                    <th>${ ui.message("Identifier") }</th>
+                                    <th>${ ui.message("Name") }</th>
+                                    <th>${ ui.message("Start Date") }</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <% if ((supervisorsForProvider == null) ||
+                                        (supervisorsForProvider != null && supervisorsForProvider.size() == 0)) { %>
+                                <tr>
+                                    <td colspan="4">${ ui.message("None") }</td>
+                                </tr>
+                                <% } %>
+                                <% supervisorsForProvider.each { supervisor ->
+
+                                %>
+                                <tr id="patient-${ supervisor.person.personId }">
+                                    <td>${ ui.format(supervisor.identifier) }</td>
+                                    <td>${ ui.format(supervisor.person.personName) }</td>
+                                    <td>${ ui.format(supervisor.relationship.startDate) }</td>
+                                </tr>
+                                <% } %>
+                                </tbody>
+                            </table>
+                        </tr>
+                        </tbody>
+                    </table>
+                <% } else if (createAccount != true ) { %>
                     <a href="">
                         <button id="add-supervisor-button">${ ui.message("Add Supervisor") }
                         &nbsp; <i class="icon-plus"></i>
                         </button>
                     </a>
                 <% } %>
-                <table class="table table-condensed borderless">
-                    <tbody>
-                    <tr>
-                        <table id="supervisor-list" width="100%" border="1" cellspacing="0" cellpadding="2">
-                            <thead>
-                            <tr>
-                                <th>${ ui.message("Identifier") }</th>
-                                <th>${ ui.message("Name") }</th>
-                                <th>${ ui.message("Start Date") }</th>
-                                <th>${ ui.message("End Date") }</th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            <% if ((supervisorsForProvider == null) ||
-                                    (supervisorsForProvider != null && supervisorsForProvider.size() == 0)) { %>
-                            <tr>
-                                <td colspan="4">${ ui.message("None") }</td>
-                            </tr>
-                            <% } %>
-                            <% supervisorsForProvider.each { supervisor ->
-
-                            %>
-                            <tr id="patient-${ supervisor.personId }">
-                                <td>${ ui.format(supervisor.personId) }</td>
-                                <td>${ ui.format(supervisor.personName) }</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <% } %>
-                            </tbody>
-                        </table>
-                    </tr>
-
-                    </tbody>
-                </table>
 
             </div>
         </div>
@@ -444,9 +436,9 @@
                             <% patientsList.each { row ->
 
                             %>
-                            <tr id="patient-${ row.patient.patientId }">
-                                <td>${ ui.format(row.patient.patientIdentifier.identifier) }</td>
-                                <td>${ ui.format(row.patient.personName) }</td>
+                            <tr id="patient-${ row.person.id }">
+                                <td>${ ui.format(row.identifier) }</td>
+                                <td>${ ui.format(row.person.personName) }</td>
                                 <td>${ ui.format(row.relationship.startDate) }</td>
                                 <td><a><i class="delete-relationship icon-remove"
                                           data-provider-id="${account.person.personId}"
@@ -494,9 +486,9 @@
                             <% patientsHistoryList.each { row ->
 
                             %>
-                            <tr id="patient-${ row.patient.patientId }">
-                                <td>${ ui.format(row.patient.patientIdentifier.identifier) }</td>
-                                <td>${ ui.format(row.patient.personName) }</td>
+                            <tr id="patient-${ row.person.id }">
+                                <td>${ ui.format(row.identifier) }</td>
+                                <td>${ ui.format(row.person.personName) }</td>
                                 <td>${ ui.format(row.relationship.startDate) }</td>
                                 <td>${ ui.format(row.relationship.endDate) }</td>
                             </tr>
