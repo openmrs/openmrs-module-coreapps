@@ -31,7 +31,7 @@ public class FindPatientPageController {
         model.addAttribute("heading", app.getConfig().get("heading").getTextValue());
         model.addAttribute("label", app.getConfig().get("label").getTextValue());
         model.addAttribute("showLastViewedPatients", app.getConfig().get("showLastViewedPatients").getBooleanValue());
-		model.addAttribute("showRegistrationLink", app.getConfig().get("showRegistrationLink").getTextValue());
+		model.addAttribute("registrationAppId", app.getConfig().get("registrationAppId").getTextValue());
         BreadcrumbHelper.addBreadcrumbsIfDefinedInApp(app, model, ui);
 	}
 

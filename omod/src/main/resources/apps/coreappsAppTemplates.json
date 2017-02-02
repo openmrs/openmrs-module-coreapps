@@ -30,8 +30,8 @@
                 "defaultValue": null
             },
             {
-                "name": "showRegistrationLink",
-                "description": "The link to the registration app to be used, the default value of null hides the registration link on the search widget and other pages",
+                "name": "registrationAppId",
+                "description": "The appId to the registration app to be used, the default value of null or empty string hides the registration button on the search widget and other pages",
                 "defaultValue": ""
             }
         ]
