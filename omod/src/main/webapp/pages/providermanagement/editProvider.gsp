@@ -434,7 +434,7 @@
                             </tr>
                             <% } %>
                             <% patientsList.each { row ->
-
+                                if (row.relationship.endDate == null) {
                             %>
                             <tr id="patient-${ row.person.id }">
                                 <td>${ ui.format(row.identifier) }</td>
@@ -447,7 +447,8 @@
                                 ></i></a>
                                 </td>
                             </tr>
-                            <% } %>
+                            <% }
+                            } %>
                             </tbody>
                         </table>
                     </tr>
@@ -477,14 +478,14 @@
                             </thead>
 
                             <tbody>
-                            <% if ((patientsHistoryList == null) ||
-                                    (patientsHistoryList != null && patientsHistoryList.size() == 0)) { %>
+                            <% if ((patientsList == null) ||
+                                    (patientsList != null && patientsList.size() == 0)) { %>
                             <tr>
                                 <td colspan="4">${ ui.message("None") }</td>
                             </tr>
                             <% } %>
-                            <% patientsHistoryList.each { row ->
-
+                            <% patientsList.each { row ->
+                                if (row.relationship.endDate != null) {
                             %>
                             <tr id="patient-${ row.person.id }">
                                 <td>${ ui.format(row.identifier) }</td>
@@ -492,7 +493,8 @@
                                 <td>${ ui.format(row.relationship.startDate) }</td>
                                 <td>${ ui.format(row.relationship.endDate) }</td>
                             </tr>
-                            <% } %>
+                            <% }
+                            }%>
                             </tbody>
                         </table>
                     </tr>
