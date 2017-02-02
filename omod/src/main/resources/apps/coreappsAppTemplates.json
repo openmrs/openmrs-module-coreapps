@@ -28,11 +28,6 @@
                 "name": "breadcrumbs",
                 "description": "If specified, list of breadcrumbs for this page. (\"label\" will be translated, \"link\" will have /CONTEXTPATH prepended.) If not specified, default breadcrumbs are Home -> translate(label).",
                 "defaultValue": null
-            },
-            {
-                "name": "registrationAppId",
-                "description": "The appId to the registration app to be used, the default value of null or empty string hides the registration button on the search widget and other pages",
-                "defaultValue": ""
             }
         ]
     },
