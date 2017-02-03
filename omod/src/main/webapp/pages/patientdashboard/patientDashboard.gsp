@@ -39,11 +39,18 @@
     var encounterCount = ${ encounterCount };    // This variable will be reused in visits.gsp
 </script>
 
-
 <% if (includeFragments) {
-    includeFragments.each { %>
-        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, it.extensionParams.fragmentConfig) }
-<%  }
+
+    includeFragments.each {
+        // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
+        def configs = [:];
+        if(it.extensionParams.fragmentConfig != null){
+            configs = it.extensionParams.fragmentConfig;
+        }
+
+        configs.patient = patient;   // add the patient to the map %>
+        ${ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs)};
+    <%}
 } %>
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, activeVisit: activeVisit, appContextModel: appContextModel ]) }

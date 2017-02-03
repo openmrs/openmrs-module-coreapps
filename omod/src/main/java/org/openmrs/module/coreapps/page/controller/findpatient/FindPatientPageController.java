@@ -1,13 +1,9 @@
 package org.openmrs.module.coreapps.page.controller.findpatient;
 
-import org.apache.commons.lang.StringUtils;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
-import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.helper.BreadcrumbHelper;
 import org.openmrs.ui.framework.UiUtils;
-import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
