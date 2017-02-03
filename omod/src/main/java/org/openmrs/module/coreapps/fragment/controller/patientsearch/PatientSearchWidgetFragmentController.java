@@ -31,7 +31,7 @@ public class PatientSearchWidgetFragmentController {
                            @SpringBean("adminService") AdministrationService administrationService,
                            @FragmentParam(value = "showLastViewedPatients", required = false) Boolean showLastViewedPatients,
                            @FragmentParam(value = "initialSearchFromParameter", required = false) String searchByParam,
-                           @FragmentParam(value = "registrationAppId", required=false) String registrationAppId) {
+                           @FragmentParam(value = "registrationAppLink", required=false) String registrationAppLink) {
 
         showLastViewedPatients = showLastViewedPatients != null ? showLastViewedPatients : false;
 
@@ -75,7 +75,7 @@ public class PatientSearchWidgetFragmentController {
             }
         }
         model.addAttribute("listingAttributeTypeNames", listingAttributeTypeNames);
-        model.addAttribute("registrationAppId", registrationAppId);
+        model.addAttribute("registrationAppLink", registrationAppLink);
 
     }
 

@@ -33,7 +33,7 @@ public class AppTest {
         String expectedHeading = app.getTemplate().getConfigOptions().get(2).getDefaultValue().getTextValue();
         assertThat(app.getConfig().get("heading").getTextValue(), is(expectedHeading));
         String expectedShowPatientLink = app.getTemplate().getConfigOptions().get(5).getDefaultValue().getTextValue();
-        assertThat(app.getConfig().get("registrationAppId").getTextValue(), is(expectedShowPatientLink));
+        assertThat(app.getConfig().get("registrationAppLink").getTextValue(), is(expectedShowPatientLink));
     }
 
     @Test

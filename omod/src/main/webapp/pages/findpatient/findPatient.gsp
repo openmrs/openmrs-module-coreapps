@@ -25,10 +25,10 @@ ${ ui.includeFragment("coreapps", "patientsearch/patientSearchWidget",
         [ afterSelectedUrl: afterSelectedUrl,
           showLastViewedPatients: showLastViewedPatients,
           breadcrumbOverride: breadcrumbs,
-          registrationAppId: registrationAppId])}
+          registrationAppLink: registrationAppLink])}
 <% } else { %>
 ${ ui.includeFragment("coreapps", "patientsearch/patientSearchWidget",
         [ afterSelectedUrl: afterSelectedUrl,
           showLastViewedPatients: showLastViewedPatients,
-          registrationAppId: registrationAppId ])}
+          registrationAppLink: registrationAppLink ])}
 <% } %>
