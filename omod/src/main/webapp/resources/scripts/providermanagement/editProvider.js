@@ -32,7 +32,7 @@ function showAddPatientDialog(){
     addPatientDialog.show();
 }
 
-function createAddSupervisorDialog() {
+function createAddSupervisorDialog(relationshipTypeId, relationshipId) {
     addSupervisorDialog = emr.setupConfirmationDialog({
         selector: '#add-supervisor-dialog',
         actions: {
@@ -40,9 +40,10 @@ function createAddSupervisorDialog() {
                 var supervisorId = jq("#supervisorId").val();
                 var superviseeId = jq("#superviseeId").val();
                 var relationshipStartDateField = jq("#supevisor-relationshipStartDate-field").val();
-                emr.getFragmentActionWithCallback('providermanagement', 'providerEdit', 'addSupervisor'
+                emr.getFragmentActionWithCallback('providermanagement', 'providerEdit', 'editSupervisor'
                     , { supervisee: superviseeId,
                         supervisor: supervisorId,
+                        relationship: (relationshipId !=null) ? relationshipId : "",
                         date: relationshipStartDateField
                     }
                     , function(data) {
@@ -60,10 +61,16 @@ function createAddSupervisorDialog() {
     });
 }
 
-function showAddSupervisorDialog(){
+function showAddSupervisorDialog(supervisorId, supervisorLabel){
     addSupervisorDialog.show();
     if (supervisors.length > 0 ) {
-        jq("#availableSupervisors").autocomplete("search", "");
+        if (supervisorId != null && supervisorLabel != null && supervisorLabel.length > 0) {
+            jq("#availableSupervisors").val(supervisorLabel);
+            jq("#supervisorId").val(supervisorId);
+        } else {
+            jq("#availableSupervisors").autocomplete("search", "");
+        }
+
     }
 }
 

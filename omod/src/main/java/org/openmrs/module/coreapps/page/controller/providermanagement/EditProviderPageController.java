@@ -98,7 +98,6 @@ public class EditProviderPageController {
         model.addAttribute("providerRoles", providerManagementService.getAllProviderRoles(false));
 
         List<ProviderPersonRelationship> patientsList = new ArrayList<ProviderPersonRelationship>();
-        List<ProviderPersonRelationship> patientsHistoryList = new ArrayList<ProviderPersonRelationship>();
         List<RelationshipType> relationshipTypes = new ArrayList<RelationshipType>();
         Set<ProviderAttributeType> providerAttributeTypes = new HashSet<ProviderAttributeType>();
         List<ProviderPersonRelationship> supervisorsForProvider = null;
@@ -124,7 +123,6 @@ public class EditProviderPageController {
         }
         model.addAttribute("relationshipTypes", relationshipTypes);
         model.addAttribute("patientsList", patientsList);
-        model.addAttribute("patientsHistoryList", patientsHistoryList);
         model.addAttribute("providerAttributeTypes", providerAttributeTypes);
         model.addAttribute("supervisorsForProvider", supervisorsForProvider);
     }
@@ -238,7 +236,8 @@ public class EditProviderPageController {
                         supervisorProvider.getPerson(),
                         supervisorProvider.getIdentifier(),
                         supervisor.getId(),
-                        supervisorRelationship, supervisorRelationshipType));
+                        supervisorRelationship,
+                        supervisorRelationshipType));
             }
         }
         return supervisors;

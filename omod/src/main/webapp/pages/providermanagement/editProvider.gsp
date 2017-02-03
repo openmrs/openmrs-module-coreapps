@@ -89,9 +89,26 @@
 
         });
 
+        jq(document).on('click', '.edit-supervisor', function(event) {
+            var supervisorId = jq(event.target).attr("data-supervisor-id");
+            var supervisorLabel = jq(event.target).attr("data-supervisor-label");
+            var relationshipTypeId = jq(event.target).attr("data-relationship-type");
+            var relationshipId = jq(event.target).attr("data-supervisor-relationship");
+
+            createAddSupervisorDialog(relationshipTypeId, relationshipId);
+            showAddSupervisorDialog(supervisorId, supervisorLabel);
+
+            event.preventDefault();
+            // this is just to prevent datimepicker dropdown to display by default
+            setTimeout(function() {
+                jq(".datetimepicker").hide();
+            }, 100);
+
+        });
+
         jq("#add-supervisor-button").click(function(event) {
-            createAddSupervisorDialog();
-            showAddSupervisorDialog();
+            createAddSupervisorDialog(null, null, null);
+            showAddSupervisorDialog(null, null);
             event.preventDefault();
         });
 
@@ -139,7 +156,7 @@
             <fieldset>
                 <p>
                     ${ ui.message("Find Supervisor:") }
-                    <input id="availableSupervisors" value="">
+                    <input id="availableSupervisors" value="" autocomplete="off">
                 </p>
                 <br><br>
                 <p>
@@ -360,6 +377,7 @@
                                     <th>${ ui.message("Identifier") }</th>
                                     <th>${ ui.message("Name") }</th>
                                     <th>${ ui.message("Start Date") }</th>
+                                    <th>&nbsp;</th>
                                 </tr>
                                 </thead>
 
@@ -371,14 +389,23 @@
                                 </tr>
                                 <% } %>
                                 <% supervisorsForProvider.each { supervisor ->
-
+                                    if (supervisor.relationship.endDate == null) {  // display only active supervisors
                                 %>
                                 <tr id="patient-${ supervisor.person.personId }">
                                     <td>${ ui.format(supervisor.identifier) }</td>
                                     <td>${ ui.format(supervisor.person.personName) }</td>
                                     <td>${ ui.format(supervisor.relationship.startDate) }</td>
+                                    <td><a><i class="edit-supervisor icon-pencil"
+                                              data-provider-id="${account.person.personId}"
+                                              data-supervisor-id="${ supervisor.person.personId }"
+                                              data-supervisor-label="${ supervisor.person.personName }"
+                                              data-relationship-type="${supervisor.relationshipType.id}"
+                                              data-supervisor-relationship="${ supervisor.relationship.id }"
+                                    ></i></a>
+                                    </td>
                                 </tr>
-                                <% } %>
+                                <% }
+                                } %>
                                 </tbody>
                             </table>
                         </tr>
