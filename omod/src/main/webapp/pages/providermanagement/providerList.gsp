@@ -31,6 +31,7 @@
         <th>${ ui.message("Name") }</th>
         <th>${ ui.message("Gender") }</th>
         <th>${ ui.message("Role") }</th>
+        <th>${ ui.message("Supervisor") }</th>
     </tr>
     </thead>
 
@@ -41,15 +42,24 @@
         <td colspan="2">${ ui.message("None") }</td>
     </tr>
     <% } %>
-    <% providersList.each { provider ->
+    <% providersList.each { provider, supervisor ->
         def personId = provider.person.personId
         def personName = provider.name
+        def mySupervisor = null
+        supervisor.each {
+            mySupervisor = it
+        }
     %>
     <tr id="provider-${ provider.person.personId}">
         <td>${ ui.format(provider.identifier) }</td>
         <td><a href="/${ contextPath }/coreapps/providermanagement/editProvider.page?personId=${ provider.person.personId }">${ ui.format(provider.name) }</a></td>
         <td>${ ui.format(provider.person.gender) }</td>
         <td>${ ui.format(provider.providerRole) }</td>
+        <td>
+        <% if (mySupervisor) { %>
+            <a href="/${ contextPath }/coreapps/providermanagement/editProvider.page?personId=${ mySupervisor.personId }">${ ui.format(mySupervisor.personName) }</a>
+        <% } %>
+        </td>
 
     </tr>
     <% } %>
@@ -62,7 +72,7 @@ ${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#providers-lis
                                                                  bFilter: true,
                                                                  bJQueryUI: true,
                                                                  bLengthChange: false,
-                                                                 iDisplayLength: 10,
+                                                                 iDisplayLength: 20,
                                                                  sPaginationType: '\"full_numbers\"',
                                                                  bSort: false,
                                                                  sDom: '\'ft<\"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg \"ip>\''

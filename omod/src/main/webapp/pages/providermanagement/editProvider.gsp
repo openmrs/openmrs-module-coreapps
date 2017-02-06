@@ -291,44 +291,45 @@
                             options: genderOptions
                     ])}
 
+
                     <div id="providerAttributesDiv" class="emr_providerDetails">
-                        <% if (createAccount != true ) {
-                            if ( account.provider.attributes !=null && account.provider.attributes.size() > 0 ) {
-                                account.provider.attributes.each { attribute ->
-                                    if ( attribute.attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
-                        ${ ui.includeFragment("uicommons", "field/datetimepicker", [
-                                id: "providerAttributeId_" + attribute.providerAttributeId,
-                                formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
-                                label: attribute.attributeType.name,
-                                defaultDate: formatter.parse(attribute.valueReference),
-                                useTime: false,
-                        ])}
-                        <% } else { %>
-                        ${ ui.includeFragment("uicommons", "field/text", [
-                                label: attribute.attributeType.name,
-                                formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
-                                initialValue: attribute.valueReference
-                        ])}
-                        <% } %>
-                        <% } %>
-                        <%}
+                            <% if (createAccount != true ) {
+                                if ( account.provider.attributes !=null && account.provider.attributes.size() > 0 ) {
+                                    account.provider.attributes.each { attribute ->
+                                        if ( attribute.attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
+                                            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                                                    id: "providerAttributeId_" + attribute.providerAttributeId,
+                                                    formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
+                                                    label: attribute.attributeType.name,
+                                                    defaultDate: formatter.parse(attribute.valueReference),
+                                                    useTime: false,
+                                            ])}
+                                        <% } else { %>
+                                            ${ ui.includeFragment("uicommons", "field/text", [
+                                                    label: attribute.attributeType.name,
+                                                    formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
+                                                    initialValue: attribute.valueReference
+                                            ])}
+                                        <% } %>
+                                <% } %>
+                            <% }
                             if (providerAttributeTypes != null && providerAttributeTypes.size() > 0) {
                                 providerAttributeTypes.each { attributeType ->
                                     if ( attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
-                        ${ ui.includeFragment("uicommons", "field/datetimepicker", [
-                                id: "attributeTypeId_" + attributeType.providerAttributeTypeId,
-                                formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId,
-                                label: attributeType.name,
-                                useTime: false,
-                        ])}
-                        <% } else { %>
-                        ${ ui.includeFragment("uicommons", "field/text", [
-                                label: attributeType.name,
-                                formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId
-                        ])}
-                        <% } %>
-                        <% } %>
-                        <% } %>
+                                            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                                                    id: "attributeTypeId_" + attributeType.providerAttributeTypeId,
+                                                    formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId,
+                                                    label: attributeType.name,
+                                                    useTime: false,
+                                            ])}
+                                     <% } else { %>
+                                            ${ ui.includeFragment("uicommons", "field/text", [
+                                                    label: attributeType.name,
+                                                    formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId
+                                            ])}
+                                <% } %>
+                            <% } %>
+                            <% } %>
                         <% } %>
                     </div>
                     <div class="emr_providerDetails">
