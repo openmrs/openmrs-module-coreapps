@@ -12,7 +12,6 @@
     var messages = {};
     messages["coreapps.age.months"] = "${ ui.message("coreapps.age.months") }";
     messages["coreapps.age.days"] = "${ ui.message("coreapps.age.days") }";
-    var dateFormat = 'YYYY-MM-DD';
     var listableAttributeTypes = [];
     <% listingAttributeTypeNames.each { %>
         listableAttributeTypes.push('${ it }');

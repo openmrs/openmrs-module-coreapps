@@ -56,7 +56,7 @@ function PatientSearchWidget(configuration){
     moment.locale([configuration.locale, configuration.defaultLocale, 'en']);
 
     function formatAge(widgetBirthdate){
-        var bdate = moment(widgetBirthdate, dateFormat);
+        var bdate = moment(widgetBirthdate, 'YYYY-MM-DD');
         var age = moment().diff(bdate, 'months', false);
         var suffix = messages["coreapps.age.months"];
         if(age == 0){
