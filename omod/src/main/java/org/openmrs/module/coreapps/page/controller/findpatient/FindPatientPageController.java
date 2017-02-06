@@ -28,6 +28,11 @@ public class FindPatientPageController {
         model.addAttribute("heading", app.getConfig().get("heading").getTextValue());
         model.addAttribute("label", app.getConfig().get("label").getTextValue());
         model.addAttribute("showLastViewedPatients", app.getConfig().get("showLastViewedPatients").getBooleanValue());
+        if (app.getConfig().get("registrationAppLink") == null) {
+	        model.addAttribute("registrationAppLink","");
+        } else {
+	        model.addAttribute("registrationAppLink", app.getConfig().get("registrationAppLink").getTextValue());
+        }
         BreadcrumbHelper.addBreadcrumbsIfDefinedInApp(app, model, ui);
 	}
 
