@@ -291,11 +291,32 @@
                             options: genderOptions
                     ])}
 
+                    <div class="emr_providerDetails">
+                        <% if (createAccount != true ) { %>
+                        ${ ui.includeFragment("uicommons", "field/text", [
+                                label: ui.message("Identifier"),
+                                formFieldName: "providerIdentifier",
+                                initialValue: (account.provider ? account.provider.identifier: '')
+                        ])}
+                        <% } %>
+                        <p>
+                            ${ ui.includeFragment("uicommons", "field/dropDown", [
+                                    label: ui.message("Provider Role"),
+                                    formFieldName: "providerRole",
+                                    initialValue: (account.providerRole?.id ?: ''),
+                                    options: providerRolesOptions,
+                                    hideEmptyLabel: true,
+                                    expanded: true
+                            ])}
+                        </p>
+
+                    </div>
 
                     <div id="providerAttributesDiv" class="emr_providerDetails">
                             <% if (createAccount != true ) {
                                 if ( account.provider.attributes !=null && account.provider.attributes.size() > 0 ) {
                                     account.provider.attributes.each { attribute ->
+
                                         if ( attribute.attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
                                             ${ ui.includeFragment("uicommons", "field/datetimepicker", [
                                                     id: "providerAttributeId_" + attribute.providerAttributeId,
@@ -304,6 +325,13 @@
                                                     defaultDate: formatter.parse(attribute.valueReference),
                                                     useTime: false,
                                             ])}
+                                            <% } else if ( attribute.attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype' ) { %>
+                                                <label>${attribute.attributeType.name}</label>
+                                                <select id="coded-data-types" name="providerAttributeId_${attribute.providerAttributeId}"></select>
+                                                <script>
+                                                    var conceptId = '${attribute.attributeType.datatypeConfig}';
+                                                    getCodedConcepts(conceptId, 'providerAttributeId_${attribute.providerAttributeId}', '${attribute.valueReference}');
+                                                </script>
                                         <% } else { %>
                                             ${ ui.includeFragment("uicommons", "field/text", [
                                                     label: attribute.attributeType.name,
@@ -322,33 +350,22 @@
                                                     label: attributeType.name,
                                                     useTime: false,
                                             ])}
-                                     <% } else { %>
-                                            ${ ui.includeFragment("uicommons", "field/text", [
-                                                    label: attributeType.name,
-                                                    formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId
-                                            ])}
+                                     <% } else if ( attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype' ) { %>
+                                            <label>${attributeType.name}</label>
+                                            <select id="coded-data-types" name="attributeTypeId_${attributeType.providerAttributeTypeId}"></select>
+                                            <script>
+                                                var conceptId = '${attributeType.datatypeConfig}';
+                                                getCodedConcepts(conceptId, 'attributeTypeId_${attributeType.providerAttributeTypeId}');
+                                            </script>
+                                <% } else { %>
+                                        ${ ui.includeFragment("uicommons", "field/text", [
+                                                label: attributeType.name,
+                                                formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId
+                                        ])}
                                 <% } %>
                             <% } %>
                             <% } %>
                         <% } %>
-                    </div>
-                    <div class="emr_providerDetails">
-                        ${ ui.includeFragment("uicommons", "field/text", [
-                                label: ui.message("Identifier"),
-                                formFieldName: "providerIdentifier",
-                                initialValue: (account.provider ? account.provider.identifier: '')
-                        ])}
-                        <p>
-                            ${ ui.includeFragment("uicommons", "field/dropDown", [
-                                    label: ui.message("Provider Role"),
-                                    formFieldName: "providerRole",
-                                    initialValue: (account.providerRole?.id ?: ''),
-                                    options: providerRolesOptions,
-                                    hideEmptyLabel: true,
-                                    expanded: true
-                            ])}
-                        </p>
-
                     </div>
 
                     <div>

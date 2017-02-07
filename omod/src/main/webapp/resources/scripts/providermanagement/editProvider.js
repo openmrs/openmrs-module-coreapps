@@ -138,3 +138,27 @@ function getSupervisors(roleId) {
             emr.handleError(err);
         });
 }
+
+function getCodedConcepts(conceptId, elementName, selectedValue){
+    jQuery.ajax({
+        url: emr.fragmentActionLink("providermanagement", "providerView", "getCodedConcepts",   { conceptId: conceptId }),
+        dataType: 'json',
+        type: 'POST'
+    }).success(function(data) {
+        var options;
+        options = jq("select[name='" + elementName + "']");
+        
+        options.empty();
+
+        var results = data.results;
+        options.append(jq("<option>", {"value":'', "text": ''}));
+        jq.each(results, function(key, value){
+            var option = jq("<option>", {"value": value.uuid, "text": value.name});
+            option.attr('class', 'dialog-drop-down small');
+            if(selectedValue === value.uuid){
+                option.attr('selected', 'selected');
+            }
+            options.append(option);
+        });
+    });
+}
