@@ -24,6 +24,10 @@
     }
     relationshipTypesOptions = relationshipTypesOptions.sort { it.label };
 
+    def assignedSupervisor = null
+    supervisorsForProvider.each {
+        assignedSupervisor = it.person.personName
+    }
     def editDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd")
     def  formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
 
@@ -58,6 +62,8 @@
 
         var addPatientDialog = null;
         var removePatientDialog = null;
+        var addSupervisorDialog = null;
+        var supervisors = null;
 
         jq('#patient-search').attr("size", "40");
 
@@ -83,14 +89,43 @@
 
         });
 
+        jq(document).on('click', '.edit-supervisor', function(event) {
+            var supervisorId = jq(event.target).attr("data-supervisor-id");
+            var supervisorLabel = jq(event.target).attr("data-supervisor-label");
+            var relationshipTypeId = jq(event.target).attr("data-relationship-type");
+            var relationshipId = jq(event.target).attr("data-supervisor-relationship");
+
+            createAddSupervisorDialog(relationshipTypeId, relationshipId);
+            showAddSupervisorDialog(supervisorId, supervisorLabel);
+
+            event.preventDefault();
+            // this is just to prevent datimepicker dropdown to display by default
+            setTimeout(function() {
+                jq(".datetimepicker").hide();
+            }, 100);
+
+        });
+
+        jq("#add-supervisor-button").click(function(event) {
+            createAddSupervisorDialog(null, null, null);
+            showAddSupervisorDialog(null, null);
+            event.preventDefault();
+        });
+
         jq("select[name='providerRole']").on('change', function(event) {
             var roleId = this.value;
+            getSupervisors(parseInt(roleId));
         });
 
         if ('${createAccount}' == 'true') {
             jq("input[name='givenName']").focus();
         } else {
             jq("#add-patient-button").focus();
+        }
+
+        var selectedProviderRole = jq("select[name='providerRole']").val();
+        if ( (selectedProviderRole != null) && (parseInt(selectedProviderRole) > 0) ) {
+            getSupervisors(parseInt(selectedProviderRole));
         }
 
     });
@@ -106,6 +141,43 @@
     width: 650px;
 }
 </style>
+
+<div id="add-supervisor-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("Create Relationship") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="superviseeId" value="${account.person.personId}"/>
+        <input type="hidden" id="supervisorId" value=""/>
+
+        <span>${ ui.message("Assign Supervisor to Provider") }</span>
+
+        <div class="panel-body ">
+            <fieldset>
+                <p>
+                    ${ ui.message("Find Supervisor:") }
+                    <input id="availableSupervisors" value="" autocomplete="off">
+                </p>
+                <br><br>
+                <p>
+                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                            id: "supevisor-relationshipStartDate",
+                            formFieldName: "supevisor-relationshipStartDate",
+                            label:"Start Date: &nbsp;&nbsp;",
+                            defaultDate: new Date(),
+                            endDate: editDateFormat.format(new Date()),
+                            useTime: false,
+                    ])}
+                </p>
+                <br><br>
+
+            </fieldset>
+
+        </div>
+        <button class="confirm right">${ ui.message("Assign") }</button>
+        <button class="cancel">${ ui.message("Cancel") }</button>
+    </div>
+</div>
 
 <div id="remove-patient-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
@@ -219,52 +291,14 @@
                             options: genderOptions
                     ])}
 
-                    <div id="providerAttributesDiv" class="emr_providerDetails">
-                        <% if (createAccount != true ) {
-                            if ( account.provider.attributes !=null && account.provider.attributes.size() > 0 ) {
-                                account.provider.attributes.each { attribute ->
-                                    if ( attribute.attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
-                        ${ ui.includeFragment("uicommons", "field/datetimepicker", [
-                                id: "providerAttributeId_" + attribute.providerAttributeId,
-                                formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
-                                label: attribute.attributeType.name,
-                                defaultDate: formatter.parse(attribute.valueReference),
-                                useTime: false,
-                        ])}
-                        <% } else { %>
-                        ${ ui.includeFragment("uicommons", "field/text", [
-                                label: attribute.attributeType.name,
-                                formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
-                                initialValue: attribute.valueReference
-                        ])}
-                        <% } %>
-                        <% } %>
-                        <%}
-                            if (providerAttributeTypes != null && providerAttributeTypes.size() > 0) {
-                                providerAttributeTypes.each { attributeType ->
-                                    if ( attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
-                        ${ ui.includeFragment("uicommons", "field/datetimepicker", [
-                                id: "attributeTypeId_" + attributeType.providerAttributeTypeId,
-                                formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId,
-                                label: attributeType.name,
-                                useTime: false,
-                        ])}
-                        <% } else { %>
-                        ${ ui.includeFragment("uicommons", "field/text", [
-                                label: attributeType.name,
-                                formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId
-                        ])}
-                        <% } %>
-                        <% } %>
-                        <% } %>
-                        <% } %>
-                    </div>
                     <div class="emr_providerDetails">
+                        <% if (createAccount != true ) { %>
                         ${ ui.includeFragment("uicommons", "field/text", [
                                 label: ui.message("Identifier"),
                                 formFieldName: "providerIdentifier",
                                 initialValue: (account.provider ? account.provider.identifier: '')
                         ])}
+                        <% } %>
                         <p>
                             ${ ui.includeFragment("uicommons", "field/dropDown", [
                                     label: ui.message("Provider Role"),
@@ -278,6 +312,62 @@
 
                     </div>
 
+                    <div id="providerAttributesDiv" class="emr_providerDetails">
+                            <% if (createAccount != true ) {
+                                if ( account.provider.attributes !=null && account.provider.attributes.size() > 0 ) {
+                                    account.provider.attributes.each { attribute ->
+
+                                        if ( attribute.attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
+                                            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                                                    id: "providerAttributeId_" + attribute.providerAttributeId,
+                                                    formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
+                                                    label: attribute.attributeType.name,
+                                                    defaultDate: formatter.parse(attribute.valueReference),
+                                                    useTime: false,
+                                            ])}
+                                            <% } else if ( attribute.attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype' ) { %>
+                                                <label>${attribute.attributeType.name}</label>
+                                                <select id="coded-data-types" name="providerAttributeId_${attribute.providerAttributeId}"></select>
+                                                <script>
+                                                    var conceptId = '${attribute.attributeType.datatypeConfig}';
+                                                    getCodedConcepts(conceptId, 'providerAttributeId_${attribute.providerAttributeId}', '${attribute.valueReference}');
+                                                </script>
+                                        <% } else { %>
+                                            ${ ui.includeFragment("uicommons", "field/text", [
+                                                    label: attribute.attributeType.name,
+                                                    formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
+                                                    initialValue: attribute.valueReference
+                                            ])}
+                                        <% } %>
+                                <% } %>
+                            <% }
+                            if (providerAttributeTypes != null && providerAttributeTypes.size() > 0) {
+                                providerAttributeTypes.each { attributeType ->
+                                    if ( attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
+                                            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                                                    id: "attributeTypeId_" + attributeType.providerAttributeTypeId,
+                                                    formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId,
+                                                    label: attributeType.name,
+                                                    useTime: false,
+                                            ])}
+                                     <% } else if ( attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype' ) { %>
+                                            <label>${attributeType.name}</label>
+                                            <select id="coded-data-types" name="attributeTypeId_${attributeType.providerAttributeTypeId}"></select>
+                                            <script>
+                                                var conceptId = '${attributeType.datatypeConfig}';
+                                                getCodedConcepts(conceptId, 'attributeTypeId_${attributeType.providerAttributeTypeId}');
+                                            </script>
+                                <% } else { %>
+                                        ${ ui.includeFragment("uicommons", "field/text", [
+                                                label: attributeType.name,
+                                                formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId
+                                        ])}
+                                <% } %>
+                            <% } %>
+                            <% } %>
+                        <% } %>
+                    </div>
+
                     <div>
                         <input type="button" class="cancel" value="${ ui.message("emr.cancel") }" onclick="javascript:window.location='/${ contextPath }/coreapps/providermanagement/providerList.page'" />
                         <input type="submit" class="confirm" id="save-button" value="${ ui.message("emr.save") }"  />
@@ -289,6 +379,67 @@
     </div>
 
     <div class="col-sm-8">
+
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Supervisor</h3>
+            </div>
+            <div class="panel-body">
+                <% if (assignedSupervisor != null) { %>
+                    <table class="table table-condensed borderless">
+                        <tbody>
+                        <tr>
+                            <table id="supervisor-list" width="100%" border="1" cellspacing="0" cellpadding="2">
+                                <thead>
+                                <tr>
+                                    <th>${ ui.message("Identifier") }</th>
+                                    <th>${ ui.message("Name") }</th>
+                                    <th>${ ui.message("Start Date") }</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <% if ((supervisorsForProvider == null) ||
+                                        (supervisorsForProvider != null && supervisorsForProvider.size() == 0)) { %>
+                                <tr>
+                                    <td colspan="4">${ ui.message("None") }</td>
+                                </tr>
+                                <% } %>
+                                <% supervisorsForProvider.each { supervisor ->
+                                    if (supervisor.relationship.endDate == null) {  // display only active supervisors
+                                %>
+                                <tr id="patient-${ supervisor.person.personId }">
+                                    <td>${ ui.format(supervisor.identifier) }</td>
+                                    <td>${ ui.format(supervisor.person.personName) }</td>
+                                    <td>${ ui.format(supervisor.relationship.startDate) }</td>
+                                    <td><a><i class="edit-supervisor icon-pencil"
+                                              data-provider-id="${account.person.personId}"
+                                              data-supervisor-id="${ supervisor.person.personId }"
+                                              data-supervisor-label="${ supervisor.person.personName }"
+                                              data-relationship-type="${supervisor.relationshipType.id}"
+                                              data-supervisor-relationship="${ supervisor.relationship.id }"
+                                    ></i></a>
+                                    </td>
+                                </tr>
+                                <% }
+                                } %>
+                                </tbody>
+                            </table>
+                        </tr>
+                        </tbody>
+                    </table>
+                <% } else if (createAccount != true ) { %>
+                    <a href="">
+                        <button id="add-supervisor-button">${ ui.message("Add Supervisor") }
+                        &nbsp; <i class="icon-plus"></i>
+                        </button>
+                    </a>
+                <% } %>
+
+            </div>
+        </div>
+
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3 class="panel-title">${ui.message("Active Patients")}</h3>
@@ -328,11 +479,11 @@
                             </tr>
                             <% } %>
                             <% patientsList.each { row ->
-
+                                if (row.relationship.endDate == null) {
                             %>
-                            <tr id="patient-${ row.patient.patientId }">
-                                <td>${ ui.format(row.patient.patientIdentifier.identifier) }</td>
-                                <td>${ ui.format(row.patient.personName) }</td>
+                            <tr id="patient-${ row.person.id }">
+                                <td>${ ui.format(row.identifier) }</td>
+                                <td>${ ui.format(row.person.personName) }</td>
                                 <td>${ ui.format(row.relationship.startDate) }</td>
                                 <td><a><i class="delete-relationship icon-remove"
                                           data-provider-id="${account.person.personId}"
@@ -341,7 +492,8 @@
                                 ></i></a>
                                 </td>
                             </tr>
-                            <% } %>
+                            <% }
+                            } %>
                             </tbody>
                         </table>
                     </tr>
@@ -371,22 +523,23 @@
                             </thead>
 
                             <tbody>
-                            <% if ((patientsHistoryList == null) ||
-                                    (patientsHistoryList != null && patientsHistoryList.size() == 0)) { %>
+                            <% if ((patientsList == null) ||
+                                    (patientsList != null && patientsList.size() == 0)) { %>
                             <tr>
                                 <td colspan="4">${ ui.message("None") }</td>
                             </tr>
                             <% } %>
-                            <% patientsHistoryList.each { row ->
-
+                            <% patientsList.each { row ->
+                                if (row.relationship.endDate != null) {
                             %>
-                            <tr id="patient-${ row.patient.patientId }">
-                                <td>${ ui.format(row.patient.patientIdentifier.identifier) }</td>
-                                <td>${ ui.format(row.patient.personName) }</td>
+                            <tr id="patient-${ row.person.id }">
+                                <td>${ ui.format(row.identifier) }</td>
+                                <td>${ ui.format(row.person.personName) }</td>
                                 <td>${ ui.format(row.relationship.startDate) }</td>
                                 <td>${ ui.format(row.relationship.endDate) }</td>
                             </tr>
-                            <% } %>
+                            <% }
+                            }%>
                             </tbody>
                         </table>
                     </tr>
