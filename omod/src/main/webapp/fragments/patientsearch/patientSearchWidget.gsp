@@ -9,9 +9,6 @@
     ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 %>
 <script type="text/javascript">
-    var messages = {};
-    messages["coreapps.age.months"] = "${ ui.message("coreapps.age.months") }";
-    messages["coreapps.age.days"] = "${ ui.message("coreapps.age.days") }";
     var listableAttributeTypes = [];
     <% listingAttributeTypeNames.each { %>
         listableAttributeTypes.push('${ it }');
@@ -78,7 +75,9 @@
                 nameColHeader: '${ ui.message("coreapps.search.name") }',
                 genderColHeader: '${ ui.message("coreapps.gender") }',
                 ageColHeader: '${ ui.message("coreapps.age") }',
-                birthdateColHeader: '${ ui.message("coreapps.birthdate") }'
+                birthdateColHeader: '${ ui.message("coreapps.birthdate") }',
+                ageInMonths: '${ ui.message("coreapps.age.months") }',
+                ageInDays: '${ ui.message("coreapps.age.days") }'
             }
         };
 

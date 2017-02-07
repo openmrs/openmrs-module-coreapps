@@ -58,10 +58,10 @@ function PatientSearchWidget(configuration){
     function formatAge(widgetBirthdate){
         var bdate = moment(widgetBirthdate, 'YYYY-MM-DD');
         var age = moment().diff(bdate, 'months', false);
-        var suffix = messages["coreapps.age.months"];
+        var suffix = config.messages.ageInMonths;
         if(age == 0){
             age = moment().diff(bdate, 'days', false);
-            suffix = messages["coreapps.age.days"];
+            suffix = config.messages.ageInDays;
         }
         return suffix.replace("{0}", age);
     }

@@ -48,8 +48,9 @@
                 nameColHeader: '${ ui.message("coreapps.search.name") }',
                 genderColHeader: '${ ui.message("coreapps.gender") }',
                 ageColHeader: '${ ui.message("coreapps.age") }',
-                birthdateColHeader: '${ ui.message("coreapps.birthdate") }'
-
+                birthdateColHeader: '${ ui.message("coreapps.birthdate") }',
+                ageInMonths: '${ ui.message("coreapps.age.months") }',
+                ageInDays: '${ ui.message("coreapps.age.days") }'
             }
         };
 
