@@ -11,17 +11,12 @@
 <script type="text/javascript">
     var listableAttributeTypes = [];
     <% listingAttributeTypeNames.each { %>
-        listableAttributeTypes.push('${ it }');
+        listableAttributeTypes.push('${ ui.encodeHtml(it) }');
     <% } %>
     var lastViewedPatients = [];
     <%  if (showLastViewedPatients && !doInitialSearch) {
             lastViewedPatients.each { it -> %>
 
-    /* [RA-452]
-    Data pushed to lastViewedPatients must be sanitized with both ui.escapeJs and ui.encodeHtmlContent.
-    - escapeJS because untrusted data is being passed into js code
-    - encodeHtmlContent because data is eventually being displayed on the page
-     */
     var patientObj = {
         uuid:"${ ui.escapeJs(ui.encodeHtmlContent(it.uuid)) }",
         name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",
@@ -35,7 +30,7 @@
         widgetBirthdate:"${ it.birthdate ? ui.escapeJs(ui.encodeHtmlContent(searchWidgetDateFormatter.format(it.birthdate))) : '' }"
     }
         <% listingAttributeTypeNames.each { attributeName -> %>
-            patientObj["${ attributeName }"] = "${ it.getAttribute(attributeName)?:'' }";
+            patientObj["${ ui.encodeHtml(attributeName) }"] = "${ it.getAttribute(attributeName) ? ui.encodeHtml(String.valueOf(it.getAttribute(attributeName))) :'' }";
         <% } %>
     lastViewedPatients.push(patientObj);
     <%      }
