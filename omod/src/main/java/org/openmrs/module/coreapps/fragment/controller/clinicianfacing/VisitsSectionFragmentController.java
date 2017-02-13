@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.clinicianfacing;
 
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
@@ -21,6 +22,8 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
+import org.openmrs.module.coreapps.utils.VisitTypeHelper;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.UiUtils;
@@ -33,9 +36,6 @@ import org.openmrs.ui.framework.page.PageModel;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.openmrs.Location;
-import org.openmrs.module.emrapi.adt.AdtService;
-import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 
 /**
  * Supports the containing PageModel having an "app" property whose config defines a "visitUrl" property
@@ -78,18 +78,16 @@ public class VisitsSectionFragmentController {
         if (visitsPageWithSpecificVisitUrl == null) {
             visitsPageWithSpecificVisitUrl = coreAppsProperties.getVisitsPageWithSpecificVisitUrl();
         }
-        if (visitsPageUrl == null) {
-			visitsPageUrl = "coreapps/patientdashboard/patientDashboard.page?patientId="+patientWrapper.getPatient().getUuid();
-			Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-                        VisitDomainWrapper activeVisit = adtService.getActiveVisit(patientWrapper.getPatient(), visitLocation);
-			visitsPageUrl += (activeVisit != null) ? "&visitId="+activeVisit.getVisit().getId()+"#visits" : "#visits";
-		}
 		visitsPageWithSpecificVisitUrl = "/" + ui.contextPath() + "/" + visitsPageWithSpecificVisitUrl;
+
         if (visitsPageUrl == null) {
             visitsPageUrl = coreAppsProperties.getVisitsPageUrl();
         }
         if (visitsPageUrl == null) {
-			visitsPageUrl = "coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}#visits";
+			visitsPageUrl = "coreapps/patientdashboard/patientDashboard.page?patientId="+patientWrapper.getPatient().getUuid();
+			Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+			VisitDomainWrapper activeVisit = adtService.getActiveVisit(patientWrapper.getPatient(), visitLocation);
+			visitsPageUrl += (activeVisit != null) ? "&visitId="+activeVisit.getVisit().getId()+"#visits" : "#visits";
 		}
 		visitsPageUrl = "/" + ui.contextPath() + "/" + visitsPageUrl;
 		model.addAttribute("visitsUrl", templateFactory.handlebars(visitsPageUrl, contextModel));
