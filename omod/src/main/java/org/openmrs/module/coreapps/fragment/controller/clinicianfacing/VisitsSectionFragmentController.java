@@ -82,13 +82,7 @@ public class VisitsSectionFragmentController {
 				visitsPageWithSpecificVisitUrl = app.getConfig().get("visitUrl").getTextValue();
 			} catch (Exception ex) { }
 			try {
-				// if there is an active visit, we actually want the visits link to link to it, so we use the specific visit url instead of the generic one
-				if (activeVisit != null) {
-					visitsPageUrl = app.getConfig().get("visitUrl").getTextValue();
-				}
-				else {
-					visitsPageUrl = app.getConfig().get("visitsUrl").getTextValue();
-				}
+				visitsPageUrl = app.getConfig().get("visitsUrl").getTextValue();
 			} catch (Exception ex) { }
 		}
 
