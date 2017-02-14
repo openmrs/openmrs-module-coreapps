@@ -65,30 +65,48 @@ public class VisitsSectionFragmentController {
 		contextModel.put("patient", new PatientContextModel(patientWrapper.getPatient()));
 
 		AppDescriptor app = (AppDescriptor) pageModel.get("app");
+
+		Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patientWrapper.getPatient(), visitLocation);
+		if (activeVisit != null) {
+			contextModel.put("visit", activeVisit.getVisit());
+		}
+
 		String visitsPageWithSpecificVisitUrl = null;
 		String visitsPageUrl = null;
+
+		// see if the app specifies urls to use
 		if (app != null) {
 			try {
 				visitsPageWithSpecificVisitUrl = app.getConfig().get("visitUrl").getTextValue();
 			} catch (Exception ex) { }
 			try {
-				visitsPageUrl = app.getConfig().get("visitsUrl").getTextValue();
+				// if there is an active visit, we actually want the visits link to link to it, so we use the specific visit url instead of the generic one
+				if (activeVisit != null) {
+					visitsPageUrl = app.getConfig().get("visitUrl").getTextValue();
+				}
+				else {
+					visitsPageUrl = app.getConfig().get("visitsUrl").getTextValue();
+				}
 			} catch (Exception ex) { }
 		}
-        if (visitsPageWithSpecificVisitUrl == null) {
+
+
+		if (visitsPageWithSpecificVisitUrl == null) {
             visitsPageWithSpecificVisitUrl = coreAppsProperties.getVisitsPageWithSpecificVisitUrl();
         }
 		visitsPageWithSpecificVisitUrl = "/" + ui.contextPath() + "/" + visitsPageWithSpecificVisitUrl;
 
         if (visitsPageUrl == null) {
-            visitsPageUrl = coreAppsProperties.getVisitsPageUrl();
+        	// if there is an active visit, we actually want the visits link to link to it, so we use the specific visit url instead of the generic one
+			if (activeVisit != null) {
+				visitsPageUrl = coreAppsProperties.getVisitsPageWithSpecificVisitUrl();
+			}
+			else {
+				visitsPageUrl = coreAppsProperties.getVisitsPageUrl();
+			}
+
         }
-        if (visitsPageUrl == null) {
-			visitsPageUrl = "coreapps/patientdashboard/patientDashboard.page?patientId="+patientWrapper.getPatient().getUuid();
-			Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-			VisitDomainWrapper activeVisit = adtService.getActiveVisit(patientWrapper.getPatient(), visitLocation);
-			visitsPageUrl += (activeVisit != null) ? "&visitId="+activeVisit.getVisit().getId()+"#visits" : "#visits";
-		}
 		visitsPageUrl = "/" + ui.contextPath() + "/" + visitsPageUrl;
 		model.addAttribute("visitsUrl", templateFactory.handlebars(visitsPageUrl, contextModel));
 
