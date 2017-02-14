@@ -67,12 +67,6 @@ public class VisitsSectionFragmentController {
 
 		AppDescriptor app = (AppDescriptor) pageModel.get("app");
 
-		Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patientWrapper.getPatient(), visitLocation);
-		if (activeVisit != null) {
-			contextModel.put("visit", activeVisit.getVisit());
-		}
-
 		String visitsPageWithSpecificVisitUrl = null;
 		String visitsPageUrl = null;
 
@@ -93,15 +87,17 @@ public class VisitsSectionFragmentController {
 		visitsPageWithSpecificVisitUrl = "/" + ui.contextPath() + "/" + visitsPageWithSpecificVisitUrl;
 
         if (visitsPageUrl == null) {
-        	// if there is an active visit, we actually want the visits link to link to it, so we use the specific visit url instead of the generic one
-			if (activeVisit != null) {
-				visitsPageUrl = coreAppsProperties.getVisitsPageWithSpecificVisitUrl();
-			}
-			else {
-				visitsPageUrl = coreAppsProperties.getVisitsPageUrl();
-			}
-
+			visitsPageUrl = coreAppsProperties.getVisitsPageUrl();
         }
+
+        // hack fix for RA-1002--if there is an active visit, and we are using the "regular" visit dashboard we actually want to link to the specific visit
+		Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patientWrapper.getPatient(), visitLocation);
+		if (visitsPageUrl.contains("/coreapps/patientdashboard/patientDashboard.page?") &&activeVisit != null) {
+			visitsPageUrl = visitsPageWithSpecificVisitUrl;
+			contextModel.put("visit", activeVisit.getVisit());
+		}
+
 		visitsPageUrl = "/" + ui.contextPath() + "/" + visitsPageUrl;
 		model.addAttribute("visitsUrl", templateFactory.handlebars(visitsPageUrl, contextModel));
 
