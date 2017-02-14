@@ -63,6 +63,7 @@ public class VisitsSectionFragmentController {
 
 		AppContextModel contextModel = sessionContext.generateAppContextModel();
 		contextModel.put("patient", new PatientContextModel(patientWrapper.getPatient()));
+		contextModel.put("patientId", patientWrapper.getPatient().getUuid());  // backwards-compatible for links that still specify patient uuid substitution with "{{patientId}}"
 
 		AppDescriptor app = (AppDescriptor) pageModel.get("app");
 
