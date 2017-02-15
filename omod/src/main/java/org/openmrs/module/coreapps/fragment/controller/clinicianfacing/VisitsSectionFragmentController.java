@@ -94,7 +94,7 @@ public class VisitsSectionFragmentController {
 		Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
 		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patientWrapper.getPatient(), visitLocation);
 		if (visitsPageUrl.contains("/coreapps/patientdashboard/patientDashboard.page?") &&activeVisit != null) {
-			visitsPageUrl = visitsPageWithSpecificVisitUrl;
+			visitsPageUrl = coreAppsProperties.getVisitsPageWithSpecificVisitUrl();
 			contextModel.put("visit", activeVisit.getVisit());
 		}
 
