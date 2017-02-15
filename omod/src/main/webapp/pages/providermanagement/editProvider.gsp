@@ -37,8 +37,8 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("Provider List")}", link: '${ui.pageLink("coreapps", "providermanagement/providerList")}' },
-        { label: "${ ui.message("Edit Provider")}" }
+        { label: "${ ui.message("providermanagement.providerList")}", link: '${ui.pageLink("coreapps", "providermanagement/providerList")}' },
+        { label: "${ ui.message("Provider.edit")}" }
 
     ];
 
@@ -144,18 +144,18 @@
 
 <div id="add-supervisor-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
-        <h3>${ ui.message("Create Relationship") }</h3>
+        <h3>${ ui.message("providermanagement.createRelationship") }</h3>
     </div>
     <div class="dialog-content">
         <input type="hidden" id="superviseeId" value="${account.person.personId}"/>
         <input type="hidden" id="supervisorId" value=""/>
 
-        <span>${ ui.message("Assign Supervisor to Provider") }</span>
+        <span>${ ui.message("providermanagement.assignSupervisor") }</span>
 
         <div class="panel-body ">
             <fieldset>
                 <p>
-                    ${ ui.message("Find Supervisor:") }
+                    ${ ui.message("providermanagement.findSupervisor") }:
                     <input id="availableSupervisors" value="" autocomplete="off">
                 </p>
                 <br><br>
@@ -163,7 +163,7 @@
                     ${ ui.includeFragment("uicommons", "field/datetimepicker", [
                             id: "supevisor-relationshipStartDate",
                             formFieldName: "supevisor-relationshipStartDate",
-                            label:"Start Date: &nbsp;&nbsp;",
+                            label: ui.message("providermanagement.startDate") + ": &nbsp;&nbsp;",
                             defaultDate: new Date(),
                             endDate: editDateFormat.format(new Date()),
                             useTime: false,
@@ -174,20 +174,20 @@
             </fieldset>
 
         </div>
-        <button class="confirm right">${ ui.message("Assign") }</button>
-        <button class="cancel">${ ui.message("Cancel") }</button>
+        <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
     </div>
 </div>
 
 <div id="remove-patient-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
-        <h3>${ ui.message("End Relationship") }</h3>
+        <h3>${ ui.message("coreapps.relationships.delete.header") }</h3>
     </div>
     <div class="dialog-content">
         <input type="hidden" id="providerId" value="${account.person.personId}"/>
         <input type="hidden" id="patientId" value=""/>
 
-        <span>${ ui.message("Are you sure you want to unassign Patient from Provider?") }</span>
+        <span>${ ui.message("providermanagement.removePatientFromProvider") }?</span>
 
         <div class="panel-body ">
             <fieldset>
@@ -195,7 +195,7 @@
                     ${ ui.includeFragment("uicommons", "field/datetimepicker", [
                             id: "relationshipEndDate",
                             formFieldName: "relationshipEndDate",
-                            label:"End Date: &nbsp;&nbsp;",
+                            label: ui.message("providermanagement.endDate") + ": &nbsp;&nbsp;",
                             defaultDate: new Date(),
                             endDate: editDateFormat.format(new Date()),
                             useTime: false,
@@ -203,25 +203,25 @@
                 </p>
             </fieldset>
         </div>
-        <button id="remove-patient-button" class="confirm right">${ ui.message("End relationship") }</button>
-        <button class="cancel">${ ui.message("Cancel") }</button>
+        <button id="remove-patient-button" class="confirm right">${ ui.message("coreapps.relationships.delete.header") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
     </div>
 </div>
 
 <div id="add-patient-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
-        <h3>${ ui.message("Create Relationship") }</h3>
+        <h3>${ ui.message("providermanagement.createRelationship") }</h3>
     </div>
     <div class="dialog-content">
         <input type="hidden" id="providerId" value="${account.person.personId}"/>
         <input type="hidden" id="patientId" value=""/>
 
-        <span>${ ui.message("Assign Patient to Provider") }</span>
+        <span>${ ui.message("providermanagement.assignPatientToProvider") }</span>
 
         <div class="panel-body ">
             <fieldset>
                 <p>
-                    ${ ui.message("Find Patient:") }
+                    ${ ui.message("Patient.find") }:
                     ${ ui.includeFragment("coreapps", "patientsearch/patientSearchWidget",
                             [ afterSelectedUrl: afterSelectedUrl,
                               rowSelectionHandler: "selectPatientHandler",
@@ -232,7 +232,7 @@
                     ${ ui.includeFragment("uicommons", "field/datetimepicker", [
                             id: "relationshipStartDate",
                             formFieldName: "relationshipStartDate",
-                            label:"Start Date: &nbsp;&nbsp;",
+                            label: ui.message("providermanagement.startDate") + ": &nbsp;&nbsp;",
                             defaultDate: new Date(),
                             endDate: editDateFormat.format(new Date()),
                             useTime: false,
@@ -241,7 +241,7 @@
                 <br><br>
                 <p>
                     ${ ui.includeFragment("uicommons", "field/dropDown", [
-                            label: ui.message("Relationship Type"),
+                            label: ui.message("providermanagement.relationshipType"),
                             formFieldName: "relationshipType",
                             classes: ["required"],
                             options: relationshipTypesOptions,
@@ -252,18 +252,18 @@
             </fieldset>
 
         </div>
-        <button class="confirm right">${ ui.message("Assign") }</button>
-        <button class="cancel">${ ui.message("Cancel") }</button>
+        <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
     </div>
 </div>
 
-<h3>${ (createAccount) ? ui.message("Create Provider") : ui.message("Edit Provider") }</h3>
+<h3>${ (createAccount) ? ui.message("Provider.create") : ui.message("Provider.edit") }</h3>
 
 <div class="row">
     <div class="col-sm-4">
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 class="panel-title">${ui.message("Provider")}</h3>
+                <h3 class="panel-title">${ui.message("providermanagement.provider")}</h3>
             </div>
             <div class="panel-body ">
 
@@ -273,13 +273,13 @@
                     <input style="display:none" type="password" name="wrong-username-from-autocomplete"/>
 
                     ${ ui.includeFragment("uicommons", "field/text", [
-                            label: ui.message("Given Name"),
+                            label: ui.message("coreapps.person.givenName"),
                             formFieldName: "givenName",
                             initialValue: (account.givenName ?: '')
                     ])}
 
                     ${ ui.includeFragment("uicommons", "field/text", [
-                            label: ui.message("Family Name"),
+                            label: ui.message("coreapps.person.familyName"),
                             formFieldName: "familyName",
                             initialValue: (account.familyName ?: '')
                     ])}
@@ -291,17 +291,23 @@
                             options: genderOptions
                     ])}
 
+                    ${ ui.includeFragment("registrationapp", "field/personAddressWithHierarchy", [
+                            id: "providerAddress",
+                            initialValue: (account.person ? account.person.personAddress : null)
+                    ])}
+
+
                     <div class="emr_providerDetails">
                         <% if (createAccount != true ) { %>
                         ${ ui.includeFragment("uicommons", "field/text", [
-                                label: ui.message("Identifier"),
+                                label: ui.message("providermanagement.identifier"),
                                 formFieldName: "providerIdentifier",
                                 initialValue: (account.provider ? account.provider.identifier: '')
                         ])}
                         <% } %>
                         <p>
                             ${ ui.includeFragment("uicommons", "field/dropDown", [
-                                    label: ui.message("Provider Role"),
+                                    label: ui.message("providermanagement.providerRole"),
                                     formFieldName: "providerRole",
                                     initialValue: (account.providerRole?.id ?: ''),
                                     options: providerRolesOptions,
@@ -382,7 +388,7 @@
 
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 class="panel-title">Supervisor</h3>
+                <h3 class="panel-title">${ ui.message("providermanagement.supervisor") }</h3>
             </div>
             <div class="panel-body">
                 <% if (assignedSupervisor != null) { %>
@@ -392,9 +398,9 @@
                             <table id="supervisor-list" width="100%" border="1" cellspacing="0" cellpadding="2">
                                 <thead>
                                 <tr>
-                                    <th>${ ui.message("Identifier") }</th>
-                                    <th>${ ui.message("Name") }</th>
-                                    <th>${ ui.message("Start Date") }</th>
+                                    <th>${ ui.message("providermanagement.identifier") }</th>
+                                    <th>${ ui.message("coreapps.person.name") }</th>
+                                    <th>${ ui.message("providermanagement.startDate") }</th>
                                     <th>&nbsp;</th>
                                 </tr>
                                 </thead>
@@ -403,7 +409,7 @@
                                 <% if ((supervisorsForProvider == null) ||
                                         (supervisorsForProvider != null && supervisorsForProvider.size() == 0)) { %>
                                 <tr>
-                                    <td colspan="4">${ ui.message("None") }</td>
+                                    <td colspan="4">${ ui.message("coreapps.none") }</td>
                                 </tr>
                                 <% } %>
                                 <% supervisorsForProvider.each { supervisor ->
@@ -431,7 +437,7 @@
                     </table>
                 <% } else if (createAccount != true ) { %>
                     <a href="">
-                        <button id="add-supervisor-button">${ ui.message("Add Supervisor") }
+                        <button id="add-supervisor-button">${ ui.message("providermanagement.addSupervisor") }
                         &nbsp; <i class="icon-plus"></i>
                         </button>
                     </a>
@@ -442,7 +448,7 @@
 
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 class="panel-title">${ui.message("Active Patients")}</h3>
+                <h3 class="panel-title">${ui.message("providermanagement.activePatients")}</h3>
             </div>
 
             <div class="panel-body ">
@@ -452,7 +458,7 @@
                         <div id="addPatientToList">
                             <% if (createAccount != true) { %>
                             <a href="">
-                                <button id="add-patient-button">${ ui.message("Add Patient") }
+                                <button id="add-patient-button">${ ui.message("providermanagement.addPatientToProvider") }
                                 &nbsp; <i class="icon-plus"></i>
                                 </button>
                             </a>
@@ -464,9 +470,9 @@
                         <table id="patients-list" width="100%" border="1" cellspacing="0" cellpadding="2">
                             <thead>
                             <tr>
-                                <th>${ ui.message("Identifier") }</th>
-                                <th>${ ui.message("Name") }</th>
-                                <th>${ ui.message("Start Date") }</th>
+                                <th>${ ui.message("providermanagement.identifier") }</th>
+                                <th>${ ui.message("coreapps.person.name") }</th>
+                                <th>${ ui.message("providermanagement.startDate") }</th>
                                 <th>&nbsp;</th>
                             </tr>
                             </thead>
@@ -475,7 +481,7 @@
                             <% if ((patientsList == null) ||
                                     (patientsList != null && patientsList.size() == 0)) { %>
                             <tr>
-                                <td colspan="4">${ ui.message("None") }</td>
+                                <td colspan="4">${ ui.message("coreapps.none") }</td>
                             </tr>
                             <% } %>
                             <% patientsList.each { row ->
@@ -505,7 +511,7 @@
 
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 class="panel-title">History List</h3>
+                <h3 class="panel-title">${ ui.message("providermanagement.historyList") }</h3>
             </div>
             <div class="panel-body">
 
@@ -515,10 +521,10 @@
                         <table id="patients-history-list" width="100%" border="1" cellspacing="0" cellpadding="2">
                             <thead>
                             <tr>
-                                <th>${ ui.message("Identifier") }</th>
-                                <th>${ ui.message("Name") }</th>
-                                <th>${ ui.message("Start Date") }</th>
-                                <th>${ ui.message("End Date") }</th>
+                                <th>${ ui.message("providermanagement.identifier") }</th>
+                                <th>${ ui.message("coreapps.person.name") }</th>
+                                <th>${ ui.message("providermanagement.startDate") }</th>
+                                <th>${ ui.message("providermanagement.endDate") }</th>
                             </tr>
                             </thead>
 
@@ -526,7 +532,7 @@
                             <% if ((patientsList == null) ||
                                     (patientsList != null && patientsList.size() == 0)) { %>
                             <tr>
-                                <td colspan="4">${ ui.message("None") }</td>
+                                <td colspan="4">${ ui.message("coreapps.none") }</td>
                             </tr>
                             <% } %>
                             <% patientsList.each { row ->
