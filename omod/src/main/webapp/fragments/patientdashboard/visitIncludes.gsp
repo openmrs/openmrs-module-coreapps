@@ -136,7 +136,7 @@
             </script>
             <p class="dialog-instructions">
                 <i class="icon-sign-warning">&#xf071;</i>
-                ${ui.message("coreapps.task.visitType.start.warning", ui.format(patient.patient))}
+                ${ui.message("coreapps.task.visitType.start.warning", ui.encodeHtmlContent(ui.format(patient.patient)))}
             </p>
             <ul class="list" style="margin-bottom:0px">
                 <% activeVisits.each { activeVisit -> %>
@@ -171,7 +171,7 @@
 	                            </select>
 	                        </td>
 	                    </tr>
-	
+
 	                    <!-- visit attributes -->
 	                    <% visitAttributeTypes.each { type -> %>
 	                        <% if(type.retired == false){ %>
@@ -182,7 +182,7 @@
 	                                        <input type="radio" value="false" name="attribute.${type.id}.new[0]" /> ${ui.message("False")}
 	                                        <input type="radio" value="true" name="attribute.${type.id}.new[0]" />  ${ui.message("True")}
 	                                    <% } else if(type.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype'){ %>
-	
+
 	                                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
 	                                                        formFieldName: "attribute." + type.id + ".new[0].date",
 	                                                        label:"",
@@ -204,7 +204,7 @@
 	                </table>
                 <% } %>
                 <input type="hidden" id="dateFormat" value='<%= org.openmrs.api.context.Context.getDateFormat().toPattern().toLowerCase() %>' />
-                <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.format(patient.patient)) }</p>
+                <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.encodeHtmlContent(ui.format(patient.patient))) }</p>
                 <% } %>
 
         <button id="start-visit-with-visittype-confirm" class="confirm right">${ ui.message("coreapps.confirm") }<i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i></button>
@@ -224,7 +224,7 @@
 
         <label for="delete-reason">${ ui.message("coreapps.retrospectiveCheckin.paymentReason.label") }: </label>
         <input type="text" id="delete-reason">
-        
+
         <br>
         <h6 id="delete-reason-empty">${ ui.message("coreapps.task.deletePatient.deleteMessageEmpty") }</h6>
         <br>
