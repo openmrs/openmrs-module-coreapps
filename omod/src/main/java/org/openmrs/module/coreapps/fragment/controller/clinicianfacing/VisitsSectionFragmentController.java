@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.clinicianfacing;
 
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
@@ -21,6 +22,8 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
+import org.openmrs.module.coreapps.utils.VisitTypeHelper;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.UiUtils;
@@ -33,9 +36,6 @@ import org.openmrs.ui.framework.page.PageModel;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.openmrs.Location;
-import org.openmrs.module.emrapi.adt.AdtService;
-import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 
 /**
  * Supports the containing PageModel having an "app" property whose config defines a "visitUrl" property
@@ -63,10 +63,14 @@ public class VisitsSectionFragmentController {
 
 		AppContextModel contextModel = sessionContext.generateAppContextModel();
 		contextModel.put("patient", new PatientContextModel(patientWrapper.getPatient()));
+		contextModel.put("patientId", patientWrapper.getPatient().getUuid());  // backwards-compatible for links that still specify patient uuid substitution with "{{patientId}}"
 
 		AppDescriptor app = (AppDescriptor) pageModel.get("app");
+
 		String visitsPageWithSpecificVisitUrl = null;
 		String visitsPageUrl = null;
+
+		// see if the app specifies urls to use
 		if (app != null) {
 			try {
 				visitsPageWithSpecificVisitUrl = app.getConfig().get("visitUrl").getTextValue();
@@ -75,22 +79,25 @@ public class VisitsSectionFragmentController {
 				visitsPageUrl = app.getConfig().get("visitsUrl").getTextValue();
 			} catch (Exception ex) { }
 		}
-        if (visitsPageWithSpecificVisitUrl == null) {
+
+
+		if (visitsPageWithSpecificVisitUrl == null) {
             visitsPageWithSpecificVisitUrl = coreAppsProperties.getVisitsPageWithSpecificVisitUrl();
         }
-        if (visitsPageUrl == null) {
-			visitsPageUrl = "coreapps/patientdashboard/patientDashboard.page?patientId="+patientWrapper.getPatient().getUuid();
-			Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-                        VisitDomainWrapper activeVisit = adtService.getActiveVisit(patientWrapper.getPatient(), visitLocation);
-			visitsPageUrl += (activeVisit != null) ? "&visitId="+activeVisit.getVisit().getId()+"#visits" : "#visits";
-		}
 		visitsPageWithSpecificVisitUrl = "/" + ui.contextPath() + "/" + visitsPageWithSpecificVisitUrl;
+
         if (visitsPageUrl == null) {
-            visitsPageUrl = coreAppsProperties.getVisitsPageUrl();
+			visitsPageUrl = coreAppsProperties.getVisitsPageUrl();
         }
-        if (visitsPageUrl == null) {
-			visitsPageUrl = "coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}#visits";
+
+        // hack fix for RA-1002--if there is an active visit, and we are using the "regular" visit dashboard we actually want to link to the specific visit
+		Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+		VisitDomainWrapper activeVisit = adtService.getActiveVisit(patientWrapper.getPatient(), visitLocation);
+		if (visitsPageUrl.contains("/coreapps/patientdashboard/patientDashboard.page?") &&activeVisit != null) {
+			visitsPageUrl = coreAppsProperties.getVisitsPageWithSpecificVisitUrl();
+			contextModel.put("visit", activeVisit.getVisit());
 		}
+
 		visitsPageUrl = "/" + ui.contextPath() + "/" + visitsPageUrl;
 		model.addAttribute("visitsUrl", templateFactory.handlebars(visitsPageUrl, contextModel));
 

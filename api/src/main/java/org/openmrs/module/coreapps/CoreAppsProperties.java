@@ -52,7 +52,7 @@ public class CoreAppsProperties extends ModuleProperties {
    public String getVisitsPageUrl() {
       String url = getGlobalProperty(CoreAppsConstants.GP_VISITS_PAGE_URL, false);
       if (!StringUtils.hasText(url)) {
-         return "/coreapps/patientdashboard/patientDashboard.page?patientId={{patientId}}#visits";
+         return "/coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}#visits";
       }
       else {
          return url;

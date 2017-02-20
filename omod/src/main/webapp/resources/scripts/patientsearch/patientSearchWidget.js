@@ -59,9 +59,16 @@ function PatientSearchWidget(configuration){
         var bdate = moment(widgetBirthdate, 'YYYY-MM-DD');
         var age = moment().diff(bdate, 'months', false);
         var suffix = config.messages.ageInMonths;
+        //If there is no translation, use english
+        if(!suffix || suffix == "coreapps.age.months"){
+            suffix = "{0} Month(s)";
+        }
         if(age == 0){
             age = moment().diff(bdate, 'days', false);
             suffix = config.messages.ageInDays;
+            if(!suffix || suffix == "coreapps.age.days"){
+                suffix = "{0} Day(s)";
+            }
         }
         return suffix.replace("{0}", age);
     }

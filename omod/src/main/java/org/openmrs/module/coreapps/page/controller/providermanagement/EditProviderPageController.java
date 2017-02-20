@@ -7,6 +7,7 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
 import org.openmrs.Patient;
 import org.openmrs.Person;
+import org.openmrs.PersonAddress;
 import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
 import org.openmrs.Relationship;
@@ -134,6 +135,7 @@ public class EditProviderPageController {
     public String post(@MethodParam("getAccount") @BindParams AccountDomainWrapper account, BindingResult errors,
                        @RequestParam(value = "userEnabled", defaultValue = "false") boolean userEnabled,
                        @RequestParam(value = "providerIdentifier", required = false) String providerIdentifier,
+                       @ModelAttribute("personAddress") @BindParams PersonAddress address,
                        @SpringBean("providerService") ProviderService providerService,
                        @SpringBean("messageSource") MessageSource messageSource,
                        @SpringBean("messageSourceService") MessageSourceService messageSourceService,
@@ -150,6 +152,10 @@ public class EditProviderPageController {
 
         if (!errors.hasErrors()) {
             try {
+                Person person = account.getPerson();
+                if (address != null ) {
+                    person.addAddress(address);
+                }
                 Provider provider = account.getProvider();
 
                 if (StringUtils.isNotBlank(providerIdentifier)) {
@@ -179,7 +185,7 @@ public class EditProviderPageController {
                         messageSourceService.getMessage("Provider saved"));
                 request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
-                return "redirect:/coreapps/providermanagement/editProvider.page?personId=" + account.getPerson().getId();
+                return "redirect:/coreapps/providermanagement/editProvider.page?personId=" + person.getId();
             } catch (Exception e) {
                 log.warn("Some error occurred while saving account details:", e);
                 request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE,

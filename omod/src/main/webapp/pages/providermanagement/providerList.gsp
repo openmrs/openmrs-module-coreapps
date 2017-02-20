@@ -5,7 +5,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("Providers List")}"}
+        { label: "${ ui.message("providermanagement.providerList")}"}
     ];
 
     jq(function() {
@@ -17,21 +17,21 @@
 
 </script>
 
-<h2>${ ui.message("Manage Providers") }</h2>
+<h2>${ ui.message("Provider.manage") }</h2>
 
 <a href="${ ui.pageLink("coreapps", "providermanagement/editProvider") }">
-    <button id="create-account-button">${ ui.message("Add Provider") }</button>
+    <button id="create-account-button">${ ui.message("coreapps.provider.createProviderAccount") }</button>
 </a>
 <hr>
 
 <table id="providers-list" width="100%" border="1" cellspacing="0" cellpadding="2">
     <thead>
     <tr>
-        <th>${ ui.message("Identifier") }</th>
-        <th>${ ui.message("Name") }</th>
-        <th>${ ui.message("Gender") }</th>
-        <th>${ ui.message("Role") }</th>
-        <th>${ ui.message("Supervisor") }</th>
+        <th>${ ui.message("providermanagement.identifier") }</th>
+        <th>${ ui.message("coreapps.person.name") }</th>
+        <th>${ ui.message("coreapps.gender") }</th>
+        <th>${ ui.message("Role.role") }</th>
+        <th>${ ui.message("providermanagement.supervisor") }</th>
     </tr>
     </thead>
 
@@ -39,7 +39,7 @@
     <% if ((providersList == null) ||
             (providersList != null && providersList.size() == 0)) { %>
     <tr>
-        <td colspan="2">${ ui.message("None") }</td>
+        <td colspan="5">${ ui.message("coreapps.none") }</td>
     </tr>
     <% } %>
     <% providersList.each { provider, supervisor ->
