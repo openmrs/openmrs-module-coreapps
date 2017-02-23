@@ -7,6 +7,9 @@
         it.collect{ ui.escapeHtml(it.diagnosis.formatWithoutSpecificAnswer(context.locale)) } .join(", ")
     }
     ui.includeJavascript("coreapps", "fragments/visitDetails.js")
+    ui.includeJavascript("coreapps", "visit/encounterToggle.js")
+
+    ui.includeCss("coreapps", "encounterToggle.css")
 %>
 
 <script type="text/javascript">
@@ -14,18 +17,6 @@
 
     jq(".collapse").collapse();
 </script>
-
-<style>
-    #i-toggle{
-        position: absolute;
-        margin-left: 950px;
-        top: 190px;
-        display: none;
-        color: #337ab7;
-        cursor: pointer;
-        font-size: 0.9em;
-}
-</style>
 
 <!-- Encounter templates -->
 <%
@@ -49,7 +40,7 @@
 <% } %>
 <!-- End of encounter templates -->
 
-<i id="i-toggle" title="${ui.message('coreapps.expandAll')}"
+<i id="i-toggle" title="${ui.message('coreapps.showAllEncounterDetails')}"
    class="toggle-icon icon-arrow-down small caret-color"
    onclick="toggle()"></i>
 
@@ -75,37 +66,17 @@
         loadTemplates(visitId, ${ patient.id }, fromEncounter, encounterCount);
 
         <%
-            def visits = patient.allVisitsUsingWrappers;
-            visits.eachWithIndex{ wrapper, idx ->
-                 if(wrapper.getVisit().visitId == param.visitId ||
-                    wrapper.getVisit().visitId == activeVisit.visit.id){
-                    if(wrapper.hasEncounters()){ %>
-                        jq('#i-toggle').show();
-                    <%}
-                 }
-            }
+            if(activeVisit.hasEncounters() && activeVisit.getVisit().getEncounters().size() < 20){ %>
+               jq('#i-toggle').show();
+            <%}
         %>
     });
-
-    function toggle(){
-        jq('.collapse').removeClass('open');
-        jq(".view-details").click();
-        if(jq('#i-toggle').hasClass('icon-arrow-up')){
-            jq('#i-toggle').removeClass('icon-arrow-up');
-            jq('#i-toggle').addClass('icon-arrow-down');
-            jq('#i-toggle').attr('title', "${ui.message('coreapps.expandAll')}");
-        } else {
-            jq('#i-toggle').removeClass('icon-arrow-down');
-            jq('#i-toggle').addClass('icon-arrow-up');
-            jq('#i-toggle').attr('title', "${ui.message('coreapps.collapseAll')}");
-        }
-    }
 </script>
 
 <ul id="visits-list" class="left-menu">
 
     <%
-        visits = patient.allVisitsUsingWrappers
+        def visits = patient.allVisitsUsingWrappers;
         visits.eachWithIndex { wrapper, idx ->
             def primaryDiagnoses = wrapper.getUniqueDiagnoses(true, false)
     %>
