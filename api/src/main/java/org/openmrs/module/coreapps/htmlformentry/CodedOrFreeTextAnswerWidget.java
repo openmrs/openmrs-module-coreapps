@@ -93,7 +93,7 @@ public class CodedOrFreeTextAnswerWidget implements Widget {
     public Object getValue(FormEntryContext context, HttpServletRequest request) {
         String fieldName = context.getFieldName(this);
         String[] submitted = request.getParameterValues(fieldName);
-        if (submitted.length == 0) {
+        if (submitted == null || submitted.length == 0) {
             return null;
         }
         if (submitted.length != 1) {
