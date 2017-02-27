@@ -94,6 +94,18 @@
                 "defaultValue": ""
             }
         ]
+    },
+    {
+        "id": "coreapps.template.baseTemplate",
+        "configOptions": [
+            {
+                "name": "icon",
+                "defaultValue": "icon-link"
+            },
+            {
+                "name": "label",
+                "defaultValue": "Links"
+            }
+        ]
     }
-
 ]
