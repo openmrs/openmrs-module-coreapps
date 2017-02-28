@@ -96,7 +96,7 @@
         ]
     },
     {
-        "id": "coreapps.template.baseTemplate",
+        "id": "coreapps.template.dashboardWidget",
         "configOptions": [
             {
                 "name": "icon",
