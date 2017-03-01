@@ -399,9 +399,13 @@
                         <source>${project.basedir}/src/test/webapp/provided/scripts/underscore-min.js</source>
                         <source>${project.basedir}/src/test/webapp/provided/scripts/knockout-2.2.1.js</source>
                     </preloadSources>
+					<!-- Excluding until we fix it -->
 					<sourceExcludes>
 						<sourceExclude>
 							**/openmrs-contrib-uicommons.bundle.js
+						</sourceExclude>
+						<sourceExclude>
+							**/dashboardwidgets/**/*.js
 						</sourceExclude>
 					</sourceExcludes>
 					<serverPort>7234</serverPort>
