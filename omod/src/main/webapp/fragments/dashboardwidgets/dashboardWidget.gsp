@@ -10,7 +10,8 @@
         <h3>${config.label}</h3>
     </div>
     <div class="info-body">
-        <${config.widget}></${config.widget}>
+        <!-- Replace { 'maxAge': '8' } with json generated from the config object in fragment controller -->
+        <${config.widget} config="{ 'maxAge': '8' }"></${config.widget}>
     </div>
 </div>
 
