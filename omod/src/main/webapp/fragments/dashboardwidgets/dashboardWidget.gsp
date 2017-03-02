@@ -10,11 +10,10 @@
         <h3>${config.label}</h3>
     </div>
     <div class="info-body">
-        <!-- Replace { 'maxAge': '8' } with json generated from the config object in fragment controller -->
         <${config.widget} config="${config.json}"></${config.widget}>
     </div>
 </div>
 
 <script>
-    angular.bootstrap("#coreapps-${config.id}", ["openmrs-contrib-dashboardwidgets"])
+    angular.bootstrap("#coreapps-${config.id}", ["openmrs-contrib-dashboardwidgets.${config.widget}"])
 </script>
