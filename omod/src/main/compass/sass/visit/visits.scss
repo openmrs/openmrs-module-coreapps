@@ -1,0 +1,26 @@
+.disabled {
+  opacity: 0.4
+}
+.enabled {
+  opacity: 1
+}
+p.filters {
+  float: right;
+}
+.filter {
+  display:inline-block;
+}
+
+.edit-visit-table td{
+  max-width: 80px;
+}
+.dialog select{
+  min-width: 100px !important;
+}
+.date input{
+  width: 100px;
+}
+.add-on{
+  left: 137px !important;
+  top: -25px;
+}
