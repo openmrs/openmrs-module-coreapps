@@ -131,12 +131,12 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
     public Object getValue(FormEntryContext context, HttpServletRequest request) {
         String fieldName = context.getFieldName(this);
         String[] submitted = request.getParameterValues(fieldName);
-        if (submitted.length != 1) {
+        if (submitted != null && submitted.length > 1) {
             throw new IllegalArgumentException("Expected one submitted parameter value for " + fieldName + " but got " + submitted.length);
         }
         try {
             List<CodedOrFreeTextAnswer> results = new ArrayList<CodedOrFreeTextAnswer>();
-            if (StringUtils.isNotEmpty(submitted[0])) {
+            if (submitted !=null && StringUtils.isNotEmpty(submitted[0])) {
                 ArrayNode array = new ObjectMapper().readValue(submitted[0], ArrayNode.class);
                 ConceptService conceptService = Context.getConceptService();
                 for (JsonNode node : array) {

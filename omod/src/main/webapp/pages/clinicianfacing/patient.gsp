@@ -43,8 +43,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
     <div class="dashboard clear">
         <div class="info-container column">
             <% if (firstColumnFragments) {
-			    firstColumnFragments.each { %>
-			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [ patient: patient, patientId: patient.patient.id, app: it.appId ])}
+			    firstColumnFragments.each {
+                    // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
+                    def configs = [:];
+                    if(it.extensionParams.fragmentConfig != null){
+                        configs = it.extensionParams.fragmentConfig;
+                    }
+                    configs << [ patient: patient, patientId: patient.patient.id, app: it.appId ]
+            %>
+			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs)}
 			<%  }
 			} %>
 
@@ -77,8 +84,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
             */%>
             
             <% if (secondColumnFragments) {
-			    secondColumnFragments.each { %>
-			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patient: patient, patientId: patient.patient.id, app: it.appId ])}
+			    secondColumnFragments.each {
+                    // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
+                    def configs = [:];
+                    if(it.extensionParams.fragmentConfig != null){
+                        configs = it.extensionParams.fragmentConfig;
+                    }
+                    configs << [ patient: patient, patientId: patient.patient.id, app: it.appId ]
+            %>
+			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs)}
 			<%   }
 			} %>
 			

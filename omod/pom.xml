@@ -392,16 +392,25 @@
                 </executions>
                 <configuration>
                     <jsSrcDir>${project.basedir}/src/main/webapp/resources/scripts</jsSrcDir>
-                    <jsTestSrcDir>${project.basedir}/src/test/webapp/resources/scripts</jsTestSrcDir>
-                    <preloadSources>
+					<jsTestSrcDir>${project.basedir}/src/test/webapp/resources/scripts</jsTestSrcDir>
+					<preloadSources>
                         <source>${project.basedir}/src/test/webapp/provided/scripts/angular.min.js</source>
                         <source>${project.basedir}/src/test/webapp/provided/scripts/jquery-1.12.4.min.js</source>
                         <source>${project.basedir}/src/test/webapp/provided/scripts/underscore-min.js</source>
                         <source>${project.basedir}/src/test/webapp/provided/scripts/knockout-2.2.1.js</source>
                     </preloadSources>
-                    <serverPort>7234</serverPort>
-                    <skipTests>false</skipTests>
-                </configuration>
+					<!-- Excluding until we fix it -->
+					<sourceExcludes>
+						<sourceExclude>
+							**/openmrs-contrib-uicommons.bundle.js
+						</sourceExclude>
+						<sourceExclude>
+							**/dashboardwidgets/**/*.js
+						</sourceExclude>
+					</sourceExcludes>
+					<serverPort>7234</serverPort>
+					<skipTests>false</skipTests>
+				</configuration>
             </plugin>
 
         </plugins>
