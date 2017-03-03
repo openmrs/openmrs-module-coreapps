@@ -11,7 +11,7 @@
     </div>
     <div class="info-body">
         <!-- Replace { 'maxAge': '8' } with json generated from the config object in fragment controller -->
-        <${config.widget} config="{ 'maxAge': '8' }"></${config.widget}>
+        <${config.widget} config="${config.json}"></${config.widget}>
     </div>
 </div>
 
