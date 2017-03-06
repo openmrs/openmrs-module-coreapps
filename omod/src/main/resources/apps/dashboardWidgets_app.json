@@ -20,5 +20,30 @@
         }
       }
     ]
+  },
+  {
+    "id": "coreapps.obsAcrossEncounters",
+    "instanceOf": "coreapps.template.dashboardWidget",
+    "description": "coreapps.obsAcrossEncounters.app.description",
+    "order": 10,
+    "config": {
+      "widget": "obsacrossencounters",
+      "icon": "icon-user-md",
+      "label": "Health Trend Summary",
+      "concepts": "5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "maxRecords": "3",
+      "maxAge": "1w"
+    },
+    "extensions": [
+      {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
+        "appId": "coreapps.obsAcrossEncounters",
+        "extensionPointId": "patientDashboard.firstColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "dashboardwidgets/dashboardWidget"
+        }
+      }
+    ]
   }
 ]

@@ -31774,7 +31774,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			var deferred = $q.defer();
 			function handleNoTestConfig() {
 				var pathname = $window.location.pathname;
-				openmrsContextConfig.href = pathname.substring(0, pathname.indexOf('/owa/'));
+				openmrsContextConfig.href = pathname.substring(0, pathname.indexOf('/coreapps/'));
 				deferred.resolve(openmrsContextConfig);
 			}
 			/**
