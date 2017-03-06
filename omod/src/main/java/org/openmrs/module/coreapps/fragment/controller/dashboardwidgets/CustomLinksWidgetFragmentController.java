@@ -1,12 +1,14 @@
-package org.openmrs.module.coreapps.fragment.controller.clinicianfacing;
+package org.openmrs.module.coreapps.fragment.controller.dashboardwidgets;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -17,6 +19,7 @@ import java.util.Map;
 public class CustomLinksWidgetFragmentController {
 
     public void controller(FragmentConfiguration config,
+                           UiUtils uiUtils,
                            @FragmentParam("app") AppDescriptor app,
                            @SpringBean("adtService") AdtService adtService,
                            @RequestParam("patientId") Patient patient,
@@ -28,33 +31,26 @@ public class CustomLinksWidgetFragmentController {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> links = mapper.convertValue(app.getConfig().get("links"), Map.class);
 
-        String patientUuid = patient.getUuid();
-        String patientId = patient.getId().toString();
-        replacePatientVariables(links, patientUuid, patientId);
+        replacePatientVariables(links, patient, uiUtils);
 
         if (activeVisit != null) {
-            String visitUuid = activeVisit.getVisit().getUuid();
-            String visitId = activeVisit.getVisit().getId().toString();
-            replaceVisitVariables(links, visitUuid, visitId);
+            replaceVisitVariables(links, activeVisit.getVisit(), uiUtils);
         }
-
 
         config.addAttribute("icon", app.getIcon());
         config.addAttribute("label", app.getLabel());
         config.addAttribute("links", links);
     }
 
-    private void replacePatientVariables(Map<String, String> links, String patientUuid, String patientId) {
+    private void replacePatientVariables(Map<String, String> links, Patient patient, UiUtils uiUtils) {
         for(Map.Entry<String, String> entry: links.entrySet()){
-            entry.setValue(entry.getValue().replace("{{patientUuid}}", patientUuid));
-            entry.setValue(entry.getValue().replace("{{patientId}}", patientId));
+            entry.setValue(uiUtils.urlBind(entry.getValue(), patient));
         }
     }
 
-    private void replaceVisitVariables(Map<String, String> links, String visitUuid, String visitId) {
+    private void replaceVisitVariables(Map<String, String> links, Visit visit, UiUtils uiUtils) {
         for(Map.Entry<String, String> entry: links.entrySet()){
-            entry.setValue(entry.getValue().replace("{{visitUuid}}", visitUuid));
-            entry.setValue(entry.getValue().replace("{{visitId}}", visitId));
+            entry.setValue(uiUtils.urlBind(entry.getValue(), visit));
         }
     }
 
