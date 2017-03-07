@@ -1,5 +1,6 @@
 <%
     ui.includeJavascript("coreapps", "fragments/openmrs-contrib-uicommons.bundle.js")
+    ui.includeJavascript("coreapps", "fragments/dashboardWidgetsCommons.service.js")
     ui.includeJavascript("coreapps", "fragments/dashboardwidgets/" + config.widget + "/" + config.widget + ".controller.js")
     ui.includeJavascript("coreapps", "fragments/dashboardwidgets/" + config.widget + "/" + config.widget + ".component.js")
 %>

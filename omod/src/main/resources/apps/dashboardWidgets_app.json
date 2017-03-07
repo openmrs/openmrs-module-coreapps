@@ -7,7 +7,9 @@
     "config": {
       "widget": "latestobsforconceptlist",
       "icon": "icon-user-md",
-      "label": "Concept List"
+      "label": "Concept List",
+      "maxAge": "10d",
+      "concepts": "5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     },
     "extensions": [
       {
