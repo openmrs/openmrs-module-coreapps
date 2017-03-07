@@ -2,7 +2,7 @@
 var scripts = document.getElementsByTagName("script");
 var obsacrossencountersPath = scripts[scripts.length - 1].src;
 
-function ObsAcrossEncountersController(openmrsRest, $scope) {
+function ObsAcrossEncountersController(openmrsRest, $scope, widgetCommons) {
     var ctrl = this;
 
     ctrl.order = 'desc';
@@ -30,12 +30,20 @@ function ObsAcrossEncountersController(openmrsRest, $scope) {
         openmrsRest.get("encounter", {
                 patient: ctrl.config.patientUuid,
                 v: 'custom:(uuid,encounterDatetime,obs:(uuid,value,concept:(uuid))',
-                limit: ctrl.config.maxRecords,
-                fromdate: getMaxAgeDate(),
+                limit: getMaxRecords(),
+                fromdate: widgetCommons.dateFromMaxAge(ctrl.config.maxAge),
                 order: ctrl.order
             }).then(function (response) {
             getEncounters(response.results);
         });
+    }
+
+    function getMaxRecords() {
+        if(ctrl.config.maxRecords == '' || angular.isUndefined(ctrl.config.maxRecords)){
+            return 4;
+        } else {
+            return ctrl.config.maxRecords;
+        }
     }
 
     function getConfigConceptsAsArray(commaDelimitedConcepts) {
@@ -72,22 +80,6 @@ function ObsAcrossEncountersController(openmrsRest, $scope) {
             }
         }
         return {value: '-'};
-    }
-
-    function getMaxAgeDate() {
-        var today = new Date();
-        var maxAge = ctrl.config.maxAge;
-        if( maxAge.indexOf('d') !== -1 ){
-            maxAge = maxAge.replace('d', '');
-            today.setDate(today.getDate()-parseInt(maxAge));
-        } if( maxAge.indexOf('w') !== -1 ){
-            maxAge = maxAge.replace('w', '');
-            today.setDate(today.getDate()-(parseInt(maxAge)*7));
-        } if( maxAge.indexOf('m') !== -1 ){
-            maxAge = maxAge.replace('m', '');
-            today.setMonth(today.getMonth()-parseInt(maxAge));
-        }
-        return today;
     }
 
     $scope.getTemplate = function () {
