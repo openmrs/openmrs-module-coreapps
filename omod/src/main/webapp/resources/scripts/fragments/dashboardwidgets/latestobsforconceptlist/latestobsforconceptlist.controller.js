@@ -25,7 +25,7 @@ function LatestObsForConceptListController($scope, openmrsRest, widgetCommons) {
             // Fetch last obs for concept
             openmrsRest.list('obs',{patient: ctrl.config.patientUuid, v: 'full', concept: concept}).then(function (resp) {
                 // Don't add more items if max concept count is reached
-                if (ctrl.obs.length < ctrl.maxConceptCount) {
+                if (ctrl.obs.length < ctrl.maxConceptCount && resp.results.length > 0) {
                     const obs = resp.results[0];
                     // Don't add obs older than maxAge
                     if (ctrl.widgetCommons.dateToDaysAgo(obs.obsDatetime) <= ctrl.maxAgeInDays)
