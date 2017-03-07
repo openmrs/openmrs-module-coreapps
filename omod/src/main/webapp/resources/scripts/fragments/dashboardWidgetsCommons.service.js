@@ -30,20 +30,24 @@ angular.module('dashboardWidgetsCommons', [])
 
         // Method used to parse maxAge to day count
         var maxAgeToDays = function maxAgeToDays(maxAge) {
-            let days = 0;
-            const values = maxAge.split(" ");
-            for (const value of values) {
-                if (value.includes("d")) {
-                    days += parseInt(value.replace("d",""));
+            if (angular.isUndefined(maxAge)) {
+                return undefined;
+            } else {
+                let days = 0;
+                const values = maxAge.split(" ");
+                for (const value of values) {
+                    if (value.includes("d")) {
+                        days += parseInt(value.replace("d",""));
+                    }
+                    if (value.includes("w")) {
+                        days += parseInt(value.replace("w","")) * 7;
+                    }
+                    if (value.includes("m")) {
+                        days += parseInt(value.replace("m","")) * 30;
+                    }
                 }
-                if (value.includes("w")) {
-                    days += parseInt(value.replace("w","")) * 7;
-                }
-                if (value.includes("m")) {
-                    days += parseInt(value.replace("m","")) * 30;
-                }
+                return days;
             }
-            return days;
         };
 
         var dateFromMaxAge = function getMaxAgeDate(maxAge) {
