@@ -55,7 +55,7 @@ function VisitByEncounterTypeController(openmrsRest, $scope, widgetCommons) {
     }
 
     function getMaxRecords() {
-        if(ctrl.config.maxRecords == '' || ctrl.config.maxRecords == null){
+        if(ctrl.config.maxRecords == '' || angular.isUndefined(ctrl.config.maxRecords)){
             return 6;
         } else {
             return ctrl.config.maxRecords;

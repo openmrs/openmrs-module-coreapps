@@ -47,7 +47,7 @@ angular.module('dashboardWidgetsCommons', [])
         };
 
         var dateFromMaxAge = function getMaxAgeDate(maxAge) {
-            if(maxAge == undefined)
+            if(angular.isUndefined(maxAge))
                 return null;
 
             var today = new Date();
