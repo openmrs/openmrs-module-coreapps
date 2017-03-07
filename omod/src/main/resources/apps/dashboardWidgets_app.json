@@ -47,5 +47,30 @@
         }
       }
     ]
+  },
+  {
+    "id": "coreapps.visitByEncounterType",
+    "instanceOf": "coreapps.template.dashboardWidget",
+    "description": "coreapps.visitByEncounterType.app.description",
+    "order": 10,
+    "config": {
+      "widget": "visitbyencountertype",
+      "icon": "icon-group",
+      "label": "Recent Visits",
+      "maxRecords": "3",
+      "maxAge": "1d",
+      "combineEncounterTypes": "true"
+    },
+    "extensions": [
+      {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
+        "appId": "coreapps.visitByEncounterType",
+        "extensionPointId": "patientDashboard.firstColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "dashboardwidgets/dashboardWidget"
+        }
+      }
+    ]
   }
 ]

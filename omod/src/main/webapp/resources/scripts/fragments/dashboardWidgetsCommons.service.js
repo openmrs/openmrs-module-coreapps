@@ -46,10 +46,31 @@ angular.module('dashboardWidgetsCommons', [])
             return days;
         };
 
+        var dateFromMaxAge = function getMaxAgeDate(maxAge) {
+            if(maxAge == undefined)
+                return null;
+
+            var today = new Date();
+            if( maxAge.indexOf('d') !== -1 ){
+                maxAge = maxAge.replace('d', '');
+                today.setDate(today.getDate()-parseInt(maxAge));
+            } else if( maxAge.indexOf('w') !== -1 ){
+                maxAge = maxAge.replace('w', '');
+                today.setDate(today.getDate()-(parseInt(maxAge)*7));
+            } else if( maxAge.indexOf('m') !== -1 ){
+                maxAge = maxAge.replace('m', '');
+                today.setMonth(today.getMonth()-parseInt(maxAge));
+            } else {
+                return null;
+            }
+            return today;
+        };
+
         return {
             dateToDaysAgoMessage: dateToDaysAgoMessage,
             dateToDaysAgo: dateToDaysAgo,
             maxAgeToDays: maxAgeToDays,
+            dateFromMaxAge: dateFromMaxAge
         };
 
     });
