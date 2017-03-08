@@ -49,7 +49,7 @@
         }
 
         configs.patient = patient;   // add the patient to the map %>
-        ${ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs)};
+        ${ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs)}
     <%}
 } %>
 
