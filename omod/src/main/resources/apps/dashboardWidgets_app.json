@@ -72,5 +72,30 @@
         }
       }
     ]
+  },
+  {
+    "id": "coreapps.obsGraph",
+    "instanceOf": "coreapps.template.dashboardWidget",
+    "description": "coreapps.obsGraph.app.description",
+    "order": 10,
+    "config": {
+      "widget": "obsgraph",
+      "icon": "icon-bar-chart",
+      "label": "Obs Graph",
+      "conceptId": "5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "maxResults": "6",
+      "maxAge": "1w"
+    },
+    "extensions": [
+      {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
+        "appId": "coreapps.obsGraph",
+        "extensionPointId": "patientDashboard.firstColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "dashboardwidgets/dashboardWidget"
+        }
+      }
+    ]
   }
 ]

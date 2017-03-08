@@ -12,14 +12,12 @@ function LatestObsForConceptListController($scope, openmrsRest, widgetCommons) {
     ctrl.widgetCommons = widgetCommons;
 
     ctrl.maxConceptCount = 10;
-    ctrl.maxAgeInDays = 'undefined';
+    ctrl.maxAgeInDays = undefined;
     ctrl.obs = [];
 
     // Init method
     ctrl.initialize = function () {
-        if (ctrl.config.maxAge !== 'undefined') {
-            ctrl.maxAgeInDays = ctrl.widgetCommons.maxAgeToDays(ctrl.config.maxAge);
-        }
+        ctrl.maxAgeInDays = ctrl.widgetCommons.maxAgeToDays(ctrl.config.maxAge);
         // Remove whitespaces
         ctrl.config.concepts = ctrl.config.concepts.replace(/\s/g,'');
         const concepts = ctrl.config.concepts.split(",");
@@ -30,7 +28,7 @@ function LatestObsForConceptListController($scope, openmrsRest, widgetCommons) {
                 if (ctrl.obs.length < ctrl.maxConceptCount && resp.results.length > 0) {
                     const obs = resp.results[0];
                     // Don't add obs older than maxAge
-                    if (ctrl.maxAgeInDays === 'undefined' || ctrl.widgetCommons.dateToDaysAgo(obs.obsDatetime) <= ctrl.maxAgeInDays) {
+                    if (angular.isUndefined(ctrl.maxAgeInDays) || ctrl.widgetCommons.dateToDaysAgo(obs.obsDatetime) <= ctrl.maxAgeInDays) {
                         // Add last obs for concept to list
                         ctrl.obs.push(obs);
                     }
@@ -39,5 +37,4 @@ function LatestObsForConceptListController($scope, openmrsRest, widgetCommons) {
         }
     };
     ctrl.initialize();
-
 }
