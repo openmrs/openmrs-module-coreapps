@@ -1,20 +1,26 @@
 <%
     ui.includeJavascript("coreapps", "fragments/openmrs-contrib-uicommons.bundle.js")
+    ui.includeJavascript("coreapps", "fragments/dashboardWidgetsCommons.service.js")
+
+    // Load chart library only when obsGraph widget is present
+    if (config.widget.equals('obsgraph')) {
+        ui.includeJavascript("coreapps", "fragments/Chart.min.js")
+        ui.includeJavascript("coreapps", "fragments/angular-chart.min.js")
+    }
+
     ui.includeJavascript("coreapps", "fragments/dashboardwidgets/" + config.widget + "/" + config.widget + ".controller.js")
     ui.includeJavascript("coreapps", "fragments/dashboardwidgets/" + config.widget + "/" + config.widget + ".component.js")
 %>
-
 <div id="coreapps-${config.id}" class="info-section">
     <div class="info-header">
         <i class="${config.icon}"></i>
         <h3>${config.label}</h3>
     </div>
     <div class="info-body">
-        <!-- Replace { 'maxAge': '8' } with json generated from the config object in fragment controller -->
-        <${config.widget} config="{ 'maxAge': '8' }"></${config.widget}>
+        <${config.widget} config="${config.json}"></${config.widget}>
     </div>
 </div>
 
 <script>
-    angular.bootstrap("#coreapps-${config.id}", ["openmrs-contrib-dashboardwidgets"])
+    angular.bootstrap("#coreapps-${config.id}", ["openmrs-contrib-dashboardwidgets.${config.widget}"])
 </script>

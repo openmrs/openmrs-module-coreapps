@@ -405,6 +405,9 @@
 							**/openmrs-contrib-uicommons.bundle.js
 						</sourceExclude>
 						<sourceExclude>
+							**/dashboardWidgetsCommons.service.js
+						</sourceExclude>
+						<sourceExclude>
 							**/dashboardwidgets/**/*.js
 						</sourceExclude>
 					</sourceExcludes>

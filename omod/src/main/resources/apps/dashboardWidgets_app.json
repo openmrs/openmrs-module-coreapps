@@ -7,12 +7,89 @@
     "config": {
       "widget": "latestobsforconceptlist",
       "icon": "icon-user-md",
-      "label": "Concept List"
+      "label": "Concept List",
+      "maxAge": "10d",
+      "concepts": "5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     },
     "extensions": [
       {
         "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
         "appId": "coreapps.latestObsForConceptList",
+        "extensionPointId": "patientDashboard.firstColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "dashboardwidgets/dashboardWidget"
+        }
+      }
+    ]
+  },
+  {
+    "id": "coreapps.obsAcrossEncounters",
+    "instanceOf": "coreapps.template.dashboardWidget",
+    "description": "coreapps.obsAcrossEncounters.app.description",
+    "order": 10,
+    "config": {
+      "widget": "obsacrossencounters",
+      "icon": "icon-user-md",
+      "label": "Health Trend Summary",
+      "concepts": "5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "maxRecords": "3",
+      "maxAge": "1w"
+    },
+    "extensions": [
+      {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
+        "appId": "coreapps.obsAcrossEncounters",
+        "extensionPointId": "patientDashboard.firstColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "dashboardwidgets/dashboardWidget"
+        }
+      }
+    ]
+  },
+  {
+    "id": "coreapps.visitByEncounterType",
+    "instanceOf": "coreapps.template.dashboardWidget",
+    "description": "coreapps.visitByEncounterType.app.description",
+    "order": 10,
+    "config": {
+      "widget": "visitbyencountertype",
+      "icon": "icon-group",
+      "label": "Recent Visits",
+      "maxRecords": "3",
+      "maxAge": "1d",
+      "combineEncounterTypes": "true"
+    },
+    "extensions": [
+      {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
+        "appId": "coreapps.visitByEncounterType",
+        "extensionPointId": "patientDashboard.firstColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "dashboardwidgets/dashboardWidget"
+        }
+      }
+    ]
+  },
+  {
+    "id": "coreapps.obsGraph",
+    "instanceOf": "coreapps.template.dashboardWidget",
+    "description": "coreapps.obsGraph.app.description",
+    "order": 10,
+    "config": {
+      "widget": "obsgraph",
+      "icon": "icon-bar-chart",
+      "label": "Obs Graph",
+      "conceptId": "5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "maxResults": "6",
+      "maxAge": "1w"
+    },
+    "extensions": [
+      {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
+        "appId": "coreapps.obsGraph",
         "extensionPointId": "patientDashboard.firstColumnFragments",
         "extensionParams": {
           "provider": "${project.parent.artifactId}",

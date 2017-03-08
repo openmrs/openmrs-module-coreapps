@@ -1,0 +1,9 @@
+<ul>
+    <li ng-if="ctrl.visits.length != 0" ng-repeat="visit in ctrl.visits track by $index">
+        <a href="/openmrs/coreapps/patientdashboard/patientDashboard.page?patientId={{ctrl.config.patientUuid}}">{{visit.startDatetime | date:'yyyy-MM-dd'}}</a>
+        <div class="tag" ng-if="visit.encounterType !== ''">{{visit.encounterType}}</div>
+    </li>
+    <p ng-if="ctrl.visits.length == 0">
+        None
+    </p>
+</ul>
