@@ -1,0 +1,11 @@
+<ul>
+    <li ng-if="ctrl.relationships.length != 0" ng-repeat="relationship in ctrl.relationships track by $index">
+        <a href="patient.page?patientId={{relationship.toPerson.uuid}}">
+            {{relationship.toPerson.person.display}} ({{relationship.toPerson.birthdate | date:'yyyy-MM-dd'}})
+        </a>
+        <div class="tag">{{relationship.type}}</div>
+    </li>
+    <p ng-if="ctrl.relationships.length == 0">
+        None
+    </p>
+</ul>
