@@ -1,5 +1,6 @@
 package org.openmrs.module.coreapps.contextmodel;
 
+import org.openmrs.Visit;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 
 import java.util.Date;
