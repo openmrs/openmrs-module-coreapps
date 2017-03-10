@@ -66,9 +66,11 @@
         loadTemplates(visitId, ${ patient.id }, fromEncounter, encounterCount);
 
         <%
-            if(activeVisit.hasEncounters() && activeVisit.getVisit().getEncounters().size() < 20){ %>
-               jq('#i-toggle').show();
-            <%}
+            if ( activeVisit != null){
+                if(activeVisit.hasEncounters() && activeVisit.getVisit().getEncounters().size() < 20){ %>
+                    jq('#i-toggle').show();
+                <%}
+            }
         %>
     });
 </script>
