@@ -58,14 +58,14 @@
       "icon": "icon-group",
       "label": "Recent Visits",
       "maxRecords": "3",
-      "maxAge": "1d",
+      "maxAge": "3m",
       "combineEncounterTypes": "true"
     },
     "extensions": [
       {
-        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardSecondColumn",
         "appId": "coreapps.visitByEncounterType",
-        "extensionPointId": "patientDashboard.firstColumnFragments",
+        "extensionPointId": "patientDashboard.secondColumnFragments",
         "extensionParams": {
           "provider": "${project.parent.artifactId}",
           "fragment": "dashboardwidgets/dashboardWidget"
@@ -111,9 +111,9 @@
     },
     "extensions": [
       {
-        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardSecondColumn",
         "appId": "coreapps.relationships",
-        "extensionPointId": "patientDashboard.firstColumnFragments",
+        "extensionPointId": "patientDashboard.secondColumnFragments",
         "extensionParams": {
           "provider": "${project.parent.artifactId}",
           "fragment": "dashboardwidgets/dashboardWidget"
