@@ -12,6 +12,7 @@ function ObsAcrossEncountersController(openmrsRest, $scope, widgetCommons) {
     activate();
 
     function activate() {
+        openmrsRest.setBaseAppPath("/coreapps");
         fetchConcepts();
         fetchEncounters();
     }

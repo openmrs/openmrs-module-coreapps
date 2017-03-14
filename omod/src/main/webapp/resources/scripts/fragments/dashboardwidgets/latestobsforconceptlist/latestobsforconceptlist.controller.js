@@ -17,6 +17,7 @@ function LatestObsForConceptListController($scope, openmrsRest, widgetCommons) {
 
     // Init method
     ctrl.initialize = function () {
+        openmrsRest.setBaseAppPath("/coreapps");
         ctrl.maxAgeInDays = ctrl.widgetCommons.maxAgeToDays(ctrl.config.maxAge);
         // Remove whitespaces
         ctrl.config.concepts = ctrl.config.concepts.replace(/\s/g,'');

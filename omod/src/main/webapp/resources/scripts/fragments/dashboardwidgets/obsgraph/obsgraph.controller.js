@@ -24,6 +24,7 @@ function ObsGraphController($scope, openmrsRest, widgetCommons) {
 
     // Init method
     ctrl.initialize = function () {
+        openmrsRest.setBaseAppPath("/coreapps");
         // Set default maxResults if not defined
         if (angular.isUndefined(ctrl.config.maxResults)) {
             ctrl.config.maxResults = 4;

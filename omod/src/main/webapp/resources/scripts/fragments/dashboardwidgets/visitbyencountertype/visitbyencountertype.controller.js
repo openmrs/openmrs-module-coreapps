@@ -10,6 +10,7 @@ function VisitByEncounterTypeController(openmrsRest, $scope, widgetCommons) {
     activate();
 
     function activate() {
+        openmrsRest.setBaseAppPath("/coreapps");
         fetchVisits();
     }
 

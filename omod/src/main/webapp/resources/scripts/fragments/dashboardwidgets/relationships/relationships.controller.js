@@ -10,6 +10,7 @@ function RelationshipsController(openmrsRest, $scope) {
     activate();
 
     function activate() {
+        openmrsRest.setBaseAppPath("/coreapps");
         fetchRelationships();
     }
 
