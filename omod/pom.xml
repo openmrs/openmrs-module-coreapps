@@ -402,7 +402,7 @@
 					<!-- Excluding until we fix it -->
 					<sourceExcludes>
 						<sourceExclude>
-							**/openmrs-contrib-uicommons.bundle.js
+							**/openmrs-contrib-uicommons.bundle.min.js
 						</sourceExclude>
 						<sourceExclude>
 							**/dashboardWidgetsCommons.service.js

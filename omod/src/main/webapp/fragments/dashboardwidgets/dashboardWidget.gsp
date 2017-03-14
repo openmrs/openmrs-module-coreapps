@@ -1,5 +1,5 @@
 <%
-    ui.includeJavascript("coreapps", "fragments/openmrs-contrib-uicommons.bundle.js")
+    ui.includeJavascript("coreapps", "fragments/openmrs-contrib-uicommons.bundle.min.js")
     ui.includeJavascript("coreapps", "fragments/dashboardWidgetsCommons.service.js")
 
     // Load chart library only when obsGraph widget is present
