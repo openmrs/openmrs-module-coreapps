@@ -1,0 +1,15 @@
+<ul>
+    <li ng-if="ctrl.patientPrograms.length != 0" ng-repeat="patientProgram in ctrl.patientPrograms track by $index">
+        <a>
+            {{ patientProgram.program.display }}
+        </a>
+
+        <!-- TODO: localize "Enrolled" -->
+        <div class="tag">Enrolled {{ patientProgram.dateEnrolled | date:dateFormat }}</div>
+    </li>
+    
+    <!-- TODO: localize "None" -->
+    <p ng-if="ctrl.patientPrograms.length == 0">
+        None
+    </p>
+</ul>
