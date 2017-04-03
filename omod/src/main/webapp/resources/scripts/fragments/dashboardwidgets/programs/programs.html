@@ -5,7 +5,7 @@
         </a>
 
         <!-- TODO: localize "Enrolled" -->
-        <div class="tag">Enrolled {{ patientProgram.dateEnrolled | date:dateFormat }}</div>
+        <div class="tag">Enrolled {{ patientProgram.dateEnrolled | date:ctrl.dateFormat }}</div>
     </li>
     
     <!-- TODO: localize "None" -->
@@ -13,3 +13,4 @@
         None
     </p>
 </ul>
+
