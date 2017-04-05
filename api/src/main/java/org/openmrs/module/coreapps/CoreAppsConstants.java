@@ -44,4 +44,7 @@ public class CoreAppsConstants {
    // This is visually helpful when there are multiple visit types.
    public final static String VISIT_TYPE_COLORS = "coreapps.visitTypeColors";
    public final static String TRANSFER_ENCOUNTER_TYPE_UUID = "coreapps.transferEncounterUuid";
+   
+   // the Sticky Note concept global property name
+   public static final String CONCEPT_STICKY_NOTE_PROPERTY_NAME = "coreapps.conceptStickyNote";
 }

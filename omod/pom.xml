@@ -177,6 +177,11 @@
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>providermanagement-api</artifactId>
 		</dependency>
+				
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod</artifactId>
+		</dependency>
 
 		<!-- End OpenMRS modules -->
 
@@ -379,44 +384,43 @@
             </plugin>
 
             <plugin>
-                <groupId>com.github.searls</groupId>
-                <artifactId>jasmine-maven-plugin</artifactId>
-                <version>1.2.0.0</version>
-                <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jsSrcDir>${project.basedir}/src/main/webapp/resources/scripts</jsSrcDir>
-					<jsTestSrcDir>${project.basedir}/src/test/webapp/resources/scripts</jsTestSrcDir>
-					<preloadSources>
-                        <source>${project.basedir}/src/test/webapp/provided/scripts/angular.min.js</source>
-                        <source>${project.basedir}/src/test/webapp/provided/scripts/jquery-1.12.4.min.js</source>
-                        <source>${project.basedir}/src/test/webapp/provided/scripts/underscore-min.js</source>
-                        <source>${project.basedir}/src/test/webapp/provided/scripts/knockout-2.2.1.js</source>
-                    </preloadSources>
-					<!-- Excluding until we fix it -->
-					<sourceExcludes>
-						<sourceExclude>
-							**/openmrs-contrib-uicommons.bundle.min.js
-						</sourceExclude>
-						<sourceExclude>
-							**/dashboardWidgetsCommons.service.js
-						</sourceExclude>
-						<sourceExclude>
-							**/dashboardwidgets/**/*.js
-						</sourceExclude>
-					</sourceExcludes>
-					<serverPort>7234</serverPort>
-					<skipTests>false</skipTests>
-				</configuration>
-            </plugin>
-
-        </plugins>
+              <groupId>com.github.searls</groupId>
+              <artifactId>jasmine-maven-plugin</artifactId>
+              <version>1.2.0.0</version>
+              <extensions>true</extensions>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>test</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <jsSrcDir>${project.basedir}/src/main/webapp/resources/scripts</jsSrcDir>
+                <jsTestSrcDir>${project.basedir}/src/test/webapp/resources/scripts</jsTestSrcDir>
+                <preloadSources>
+                  <source>${project.basedir}/src/test/webapp/provided/scripts/angular.min.js</source>
+                  <source>${project.basedir}/src/test/webapp/provided/scripts/jquery-1.12.4.min.js</source>
+                  <source>${project.basedir}/src/test/webapp/provided/scripts/underscore-min.js</source>
+                  <source>${project.basedir}/src/test/webapp/provided/scripts/knockout-2.2.1.js</source>
+                </preloadSources>
+                <!-- Excluding until we fix it -->
+                <sourceExcludes>
+                  <sourceExclude>
+                   **/openmrs-contrib-uicommons.bundle.min.js
+                 </sourceExclude>
+                 <sourceExclude>
+                   **/dashboardWidgetsCommons.service.js
+                 </sourceExclude>
+                 <sourceExclude>
+                   **/dashboardwidgets/**/*.js
+                 </sourceExclude>
+               </sourceExcludes>
+               <serverPort>7234</serverPort>
+               <skipTests>false</skipTests>
+             </configuration>
+           </plugin>
+          </plugins>
 	</build>
 
     <profiles>

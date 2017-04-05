@@ -1,0 +1,16 @@
+<div>
+  <div class="dialog-header">
+    <h3>{{ msgs[module.getProvider() + '.clickToEditObs.delete.title'] }}</h3>
+  </div>
+  <div class="dialog-content">
+    <input type="hidden" id="encounterId" value=""/>
+    <ul>
+      <li class="info">
+        <span>{{ msgs[module.getProvider() + '.clickToEditObs.delete.confirm'] }}</span>
+      </li>
+    </ul>
+    <button class="confirm right" ng-click="confirm()">{{msgs["coreapps.yes"]}}
+    </button>
+    <button class="cancel" ng-click="closeThisDialog()">{{msgs["coreapps.no"]}}</button>
+  </div>
+</div>
