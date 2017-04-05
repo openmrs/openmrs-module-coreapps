@@ -38,15 +38,13 @@
         </th>
         <th>&nbsp;</th>
     </tr>
-    <tr ng-repeat="patientState in ctrl.patientStateHistory track by $index">
-        <td>{{ patientState.startDate | date:ctrl.dateFormat }} </td>
-        <td ng-repeat="workflow in ctrl.program.allWorkflows">
-            <span ng-if="patientState.workflow.uuid == workflow.uuid">
-                {{ patientState.state.concept.display }}
-            </span>
-        </td>
+    <tr ng-repeat="row in ctrl.patientStateHistory">
+        <td>{{ row.startDate | date:ctrl.dateFormat }} </td>
+            <td ng-repeat="workflow in ctrl.program.allWorkflows">
+                {{ row.patientStatesByWorkflow[workflow.uuid].state.concept.display }}
+            </td>
         <td>
-            <i class="icon-remove right" ng-click="ctrl.deletePatientState(patientState.uuid)"/>
+            <i ng-if="$first" class="icon-remove right" ng-click="ctrl.deleteMostRecentPatientStates()"/>
         </td>
     </tr>
 </table>
