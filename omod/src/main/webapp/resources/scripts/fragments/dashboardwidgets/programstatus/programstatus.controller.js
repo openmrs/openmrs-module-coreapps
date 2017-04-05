@@ -2,7 +2,7 @@
 var scripts = document.getElementsByTagName("script");
 var programStatusPath = scripts[scripts.length - 1].src;
 
-function ProgramStatusController(openmrsRest, $scope, $filter) {
+function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO change widget name to program overview?
 
@@ -130,32 +130,56 @@ function ProgramStatusController(openmrsRest, $scope, $filter) {
         })
     }
 
-    function voidPatientState(patientStateUuid) {
-        openmrsRest.remove('programenrollment/' + ctrl.patientProgram.uuid + "/state/" + patientStateUuid, {
-            voided: "true",
-            voidReason: "voided via UI"
-        }).then(function(response) {
+    function voidPatientStates(patientStateUuids) {
+
+        var voidCalls = [];
+
+        angular.forEach(patientStateUuids, function(patientStateUuid) {
+            voidCalls.push(openmrsRest.remove('programenrollment/' + ctrl.patientProgram.uuid + "/state/" + patientStateUuid, {
+                voided: "true",
+                voidReason: "voided via UI"
+            }));
+        });
+
+        $q.all(voidCalls).then(function(response) {
             // TODO: handle error cases--what if the widget rejects the change?
             fetchPatientProgram(); // refresh display
         })
+
     }
 
+    // TODO: definitely document what this is actually doing if we keep it!
     function groupAndSortPatientStates() {
         ctrl.patientStateHistory = [];
+
+        // TODO can we remove this whole variable if we rework how the selection works
         ctrl.stateUuidForCurrentPatientStateByWorkflow = {};
 
         // TODO remove this first filter once the bug with the REST request returning voided elements is fixed
         ctrl.patientProgram.states = $filter('filter')(ctrl.patientProgram.states, function(state) { return !state.voided }, true);
-        ctrl.patientProgram.states = $filter('orderBy')(ctrl.patientProgram.states, function(state) { return state.startDate }, true);
+        ctrl.patientProgram.states = $filter('orderBy')(ctrl.patientProgram.states, function(state) { return state.startDate });
 
         angular.forEach(ctrl.patientProgram.states, function(patientState) {
             var workflow = getWorkflowForState(patientState.state);
+            patientState['workflow'] = workflow;
+
             if (!(workflow.uuid in ctrl.stateUuidForCurrentPatientStateByWorkflow)) {
                 ctrl.stateUuidForCurrentPatientStateByWorkflow[workflow.uuid] = patientState.state.uuid;
             }
 
-            patientState['workflow'] = workflow;
-            ctrl.patientStateHistory.push(patientState);
+            if (ctrl.patientStateHistory.length > 0 &&
+                ctrl.patientStateHistory[0].startDate == patientState.startDate) {
+                // assumption: only one state per workflow per day
+                ctrl.patientStateHistory[0]['patientStatesByWorkflow'][workflow.uuid] = patientState;
+            }
+            else {
+                var newEntry = {};
+                newEntry['startDate'] = patientState.startDate;
+                newEntry['patientStatesByWorkflow'] = {};
+                newEntry['patientStatesByWorkflow'][workflow.uuid] = patientState;
+                ctrl.patientStateHistory.unshift(newEntry);  // add to front
+            }
+
         })
 
         return; // TODO remove
@@ -192,6 +216,16 @@ function ProgramStatusController(openmrsRest, $scope, $filter) {
 
     ctrl.exitEditMode = function() {
         ctrl.editMode = false;
+    }
+
+    ctrl.deleteMostRecentPatientStates = function() {
+        if (ctrl.patientStateHistory.length > 0) {
+            var stateUuids = [];
+            for (var workflow in ctrl.patientStateHistory[0].patientStatesByWorkflow) {
+                stateUuids.push(ctrl.patientStateHistory[0].patientStatesByWorkflow[workflow].uuid)
+            }
+            voidPatientStates(stateUuids);
+        }
     }
 
     $scope.getTemplate = function () {
