@@ -6,23 +6,18 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO change widget name to program overview?
 
-    // TODO change the history to be row-per-day
-    // TODO only allow deletion of most recent
     // TODO make the state change need to take a date
 
-    // TODO state
-    // TODO commit a branch?
-    // TODO localization
+    // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date
+
+    // TODO localization of states works?
     // TODO location (on enrollment?)
     // TODO date (on enrollment)
-    // TODO voided patient states and regular states bug
     // TODO handle completion + outcome?
 
     var vPatientProgram = 'custom:uuid,dateEnrolled,location:(display),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
 
     var ctrl = this;
-
-    ctrl.editMode = false;
 
     ctrl.program = null;
 
@@ -32,9 +27,13 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     ctrl.statesByUuid = {};
 
-    ctrl.stateUuidForCurrentPatientStateByWorkflow = {};
-
     ctrl.patientStateHistory = [];
+
+    ctrl.changeToStateByWorkflow = {};
+
+    ctrl.editModeByWorkflow = {};
+
+    ctrl.editableByWorkflow = {};
 
     ctrl.dateFormat = (ctrl.config.dateFormat == '' || angular.isUndefined(ctrl.config.dateFormat))
         ? 'yyyy-MM-dd' : ctrl.config.dateFormat;
@@ -58,6 +57,8 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
             ctrl.program = response;
 
             angular.forEach(ctrl.program.allWorkflows, function(workflow) {
+                ctrl.editModeByWorkflow[workflow.uuid] = false;
+                ctrl.editableByWorkflow[workflow.uuid] = true;
                 ctrl.statesByWorkflow[workflow.uuid] = workflow.states;
                 angular.forEach(workflow.states, function(state) {
                     ctrl.statesByUuid[state.uuid] = state;
@@ -152,35 +153,36 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     function groupAndSortPatientStates() {
         ctrl.patientStateHistory = [];
 
-        // TODO can we remove this whole variable if we rework how the selection works
-        ctrl.stateUuidForCurrentPatientStateByWorkflow = {};
+        if (ctrl.patientProgram && ctrl.patientProgram.states) {
+            // TODO remove this first filter once the bug with the REST request returning voided elements is fixed
+            ctrl.patientProgram.states = $filter('filter')(ctrl.patientProgram.states, function (state) {
+                return !state.voided
+            }, true);
+            ctrl.patientProgram.states = $filter('orderBy')(ctrl.patientProgram.states, function (state) {
+                return state.startDate
+            });
 
-        // TODO remove this first filter once the bug with the REST request returning voided elements is fixed
-        ctrl.patientProgram.states = $filter('filter')(ctrl.patientProgram.states, function(state) { return !state.voided }, true);
-        ctrl.patientProgram.states = $filter('orderBy')(ctrl.patientProgram.states, function(state) { return state.startDate });
+            angular.forEach(ctrl.patientProgram.states, function (patientState) {
+                var workflow = getWorkflowForState(patientState.state);
 
-        angular.forEach(ctrl.patientProgram.states, function(patientState) {
-            var workflow = getWorkflowForState(patientState.state);
-            patientState['workflow'] = workflow;
+                // TODO can't edit if today
 
-            if (!(workflow.uuid in ctrl.stateUuidForCurrentPatientStateByWorkflow)) {
-                ctrl.stateUuidForCurrentPatientStateByWorkflow[workflow.uuid] = patientState.state.uuid;
-            }
+                patientState['workflow'] = workflow;
 
-            if (ctrl.patientStateHistory.length > 0 &&
-                ctrl.patientStateHistory[0].startDate == patientState.startDate) {
-                // assumption: only one state per workflow per day
-                ctrl.patientStateHistory[0]['patientStatesByWorkflow'][workflow.uuid] = patientState;
-            }
-            else {
-                var newEntry = {};
-                newEntry['startDate'] = patientState.startDate;
-                newEntry['patientStatesByWorkflow'] = {};
-                newEntry['patientStatesByWorkflow'][workflow.uuid] = patientState;
-                ctrl.patientStateHistory.unshift(newEntry);  // add to front
-            }
-
-        })
+                if (ctrl.patientStateHistory.length > 0 &&
+                    ctrl.patientStateHistory[0].startDate == patientState.startDate) {
+                    // assumption: only one state per workflow per day
+                    ctrl.patientStateHistory[0]['patientStatesByWorkflow'][workflow.uuid] = patientState;
+                }
+                else {
+                    var newEntry = {};
+                    newEntry['startDate'] = patientState.startDate;
+                    newEntry['patientStatesByWorkflow'] = {};
+                    newEntry['patientStatesByWorkflow'][workflow.uuid] = patientState;
+                    ctrl.patientStateHistory.unshift(newEntry);  // add to front
+                }
+            })
+        }
 
         return; // TODO remove
 
@@ -202,20 +204,22 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
        enrollInProgram();
     }
 
-    ctrl.updatePatientState = function(workflowUuid) {
-        createPatientState(ctrl.stateUuidForCurrentPatientStateByWorkflow[workflowUuid])
+    ctrl.updatePatientState = function(workflowUuid, stateUuid) {
+        ctrl.editModeByWorkflow[workflowUuid] = false;
+        createPatientState(ctrl.changeToStateByWorkflow[workflowUuid])
     }
 
-    ctrl.deletePatientState = function(patientStateUuid) {
-        voidPatientState(patientStateUuid)
+    ctrl.enterEditMode = function(workflowUuid) {
+        // exit edit mode for any other workflows
+        for (uuid in ctrl.editModeByWorkflow) {
+            ctrl.editModeByWorkflow[uuid] = false
+        }
+
+        ctrl.editModeByWorkflow[workflowUuid] = true;
     }
 
-    ctrl.enterEditMode = function() {
-        ctrl.editMode = true;
-    }
-
-    ctrl.exitEditMode = function() {
-        ctrl.editMode = false;
+    ctrl.exitEditMode = function(workflowUuid) {
+        ctrl.editModeByWorkflow[workflowUuid] = false;
     }
 
     ctrl.deleteMostRecentPatientStates = function() {
@@ -226,6 +230,19 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
             }
             voidPatientStates(stateUuids);
         }
+    }
+
+    ctrl.hasHistory = function() {
+        return ctrl.patientStateHistory.length > 0;
+    }
+
+    ctrl.isNotCurrentState = function(workflow) {
+        return function(state) {
+            return ctrl.patientStateHistory.length == 0
+                || !ctrl.patientStateHistory[0].patientStatesByWorkflow.hasOwnProperty(workflow.uuid)
+                ||  ctrl.patientStateHistory[0].patientStatesByWorkflow[workflow.uuid].state.uuid != state.uuid;
+        }
+
     }
 
     $scope.getTemplate = function () {

@@ -1,6 +1,4 @@
 <!-- TODO: **localize all** -->
-<i ng-if="!ctrl.editMode" ng-click="ctrl.enterEditMode()" class="icon-pencil right"/>
-<i ng-if="ctrl.editMode" ng-click="ctrl.exitEditMode()" class="icon-remove right"/>
 
 <div ng-if="!ctrl.patientProgram">
     <!-- TODO add location and date -->
@@ -10,41 +8,47 @@
 </div>
 
 <ul style="font-size: 0.8em" ng-if="ctrl.patientProgram">
-    <li>Enrolled since {{ ctrl.patientProgram.dateEnrolled | date:ctrl.dateFormat }}</li>
-    <li>Location: {{ ctrl.patientProgram.location.display }}</li>
+    <li>Enrolled since {{ ctrl.patientProgram.dateEnrolled | date:ctrl.dateFormat }} at {{ ctrl.patientProgram.location.display }}</li>
 
     <li ng-if="ctrl.program.allWorkflows.length != 0" ng-repeat="workflow in ctrl.program.allWorkflows track by $index">
-            {{ workflow.concept.display }}:
-        <span ng-if="!ctrl.editMode">
-            {{ ctrl.statesByUuid[ctrl.stateUuidForCurrentPatientStateByWorkflow[workflow.uuid]].concept.display }}
+           <b>{{ workflow.concept.display }}</b>:
+        <span>
+            <!-- patient state history sorted so most recent is always sorted first -->
+            {{ ctrl.patientStateHistory[0].patientStatesByWorkflow[workflow.uuid].state.concept.display }}
         </span>
-        <span ng-if="ctrl.editMode">
-            <select ng-model="ctrl.stateUuidForCurrentPatientStateByWorkflow[workflow.uuid]"
-                    ng-options="state.uuid as state.concept.display for state in ctrl.statesByWorkflow[workflow.uuid]"
-                    ng-change="ctrl.updatePatientState(workflow.uuid)">
+        <span ng-if="ctrl.editModeByWorkflow[workflow.uuid]">
+            Transition to: <select ng-model="ctrl.changeToStateByWorkflow[workflow.uuid]"
+                    ng-options="state.uuid as state.concept.display for state in ctrl.statesByWorkflow[workflow.uuid] | filter: ctrl.isNotCurrentState(workflow) ">
                  <option value=""></option>
             </select>
+            <icon class="icon-check" ng-click="ctrl.updatePatientState(workflow.uuid)"/>
+            <icon class="icon-remove"  ng-click="ctrl.exitEditMode(workflow.uuid)" />
+        </span>
+        <span ng-if="!ctrl.editModeByWorkflow[workflow.uuid] && ctrl.editableByWorkflow[workflow.uuid]">
+            <i ng-click="ctrl.enterEditMode(workflow.uuid)" class="icon-pencil right"/>
         </span>
     </li>
 </ul>
 
-<span style="font-size: 0.8em">History:</span>
+<div ng-if="ctrl.hasHistory()">
+    <span style="font-size: 0.8em">History:</span>
 
-<table style="font-size: 0.6em">  <!-- TODO pull out into style sheet -->
-    <tr>
-        <th>Date</th>
-        <th ng-repeat="workflow in ctrl.program.allWorkflows">
-            {{ workflow.concept.display }}
-        </th>
-        <th>&nbsp;</th>
-    </tr>
-    <tr ng-repeat="row in ctrl.patientStateHistory">
-        <td>{{ row.startDate | date:ctrl.dateFormat }} </td>
-            <td ng-repeat="workflow in ctrl.program.allWorkflows">
-                {{ row.patientStatesByWorkflow[workflow.uuid].state.concept.display }}
+    <table style="font-size: 0.6em">  <!-- TODO pull out into style sheet -->
+        <tr>
+            <th>Date</th>
+            <th ng-repeat="workflow in ctrl.program.allWorkflows">
+                {{ workflow.concept.display }}
+            </th>
+            <th>&nbsp;</th>
+        </tr>
+        <tr ng-repeat="row in ctrl.patientStateHistory">
+            <td>{{ row.startDate | date:ctrl.dateFormat }} </td>
+                <td ng-repeat="workflow in ctrl.program.allWorkflows">
+                    {{ row.patientStatesByWorkflow[workflow.uuid].state.concept.display }}
+                </td>
+            <td>
+                <i ng-if="$first" class="icon-remove right" ng-click="ctrl.deleteMostRecentPatientStates()"/>
             </td>
-        <td>
-            <i ng-if="$first" class="icon-remove right" ng-click="ctrl.deleteMostRecentPatientStates()"/>
-        </td>
-    </tr>
-</table>
+        </tr>
+    </table>
+</div>
