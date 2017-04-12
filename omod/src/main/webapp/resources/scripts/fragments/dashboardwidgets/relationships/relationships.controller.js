@@ -5,12 +5,23 @@ var relationshipsPath = scripts[scripts.length - 1].src;
 function RelationshipsController(openmrsRest, $scope) {
     var ctrl = this;
 
+    // the default patient page is the clinician dashboard
+    ctrl.patientPage = "/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}";
+
     ctrl.relationships = [];
 
     activate();
 
     function activate() {
-        openmrsRest.setBaseAppPath("/coreapps");
+        if ( ctrl.config.baseAppPath ) {
+            openmrsRest.setBaseAppPath(ctrl.config.baseAppPath);
+        } else {
+            openmrsRest.setBaseAppPath("/coreapps");
+        }
+
+        if( ctrl.config.patientPage ) {
+            ctrl.patientPage = ctrl.config.patientPage;
+        }
         fetchRelationships();
     }
 
@@ -44,6 +55,23 @@ function RelationshipsController(openmrsRest, $scope) {
         } else {
             return ctrl.config.maxRecords;
         }
+    }
+    
+    function navigateTo(patientId) {
+        var destinationPage ="";
+        if (ctrl.patientPage) {
+            destinationPage = Handlebars.compile(ctrl.patientPage)({
+                patientUuid: patientId
+            });
+        }
+        openmrsRest.getServerUrl().then(function(url) {
+            window.location.href = url + destinationPage;
+        });
+
+    }
+
+    ctrl.goTo = function(patientId) {
+        navigateTo(patientId);
     }
 
     $scope.getTemplate = function () {
