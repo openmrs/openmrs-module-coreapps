@@ -1,11 +1,19 @@
 <!-- TODO: **localize all** -->
 
-<div ng-if="!ctrl.patientProgram">
+<ul style="font-size: 0.8em" ng-if="!ctrl.patientProgram">
     <!-- TODO add location and date -->
-    Enrollment Date:
-    Enrollment Location:
-    <button ng-click="ctrl.enroll()">Enroll</button>
-</div>
+    <li>
+        Enrollment Date:
+        <!-- TODO make uib-datepicker-popup format configurable -->
+        <input type="text" uib-datepicker-popup="{{ctrl.dateFormat}}" datepicker-options="ctrl.dateEnrolledPopup.options" ng-model="ctrl.dateEnrolledInputField"
+               is-open="ctrl.dateEnrolledPopup.opened" close-text="Close" />
+        <i class="icon-calendar" ng-click="ctrl.dateEnrolledPopupOpen()"/>
+    </li>
+    <li>
+        Enrollment Location:
+        <button ng-click="ctrl.enroll()">Enroll</button>
+    </li>
+</ul>
 
 <ul style="font-size: 0.8em" ng-if="ctrl.patientProgram">
     <li>Enrolled since {{ ctrl.patientProgram.dateEnrolled | date:ctrl.dateFormat }} at {{ ctrl.patientProgram.location.display }}</li>
@@ -13,21 +21,18 @@
     <li ng-if="ctrl.program.allWorkflows.length != 0" ng-repeat="workflow in ctrl.program.allWorkflows track by $index">
            <b>{{ workflow.concept.display }}</b>:
         <span>
-            <!-- patient state history sorted so most recent is always sorted first -->
-            {{ ctrl.patientStateHistory[0].patientStatesByWorkflow[workflow.uuid].state.concept.display }}
+            {{ ctrl.getMostRecentStateForWorkflow(workflow.uuid).state.concept.display }}
         </span>
         <span ng-if="ctrl.editModeByWorkflow[workflow.uuid]">
             Transition to:
-            <select ng-model="ctrl.changeToStateByWorkflow[workflow.uuid]"
+            <select ng-model="ctrl.changeToStateByWorkflow[workflow.uuid].state"
                     ng-options="state.uuid as state.concept.display for state in ctrl.statesByWorkflow[workflow.uuid] | filter: ctrl.isNotCurrentState(workflow) ">
                  <option value=""></option>
             </select>
 
-
-            <span class="angular-datepicker">
-                <input type="text" is-open="opened" ng-model="ngModel" datepicker-popup="dd-MMM-yyyy" readonly
-                       datepicker-options="options" min-date="minDate" max-date="maxDate" ng-click="open($event)"/>
-             </span>
+            <input type="text" uib-datepicker-popup="{{ctrl.dateFormat}}" datepicker-options="ctrl.patientStateDatePopup[workflow.uuid].options" ng-model="ctrl.changeToStateByWorkflow[workflow.uuid].date"
+                   is-open="ctrl.patientStateDatePopup[workflow.uuid].opened" close-text="Close" />
+            <i class="icon-calendar" ng-click="ctrl.patientStateDatePopupOpen(workflow.uuid)"/>
 
 
             <icon class="icon-check" ng-click="ctrl.updatePatientState(workflow.uuid)"/>
