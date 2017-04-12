@@ -5,6 +5,7 @@ var programStatusPath = scripts[scripts.length - 1].src;
 function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO change widget name to program overview?
+    // TODO make a date picker widget in contrib-uicommons
 
     // TODO make the state change need to take a date
 
