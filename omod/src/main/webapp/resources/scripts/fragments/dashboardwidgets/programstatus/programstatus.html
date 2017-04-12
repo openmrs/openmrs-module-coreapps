@@ -17,10 +17,19 @@
             {{ ctrl.patientStateHistory[0].patientStatesByWorkflow[workflow.uuid].state.concept.display }}
         </span>
         <span ng-if="ctrl.editModeByWorkflow[workflow.uuid]">
-            Transition to: <select ng-model="ctrl.changeToStateByWorkflow[workflow.uuid]"
+            Transition to:
+            <select ng-model="ctrl.changeToStateByWorkflow[workflow.uuid]"
                     ng-options="state.uuid as state.concept.display for state in ctrl.statesByWorkflow[workflow.uuid] | filter: ctrl.isNotCurrentState(workflow) ">
                  <option value=""></option>
             </select>
+
+
+            <span class="angular-datepicker">
+                <input type="text" is-open="opened" ng-model="ngModel" datepicker-popup="dd-MMM-yyyy" readonly
+                       datepicker-options="options" min-date="minDate" max-date="maxDate" ng-click="open($event)"/>
+             </span>
+
+
             <icon class="icon-check" ng-click="ctrl.updatePatientState(workflow.uuid)"/>
             <icon class="icon-remove"  ng-click="ctrl.exitEditMode(workflow.uuid)" />
         </span>
