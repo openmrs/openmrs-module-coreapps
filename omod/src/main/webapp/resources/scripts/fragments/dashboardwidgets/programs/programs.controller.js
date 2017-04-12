@@ -1,3 +1,6 @@
+// NOTE: work-in-progress, consider this not yet an "official" release of this widgets, future changes may not be bacwards-compatible and change functionality signficantly
+
+
 //Determine current script path
 var scripts = document.getElementsByTagName("script");
 var programsPath = scripts[scripts.length - 1].src;
