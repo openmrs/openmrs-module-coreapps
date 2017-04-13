@@ -1,16 +1,18 @@
 <!-- TODO: **localize all** -->
 
 <ul style="font-size: 0.8em" ng-if="!ctrl.patientProgram">
-    <!-- TODO add location and date -->
     <li>
         Enrollment Date:
-        <!-- TODO make uib-datepicker-popup format configurable -->
         <input type="text" uib-datepicker-popup="{{ctrl.dateFormat}}" datepicker-options="ctrl.datePopup.enrollment.options" ng-model="ctrl.input.dateEnrolled"
                is-open="ctrl.datePopup.enrollment.opened" close-text="Close" />
         <i class="icon-calendar" ng-click="ctrl.toggleDatePopup.enrollment()"/>
     </li>
     <li>
         Enrollment Location:
+        <select ng-model="ctrl.input.enrollmentLocation"
+                ng-options="location.uuid as location.display for location in ctrl.programLocations">
+                <option value=""></option>
+        </select>
         <button ng-click="ctrl.enroll()">Enroll</button>
     </li>
 </ul>
@@ -21,6 +23,13 @@
     <li ng-if="ctrl.edit.enrollment"><input type="text" uib-datepicker-popup="{{ctrl.dateFormat}}" datepicker-options="ctrl.datePopup.enrollment.options" ng-model="ctrl.input.dateEnrolled"
            is-open="ctrl.datePopup.enrollment.opened" close-text="Close" />
         <i class="icon-calendar" ng-click="ctrl.toggleDatePopup.enrollment()"/>
+    </li>
+
+    <li ng-if="ctrl.edit.enrollment">
+        <select ng-model="ctrl.input.enrollmentLocation"
+                ng-options="location.uuid as location.display for location in ctrl.programLocations">
+            <option value=""></option>
+        </select>
         <icon class="icon-check" ng-click="ctrl.updatePatientProgram()"/>
         <icon class="icon-remove"  ng-click="ctrl.toggleEdit.enrollment()" />
     </li>

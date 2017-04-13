@@ -5,20 +5,24 @@ var programStatusPath = scripts[scripts.length - 1].src;
 function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO change widget name to program overview?
-    // TODO location (on enrollment?)
-    // TODO edit date (on enrollment)
 
     // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date
 
     // TODO unit tests? clean up?
-    // TODO localization of states works?
+    // TODO localization of text
+    // TODO layout
+    // TODO validation elements--can't change state without selecting date, etc
+
 
     // TODO handle completion + outcome?
     // TODO fix voided issue in REST module
 
-    var vPatientProgram = 'custom:uuid,dateEnrolled,location:(display),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
+    var vPatientProgram = 'custom:uuid,dateEnrolled,location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
 
     var ctrl = this;
+
+    // TODO this should change to a new "program location" tag, and/or be configurable
+    ctrl.locationTag = 'dea8febf-0bbe-4111-8152-a9cf7df622b6';
 
     ctrl.dateFormat = (ctrl.config.dateFormat == '' || angular.isUndefined(ctrl.config.dateFormat))
         ? 'dd-MMM-yyyy' : ctrl.config.dateFormat;
@@ -26,6 +30,8 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     ctrl.program = null;
 
     ctrl.patientProgram = null;
+
+    ctrl.programLocations = null;
 
     ctrl.statesByWorkflow = {};
 
@@ -36,6 +42,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     // backs the various input fields
     ctrl.input = {
         dateEnrolled: null,
+        enrollmentLocation: null,
         changeToStateByWorkflow: {}
     }
 
@@ -46,7 +53,6 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     }
 
     // controls the state and options of the various date popups
-    // TODO the enrollment date can't be changed to be outside of any of the states
     ctrl.datePopup = {
         enrollment: {
             "opened": false,
@@ -61,6 +67,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     function activate() {
         openmrsRest.setBaseAppPath("/coreapps");
+        fetchLocations();
         fetchProgram().then(function (response) {
             fetchPatientProgram();
         })
@@ -112,6 +119,15 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         }
     }
 
+    function fetchLocations() {
+        return openmrsRest.get('location', {
+            v: 'custom:display,uuid',
+            tag: ctrl.locationTag,
+        }).then(function(response) {
+            ctrl.programLocations = response.results;
+        })
+    }
+
     function getActiveProgram(patientPrograms) {
         if (patientPrograms.length > 0) {
             patientPrograms = $filter('filter')(patientPrograms, function(program) {
@@ -121,7 +137,8 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         // assumption: only one active program
         if (patientPrograms.length > 0) {
             ctrl.patientProgram = patientPrograms[0]
-           // ctrl.input.dateEnrolled = ctrl.patientProgram.dateEnrolled  // get this working?
+            ctrl.input.dateEnrolled = new Date(ctrl.patientProgram.dateEnrolled)
+            ctrl.input.enrollmentLocation = ctrl.patientProgram.location ? ctrl.patientProgram.location.uuid : null
         }
     }
 
@@ -129,7 +146,8 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         openmrsRest.create('programenrollment', {
             patient: ctrl.config.patientUuid,
             program: ctrl.config.program,
-            dateEnrolled: ctrl.input.dateEnrolled
+            dateEnrolled: ctrl.input.dateEnrolled,
+            location: ctrl.input.enrollmentLocation
         }).then(function(response) {
             fetchPatientProgram(); // refresh display
         })
@@ -138,15 +156,14 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     function updatePatientProgram() {
         openmrsRest.create('programenrollment/' + ctrl.patientProgram.uuid, {
-            dateEnrolled: ctrl.input.dateEnrolled
+            dateEnrolled: ctrl.input.dateEnrolled,
+            location: ctrl.input.enrollmentLocation
         }).then(function(response) {
             fetchPatientProgram(); // refresh display
         })
     }
 
     function createPatientState(state) {
-        // TODO don't allow switching to a state that already exists?
-
         openmrsRest.update('programenrollment/' + ctrl.patientProgram.uuid, {
             states: [
                 {
@@ -211,10 +228,13 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
                     ctrl.patientStateHistory.unshift(newEntry);  // add to front
                 }
             })
+
+            // date enrolled can never be edited to be before the first state change
+
+            if (ctrl.patientStateHistory.length > 0) {
+                ctrl.datePopup.enrollment.options.maxDate = new Date(ctrl.patientStateHistory[ctrl.patientStateHistory.length - 1].startDate);
+            }
         }
-
-        return; // TODO remove
-
     }
 
     function configWorkflowDatePopups() {
