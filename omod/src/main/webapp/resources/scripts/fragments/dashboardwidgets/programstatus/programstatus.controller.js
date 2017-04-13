@@ -19,11 +19,12 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     var ctrl = this;
 
+    ctrl.dateFormat = (ctrl.config.dateFormat == '' || angular.isUndefined(ctrl.config.dateFormat))
+        ? 'dd-MMM-yyyy' : ctrl.config.dateFormat;
+
     ctrl.program = null;
 
     ctrl.patientProgram = null;
-
-    ctrl.dateEnrolledInputField = null;
 
     ctrl.statesByWorkflow = {};
 
@@ -31,10 +32,13 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     ctrl.patientStateHistory = [];
 
-    ctrl.changeToStateByWorkflow = {};
-
     ctrl.editableByWorkflow = {};
 
+    // backs the various input fields
+    ctrl.input = {
+        dateEnrolled: null,
+        changeToStateByWorkflow: {}
+    }
 
     // controls the state (open/closed) of the elements to edit enrollment & state information
     ctrl.edit = {
@@ -42,17 +46,16 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         workflow: {}
     }
 
-    ctrl.dateFormat = (ctrl.config.dateFormat == '' || angular.isUndefined(ctrl.config.dateFormat))
-        ? 'dd-MMM-yyyy' : ctrl.config.dateFormat;
-
-    ctrl.dateEnrolledPopup = {
-        "opened": false,
-        "options": {
-            "maxDate": new Date()
-        }
+    // controls the state and options of the various date popups
+    ctrl.datePopup = {
+        enrollment: {
+            "opened": false,
+            "options": {
+                "maxDate": new Date()
+            }
+        },
+        workflow: {}
     }
-
-    ctrl.patientStateDatePopup = {};
 
     activate();
 
@@ -207,7 +210,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     function configPatientStateDatePopups() {
         angular.forEach(ctrl.program.allWorkflows, function(workflow) {
-            ctrl.patientStateDatePopup[workflow.uuid] = {
+            ctrl.datePopup.workflow[workflow.uuid] = {
                 "opened": false,
                 "options": {
                     "maxDate": new Date(),
@@ -245,19 +248,11 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     ctrl.enroll = function() {
        enrollInProgram();
     }
-    ctrl.dateEnrolledPopupOpen = function() {
-        ctrl.dateEnrolledPopup.opened = true;
-    }
-
-    ctrl.patientStateDatePopupOpen = function(workflowUuid) {
-        ctrl.patientStateDatePopup[workflowUuid].opened = true;
-    }
 
     ctrl.updatePatientState = function(workflowUuid, stateUuid) {
-        ctrl.editModeByWorkflow[workflowUuid] = false;
-        createPatientState(ctrl.changeToStateByWorkflow[workflowUuid])
+        ctrl.edit.workflow[workflowUuid] = false;
+        createPatientState(ctrl.input.changeToStateByWorkflow[workflowUuid])
     }
-
 
     // functions that control showing/hiding elements for editing enrollment or states
     ctrl.toggleEdit = {}
@@ -293,7 +288,16 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         ctrl.edit.enrollment = !ctrl.edit.enrollment;
     }
 
+    // functions that open the datepicker widgets for various input elements
+    ctrl.toggleDatePopup = {}
 
+    ctrl.toggleDatePopup.enrollment = function() {
+        ctrl.toggleDatePopup.enrollment.opened = !ctrl.toggleDatePopup.enrollment.opened;
+    }
+
+    ctrl.toggleDatePopup.workflow = function(workflowUuid) {
+        ctrl.datePopup.workflow[workflowUuid].opened = !ctrl.datePopup.workflow[workflowUuid].opened;
+    }
 
 
     ctrl.deleteMostRecentPatientStates = function() {
