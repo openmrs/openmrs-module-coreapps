@@ -5,13 +5,14 @@ var programStatusPath = scripts[scripts.length - 1].src;
 function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO change widget name to program overview?
+    // TODO location (on enrollment?)
+    // TODO edit date (on enrollment)
 
     // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date
 
     // TODO unit tests? clean up?
     // TODO localization of states works?
-    // TODO location (on enrollment?)
-    // TODO edit date (on enrollment)
+
     // TODO handle completion + outcome?
     // TODO fix voided issue in REST module
 
@@ -31,8 +32,6 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     ctrl.statesByUuid = {};
 
     ctrl.patientStateHistory = [];
-
-    ctrl.editableByWorkflow = {};
 
     // backs the various input fields
     ctrl.input = {
@@ -76,7 +75,6 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
             ctrl.program = response;
 
             angular.forEach(ctrl.program.allWorkflows, function(workflow) {
-                ctrl.editableByWorkflow[workflow.uuid] = true;
                 ctrl.statesByWorkflow[workflow.uuid] = workflow.states;
                 angular.forEach(workflow.states, function(state) {
                     ctrl.statesByUuid[state.uuid] = state;
@@ -96,7 +94,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
             }).then(function (response) {
                 getActiveProgram(response.results);
                 groupAndSortPatientStates();
-                configPatientStateDatePopups();
+                configWorkflowDatePopups();
             })
         }
         else {
@@ -108,7 +106,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
             }).then(function (response) {
                 ctrl.patientProgram = response;
                 groupAndSortPatientStates();
-                configPatientStateDatePopups();
+                configWorkflowDatePopups();
             })
         }
     }
@@ -208,7 +206,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     }
 
-    function configPatientStateDatePopups() {
+    function configWorkflowDatePopups() {
         angular.forEach(ctrl.program.allWorkflows, function(workflow) {
             ctrl.datePopup.workflow[workflow.uuid] = {
                 "opened": false,
@@ -233,7 +231,36 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         return result;
     }
 
-    ctrl.fn = {}
+    ctrl.enroll = function() {
+       enrollInProgram();
+    }
+
+    ctrl.updatePatientState = function(workflowUuid, stateUuid) {
+        ctrl.edit.workflow[workflowUuid] = false;
+        createPatientState(ctrl.input.changeToStateByWorkflow[workflowUuid])
+    }
+
+    ctrl.deleteMostRecentPatientStates = function() {
+        if (ctrl.patientStateHistory.length > 0) {
+            var stateUuids = [];
+            for (var workflow in ctrl.patientStateHistory[0].patientStatesByWorkflow) {
+                stateUuids.push(ctrl.patientStateHistory[0].patientStatesByWorkflow[workflow].uuid)
+            }
+            voidPatientStates(stateUuids);
+        }
+    }
+
+    ctrl.hasHistory = function() {
+        return ctrl.patientStateHistory.length > 0;
+    }
+
+    ctrl.isNotCurrentState = function(workflow) {
+        return function(state) {
+            var currentState = ctrl.getMostRecentStateForWorkflow(workflow.uuid);
+            return !currentState || currentState.state.uuid != state.uuid;
+        }
+
+    }
 
     ctrl.getMostRecentStateForWorkflow = function(workflowUuid) {
         var result = null;
@@ -243,15 +270,6 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
             }
         })
         return result;
-    }
-
-    ctrl.enroll = function() {
-       enrollInProgram();
-    }
-
-    ctrl.updatePatientState = function(workflowUuid, stateUuid) {
-        ctrl.edit.workflow[workflowUuid] = false;
-        createPatientState(ctrl.input.changeToStateByWorkflow[workflowUuid])
     }
 
     // functions that control showing/hiding elements for editing enrollment or states
@@ -297,29 +315,6 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     ctrl.toggleDatePopup.workflow = function(workflowUuid) {
         ctrl.datePopup.workflow[workflowUuid].opened = !ctrl.datePopup.workflow[workflowUuid].opened;
-    }
-
-
-    ctrl.deleteMostRecentPatientStates = function() {
-        if (ctrl.patientStateHistory.length > 0) {
-            var stateUuids = [];
-            for (var workflow in ctrl.patientStateHistory[0].patientStatesByWorkflow) {
-                stateUuids.push(ctrl.patientStateHistory[0].patientStatesByWorkflow[workflow].uuid)
-            }
-            voidPatientStates(stateUuids);
-        }
-    }
-
-    ctrl.hasHistory = function() {
-        return ctrl.patientStateHistory.length > 0;
-    }
-
-    ctrl.isNotCurrentState = function(workflow) {
-        return function(state) {
-            var currentState = ctrl.getMostRecentStateForWorkflow(workflow.uuid);
-            return !currentState || currentState.state.uuid != state.uuid;
-        }
-
     }
 
     $scope.getTemplate = function () {

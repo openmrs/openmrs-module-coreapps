@@ -44,7 +44,7 @@
             <icon class="icon-check" ng-click="ctrl.updatePatientState(workflow.uuid)"/>
             <icon class="icon-remove"  ng-click="ctrl.toggleEdit.workflow(workflow.uuid)" />
         </span>
-        <span ng-if="!ctrl.edit.workflow[workflow.uuid] && ctrl.editableByWorkflow[workflow.uuid]">
+        <span ng-if="!ctrl.edit.workflow[workflow.uuid]">
             <i ng-click="ctrl.toggleEdit.workflow(workflow.uuid)" class="icon-pencil right"/>
         </span>
     </li>
