@@ -16,14 +16,21 @@
 </ul>
 
 <ul style="font-size: 0.8em" ng-if="ctrl.patientProgram">
-    <li>Enrolled since {{ ctrl.patientProgram.dateEnrolled | date:ctrl.dateFormat }} at {{ ctrl.patientProgram.location.display }}</li>
+    <li>Enrolled since {{ ctrl.patientProgram.dateEnrolled | date:ctrl.dateFormat }} at {{ ctrl.patientProgram.location.display }} <i ng-if="!ctrl.edit.enrollment" ng-click="ctrl.toggleEdit.enrollment()" class="icon-pencil right"/> </li>
+
+    <li ng-if="ctrl.edit.enrollment"><input type="text" uib-datepicker-popup="{{ctrl.dateFormat}}" datepicker-options="ctrl.patientStateDatePopup[workflow.uuid].options" ng-model="ctrl.dateEnrolledInputField"
+           is-open="ctrl.dateEnrolledPopup.opened" close-text="Close" />
+        <i class="icon-calendar" ng-click="ctrl.dateEnrolledPopupOpen()"/>
+        <icon class="icon-check" ng-click=""/>
+        <icon class="icon-remove"  ng-click="ctrl.toggleEdit.enrollment()" />
+    </li>
 
     <li ng-if="ctrl.program.allWorkflows.length != 0" ng-repeat="workflow in ctrl.program.allWorkflows track by $index">
            <b>{{ workflow.concept.display }}</b>:
         <span>
             {{ ctrl.getMostRecentStateForWorkflow(workflow.uuid).state.concept.display }}
         </span>
-        <span ng-if="ctrl.editModeByWorkflow[workflow.uuid]">
+        <span ng-if="ctrl.edit.workflow[workflow.uuid]">
             Transition to:
             <select ng-model="ctrl.changeToStateByWorkflow[workflow.uuid].state"
                     ng-options="state.uuid as state.concept.display for state in ctrl.statesByWorkflow[workflow.uuid] | filter: ctrl.isNotCurrentState(workflow) ">
@@ -34,12 +41,11 @@
                    is-open="ctrl.patientStateDatePopup[workflow.uuid].opened" close-text="Close" />
             <i class="icon-calendar" ng-click="ctrl.patientStateDatePopupOpen(workflow.uuid)"/>
 
-
             <icon class="icon-check" ng-click="ctrl.updatePatientState(workflow.uuid)"/>
-            <icon class="icon-remove"  ng-click="ctrl.exitEditMode(workflow.uuid)" />
+            <icon class="icon-remove"  ng-click="ctrl.toggleEdit.workflow(workflow.uuid)" />
         </span>
-        <span ng-if="!ctrl.editModeByWorkflow[workflow.uuid] && ctrl.editableByWorkflow[workflow.uuid]">
-            <i ng-click="ctrl.enterEditMode(workflow.uuid)" class="icon-pencil right"/>
+        <span ng-if="!ctrl.edit.workflow[workflow.uuid] && ctrl.editableByWorkflow[workflow.uuid]">
+            <i ng-click="ctrl.toggleEdit.workflow(workflow.uuid)" class="icon-pencil right"/>
         </span>
     </li>
 </ul>

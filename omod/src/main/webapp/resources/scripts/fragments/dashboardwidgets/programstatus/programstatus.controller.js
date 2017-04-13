@@ -8,7 +8,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date
 
-    // TODO unit tests?
+    // TODO unit tests? clean up?
     // TODO localization of states works?
     // TODO location (on enrollment?)
     // TODO edit date (on enrollment)
@@ -33,9 +33,14 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     ctrl.changeToStateByWorkflow = {};
 
-    ctrl.editModeByWorkflow = {};
-
     ctrl.editableByWorkflow = {};
+
+
+    // controls the state (open/closed) of the elements to edit enrollment & state information
+    ctrl.edit = {
+        enrollment: false,
+        workflow: {}
+    }
 
     ctrl.dateFormat = (ctrl.config.dateFormat == '' || angular.isUndefined(ctrl.config.dateFormat))
         ? 'dd-MMM-yyyy' : ctrl.config.dateFormat;
@@ -68,7 +73,6 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
             ctrl.program = response;
 
             angular.forEach(ctrl.program.allWorkflows, function(workflow) {
-                ctrl.editModeByWorkflow[workflow.uuid] = false;
                 ctrl.editableByWorkflow[workflow.uuid] = true;
                 ctrl.statesByWorkflow[workflow.uuid] = workflow.states;
                 angular.forEach(workflow.states, function(state) {
@@ -226,6 +230,8 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         return result;
     }
 
+    ctrl.fn = {}
+
     ctrl.getMostRecentStateForWorkflow = function(workflowUuid) {
         var result = null;
         angular.forEach(ctrl.patientStateHistory, function(history) {
@@ -252,18 +258,43 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         createPatientState(ctrl.changeToStateByWorkflow[workflowUuid])
     }
 
-    ctrl.enterEditMode = function(workflowUuid) {
-        // exit edit mode for any other workflows
-        for (uuid in ctrl.editModeByWorkflow) {
-            ctrl.editModeByWorkflow[uuid] = false
+
+    // functions that control showing/hiding elements for editing enrollment or states
+    ctrl.toggleEdit = {}
+
+    ctrl.toggleEdit.workflow = function(workflowUuid) {
+
+        // make sure we edit edit mode for enrollment
+        ctrl.edit.enrollment = false;
+
+        // make sure we exit edit mode for any other workflows
+        for (uuid in ctrl.edit.workflow) {
+            if (uuid != workflowUuid) {
+                ctrl.edit.workflow[uuid] = false
+            }
         }
 
-        ctrl.editModeByWorkflow[workflowUuid] = true;
+        // the first time we hit this, we need to initialize the workflw
+        if (!workflowUuid in ctrl.edit.workflow) {
+            ctrl.edit.workflow[workflowUuid] = true
+        }
+        else {
+            ctrl.edit.workflow[workflowUuid] = !ctrl.edit.workflow[workflowUuid]
+        }
     }
 
-    ctrl.exitEditMode = function(workflowUuid) {
-        ctrl.editModeByWorkflow[workflowUuid] = false;
+    ctrl.toggleEdit.enrollment = function() {
+
+        // make sure we exit edit mode for any  workflows
+        for (uuid in ctrl.edit.workflow) {
+            ctrl.edit.workflow[uuid] = false
+        }
+
+        ctrl.edit.enrollment = !ctrl.edit.enrollment;
     }
+
+
+
 
     ctrl.deleteMostRecentPatientStates = function() {
         if (ctrl.patientStateHistory.length > 0) {
