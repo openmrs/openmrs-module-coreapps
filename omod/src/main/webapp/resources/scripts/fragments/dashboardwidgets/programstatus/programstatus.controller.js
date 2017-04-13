@@ -46,6 +46,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     }
 
     // controls the state and options of the various date popups
+    // TODO the enrollment date can't be changed to be outside of any of the states
     ctrl.datePopup = {
         enrollment: {
             "opened": false,
@@ -120,6 +121,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         // assumption: only one active program
         if (patientPrograms.length > 0) {
             ctrl.patientProgram = patientPrograms[0]
+           // ctrl.input.dateEnrolled = ctrl.patientProgram.dateEnrolled  // get this working?
         }
     }
 
@@ -127,7 +129,16 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         openmrsRest.create('programenrollment', {
             patient: ctrl.config.patientUuid,
             program: ctrl.config.program,
-            dateEnrolled: ctrl.dateEnrolledInputField
+            dateEnrolled: ctrl.input.dateEnrolled
+        }).then(function(response) {
+            fetchPatientProgram(); // refresh display
+        })
+    }
+
+
+    function updatePatientProgram() {
+        openmrsRest.create('programenrollment/' + ctrl.patientProgram.uuid, {
+            dateEnrolled: ctrl.input.dateEnrolled
         }).then(function(response) {
             fetchPatientProgram(); // refresh display
         })
@@ -213,7 +224,8 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
                 "options": {
                     "maxDate": new Date(),
                     // TODO minDate should be most recent date + 1!
-                    "minDate": ctrl.getMostRecentStateForWorkflow(workflow.uuid) ? ctrl.getMostRecentStateForWorkflow(workflow.uuid).startDate : ctrl.patientProgram.dateEnrolled
+                    "minDate": ctrl.getMostRecentStateForWorkflow(workflow.uuid) ? ctrl.getMostRecentStateForWorkflow(workflow.uuid).startDate
+                        : ctrl.patientProgram ? ctrl.patientProgram.dateEnrolled : new Date()
                 }
             }
         })
@@ -233,6 +245,11 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     ctrl.enroll = function() {
        enrollInProgram();
+    }
+
+    ctrl.updatePatientProgram = function () {
+        ctrl.edit.enrollment = false;
+        updatePatientProgram();
     }
 
     ctrl.updatePatientState = function(workflowUuid, stateUuid) {
@@ -310,7 +327,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     ctrl.toggleDatePopup = {}
 
     ctrl.toggleDatePopup.enrollment = function() {
-        ctrl.toggleDatePopup.enrollment.opened = !ctrl.toggleDatePopup.enrollment.opened;
+        ctrl.datePopup.enrollment.opened = !ctrl.datePopup.enrollment.opened;
     }
 
     ctrl.toggleDatePopup.workflow = function(workflowUuid) {
