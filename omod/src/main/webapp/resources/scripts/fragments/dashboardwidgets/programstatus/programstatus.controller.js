@@ -66,6 +66,8 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         expanded: false
     }
 
+    ctrl.expanded = false;
+
     activate();
 
     function activate() {
@@ -315,6 +317,15 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     // functions that control showing/hiding elements for editing enrollment or states
     ctrl.toggleEdit = {}
 
+    ctrl.toggleEdit.enrollment = function() {
+        // make sure we exit edit mode for any  workflows
+        for (uuid in ctrl.edit.workflow) {
+            ctrl.edit.workflow[uuid] = false
+        }
+
+        ctrl.edit.enrollment = !ctrl.edit.enrollment;
+    }
+
     ctrl.toggleEdit.workflow = function(workflowUuid) {
 
         // make sure we edit edit mode for enrollment
@@ -336,16 +347,6 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         }
     }
 
-    ctrl.toggleEdit.enrollment = function() {
-
-        // make sure we exit edit mode for any  workflows
-        for (uuid in ctrl.edit.workflow) {
-            ctrl.edit.workflow[uuid] = false
-        }
-
-        ctrl.edit.enrollment = !ctrl.edit.enrollment;
-    }
-
     // functions that open the datepicker widgets for various input elements
     ctrl.toggleDatePopup = {}
 
@@ -359,6 +360,28 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     ctrl.toggleHistory =  function() {
         ctrl.history.expanded = !ctrl.history.expanded;
+    }
+
+    ctrl.toggleExpanded = function() {
+
+        if (!ctrl.expanded) {
+            angular.element(document.body).prepend('<div id="overlay"></div>');
+            ctrl.expanded = true;
+            ctrl.history.expanded = true;
+        }
+        else if (ctrl.expanded) {
+            // cancel all edit modes
+            ctrl.edit.enrollment = false;
+
+            for (uuid in ctrl.edit.workflow) {
+                ctrl.edit.workflow[uuid] = false
+            }
+
+            ctrl.expanded = false;
+            ctrl.history.expanded = false;
+
+            angular.element('#overlay').remove();
+        }
     }
 
     $scope.getTemplate = function () {
