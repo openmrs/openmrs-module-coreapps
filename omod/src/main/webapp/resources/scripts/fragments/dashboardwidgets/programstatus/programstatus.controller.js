@@ -10,11 +10,10 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO unit tests? clean up?
     // TODO localization of text
-    // TODO layout
+    // TODO layout/perhaps a way to "expand"
     // TODO validation elements--can't change state without selecting date, etc
 
-
-    // TODO handle completion + outcome?
+    // TODO handle completion + outcome? when there is outcome, then you can't change the states?
     // TODO fix voided issue in REST module
 
     var vPatientProgram = 'custom:uuid,dateEnrolled,location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
@@ -61,6 +60,10 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
             }
         },
         workflow: {}
+    }
+
+    ctrl.history = {
+        expanded: false
     }
 
     activate();
@@ -352,6 +355,10 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     ctrl.toggleDatePopup.workflow = function(workflowUuid) {
         ctrl.datePopup.workflow[workflowUuid].opened = !ctrl.datePopup.workflow[workflowUuid].opened;
+    }
+
+    ctrl.toggleHistory =  function() {
+        ctrl.history.expanded = !ctrl.history.expanded;
     }
 
     $scope.getTemplate = function () {
