@@ -6,19 +6,18 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO change widget name to program overview?
 
-    // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date
+    // TODO loading outcomes based on concepts, setting outcomes
     // TODO fix giant date widget
+    // TODO change to fill whole screen minus header?
 
+    // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)
     // TODO unit tests? clean up?
     // TODO localization of text
     // TODO validation elements--can't change state without selecting date, etc
-
     // TODO program location tag and/or configurable
-
-    // TODO handle completion + outcome? when there is outcome, then you can't change the states?
+    // TODO ability to manage the header, add a link
+    // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
     // TODO fix voided issue in REST module
-
-    // TODO deleting completion and outcome together?
 
     var vPatientProgram = 'custom:uuid,dateEnrolled,dateCompleted,outcome:{display},location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
 
@@ -26,9 +25,6 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO this should change to a new "program location" tag, and/or be configurable
     ctrl.locationTag = 'dea8febf-0bbe-4111-8152-a9cf7df622b6';
-
-    // TODO should load this from the progam
-    ctrl.outcomesConcept = '36ba7721-fae0-4da4-aef2-7e476cc04bdf';
 
     ctrl.dateFormat = (ctrl.config.dateFormat == '' || angular.isUndefined(ctrl.config.dateFormat))
         ? 'dd-MMM-yyyy' : ctrl.config.dateFormat;
@@ -50,15 +46,16 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     // backs the various input fields
     ctrl.input = {
         dateEnrolled: null,
-        dateCompleted: null,
         enrollmentLocation: null,
+        dateCompleted: null,
+        outcome: null,
         changeToStateByWorkflow: {}
     }
 
     // controls the state (open/closed) of the elements to edit enrollment & state information
     ctrl.edit = {
         enrollment: false,
-        completion: false,
+     //   completion: false,
         workflow: {}
     }
 
@@ -90,8 +87,8 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     function activate() {
         openmrsRest.setBaseAppPath("/coreapps");
         fetchLocations();
-        //fetchOutcomes();
         fetchProgram().then(function (response) {
+            fetchOutcomes();
             fetchPatientProgram();
         })
 
@@ -100,7 +97,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     function fetchProgram() {
         return openmrsRest.get('program', {
             uuid: ctrl.config.program,
-            v: 'custom:display,uuid,allWorkflows:(uuid,concept:(display),states:(uuid,concept:(display))'
+            v: 'custom:display,uuid,outcomesConcept:(uuid),allWorkflows:(uuid,concept:(display),states:(uuid,concept:(display))'
         }).then(function(response) {
             // TODO handle error cases, program doesn't exist
             ctrl.program = response;
@@ -143,7 +140,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     }
 
     function fetchLocations() {
-        return openmrsRest.get('location', {
+        openmrsRest.get('location', {
             v: 'custom:display,uuid',
             tag: ctrl.locationTag,
         }).then(function(response) {
@@ -151,16 +148,18 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         })
     }
 
-/*
+
     function fetchOutcomes() {
-        return openmrsRest.get('concept', {
-            v: 'custom:display,uuid',
-            tag: ctrl.locationTag,
-        }).then(function(response) {
-            ctrl.programLocations = response.results;
-        })
+        if (ctrl.program.outcomesConcept) {
+            openmrsRest.get('concept', {
+                v: 'custom:answers:(display,uuid)',
+                uuid: ctrl.program.outcomesConcept.uuid,
+            }).then(function (response) {
+                ctrl.programOutcomes = response.answers;
+            })
+        }
     }
-*/
+
 
     function getMostRecentProgram(patientPrograms) {
         // TODO assumption: confirm this sorts descending
@@ -172,6 +171,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
             ctrl.input.dateEnrolled = new Date(ctrl.patientProgram.dateEnrolled);
             ctrl.input.dateCompleted = ctrl.patientProgram.dateCompleted ? new Date(ctrl.patientProgram.dateCompleted) : null;
             ctrl.input.enrollmentLocation = ctrl.patientProgram.location ? ctrl.patientProgram.location.uuid : null;
+            ctrl.input.outcome = ctrl.patientProgram.outcome ? ctrl.patientProgram.outcome.uuid : null;
         }
     }
 
@@ -191,7 +191,8 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         openmrsRest.create('programenrollment/' + ctrl.patientProgram.uuid, {
             dateEnrolled: ctrl.input.dateEnrolled,
             dateCompleted: ctrl.input.dateCompleted,
-            location: ctrl.input.enrollmentLocation
+            location: ctrl.input.enrollmentLocation,
+            outcome: ctrl.input.outcome
         }).then(function(response) {
             fetchPatientProgram(); // refresh display
         })
@@ -302,7 +303,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     function cancelAllEditModes() {
 
         ctrl.edit.enrollment = false;
-        ctrl.edit.completion = false;
+      //  ctrl.edit.completion = false;
 
         for (uuid in ctrl.edit.workflow) {
             ctrl.edit.workflow[uuid] = false
@@ -365,11 +366,11 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         ctrl.edit.enrollment = !currentStatus;
     }
 
-    ctrl.toggleEdit.completion = function() {
+  /*  ctrl.toggleEdit.completion = function() {
         var currentStatus = ctrl.edit.completion;
         cancelAllEditModes();
         ctrl.edit.completion = !currentStatus;
-    }
+    }*/
 
     ctrl.toggleEdit.workflow = function(workflowUuid) {
         var currentStatus = ctrl.edit.workflow[workflowUuid];

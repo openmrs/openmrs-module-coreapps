@@ -60,13 +60,13 @@ li  {
 <div ng-class="{expanded: ctrl.expanded}">
     <ul ng-class="{'eighty-percent-font': !ctrl.expanded}" ng-if="!ctrl.patientProgram">
         <li>
-            Enrollment Date:
+            <b>Enrollment Date:</b>
             <input type="text" uib-datepicker-popup="{{ctrl.dateFormat}}" datepicker-options="ctrl.datePopup.enrollment.options" ng-model="ctrl.input.dateEnrolled"
                    is-open="ctrl.datePopup.enrollment.opened" close-text="Close" />
             <i class="icon-calendar" ng-click="ctrl.toggleDatePopup.enrollment()"/>
         </li>
         <li>
-            Enrollment Location:
+            <b>Enrollment Location:</b>
             <select ng-model="ctrl.input.enrollmentLocation"
                     ng-options="location.uuid as location.display for location in ctrl.programLocations">
                     <option value=""></option>
@@ -82,42 +82,47 @@ li  {
             <i ng-if="!ctrl.expanded" ng-click="ctrl.toggleExpanded()" class="icon-pencil right no-padding"/>
 
             <i ng-if="ctrl.expanded && !ctrl.edit.enrollment" ng-click="ctrl.toggleEdit.enrollment()" class="icon-pencil right no-padding"/>
-            Enrolled: {{ ctrl.patientProgram.dateEnrolled | date:ctrl.dateFormat }} <span ng-if="ctrl.patientProgram.location">at {{ ctrl.patientProgram.location.display }}</span>
+            <b>Enrolled:</b> {{ ctrl.patientProgram.dateEnrolled | date:ctrl.dateFormat }} <span ng-if="ctrl.patientProgram.location">at {{ ctrl.patientProgram.location.display }}</span>
         </li>
 
         <li ng-if="ctrl.edit.enrollment">
             <icon class="icon-remove right"  ng-click="ctrl.toggleEdit.enrollment()" />
             <icon class="icon-check right" ng-click="ctrl.updatePatientProgram()"/>
-            Enrolled:
+            <b>Enrolled:</b>
             <input class="inline-block" type="text" uib-datepicker-popup="{{ctrl.dateFormat}}" datepicker-options="ctrl.datePopup.enrollment.options" ng-model="ctrl.input.dateEnrolled"
                    is-open="ctrl.datePopup.enrollment.opened" close-text="Close"/>
             <i class="icon-calendar inline-block" ng-click="ctrl.toggleDatePopup.enrollment()"/>
         </li>
 
         <li ng-if="ctrl.edit.enrollment">
-            Location:
+            <b>Location:</b>
             <select ng-model="ctrl.input.enrollmentLocation"
                     ng-options="location.uuid as location.display for location in ctrl.programLocations">
                 <option value=""></option>
             </select>
         </li>
 
-        <li ng-if="!ctrl.edit.completion && (ctrl.patientProgram.dateCompleted || ctrl.expanded)">
-            <i ng-if="!ctrl.edit.completion && ctrl.expanded" ng-click="ctrl.toggleEdit.completion()" class="icon-pencil right no-padding"/>
-            Completed: {{ ctrl.patientProgram.dateCompleted | date:ctrl.dateFormat }}
+        <li ng-if="!ctrl.edit.enrollment && ctrl.patientProgram.dateCompleted">
+            <b>Completed:</b> {{ ctrl.patientProgram.dateCompleted | date:ctrl.dateFormat }}
         </li>
 
-        <li ng-if="ctrl.edit.completion">
-            <icon class="icon-remove right"  ng-click="ctrl.toggleEdit.completion()" />
-            <icon class="icon-check right" ng-click="ctrl.updatePatientProgram()"/>
-            Completed:
+        <li ng-if="ctrl.edit.enrollment">
+            <b>Completed:</b>
             <input class="inline-block" type="text" uib-datepicker-popup="{{ctrl.dateFormat}}" datepicker-options="ctrl.datePopup.completion.options" ng-model="ctrl.input.dateCompleted"
                    is-open="ctrl.datePopup.completion.opened" close-text="Close"/>
             <i class="icon-calendar inline-block" ng-click="ctrl.toggleDatePopup.completion()"/>
         </li>
 
-        <li ng-if="ctrl.patientProgram.dateCompleted">
-            Outcome:
+        <li ng-if="!ctrl.edit.enrollment && ctrl.patientProgram.dateCompleted">
+            <b>Outcome:</b> {{ ctrl.patientProgram.outcome.display }}
+        </li>
+
+        <li ng-if="ctrl.edit.enrollment">
+            <b>Outcome:</b>
+            <select ng-model="ctrl.input.outcome"
+                    ng-options="outcome.uuid as outcome.display for outcome in ctrl.programOutcomes">
+                <option value=""></option>
+            </select>
         </li>
 
         <div ng-repeat="workflow in ctrl.program.allWorkflows track by $index" ng-if="ctrl.program.allWorkflows.length != 0">
@@ -146,7 +151,7 @@ li  {
 
     <div ng-if="ctrl.hasHistory()">
         <span ng-class="{'eighty-percent-font': !ctrl.expanded}">
-            History
+            <b>History</b>
             <i ng-click="ctrl.toggleHistory()" ng-if="!ctrl.expanded && !ctrl.history.expanded" class="icon-plus"/>
             <i ng-click="ctrl.toggleHistory()" ng-if="!ctrl.expanded && ctrl.history.expanded" class="icon-minus"/>
         </span>
@@ -157,14 +162,14 @@ li  {
                 <th ng-repeat="workflow in ctrl.program.allWorkflows">
                     {{ workflow.concept.display }}
                 </th>
-                <th>&nbsp;</th>
+                <th ng-if="ctrl.expanded">&nbsp;</th>
             </tr>
             <tr ng-repeat="row in ctrl.patientStateHistory">
                 <td>{{ row.startDate | date:ctrl.dateFormat }} </td>
                     <td ng-repeat="workflow in ctrl.program.allWorkflows">
                         {{ row.patientStatesByWorkflow[workflow.uuid].state.concept.display }}
                     </td>
-                <td>
+                <td ng-if="ctrl.expanded">
                     <i ng-if="$first" class="icon-remove right" ng-click="ctrl.deleteMostRecentPatientStates()"/>
                 </td>
             </tr>
