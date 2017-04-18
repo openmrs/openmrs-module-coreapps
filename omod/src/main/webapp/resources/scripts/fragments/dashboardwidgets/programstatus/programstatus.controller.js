@@ -6,8 +6,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO change widget name to program overview?
 
-    // TODO loading outcomes based on concepts, setting outcomes
-    // TODO fix giant date widget
+    // TODO fix giant date widget--figure out how to bundle in bootstrap.css?
     // TODO change to fill whole screen minus header?
 
     // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)
