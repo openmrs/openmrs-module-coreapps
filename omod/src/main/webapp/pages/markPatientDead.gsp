@@ -1,5 +1,6 @@
 <%
     ui.includeJavascript("coreapps", "custom/markPatientDead.js")
+    ui.includeCss("coreapps", "patientdashboard/patientDashboard.css")
     ui.decorateWith("appui", "standardEmrPage", [title: ui.message("coreapps.markPatientDead.label")])
 
     def htmlSafeId = { extension ->
@@ -12,7 +13,6 @@
     def breadcrumbMiddle = breadcrumbOverride ?: '';
 %>
 <script type="text/javascript">
-
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
         {
@@ -51,11 +51,11 @@
             if (jq('#deceased').is(":checked")) {
                 // validate that the date of death and cause of death are not empty
                 if (jq('#death-date-display').val()=="") {
-                    jq("#death-date > .field-error").append("Please select the date of death").show();
+                    jq("#death-date > .field-error").append("${ui.message("coreapps.markPatientDead.dateOfDeath.errorMessage")}").show();
                     hasError = true;
                 }
                 if (jq('#cause-of-death').val()=="") {
-                    jq("#cause-of-death-container > .field-error").append("Please select the cause of death").show();
+                    jq("#cause-of-death-container > .field-error").append("${ui.message("coreapps.markPatientDead.causeOfDeath.errorMessage")}").show();
                     hasError = true;
                 }
             }
@@ -64,19 +64,7 @@
 
     });
 </script>
-<style type="text/css">
-#death-date-display {
-    min-width: 35%;
-}
 
-span.field-error {
-    padding: 1px 6px 1px 6px;
-    margin-left: 4px;
-    margin-right: 4px;
-    vertical-align: middle;
-    color: red;
-}
-</style>
 ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
 <h3>${ui.message("coreapps.markPatientDead.label")}</h3>
 
@@ -102,7 +90,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
         <p>
             <span id="death-date-container">
                 ${ui.includeFragment("uicommons", "field/datetimepicker", [
-                        label        : "coreapps.markpatientdeceased.dateofdeath",
+                        label        : "coreapps.markPatientDead.dateOfDeath",
                         formFieldName: "deathDate",
                         left         : true,
                         defaultDate  : patient?.getDeathDate() ?: null,
@@ -121,10 +109,10 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
         <p>
             <span id="cause-of-death-container">
                 <label for="cause-of-death">
-                    <span>${ui.message("coreapps.markpatientdeceased.causeofdeath")}</span>
+                    <span>${ui.message("coreapps.markPatientDead.causeOfDeath")}</span>
                 </label>
                 <select name="causeOfDeath" id="cause-of-death">
-                    <option value="">Select Cause Of Death</option>
+                    <option value="">${ui.message("coreapps.markPatientDead.causeOfDeath.selectTitle")}</option>
                     <% if (conceptAnswers != null) {
                         conceptAnswers.each {
                     %>
@@ -141,14 +129,14 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                 </select>
                 <span class="field-error" style="display: none;"></span>
                 <% if (conceptAnswers == null) { %>
-                <div>You are missing concept Cause of death</div>
+                <div><${ui.message("coreapps.markPatientDead.causeOfDeath.missingConcepts")}</div>
                 <% } %>
             </span>
         </p>
 
         <p>
             <span>
-                <input type="submit" class="confirm" value="Submit">
+                <input type="submit" class="confirm" value="${ ui.message("coreapps.markPatientDead.submitValue")}">
             </span>
         </p>
     </fieldset>

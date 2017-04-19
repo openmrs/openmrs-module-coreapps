@@ -36,7 +36,7 @@
         "type": "Link",
         "label": "coreapps.markPatientDead.label",
         "url": "coreapps/markPatientDead.page?patientId={{patient.uuid}}",
-        "icon": "icon-ambulance",
+        "icon": "icon-plus-sign-alt",
         "order": 24
     },
     {
