@@ -22,7 +22,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" , link: '${ui.escapeJs(returnUrl)}'},
+        { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" , link: '${ui.escapeJs( ui.encodeHtmlAttribute(returnUrl) )}'},
         { label: "${ ui.message("coreapps.task.mergeVisits.label")}"}
     ];
 
@@ -128,10 +128,10 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
         </tbody>
     </table>
     <input type="hidden" name="patientId" value="${ patient.patient.id }" />
-	<input type="hidden" name="returnUrl" value="${ returnUrl }" />
+	<input type="hidden" name="returnUrl" value="${ ui.encodeHtmlAttribute(returnUrl) }" />
 
     <div>
-        <input type="button" class="cancel" value="${ ui.message("coreapps.return") }" onclick="javascript:window.location='${ returnUrl }'" />
+        <input type="button" class="cancel" value="${ ui.message("coreapps.return") }" onclick="javascript:window.location='${ ui.encodeJavaScript(returnUrl) }'" />
         <input type="submit" id="mergeVisitsBtn" class="confirm" value="${ ui.message("coreapps.task.mergeVisits.mergeSelectedVisits") }" />
     </div>
 </form>
