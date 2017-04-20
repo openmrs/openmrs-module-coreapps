@@ -25,6 +25,7 @@ public class CoreAppsConstants {
    public static final String PRIVILEGE_START_VISIT = "Task: coreapps.createVisit";
    public static final String PRIVILEGE_END_VISIT = "Task: coreapps.endVisit";
    public static final String PRIVILEGE_DELETE_PATIENT = "Task: coreapps.deletePatient";
+   public static final String PRIVILEGE_EDIT_RELATIONSHIPS = "Task: coreapps.editRelationships";
 
    public static final String GP_RECENT_DIAGNOSIS_PERIOD_IN_DAYS = "coreapps.recentDiagnosisPeriodInDays";
 
