@@ -1,11 +1,78 @@
 <ul>
     <li ng-if="ctrl.relationships.length != 0" ng-repeat="relationship in ctrl.relationships track by $index">
         <a ng-click="ctrl.goTo(relationship.toPerson.uuid)">
-            {{relationship.toPerson.person.display}} ({{relationship.toPerson.birthdate | date:'yyyy-MM-dd'}})
+            {{relationship.toPerson.person.display}}
         </a>
+
         <div class="tag">{{relationship.type}}</div>
+        <div ng-if="ctrl.hasEditPrivileges == true && ctrl.removeFlag == false" class="remove-tag">
+            <a class="remove-link" ng-click="ctrl.removeRelationship(relationship.uuid)">
+                <i class="icon-remove" title="Remove relationship"></i>
+            </a>
+        </div>
+
     </li>
     <p ng-if="ctrl.relationships.length == 0">
         None
     </p>
+
+    <li ng-if="ctrl.removeFlag == true">
+        Are you sure you want to remove this relationship?
+    </li>
+
+    <li ng-if="ctrl.hasEditPrivileges == true && ctrl.edit == false && ctrl.removeFlag == false">
+        <a ng-click="ctrl.addRelationship()">
+            <i class="icon-plus-sign" title="Add relationship"></i>
+        </a>
+    </li>
+
+    <li ng-if="ctrl.edit == true">
+        Add new relationship
+    </li>
+
+    <li ng-if="ctrl.edit == true">
+        <p class="left">
+        <select class="relationship-input" ng-options="type as type.name for type in ctrl.types"
+                ng-model="ctrl.relationshipType" ng-change="ctrl.updateRelationshipType()">
+            <option value="">What type of relationship?</option>
+        </select>
+
+        </p>
+    </li>
+    <li ng-if="ctrl.showFindOtherPerson == true">
+        &nbsp;
+    </li>
+    <li ng-if="ctrl.showFindOtherPerson == true">
+        <p class="left">
+            <input type="text" class="person-typeahead relationship-input" placeholder="Find {{ctrl.relationshipType.name}}"
+                   ng-model="ctrl.searchPerson"
+                   typeahead-no-results="noResults"
+                   ng-change="ctrl.searchPersons()"
+                   uib-typeahead="person as person.display + ' (' + person.gender + ', ' + (person.age ? person.age:'') + ')' for person in ctrl.relatedPersons"
+                   typeahead-wait-ms="250"
+                   typeahead-select-on-exact="true"
+                   typeahead-min-length="3"
+                   typeahead-on-select="ctrl.onSelect($item, $model, $label)"
+                   />
+        </p>
+    </li>
+
+    <li ng-if="ctrl.edit == true">
+        <p>
+        <div>
+            <button class="tag" ng-if="ctrl.showSaveButton" ng-click="ctrl.save()">Save</button>
+            <button class="cancel-tag" ng-click="ctrl.cancel()">Cancel</button>
+        </div>
+        </p>
+    </li>
+
+    <li ng-if="ctrl.removeFlag == true">
+        <p>
+        <div>
+            <button class="tag" ng-click="ctrl.remove()">Remove</button>
+            <button class="cancel-tag" ng-click="ctrl.cancel()">Cancel</button>
+        </div>
+        </p>
+    </li>
+
 </ul>

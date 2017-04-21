@@ -191,3 +191,31 @@ $green: #51A351;
 .left-margin{
   margin-left: 10px
 }
+
+.relationship-input {
+  width: 300px;
+}
+
+.remove-tag {
+  display: inline;
+  float: right;
+  padding: 2px 5px;
+  border-radius: 1px;
+  font-size: 0.8em;
+}
+
+.remove-link {
+  color: #003f5e;
+}
+
+.cancel-tag {
+  background: #ff6666;
+  float: left;
+  min-width: 66px;
+  text-align: center;
+  color: white;
+  display: inline;
+  padding: 2px 5px;
+  border-radius: 1px;
+  font-size: 0.8em;
+}
