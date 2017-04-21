@@ -44,7 +44,7 @@ function RelationshipsController(openmrsRest, $scope) {
         openmrsRest.get('relationship', {
             person: ctrl.config.patientUuid,
             limit: getMaxRecords(),
-            v: 'custom:(uuid,personA:(uuid,person:(display),birthdate),personB:(uuid,person:(display),birthdate),relationshipType:(uuid,aIsToB,bIsToA))'
+            v: 'custom:(uuid,personA:(uuid,display,birthdate),personB:(uuid,display,birthdate),relationshipType:(uuid,aIsToB,bIsToA))'
         }).then(function (response) {
                 getRelationships(response.results);
         })

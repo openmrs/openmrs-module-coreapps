@@ -1,7 +1,7 @@
 <ul>
     <li ng-if="ctrl.relationships.length != 0" ng-repeat="relationship in ctrl.relationships track by $index">
         <a ng-click="ctrl.goTo(relationship.toPerson.uuid)">
-            {{relationship.toPerson.person.display}}
+            {{relationship.toPerson.display}}
         </a>
 
         <div class="tag">{{relationship.type}}</div>
