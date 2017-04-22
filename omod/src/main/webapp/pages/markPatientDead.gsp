@@ -1,6 +1,6 @@
 <%
     ui.includeJavascript("coreapps", "custom/markPatientDead.js")
-    ui.includeCss("coreapps", "markpatientdead/markPatientDead.scss")
+    ui.includeCss("coreapps", "markpatientdead/markPatientDead.css")
     ui.decorateWith("appui", "standardEmrPage", [title: ui.message("coreapps.markPatientDead.label")])
 
     def htmlSafeId = { extension ->
