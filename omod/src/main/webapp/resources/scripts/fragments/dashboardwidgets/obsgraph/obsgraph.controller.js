@@ -37,13 +37,14 @@ function ObsGraphController($scope, openmrsRest, widgetCommons) {
                 // Set concept to display
                 ctrl.concept = obss[0].concept;
                 ctrl.series.push(ctrl.concept.display);
-                for (let obs of obss) {
+                for (var i = 0; i < obss.length; i++) {
+                    var obs = obss[i];
                     // Show numeric concepts only
                     if (obs.concept.datatype.display == 'Numeric') {
                         // Don't add obs older than maxAge
                         if (angular.isUndefined(ctrl.maxAgeInDays) || ctrl.widgetCommons.dateToDaysAgo(obs.obsDatetime) <= ctrl.maxAgeInDays) {
                             // Add obs data for chart display
-                            let date = new Date(obs.obsDatetime);
+                            var date = new Date(obs.obsDatetime);
                             ctrl.labels.unshift(date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear());
                             ctrl.data[0].unshift(obs.value);
                         }

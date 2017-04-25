@@ -18,8 +18,9 @@ function DataIntegrityViolationsController($scope, openmrsRest) {
             ctrl.config.maxResults = 6;
         }
         openmrsRest.list('dataintegrity/integrityresults',{patient: ctrl.config.patientUuid, v: 'full', limit: ctrl.config.maxResults}).then(function (resp) {
-            for (let dataViolation of resp.results) {
-                ctrl.dataViolations.push(dataViolation);
+            var index;
+            for (index = 0; index < resp.results.length; index++) {
+                ctrl.dataViolations.push(resp.results[index]);
             }
         })
     };
