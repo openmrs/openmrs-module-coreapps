@@ -15,6 +15,7 @@ function RelationshipsController(openmrsRest, $scope) {
     function initialize() {
         ctrl.relationships = [];
         ctrl.types = [];
+        ctrl.allowedTypes = [];
         ctrl.relationshipType = [];
         ctrl.hasEditPrivileges = false;
         ctrl.edit = false;
@@ -36,6 +37,11 @@ function RelationshipsController(openmrsRest, $scope) {
         if( ctrl.config.patientPage ) {
             ctrl.patientPage = ctrl.config.patientPage;
         }
+
+        if (ctrl.config.includeRelationshipTypes ) {
+            ctrl.allowedTypes = ctrl.config.includeRelationshipTypes.split(',');
+        }
+
         fetchPrivileges();
         fetchRelationships();
         fetchRelationshipTypes();
@@ -64,6 +70,15 @@ function RelationshipsController(openmrsRest, $scope) {
         })
     }
 
+    function relationshipsContain(personUuid) {
+        var result = false;
+        angular.forEach(ctrl.relationships, function(relationship) {
+            if (relationship.toPerson.uuid == personUuid) {
+                result = true;
+            }
+        });
+        return result;
+    }
 
     function fetchRelationshipTypes() {
         openmrsRest.get('relationshiptype', {
@@ -97,25 +112,41 @@ function RelationshipsController(openmrsRest, $scope) {
             q: searchString,
             v: 'custom:(uuid,display,gender,age)'
         }).then(function(response) {
-            ctrl.relatedPersons = response.results;
+            ctrl.relatedPersons = [];
+            filterSearchedPersons(response.results);
         });
+    }
+
+    function filterSearchedPersons(searchedPersons) {
+        if (angular.isArray(searchedPersons) && searchedPersons.length > 0) {
+            angular.forEach(searchedPersons, function(person) {
+                if( !relationshipsContain( person.uuid ) ) {
+                    // when searching for persons to create new relationships exclude the persons that already have a relationship with this person
+                    ctrl.relatedPersons.push(person);
+                }
+            });
+        }
     }
 
     function getRelationshipTypes(types) {
         angular.forEach(types, function (type) {
-            if (findRelTypeByName(type.aIsToB) == null) {
-                var relTypeA = {};
-                relTypeA.uuid = type.uuid;
-                relTypeA.name = type.aIsToB;
-                relTypeA.type = "B";
-                ctrl.types.push(relTypeA);
-            }
-            if (findRelTypeByName(type.bIsToA) == null) {
-                var relTypeB = {};
-                relTypeB.uuid = type.uuid;
-                relTypeB.name = type.bIsToA;
-                relTypeB.type = "A";
-                ctrl.types.push(relTypeB);
+            if ((ctrl.allowedTypes.length < 1) || ((ctrl.allowedTypes.length > 0)
+                && (ctrl.allowedTypes.indexOf(type.uuid) !== -1))) {
+                // if the relationship type uuid is in the allowed list
+                if (findRelTypeByName(type.aIsToB) == null) {
+                    var relTypeA = {};
+                    relTypeA.uuid = type.uuid;
+                    relTypeA.name = type.aIsToB;
+                    relTypeA.type = "B";
+                    ctrl.types.push(relTypeA);
+                }
+                if (findRelTypeByName(type.bIsToA) == null) {
+                    var relTypeB = {};
+                    relTypeB.uuid = type.uuid;
+                    relTypeB.name = type.bIsToA;
+                    relTypeB.type = "A";
+                    ctrl.types.push(relTypeB);
+                }
             }
         });
     }
@@ -232,7 +263,8 @@ function RelationshipsController(openmrsRest, $scope) {
     }
 
     ctrl.searchPersons = function() {
-        if (angular.isDefined(ctrl.searchPerson) && (ctrl.searchPerson.length > ctrl.minSearchLength) ) {
+        if (angular.isDefined(ctrl.searchPerson) &&
+            (ctrl.searchPerson.length > ctrl.minSearchLength) ) {
             getPersons(ctrl.searchPerson);
         }
     }

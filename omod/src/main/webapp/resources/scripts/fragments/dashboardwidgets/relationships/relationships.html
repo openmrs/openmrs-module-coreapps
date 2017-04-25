@@ -5,7 +5,7 @@
         </a>
 
         <div class="tag">{{relationship.type}}</div>
-        <div ng-if="ctrl.hasEditPrivileges == true && ctrl.removeFlag == false" class="remove-tag">
+        <div ng-if="ctrl.hasEditPrivileges == true && ctrl.removeFlag == false && ctrl.edit == false" class="remove-tag">
             <a class="remove-link" ng-click="ctrl.removeRelationship(relationship.uuid)">
                 <i class="icon-remove" title="Remove relationship"></i>
             </a>
@@ -21,7 +21,7 @@
     </li>
 
     <li ng-if="ctrl.hasEditPrivileges == true && ctrl.edit == false && ctrl.removeFlag == false">
-        <a ng-click="ctrl.addRelationship()">
+        <a class="add-link" ng-click="ctrl.addRelationship()">
             <i class="icon-plus-sign" title="Add relationship"></i>
         </a>
     </li>
