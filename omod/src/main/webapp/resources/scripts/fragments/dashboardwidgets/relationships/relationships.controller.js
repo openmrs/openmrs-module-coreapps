@@ -263,7 +263,8 @@ function RelationshipsController(openmrsRest, $scope) {
     }
 
     ctrl.searchPersons = function() {
-        if (angular.isDefined(ctrl.searchPerson) && (ctrl.searchPerson.length > ctrl.minSearchLength) ) {
+        if (angular.isDefined(ctrl.searchPerson) &&
+            (ctrl.searchPerson.length > ctrl.minSearchLength) ) {
             getPersons(ctrl.searchPerson);
         }
     }
