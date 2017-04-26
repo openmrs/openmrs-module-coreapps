@@ -20,7 +20,7 @@ delPatient.createDeletePatientCreationDialog = function() {
                 var deleteReason = jq('#delete-reason').val().trim(); //Retrieve text from text box
                 if(deleteReason && deleteReason.length > 0) { //Should not be invalid or empty
                     jq.ajax({
-                        url: '/openmrs/ws/rest/v1/patient/'+delPatient.patientUUID+'?reason='+deleteReason,
+                        url: '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/patient/'+delPatient.patientUUID+'?reason='+deleteReason,
                         type: 'DELETE',
                         success: function() {
                             emr.successMessage('coreapps.task.deletePatient.deletePatientSuccessful');
