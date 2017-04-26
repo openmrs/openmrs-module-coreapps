@@ -130,9 +130,10 @@ function RelationshipsController(openmrsRest, $scope) {
 
     function getRelationshipTypes(types) {
         angular.forEach(types, function (type) {
-            if ((ctrl.allowedTypes.length < 1) || ((ctrl.allowedTypes.length > 0)
-                && (ctrl.allowedTypes.indexOf(type.uuid) !== -1))) {
-                // if the relationship type uuid is in the allowed list
+            if ((ctrl.allowedTypes.length < 1) ||
+                ((ctrl.allowedTypes.length > 0) && (ctrl.allowedTypes.indexOf(type.uuid) !== -1))) {
+                // if a relationship type filter was not specified then we display all types,
+                // OR if a filter was defined then we only display the types included in the filter
                 if (findRelTypeByName(type.aIsToB) == null) {
                     var relTypeA = {};
                     relTypeA.uuid = type.uuid;
