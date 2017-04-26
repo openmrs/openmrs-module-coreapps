@@ -14,7 +14,9 @@ function DataIntegrityViolationsController($scope, openmrsRest) {
     ctrl.initialize = function () {
         openmrsRest.setBaseAppPath("/coreapps");
 
-        ctrl.serverUrl = openmrsRest.getServerUrl();
+        openmrsRest.getServerUrl().then(function (result) {
+            ctrl.serverUrl = result;
+        });
 
         // Set default maxResults if not defined
         if (angular.isUndefined(ctrl.config.maxResults)) {

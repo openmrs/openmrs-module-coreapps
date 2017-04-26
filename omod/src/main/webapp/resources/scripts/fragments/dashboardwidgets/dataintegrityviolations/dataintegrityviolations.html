@@ -3,7 +3,7 @@
         <li ng-repeat="dataViolation in ctrl.dataViolations">
             {{dataViolation.rule.ruleName}}
             <div class="tag" ng-if="dataViolation.actionUrl">
-                <a style="color: white" href="{{::ctrl.serverUrl}}/{{dataViolation.actionUrl}}">
+                <a style="color: white" href="{{ctrl.serverUrl}}/{{dataViolation.actionUrl}}">
                     <strong>
                         Fix
                     </strong>
