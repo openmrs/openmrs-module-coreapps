@@ -7,8 +7,8 @@
     "config": {
       "widget": "latestobsforconceptlist",
       "icon": "icon-user-md",
-      "label": "Concept List",
-      "maxAge": "10d",
+      "label": "LATEST OBSERVATIONS",
+      "maxAge": "1m",
       "concepts": "5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     },
     "extensions": [
@@ -31,10 +31,10 @@
     "config": {
       "widget": "obsacrossencounters",
       "icon": "icon-user-md",
-      "label": "Health Trend Summary",
+      "label": "HEALTH TREND SUMMARY",
       "concepts": "5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      "maxRecords": "3",
-      "maxAge": "1w"
+      "maxRecords": "5",
+      "maxAge": "1m"
     },
     "extensions": [
       {
@@ -56,7 +56,7 @@
     "config": {
       "widget": "visitbyencountertype",
       "icon": "icon-group",
-      "label": "Recent Visits",
+      "label": "RECENT VISITS",
       "maxRecords": "3",
       "maxAge": "3m",
       "combineEncounterTypes": "true"
@@ -81,10 +81,10 @@
     "config": {
       "widget": "obsgraph",
       "icon": "icon-bar-chart",
-      "label": "Obs Graph",
-      "conceptId": "5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      "maxResults": "6",
-      "maxAge": "1w"
+      "label": "WEIGHT GRAPH",
+      "conceptId": "5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "maxResults": "10",
+      "maxAge": "1y"
     },
     "extensions": [
       {
@@ -106,8 +106,8 @@
     "config": {
       "widget": "relationships",
       "icon": "icon-group",
-      "label": "Family",
-      "maxRecords": "3"
+      "label": "FAMILY",
+      "maxRecords": "5"
     },
     "extensions": [
       {
