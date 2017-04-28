@@ -14,7 +14,7 @@ $(function() {
 		showDeleteEncounterDialog();
 	});
 
-    $(document).on('click', '.editEncounter', function(event) {
+    $(document).on('click', '.editEncounter, .viewEncounter', function(event) {
         var encounterId = $(event.target).attr("data-encounter-id");
         var patientId = $(event.target).attr("data-patient-id");
         var editUrl = $(event.target).attr("data-edit-url");
