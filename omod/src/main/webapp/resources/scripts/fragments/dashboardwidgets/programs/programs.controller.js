@@ -35,15 +35,12 @@ function ProgramsController(openmrsRest, $scope) {
     }
 
     function getMaxRecords() {
-        if(ctrl.config.maxRecords == '' || angular.isUndefined(ctrl.config.maxRecords)){
+        if (ctrl.config.maxRecords == '' || angular.isUndefined(ctrl.config.maxRecords)) {
             return 10;
         } else {
             return ctrl.config.maxRecords;
         }
     }
-
-    $scope.dateFormat = (ctrl.config.dateFormat == '' || angular.isUndefined(ctrl.config.dateFormat))
-                            ? 'yyyy-MM-dd' : ctrl.config.dateFormat;
 
 
     $scope.getTemplate = function () {
