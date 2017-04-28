@@ -2,7 +2,7 @@
 var scripts = document.getElementsByTagName("script");
 var obsgraphPath = scripts[scripts.length - 1].src;
 
-function ObsGraphController($scope, openmrsRest, widgetCommons) {
+function ObsGraphController($scope, $filter, openmrsRest, widgetCommons) {
     $scope.getTemplate = function () {
         return obsgraphPath.replace(".controller.js", ".html");
     };
@@ -44,8 +44,8 @@ function ObsGraphController($scope, openmrsRest, widgetCommons) {
                         // Don't add obs older than maxAge
                         if (angular.isUndefined(ctrl.maxAgeInDays) || ctrl.widgetCommons.dateToDaysAgo(obs.obsDatetime) <= ctrl.maxAgeInDays) {
                             // Add obs data for chart display
-                            var date = new Date(obs.obsDatetime);
-                            ctrl.labels.unshift(date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear());
+                            var date = $filter('date')(new Date(obs.obsDatetime), ctrl.config.dateFormat);
+                            ctrl.labels.unshift(date);
                             ctrl.data[0].unshift(obs.value);
                         }
                     }
