@@ -150,6 +150,45 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
+		
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>webservices.rest-omod-common</artifactId>
+			<version>2.18.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.openmrs.module</groupId>-->
+			<!--<artifactId>webservices.rest-omod-common</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.openmrs.module</groupId>-->
+			<!--<artifactId>webservices.rest-omod-1.8</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.openmrs.module</groupId>-->
+			<!--<artifactId>webservices.rest-omod-1.9</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.openmrs.module</groupId>-->
+			<!--<artifactId>webservices.rest-omod-1.10</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.openmrs.module</groupId>-->
+			<!--<artifactId>webservices.rest-omod-1.11</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.openmrs.module</groupId>-->
+			<!--<artifactId>webservices.rest-omod-1.12</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.openmrs.module</groupId>-->
+			<!--<artifactId>webservices.rest-omod-2.0</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.openmrs.module</groupId>-->
+			<!--<artifactId>webservices.rest-omod-2.1</artifactId>-->
+		<!--</dependency>-->
 
         <!-- End OpenMRS modules -->
 		
