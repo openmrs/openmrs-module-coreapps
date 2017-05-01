@@ -12,7 +12,6 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
-import org.openmrs.util.OpenmrsConstants;
 
 import java.io.IOException;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class DashboardWidgetFragmentController {
         }
         appConfig.put("patientUuid", patientWrapper.getPatient().getUuid());
 
-        if (!appConfig.has("dateFormat")) {
+        if (appConfig.get("dateFormat") == null) {
             appConfig.put("dateFormat", adminService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATE_FORMAT, "yyyy-MM-dd"));
         }
 
