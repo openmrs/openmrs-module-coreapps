@@ -49,6 +49,7 @@
         <providermanagementVersion>2.5.0</providermanagementVersion>
         <idgenVersion>4.4.0</idgenVersion>
         <uicommonsVersion>2.2.0</uicommonsVersion>
+		<webservicesRestVersion>2.18.0</webservicesRestVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -215,6 +216,55 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>uicommons-api</artifactId>
 				<version>${uicommonsVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-common</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-1.8</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-1.9</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-1.10</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-1.11</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-1.12</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-2.0</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-2.1</artifactId>
+				<version>${webservicesRestVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 		</dependencies>
