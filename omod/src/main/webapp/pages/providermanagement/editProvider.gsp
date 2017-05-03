@@ -2,6 +2,7 @@
     ui.decorateWith("appui", "standardEmrPage")
 
     ui.includeCss("coreapps", "bootstrap.css")
+    ui.includeCss("coreapps", "providermanagement/providermanagement.css")
 
     ui.includeJavascript("coreapps", "providermanagement/editProvider.js")
 
@@ -26,7 +27,9 @@
 
     def assignedSupervisor = null
     supervisorsForProvider.each {
-        assignedSupervisor = it.person.personName
+        if (it.relationship.endDate == null) {
+            assignedSupervisor = it.person.personName
+        }
     }
     def editDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd")
     def  formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
@@ -63,6 +66,7 @@
         var addPatientDialog = null;
         var removePatientDialog = null;
         var addSupervisorDialog = null;
+        var retireProviderDialog = null;
         var supervisors = null;
 
         jq('#patient-search').attr("size", "40");
@@ -70,6 +74,13 @@
         jq("#add-patient-button").click(function(event) {
             createAddPatientDialog();
             showAddPatientDialog();
+            event.preventDefault();
+        });
+
+        jq("#retire-button").click(function(event) {
+            var providerId = jq(event.target).attr("data-provider-id");
+            createRetireProviderDialog(providerId);
+            showRetireProviderDialog();
             event.preventDefault();
         });
 
@@ -179,6 +190,32 @@
     </div>
 </div>
 
+<div id="retire-provider-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("providermanagement.retireProvider") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="providerId" value="${account.person.personId}"/>
+
+        <span>${ ui.message("providermanagement.confirmRetire") }</span>
+
+        <div class="panel-body ">
+            <fieldset>
+                <p>
+                    ${ ui.includeFragment("uicommons", "field/text", [
+                            id: "retireReason",
+                            formFieldName: "retireReason",
+                            label: ui.message("providermanagement.retireReason")
+                    ])}
+                </p>
+            </fieldset>
+        </div>
+
+        <button id="retire-provider-button" class="confirm right">${ ui.message("general.retire") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
+    </div>
+</div>
+
 <div id="remove-patient-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
         <h3>${ ui.message("coreapps.relationships.delete.header") }</h3>
@@ -260,7 +297,7 @@
 <h3>${ (createAccount) ? ui.message("Provider.create") : ui.message("Provider.edit") }</h3>
 
 <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-5">
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3 class="panel-title">${ui.message("providermanagement.provider")}</h3>
@@ -377,6 +414,9 @@
                     <div>
                         <input type="button" class="cancel" value="${ ui.message("emr.cancel") }" onclick="javascript:window.location='/${ contextPath }/coreapps/providermanagement/providerList.page'" />
                         <input type="submit" class="confirm" id="save-button" value="${ ui.message("emr.save") }"  />
+                        <% if (createAccount != true ) { %>
+                            <input type="button" id="retire-button" value="${ ui.message("general.retire") }" data-provider-id="${account.person.personId}" />
+                        <% } %>
                     </div>
                 </form>
 
@@ -384,7 +424,7 @@
         </div>
     </div>
 
-    <div class="col-sm-8">
+    <div class="col-sm-7">
 
         <div class="panel panel-info">
             <div class="panel-heading">
@@ -524,7 +564,7 @@
                                 <th>${ ui.message("providermanagement.identifier") }</th>
                                 <th>${ ui.message("coreapps.person.name") }</th>
                                 <th>${ ui.message("providermanagement.startDate") }</th>
-                                <th>${ ui.message("providermanagement.endDate") }</th>
+                                <th>${ ui.message("providermanagement.stopDate") }</th>
                             </tr>
                             </thead>
 
