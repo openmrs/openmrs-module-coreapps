@@ -27,7 +27,7 @@
 
     def assignedSupervisor = null
     supervisorsForProvider.each {
-        if (it.relationship.endDate == null) {
+        if (it.relationship && it.relationship.endDate == null) {
             assignedSupervisor = it.person.personName
         }
     }
@@ -453,7 +453,7 @@
                                 </tr>
                                 <% } %>
                                 <% supervisorsForProvider.each { supervisor ->
-                                    if (supervisor.relationship.endDate == null) {  // display only active supervisors
+                                    if (supervisor.relationship && supervisor.relationship.endDate == null) {  // display only active supervisors
                                 %>
                                 <tr id="patient-${ supervisor.person.personId }">
                                     <td>${ ui.format(supervisor.identifier) }</td>
@@ -525,7 +525,7 @@
                             </tr>
                             <% } %>
                             <% patientsList.each { row ->
-                                if (row.relationship.endDate == null) {
+                                if (row.relationship && row.relationship.endDate == null) {
                             %>
                             <tr id="patient-${ row.person.id }">
                                 <td>${ ui.format(row.identifier) }</td>
@@ -576,7 +576,8 @@
                             </tr>
                             <% } %>
                             <% patientsList.each { row ->
-                                if (row.relationship.endDate != null) {
+                                if ((row.relationship == null) ||
+                                        (row.relationship && row.relationship.endDate != null) ) {
                             %>
                             <tr id="patient-${ row.person.id }">
                                 <td>${ ui.format(row.identifier) }</td>
