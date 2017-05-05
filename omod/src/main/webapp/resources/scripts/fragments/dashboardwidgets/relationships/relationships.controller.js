@@ -50,7 +50,7 @@ function RelationshipsController(openmrsRest, $scope) {
         openmrsRest.get('relationship', {
             person: ctrl.config.patientUuid,
             limit: getMaxRecords(),
-            v: 'custom:(uuid,personA:(uuid,display,birthdate),personB:(uuid,display,birthdate),relationshipType:(uuid,aIsToB,bIsToA))'
+            v: 'custom:(uuid,personA:(uuid,display,birthdate,isPatient),personB:(uuid,display,birthdate,isPatient),relationshipType:(uuid,aIsToB,bIsToA))'
         }).then(function (response) {
                 getRelationships(response.results);
         })
@@ -61,9 +61,11 @@ function RelationshipsController(openmrsRest, $scope) {
             rel.uuid = relationship.uuid;
             if(relationship.personA.uuid !== ctrl.config.patientUuid){
                 rel.toPerson = relationship.personA;
+                rel.isPatient = relationship.personA.isPatient;
                 rel.type = relationship.relationshipType.aIsToB;
             } else {
                 rel.toPerson = relationship.personB;
+                rel.isPatient = relationship.personB.isPatient;
                 rel.type = relationship.relationshipType.bIsToA;
             }
             ctrl.relationships.push(rel);
@@ -108,7 +110,7 @@ function RelationshipsController(openmrsRest, $scope) {
     }
 
     function getPersons(searchString) {
-        openmrsRest.get('person', {
+        openmrsRest.get('patient', {
             q: searchString,
             v: 'custom:(uuid,display,gender,age)'
         }).then(function(response) {
