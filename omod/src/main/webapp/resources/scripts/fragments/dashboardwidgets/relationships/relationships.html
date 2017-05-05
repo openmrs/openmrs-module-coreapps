@@ -2,13 +2,14 @@
     <li ng-if="ctrl.relationships.length != 0" ng-repeat="relationship in ctrl.relationships track by $index">
         <div>
             <span class="sixty-percent">
-                <a ng-click="ctrl.goTo(relationship.toPerson.uuid)">
+                <a ng-if="relationship.isPatient" ng-click="ctrl.goTo(relationship.toPerson.uuid)">
                     {{relationship.toPerson.display}}
                 </a>
+                <span ng-if="!relationship.isPatient">{{relationship.toPerson.display}}</span>
             </span>
             <div class="tag">{{relationship.type}}</div>
             <div ng-if="ctrl.hasEditPrivileges == true && ctrl.removeFlag == false && ctrl.edit == false" class="remove-tag">
-                <a class="remove-link" ng-click="ctrl.removeRelationship(relationship.uuid)">
+                <a ng-if="relationship.isPatient" class="remove-link" ng-click="ctrl.removeRelationship(relationship.uuid)">
                     <i class="icon-remove" title="Remove relationship"></i>
                 </a>
             </div>
