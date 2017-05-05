@@ -56,7 +56,7 @@
         <td>${ ui.format(provider.person.gender) }</td>
         <td>${ ui.format(provider.providerRole) }</td>
         <td>
-        <% if (mySupervisor && (mySupervisor.relationship.endDate == null) ) { %>
+        <% if (mySupervisor && mySupervisor.relationship && (mySupervisor.relationship.endDate == null) ) { %>
             <a href="/${ contextPath }/coreapps/providermanagement/editProvider.page?personId=${ mySupervisor.person.id }">${ ui.format(mySupervisor.person.personName) }</a>
         <% } %>
         </td>

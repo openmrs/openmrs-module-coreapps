@@ -1,10 +1,9 @@
 package org.openmrs.module.coreapps.page.controller.providermanagement;
 
-import org.openmrs.Person;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.providermanagement.Provider;
 import org.openmrs.module.providermanagement.ProviderManagementUtils;
-import org.openmrs.module.providermanagement.ProviderPersonRelationship;
+import org.openmrs.module.providermanagement.relationship.ProviderPersonRelationship;
 import org.openmrs.module.providermanagement.ProviderRole;
 import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.openmrs.module.providermanagement.exception.PersonIsNotProviderException;
