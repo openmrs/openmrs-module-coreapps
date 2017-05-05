@@ -1,9 +1,10 @@
 package org.openmrs.module.coreapps.contextmodel;
 
-import org.openmrs.Visit;
-import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
-
 import java.util.Date;
+
+import org.openmrs.VisitType;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.ui.framework.SimpleObject;
 
 /**
  * A very simple view of a visit, suitable for use in an app contextModel.
@@ -17,6 +18,7 @@ public class VisitContextModel {
     private Long stopDatetimeInMilliseconds;
     private Long startDatetimeInMilliseconds;
     private Date stopDatetime;
+    private SimpleObject visitType;
 
     public VisitContextModel(VisitDomainWrapper visit) {
         this.id = visit.getVisitId();
@@ -28,12 +30,16 @@ public class VisitContextModel {
         Date stopDatetime = visit.getStopDatetime();
         this.stopDatetime = stopDatetime;
 
-        if(stopDatetime!=null){
+        if (stopDatetime != null) {
             this.stopDatetimeInMilliseconds = stopDatetime.getTime();
-        }else{
+        } else {
             this.stopDatetimeInMilliseconds = null;
         }
-
+        
+       VisitType visitType = visit.getVisit().getVisitType();
+        if (visitType != null) {
+            this.visitType = new SimpleObject(visitType);
+        }
     }
 
     public int getId() {
@@ -62,5 +68,9 @@ public class VisitContextModel {
 
     public Date getStopDatetime() {
         return stopDatetime;
+    }
+    
+    public SimpleObject getVisitType() {
+        return visitType;
     }
 }
