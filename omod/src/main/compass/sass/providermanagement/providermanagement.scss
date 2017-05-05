@@ -33,3 +33,16 @@ $fontPath: "../fonts";
 .borderless td, .borderless th {
 	border: none;
 }
+
+#retire-button {
+	background-color: #7786ff;
+	background: #7786ff;
+	border: #7786ff 1px solid;
+	color: white;
+	display: inline-block;
+	max-width: 250px;
+	min-width: 0;
+	margin-right: 10px;
+}
+
+

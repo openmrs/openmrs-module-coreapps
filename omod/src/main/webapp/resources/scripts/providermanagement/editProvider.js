@@ -105,6 +105,35 @@ function showRemovePatientDialog(){
     removePatientDialog.show();
 }
 
+function createRetireProviderDialog(providerId) {
+    retireProviderDialog = emr.setupConfirmationDialog({
+        selector: '#retire-provider-dialog',
+        actions: {
+            confirm: function() {
+                var retireReasonField = jq("#retireReason-field").val();
+                emr.getFragmentActionWithCallback('providermanagement', 'providerEdit', 'retireProvider'
+                    , { provider: providerId,
+                        reason: retireReasonField
+                    }
+                    , function(data) {
+                        retireProviderDialog.close();
+                        window.location = "/" + OPENMRS_CONTEXT_PATH + "/coreapps/providermanagement/providerList.page";
+                    }, function(err){
+                        emr.handleError(err);
+                        retireProviderDialog.close();
+                    });
+            },
+            cancel: function() {
+                retireProviderDialog.close();
+            }
+        }
+    });
+}
+function showRetireProviderDialog(){
+    retireProviderDialog.show();
+}
+
+
 function getSupervisors(roleId) {
     emr.getFragmentActionWithCallback('providermanagement', 'providerSearch', 'getSupervisors'
         , { roleId: roleId
