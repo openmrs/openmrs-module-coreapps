@@ -49,6 +49,7 @@
         <providermanagementVersion>2.5.0</providermanagementVersion>
         <idgenVersion>4.4.0</idgenVersion>
         <uicommonsVersion>2.3.0</uicommonsVersion>
+        <webservicesRestVersion>2.8</webservicesRestVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -215,6 +216,12 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>uicommons-api</artifactId>
 				<version>${uicommonsVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-common</artifactId>
+				<version>${webservicesRestVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 		</dependencies>
