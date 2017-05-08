@@ -178,6 +178,11 @@
 			<artifactId>providermanagement-api</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>htmlformentry-api-1.10</artifactId>
+		</dependency>
+
 		<!-- End OpenMRS modules -->
 
         <dependency>

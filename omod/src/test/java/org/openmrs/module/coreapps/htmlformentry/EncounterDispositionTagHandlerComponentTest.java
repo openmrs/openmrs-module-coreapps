@@ -22,7 +22,7 @@ import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
 import org.openmrs.module.htmlformentry.RegressionTestHelper;
 import org.openmrs.module.htmlformentry.TestUtil;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertThat;
 /**
  *
  */
-public class EncounterDispositionTagHandlerComponentTest extends BaseModuleContextSensitiveTest {
+public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebContextSensitiveTest {
 
     @Autowired
     private ConceptService conceptService;

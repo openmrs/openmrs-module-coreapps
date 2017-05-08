@@ -52,15 +52,15 @@ import org.openmrs.module.emrapi.matcher.ObsGroupMatcher;
 import org.openmrs.module.emrapi.test.ContextSensitiveMetadataTestUtils;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.RegressionTestHelper;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.ui.framework.page.PageAction;
+import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  *
  */
-public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleContextSensitiveTest {
+public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebContextSensitiveTest {
 
     @Autowired
     ConceptService conceptService;
