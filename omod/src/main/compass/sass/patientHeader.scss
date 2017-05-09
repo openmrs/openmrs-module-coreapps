@@ -202,6 +202,24 @@ $green: #51A351;
 .fifty-percent {
   width: 50%;
 }
+.forty-percent {
+  width: 40%;
+}
+
+.relationship-li {
+  display: flex;
+  width: 100%;
+}
+
+.relationship-wrapper {
+  display: inline-block;
+  vertical-align: middle;
+  flex-grow: 1;
+}
+
+.relationship-inner {
+  display: inline-block;
+}
 
 .remove-tag {
   display: inline;
