@@ -66,8 +66,11 @@
         var addPatientDialog = null;
         var removePatientDialog = null;
         var addSupervisorDialog = null;
+        var addSuperviseeDialog = null;
+        var unassignSuperviseeDialog = null;
         var retireProviderDialog = null;
         var supervisors = null;
+        var supervisees = null;
 
         jq('#patient-search').attr("size", "40");
 
@@ -100,6 +103,22 @@
 
         });
 
+        jq(document).on('click', '.delete-supervisee', function(event) {
+            var supervisorId = jq(event.target).attr("data-supervisor-id");
+            var superviseeId = jq(event.target).attr("data-supervisee-id");
+            var superviseeLabel = jq(event.target).attr("data-supervisor-label");
+
+            createUnassignSuperviseeDialog(supervisorId, superviseeId);
+            showUnassignSuperviseeDialog(superviseeLabel);
+
+            event.preventDefault();
+            // this is just to prevent datimepicker dropdown to display by default
+            setTimeout(function() {
+                jq(".datetimepicker").hide();
+            }, 100);
+
+        });
+
         jq(document).on('click', '.edit-supervisor', function(event) {
             var supervisorId = jq(event.target).attr("data-supervisor-id");
             var supervisorLabel = jq(event.target).attr("data-supervisor-label");
@@ -123,6 +142,12 @@
             event.preventDefault();
         });
 
+        jq("#add-supervisee-button").click(function(event) {
+            createAddSuperviseeDialog();
+            showAddSuperviseeDialog(null, null);
+            event.preventDefault();
+        });
+
         jq("select[name='providerRole']").on('change', function(event) {
             var roleId = this.value;
             getSupervisors(parseInt(roleId));
@@ -137,6 +162,7 @@
         var selectedProviderRole = jq("select[name='providerRole']").val();
         if ( (selectedProviderRole != null) && (parseInt(selectedProviderRole) > 0) ) {
             getSupervisors(parseInt(selectedProviderRole));
+            getSupervisees(parseInt(selectedProviderRole));
         }
 
     });
@@ -174,6 +200,43 @@
                     ${ ui.includeFragment("uicommons", "field/datetimepicker", [
                             id: "supevisor-relationshipStartDate",
                             formFieldName: "supevisor-relationshipStartDate",
+                            label: ui.message("providermanagement.startDate") + ": &nbsp;&nbsp;",
+                            defaultDate: new Date(),
+                            endDate: editDateFormat.format(new Date()),
+                            useTime: false,
+                    ])}
+                </p>
+                <br><br>
+
+            </fieldset>
+
+        </div>
+        <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
+    </div>
+</div>
+
+<div id="add-supervisee-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("providermanagement.createRelationship") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="currentSupervisorId" value="${account.person.personId}"/>
+        <input type="hidden" id="superviseeId" value=""/>
+
+        <span>${ ui.message("providermanagement.supervisee.add") }</span>
+
+        <div class="panel-body ">
+            <fieldset>
+                <p>
+                    ${ ui.message("providermanagement.supervisee.find") }:
+                    <input id="availableSupervisees" value="" autocomplete="off">
+                </p>
+                <br><br>
+                <p>
+                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                            id: "supevisee-relationshipStartDate",
+                            formFieldName: "supevisee-relationshipStartDate",
                             label: ui.message("providermanagement.startDate") + ": &nbsp;&nbsp;",
                             defaultDate: new Date(),
                             endDate: editDateFormat.format(new Date()),
@@ -232,7 +295,7 @@
                     ${ ui.includeFragment("uicommons", "field/datetimepicker", [
                             id: "relationshipEndDate",
                             formFieldName: "relationshipEndDate",
-                            label: ui.message("providermanagement.endDate") + ": &nbsp;&nbsp;",
+                            label: ui.message("providermanagement.stopDate") + ": &nbsp;&nbsp;",
                             defaultDate: new Date(),
                             endDate: editDateFormat.format(new Date()),
                             useTime: false,
@@ -241,6 +304,40 @@
             </fieldset>
         </div>
         <button id="remove-patient-button" class="confirm right">${ ui.message("coreapps.relationships.delete.header") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
+    </div>
+</div>
+
+<div id="unassign-supervisee-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("providermanagement.supervisee.unassign") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="providerId" value="${account.person.personId}"/>
+        <input type="hidden" id="patientId" value=""/>
+
+        <span>${ ui.message("providermanagement.supervisee.unassign.confirm") }?</span>
+
+        <div class="panel-body ">
+            <fieldset>
+                <p>
+                    ${ ui.message("providermanagement.supervisee.name") }:
+                    <strong><label id="superviseeName"></label></strong>
+                </p>
+                <br><br>
+                <p>
+                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                            id: "superviseeEndDate",
+                            formFieldName: "superviseeEndDate",
+                            label: ui.message("providermanagement.stopDate") + ": &nbsp;&nbsp;",
+                            defaultDate: new Date(),
+                            endDate: editDateFormat.format(new Date()),
+                            useTime: false,
+                    ])}
+                </p>
+            </fieldset>
+        </div>
+        <button id="unassign-supervisee-button" class="confirm right">${ ui.message("coreapps.relationships.delete.header") }</button>
         <button class="cancel">${ ui.message("coreapps.cancel") }</button>
     </div>
 </div>
@@ -336,11 +433,11 @@
 
                     <div class="emr_providerDetails">
                         <% if (createAccount != true ) { %>
-                        ${ ui.includeFragment("uicommons", "field/text", [
-                                label: ui.message("providermanagement.identifier"),
-                                formFieldName: "providerIdentifier",
-                                initialValue: (account.provider ? account.provider.identifier: '')
-                        ])}
+                            ${ ui.includeFragment("uicommons", "field/text", [
+                                    label: ui.message("providermanagement.identifier"),
+                                    formFieldName: "providerIdentifier",
+                                    initialValue: (account.provider ? account.provider.identifier: '')
+                            ])}
                         <% } %>
                         <p>
                             ${ ui.includeFragment("uicommons", "field/dropDown", [
@@ -457,7 +554,9 @@
                                 %>
                                 <tr id="patient-${ supervisor.person.personId }">
                                     <td>${ ui.format(supervisor.identifier) }</td>
-                                    <td>${ ui.format(supervisor.person.personName) }</td>
+                                    <td>
+                                        <a href="/${ contextPath }/coreapps/providermanagement/editProvider.page?personId=${ supervisor.person.personId }">${ ui.format(supervisor.person.personName) }</a>
+                                    </td>
                                     <td>${ ui.format(supervisor.relationship.startDate) }</td>
                                     <td><a><i class="edit-supervisor icon-pencil"
                                               data-provider-id="${account.person.personId}"
@@ -485,6 +584,72 @@
 
             </div>
         </div>
+
+        <% if (isSupervisor == true) { %>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">${ ui.message("providermanagement.currentSupervisees") }</h3>
+                </div>
+                <div class="panel-body">
+
+                    <table class="table table-condensed borderless">
+                        <tbody>
+
+                        <% if (createAccount != true ) { %>
+                            <a href="">
+                                <button id="add-supervisee-button">${ ui.message("providermanagement.supervisee.add") }
+                                &nbsp; <i class="icon-plus"></i>
+                                </button>
+                            </a>
+                        <% } %>
+
+                        <tr>
+                            <table id="supervisee-list" width="100%" border="1" cellspacing="0" cellpadding="2">
+                                <thead>
+                                <tr>
+                                    <th>${ ui.message("providermanagement.identifier") }</th>
+                                    <th>${ ui.message("coreapps.person.name") }</th>
+                                    <th>${ ui.message("providermanagement.startDate") }</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <% if ((superviseesForSupervisor == null) ||
+                                        (superviseesForSupervisor != null && superviseesForSupervisor.size() == 0)) { %>
+                                <tr>
+                                    <td colspan="4">${ ui.message("coreapps.none") }</td>
+                                </tr>
+                                <% } %>
+                                <% superviseesForSupervisor.each { supervisee ->
+                                    if (supervisee.relationship && supervisee.relationship.endDate == null) {  // display only active supervisee
+                                %>
+                                <tr id="patient-${ supervisee.person.personId }">
+                                    <td>${ ui.format(supervisee.identifier) }</td>
+                                    <td>
+                                        <a href="/${ contextPath }/coreapps/providermanagement/editProvider.page?personId=${ supervisee.person.personId }">
+                                            ${ ui.format(supervisee.person.personName) }
+                                        </a>
+                                    </td>
+                                    <td>${ ui.format(supervisee.relationship.startDate) }</td>
+                                    <td><a><i title="${ ui.message("providermanagement.supervisee.unassign") }"
+                                              class="delete-supervisee icon-remove"
+                                              data-supervisor-id="${account.person.personId}"
+                                              data-supervisee-id="${ supervisee.person.personId }"
+                                              data-supervisor-label="${ supervisee.person.personName }"
+                                    ></i></a>
+                                    </td>
+                                </tr>
+                                <% }
+                                } %>
+                                </tbody>
+                            </table>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <% } %>
 
         <div class="panel panel-info">
             <div class="panel-heading">
