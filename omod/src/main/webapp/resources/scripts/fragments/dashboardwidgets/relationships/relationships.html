@@ -1,17 +1,19 @@
 <ul>
     <li ng-if="ctrl.relationships.length != 0" ng-repeat="relationship in ctrl.relationships track by $index">
         <div>
-            <span class="sixty-percent">
+            <span class="fifty-percent">
                 <a ng-if="relationship.isPatient" ng-click="ctrl.goTo(relationship.toPerson.uuid)">
                     {{relationship.toPerson.display}}
                 </a>
                 <span ng-if="!relationship.isPatient">{{relationship.toPerson.display}}</span>
             </span>
-            <div class="tag">{{relationship.type}}</div>
-            <div ng-if="ctrl.hasEditPrivileges == true && ctrl.removeFlag == false && ctrl.edit == false" class="remove-tag">
-                <a ng-if="relationship.isPatient" class="remove-link" ng-click="ctrl.removeRelationship(relationship.uuid)">
-                    <i class="icon-remove" title="Remove relationship"></i>
-                </a>
+            <div class="tag">
+                <span ng-if="ctrl.hasEditPrivileges == true && ctrl.removeFlag == false && ctrl.edit == false" class="remove-tag">
+                    <a ng-if="relationship.isPatient" class="remove-link" ng-click="ctrl.removeRelationship(relationship.uuid)">
+                        <i class="icon-remove" title="Remove relationship"></i>
+                    </a>
+                </span>
+                {{relationship.type}}
             </div>
         </div>
     </li>

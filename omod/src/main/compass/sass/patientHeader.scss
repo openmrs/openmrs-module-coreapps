@@ -199,9 +199,13 @@ $green: #51A351;
   width: 60%;
 }
 
+.fifty-percent {
+  width: 50%;
+}
+
 .remove-tag {
   display: inline;
-  float: right;
+  float: left;
   padding: 2px 5px;
   border-radius: 1px;
   font-size: 0.8em;
