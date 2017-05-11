@@ -18,7 +18,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
     // TODO fix voided issue in REST module
 
-    var vPatientProgram = 'custom:uuid,dateEnrolled,dateCompleted,outcome:{display},location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
+    var vPatientProgram = 'custom:uuid,program:(uuid),dateEnrolled,dateCompleted,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
 
     var ctrl = this;
 
@@ -115,7 +115,6 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         if (ctrl.config.patientProgram == '' || angular.isUndefined(ctrl.config.patientPrograms)) {
             // we haven't been been given a patient program uuid, so load the programs and pick the active program (if it exists)
             return openmrsRest.get('programenrollment', {
-                program: ctrl.config.program,
                 patient: ctrl.config.patientUuid,
                 v: vPatientProgram
             }).then(function (response) {
@@ -161,11 +160,20 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
 
     function getMostRecentProgram(patientPrograms) {
-        // TODO assumption: confirm this sorts descending
+
+        // only patient programs of the specified type
+        patientPrograms = $filter('filter') (patientPrograms, function (patientProgram) {
+            return patientProgram.program.uuid == ctrl.config.program;
+        })
+
         if (patientPrograms.length > 0) {
-            patientPrograms = $filter('orderBy')(patientPrograms, function (patientPrograms) {
+
+
+            // TODO assumption: confirm this sorts descending
+            patientPrograms = $filter('orderBy')(patientPrograms, function (patientProgram) {
                 return patientPrograms.startDate
             });
+
             ctrl.patientProgram = patientPrograms[0];
             ctrl.input.dateEnrolled = new Date(ctrl.patientProgram.dateEnrolled);
             ctrl.input.dateCompleted = ctrl.patientProgram.dateCompleted ? new Date(ctrl.patientProgram.dateCompleted) : null;
