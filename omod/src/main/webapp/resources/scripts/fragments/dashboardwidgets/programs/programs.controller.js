@@ -5,7 +5,7 @@
 var scripts = document.getElementsByTagName("script");
 var programsPath = scripts[scripts.length - 1].src;
 
-function ProgramsController(openmrsRest, $scope) {
+function ProgramsController(openmrsRest, $scope, $filter) {
 
     var ctrl = this;
 
@@ -13,6 +13,8 @@ function ProgramsController(openmrsRest, $scope) {
     ctrl.patientPage = "/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}&dashboard={{dashboard}}";
 
     ctrl.programs = [];
+
+    ctrl.unenrolledPrograms = [];
 
     ctrl.patientPrograms= [];
 
@@ -28,12 +30,21 @@ function ProgramsController(openmrsRest, $scope) {
             ctrl.patientPage = ctrl.config.patientPage;
         }
 
-        fetchPrograms();
-        fetchPatientPrograms();
+       /* fetchPrograms()
+            .then(function (response) {
+                fetchPatientPrograms()
+                    .then(function (response) {
+                        determineUnenrolledPrograms()
+                })
+            })
+*/
+        fetchPrograms()
+            .then(fetchPatientPrograms)
+            .then(determineUnenrolledPrograms)
     }
 
     function fetchPrograms() {
-        openmrsRest.get('program', {
+        return openmrsRest.get('program', {
             v: 'custom:display,uuid'
         }).then(function(response) {
             getPrograms(response.results)
@@ -41,11 +52,11 @@ function ProgramsController(openmrsRest, $scope) {
     }
 
     function fetchPatientPrograms() {
-        openmrsRest.get('programenrollment', {
+        return openmrsRest.get('programenrollment', {
             patient: ctrl.config.patientUuid,
             voided: false,
             limit: getMaxRecords(),
-            v: 'custom:program:(uuid,display),dateEnrolled'
+            v: 'custom:program:(uuid,display),dateEnrolled,dateCompleted'
         }).then(function (response) {
             getPatientPrograms(response.results);
         })
@@ -58,8 +69,7 @@ function ProgramsController(openmrsRest, $scope) {
     }
 
     function getPatientPrograms(patientPrograms) {
-        // TODO restrict to active programs?
-        ctrl.patientPrograms= [];
+        ctrl.patientPrograms = [];
         angular.forEach(patientPrograms, function(patentProgram) {
             ctrl.patientPrograms.push(patentProgram)
         })
@@ -71,6 +81,22 @@ function ProgramsController(openmrsRest, $scope) {
         } else {
             return ctrl.config.maxRecords;
         }
+    }
+
+    function determineUnenrolledPrograms() {
+
+        var activeProgramsUuids = [];
+        angular.forEach(ctrl.patientPrograms, function(patientProgram) {
+            if (!patientProgram.dateCompleted) {
+                activeProgramsUuids.push(patientProgram.program.uuid)
+            }
+        })
+
+        ctrl.unenrolledPrograms = $filter('filter')(ctrl.programs, function(program) {
+            return activeProgramsUuids.indexOf(program.uuid) == -1
+        })
+
+        //return true;
     }
 
     ctrl.gotoProgramDashboard = function(programUuid) {

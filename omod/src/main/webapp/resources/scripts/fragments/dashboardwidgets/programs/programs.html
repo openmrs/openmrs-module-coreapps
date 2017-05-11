@@ -16,9 +16,9 @@
     </p>
 </ul>
 
-<select ng-show="ctrl.config.enableProgramDashboards"
+<select ng-show="ctrl.config.enableProgramDashboards && ctrl.unenrolledPrograms && ctrl.unenrolledPrograms.length > 0"
         ng-model="ctrl.input.program"
-        ng-options="program.uuid as program.display for program in ctrl.programs"
+        ng-options="program.uuid as program.display for program in ctrl.unenrolledPrograms"
         ng-change="ctrl.gotoProgramDashboard(ctrl.input.program)">
     <option value="">Enroll In:</option>
 </select>
