@@ -1,17 +1,24 @@
 <!-- NOTE: work-in-progress, consider this not yet an "official" release of this widgets, future changes may not be bacwards-compatible and change functionality signficantly -->
 
+<!-- TODO: localize all text -->
+
 <ul>
     <li ng-if="ctrl.patientPrograms.length != 0" ng-repeat="patientProgram in ctrl.patientPrograms track by $index">
-        <a>
+        <a ng-click="ctrl.gotoProgramDashboard(patientProgram.program.uuid)">
             {{ patientProgram.program.display }}
         </a>
 
-        <!-- TODO: localize "Enrolled" -->
         <div class="tag">Enrolled {{ patientProgram.dateEnrolled | date:dateFormat }}</div>
     </li>
-    
-    <!-- TODO: localize "None" -->
+
     <p ng-if="ctrl.patientPrograms.length == 0">
         None
     </p>
 </ul>
+
+<select ng-show="ctrl.config.enableProgramDashboards"
+        ng-model="ctrl.input.program"
+        ng-options="program.uuid as program.display for program in ctrl.programs"
+        ng-change="ctrl.gotoProgramDashboard(ctrl.input.program)">
+    <option value="">Enroll In:</option>
+</select>

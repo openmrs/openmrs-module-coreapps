@@ -7,9 +7,10 @@ var programsPath = scripts[scripts.length - 1].src;
 
 function ProgramsController(openmrsRest, $scope) {
 
-    // TODO don't allow multiple enrollments in same program
-
     var ctrl = this;
+
+    // the default patient page is the clinician dashboard
+    ctrl.patientPage = "/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}&dashboard={{dashboard}}";
 
     ctrl.programs = [];
 
@@ -22,6 +23,11 @@ function ProgramsController(openmrsRest, $scope) {
 
     function activate() {
         openmrsRest.setBaseAppPath("/coreapps");
+
+        if( ctrl.config.patientPage ) {
+            ctrl.patientPage = ctrl.config.patientPage;
+        }
+
         fetchPrograms();
         fetchPatientPrograms();
     }
@@ -39,7 +45,7 @@ function ProgramsController(openmrsRest, $scope) {
             patient: ctrl.config.patientUuid,
             voided: false,
             limit: getMaxRecords(),
-            v: 'custom:program:(display),dateEnrolled'
+            v: 'custom:program:(uuid,display),dateEnrolled'
         }).then(function (response) {
             getPatientPrograms(response.results);
         })
@@ -67,6 +73,18 @@ function ProgramsController(openmrsRest, $scope) {
         }
     }
 
+    ctrl.gotoProgramDashboard = function(programUuid) {
+        if (programUuid && ctrl.config.enableProgramDashboards) {
+            var destinationPage = "";
+            destinationPage = Handlebars.compile(ctrl.patientPage)({
+                patientUuid: ctrl.config.patientUuid,
+                dashboard: programUuid
+            });
+            openmrsRest.getServerUrl().then(function (url) {
+                window.location.href = url + destinationPage;
+            });
+        }
+    }
 
     $scope.getTemplate = function () {
         return programsPath.replace(".controller.js", ".html");
