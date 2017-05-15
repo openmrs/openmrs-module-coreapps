@@ -23,13 +23,15 @@ public class ProviderListPageController {
 
         Map<Provider, List<ProviderPersonRelationship>> providers = new HashMap<Provider, List<ProviderPersonRelationship>>();
         List<ProviderRole> providerRoleList = providerManagementService.getAllProviderRoles(true);
-        List<Provider> providersByRoles = Context.getService(ProviderManagementService.class).getProvidersByRoles(providerRoleList);
-        for (Provider providerByRole : providersByRoles) {
-            List<ProviderPersonRelationship> supervisorsForProvider = ProviderManagementUtils.getSupervisors(providerByRole);
-            if (supervisorsForProvider == null) {
-                supervisorsForProvider = new ArrayList<ProviderPersonRelationship>();
+        if (providerRoleList != null && providerRoleList.size() > 0 ) {
+            List<Provider> providersByRoles = Context.getService(ProviderManagementService.class).getProvidersByRoles(providerRoleList);
+            for (Provider providerByRole : providersByRoles) {
+                List<ProviderPersonRelationship> supervisorsForProvider = ProviderManagementUtils.getSupervisors(providerByRole);
+                if (supervisorsForProvider == null) {
+                    supervisorsForProvider = new ArrayList<ProviderPersonRelationship>();
+                }
+                providers.put(providerByRole, supervisorsForProvider);
             }
-            providers.put(providerByRole, supervisorsForProvider);
         }
         model.addAttribute("providersList", providers);
     }

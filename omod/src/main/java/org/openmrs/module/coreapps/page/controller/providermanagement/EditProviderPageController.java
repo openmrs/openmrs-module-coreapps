@@ -15,6 +15,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
+import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.emrapi.account.AccountDomainWrapper;
 import org.openmrs.module.emrapi.account.AccountService;
 import org.openmrs.module.emrapi.account.AccountValidator;
@@ -44,6 +45,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class EditProviderPageController {
 
@@ -107,12 +110,20 @@ public class EditProviderPageController {
                 patientsList= ProviderManagementUtils.getAssignedPatients(provider);
             }
         }
+
+        boolean useAddressHierarchy = false;
+        if (ModuleFactory.isModuleStarted("addresshierarchy")) {
+            useAddressHierarchy = true;
+        }
+
         model.addAttribute("relationshipTypes", relationshipTypes);
         model.addAttribute("patientsList", patientsList);
         model.addAttribute("providerAttributeTypes", providerAttributeTypes);
         model.addAttribute("isSupervisor", isSupervisor);
         model.addAttribute("supervisorsForProvider", supervisorsForProvider);
         model.addAttribute("superviseesForSupervisor", superviseesForSupervisor);
+        model.addAttribute("superviseesForSupervisor", superviseesForSupervisor);
+        model.addAttribute("useAddressHierarchy", useAddressHierarchy);
     }
 
     public String post(@MethodParam("getAccount") @BindParams AccountDomainWrapper account, BindingResult errors,
@@ -137,6 +148,7 @@ public class EditProviderPageController {
             try {
                 Person person = account.getPerson();
                 if (address != null ) {
+                    address.setPreferred(true);
                     person.addAddress(address);
                 }
                 Provider provider = account.getProvider();
