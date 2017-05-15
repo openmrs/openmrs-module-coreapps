@@ -188,6 +188,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>coreapps.conceptStickyNote</property>
+        <defaultValue>CIEL:162169</defaultValue>
+        <description>
+            Mapping of the concept used for the Sticky Note. In the form of SOURCE:NUMBER.
+        </description>
+    </globalProperty>
+
     <privilege>
         <name>Task: coreapps.editRelationships</name>
         <description>Able to edit relationships</description>

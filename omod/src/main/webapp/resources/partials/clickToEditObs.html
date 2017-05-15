@@ -1,0 +1,115 @@
+<style type="text/css">
+
+  .clickToEditObs {
+    margin-left: 0px;
+  }
+  .preformatted-note {
+    margin: 0;
+    padding: 0px;
+    padding-top: 1px;
+    background: white;
+    color: #e9241d;
+    font-family: "OpenSans", Arial, sans-serif;
+    font-weight: bold;
+    font-size: 0.8em;
+  }
+  .preformatted-note.empty {
+    padding-top: 0px;
+  }
+  .note-wrapper {
+    float: left;
+    max-width: 92%;
+    min-height: 20px;
+    border: solid 2px #e9241d;
+    border-radius:2px;
+    padding-left: 4px;
+    padding-right: 4px;
+    background: white;
+    font-family: "OpenSans", Arial, sans-serif;
+    cursor: pointer;
+  }
+  .note-wrapper.no-borders {
+    border: none;
+    padding: 0;
+    background: none;
+  }
+  .editable-input {
+    width: 100%!important;
+    margin: 0px;
+    -webkit-box-sizing: border-box!important;
+    -moz-box-sizing: border-box!important;
+    box-sizing: border-box!important;
+    font-size: 0.9em;
+  }
+  .editable-buttons {
+    float: right;
+  }
+  .editable-buttons > .btn {
+    min-width: 33px;
+    min-height: 25px;
+    border: none;
+    padding: 2px;
+    background: none;
+  }
+  .icon-sticky-note {
+    position: absolute;
+    border-radius: 2px;
+    padding: 0;
+    padding-left: 2px;
+    padding-right: 2px;
+    background: #00463f;
+    color: yellow;
+    font-size: 20px;
+  }
+  .icon-sticky-note:before {
+    position: relative;
+    top: 1px;
+    font-size: 20px;
+  }
+  .icons-wrapper {
+    cursor: pointer;
+  }
+  .icon-wrapper > .icon-remove {
+    color: #666666;
+  }
+  .icons-wrapper > .icon-remove:hover {
+    color: #999999;
+  }
+  .details {
+    margin-top:3px;
+    font-size: 0.8em;
+  }
+  .created-by {
+    font-weight: bold;
+    color: #666666;
+  }
+  .created-date {
+    clear: both;
+    font-weight: normal;
+    font-size: 0.7em;
+    color: #666666;
+  }
+  .secondLine {
+    clear:both;
+  }
+  .other-actions {
+    display: none;
+  }
+
+</style>
+
+<div class="clickToEditObs">
+  <div class="firstLine">
+    <span class="note-wrapper" ng-class="{'no-borders': isEditing || isEmpty}"><span id="TextField" onhide="toggleEditMode()" onshow="toggleEditMode()" editable-textarea="note.text" e-placeholder="{{ msgs[module.getProvider() + '.clickToEditObs.placeholder'] }}" e-rows="7" e-cols="40" onaftersave="updateObs()" ><pre class="preformatted-note" ng-class="{empty: isEmpty}">{{ note.text }}<i ng-show="isEmpty" class="icon-sticky-note"></i></pre></span></span>
+    <span class="icons-wrapper">
+      <div ng-hide="isEditing || isEmpty" class="icon-remove" ng-click="confirmDelete()"></div>
+    </span>
+  </div>
+  <div class="details secondLine" ng-hide="isEmpty || isEditing">
+    <span class="created-by">{{ note.createdBy }} </span><span class="created-date">{{ note.creationDate }}</span>
+  </div>
+  <div class="other-actions" ng-show="showActions">
+   <i ng-hide="isEditing || isEmpty" class="icon-chevron-left"></i>
+   <i ng-hide="isEditing || isEmpty" class="icon-chevron-right"></i>
+ </div>
+</div>
