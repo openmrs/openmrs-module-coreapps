@@ -47,7 +47,10 @@
         def personName = provider.name
         def mySupervisor = null
         supervisor.each {
-            mySupervisor = it
+            // retrieve the most recent active supervisor
+            if (it.relationship && it.relationship.endDate == null) {
+                mySupervisor = it
+            }
         }
     %>
     <tr id="provider-${ provider.person.personId}">

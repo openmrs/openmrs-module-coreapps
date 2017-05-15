@@ -425,20 +425,20 @@
                             options: genderOptions
                     ])}
 
-                    ${ ui.includeFragment("registrationapp", "field/personAddressWithHierarchy", [
-                            id: "providerAddress",
-                            initialValue: (account.person ? account.person.personAddress : null)
+                    ${ ui.includeFragment("uicommons", "field/text", [
+                            label: ui.message("providermanagement.identifier"),
+                            formFieldName: "providerIdentifier",
+                            initialValue: (account.provider ? account.provider.identifier: '')
                     ])}
 
+                    <% if (useAddressHierarchy == true ) { %>
+                        ${ ui.includeFragment("registrationapp", "field/personAddressWithHierarchy", [
+                                id: "providerAddress",
+                                initialValue: (account.person ? account.person.personAddress : null)
+                        ])}
+                    <% } %>
 
                     <div class="emr_providerDetails">
-                        <% if (createAccount != true ) { %>
-                            ${ ui.includeFragment("uicommons", "field/text", [
-                                    label: ui.message("providermanagement.identifier"),
-                                    formFieldName: "providerIdentifier",
-                                    initialValue: (account.provider ? account.provider.identifier: '')
-                            ])}
-                        <% } %>
                         <p>
                             ${ ui.includeFragment("uicommons", "field/dropDown", [
                                     label: ui.message("providermanagement.providerRole"),
