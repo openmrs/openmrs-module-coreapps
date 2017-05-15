@@ -7,6 +7,9 @@
         it.collect{ ui.escapeHtml(it.diagnosis.formatWithoutSpecificAnswer(context.locale)) } .join(", ")
     }
     ui.includeJavascript("coreapps", "fragments/visitDetails.js")
+    ui.includeJavascript("coreapps", "visit/encounterToggle.js")
+
+    ui.includeCss("coreapps", "encounterToggle.css")
 %>
 
 <script type="text/javascript">
@@ -37,6 +40,10 @@
 <% } %>
 <!-- End of encounter templates -->
 
+<i id="i-toggle" title="${ui.message('coreapps.showAllEncounterDetails')}"
+   class="toggle-icon icon-arrow-down small caret-color"
+   onclick="toggle()"></i>
+
 <script type="text/template" id="visitDetailsTemplate">
     ${ ui.includeFragment("coreapps", "patientdashboard/visitDetailsTemplate") }
 </script>
@@ -57,12 +64,21 @@
             encounterCount = ${ param.encounterCount }; // This variable is defined in patientdashboard/patientDashboard.gsp
         <% } %>
         loadTemplates(visitId, ${ patient.id }, fromEncounter, encounterCount);
+
+        <%
+            if ( activeVisit != null){
+                if(activeVisit.hasEncounters() && activeVisit.getVisit().getEncounters().size() < 20){ %>
+                    jq('#i-toggle').show();
+                <%}
+            }
+        %>
     });
 </script>
 
 <ul id="visits-list" class="left-menu">
 
-    <%  def visits = patient.allVisitsUsingWrappers
+    <%
+        def visits = patient.allVisitsUsingWrappers;
         visits.eachWithIndex { wrapper, idx ->
             def primaryDiagnoses = wrapper.getUniqueDiagnoses(true, false)
     %>
