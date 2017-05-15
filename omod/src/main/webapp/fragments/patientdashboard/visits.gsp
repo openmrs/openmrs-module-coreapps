@@ -51,8 +51,8 @@
 <script type="text/javascript">
     jq(function(){
         var visitId;
-        <% if (param.visitId != null) { %>
-            visitId = ${ param.visitId };
+        <% if (selectedVisit != null) { %>
+            visitId = ${ selectedVisit.id };
         <% } else if (activeVisit != null) { %>
             visitId = ${ activeVisit.visit.id };
         <% } %>

@@ -3,7 +3,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>coreapps</artifactId>
-	<version>1.11.2-SNAPSHOT</version>
+	<version>1.14.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Core Apps Module</name>
 	<description>Provides apps for performing the common tasks</description>
@@ -46,9 +46,10 @@
         <serialization.xstreamVersion>0.2.12</serialization.xstreamVersion>
         <calculationVersion>1.2</calculationVersion>
         <reportingVersion>0.10.4</reportingVersion>
-        <providermanagementVersion>2.5.0</providermanagementVersion>
+        <providermanagementVersion>2.6.1-SNAPSHOT</providermanagementVersion>
         <idgenVersion>4.4.0</idgenVersion>
-        <uicommonsVersion>2.2-SNAPSHOT</uicommonsVersion>
+        <uicommonsVersion>2.3.0</uicommonsVersion>
+        <webservicesRestVersion>2.8</webservicesRestVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -215,6 +216,12 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>uicommons-api</artifactId>
 				<version>${uicommonsVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-common</artifactId>
+				<version>${webservicesRestVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 		</dependencies>

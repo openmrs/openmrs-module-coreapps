@@ -7,7 +7,7 @@ import org.openmrs.module.appui.TestUiUtils;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.RegressionTestHelper;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Date;
@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleContextSensitiveTest {
+public class CodedOrFreeTextObsTagHandlerComponentTest extends BaseModuleWebContextSensitiveTest {
 
     @Before
     public void setUp() throws Exception {

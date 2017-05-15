@@ -191,3 +191,60 @@ $green: #51A351;
 .left-margin{
   margin-left: 10px
 }
+
+.relationship-input {
+  width: 300px;
+}
+.sixty-percent {
+  width: 60%;
+}
+
+.fifty-percent {
+  width: 50%;
+}
+.forty-percent {
+  width: 40%;
+}
+
+.relationship-li {
+  display: flex;
+  width: 100%;
+}
+
+.relationship-wrapper {
+  display: inline-block;
+  vertical-align: middle;
+  flex-grow: 1;
+}
+
+.relationship-inner {
+  display: inline-block;
+}
+
+.remove-tag {
+  display: inline;
+  float: left;
+  padding: 2px 5px;
+  border-radius: 1px;
+  font-size: 0.8em;
+}
+
+.remove-link {
+  color: #003f5e;
+}
+
+.add-link {
+  color: #501d3d;
+}
+
+.cancel-tag {
+  background: #ff6666;
+  float: left;
+  min-width: 66px;
+  text-align: center;
+  color: white;
+  display: inline;
+  padding: 2px 5px;
+  border-radius: 1px;
+  font-size: 0.8em;
+}

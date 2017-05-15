@@ -12,13 +12,14 @@ function ObsAcrossEncountersController(openmrsRest, $scope, widgetCommons) {
     activate();
 
     function activate() {
+        openmrsRest.setBaseAppPath("/coreapps");
         fetchConcepts();
         fetchEncounters();
     }
 
     function fetchConcepts() {
         ctrl.concepts = getConfigConceptsAsArray(ctrl.config.concepts);
-        for(i = 0; i < ctrl.concepts.length; i++) {
+        for(var i = 0; i < ctrl.concepts.length; i++) {
             openmrsRest.getFull("concept/" + ctrl.concepts[i], {v: 'custom:(uuid,display,names:(display,conceptNameType)'}).then(function (concept) {
                 var index = ctrl.concepts.indexOf(concept.uuid);
                 ctrl.concepts[index] = getConceptWithShortName(concept);
@@ -74,7 +75,7 @@ function ObsAcrossEncountersController(openmrsRest, $scope, widgetCommons) {
     }
 
     function getObservationForConcept(observations, conceptUuid) {
-        for(i = 0; i < observations.length; i++){
+        for(var i = 0; i < observations.length; i++){
             if(observations[i].concept.uuid === conceptUuid){
                 return observations[i];
             }

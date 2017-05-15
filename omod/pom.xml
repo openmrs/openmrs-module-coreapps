@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>coreapps</artifactId>
-		<version>1.11.2-SNAPSHOT</version>
+		<version>1.14.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>coreapps-omod</artifactId>
@@ -116,6 +116,11 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
+            <artifactId>serialization.xstream-api-1.9</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
             <artifactId>calculation-api</artifactId>
         </dependency>
 
@@ -126,6 +131,19 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api-1.10</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>emrapi-api-1.11</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>emrapi-api-1.12</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.openmrs</groupId>
+            <artifactId>event-api</artifactId>
         </dependency>
 
         <dependency>
@@ -176,6 +194,11 @@
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>providermanagement-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>htmlformentry-api-1.10</artifactId>
 		</dependency>
 
 		<!-- End OpenMRS modules -->
@@ -402,7 +425,7 @@
 					<!-- Excluding until we fix it -->
 					<sourceExcludes>
 						<sourceExclude>
-							**/openmrs-contrib-uicommons.bundle.js
+							**/openmrs-contrib-uicommons.bundle.min.js
 						</sourceExclude>
 						<sourceExclude>
 							**/dashboardWidgetsCommons.service.js

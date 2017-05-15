@@ -1,8 +1,9 @@
 package org.openmrs.module.coreapps.page.controller.providermanagement;
 
-import org.openmrs.Person;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.providermanagement.Provider;
+import org.openmrs.module.providermanagement.ProviderManagementUtils;
+import org.openmrs.module.providermanagement.relationship.ProviderPersonRelationship;
 import org.openmrs.module.providermanagement.ProviderRole;
 import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.openmrs.module.providermanagement.exception.PersonIsNotProviderException;
@@ -20,15 +21,15 @@ public class ProviderListPageController {
                     @SpringBean("providerManagementService") ProviderManagementService providerManagementService
                     ) throws PersonIsNotProviderException {
 
-        Map<Provider, List<Person>> providers = new HashMap<Provider, List<Person>>();
+        Map<Provider, List<ProviderPersonRelationship>> providers = new HashMap<Provider, List<ProviderPersonRelationship>>();
         List<ProviderRole> providerRoleList = providerManagementService.getAllProviderRoles(true);
         List<Provider> providersByRoles = Context.getService(ProviderManagementService.class).getProvidersByRoles(providerRoleList);
         for (Provider providerByRole : providersByRoles) {
-            List<Person> supervisorPersons = providerManagementService.getSupervisorsForProvider(providerByRole.getPerson());
-            if (supervisorPersons == null) {
-                supervisorPersons = new ArrayList<Person>();
+            List<ProviderPersonRelationship> supervisorsForProvider = ProviderManagementUtils.getSupervisors(providerByRole);
+            if (supervisorsForProvider == null) {
+                supervisorsForProvider = new ArrayList<ProviderPersonRelationship>();
             }
-            providers.put(providerByRole, supervisorPersons);
+            providers.put(providerByRole, supervisorsForProvider);
         }
         model.addAttribute("providersList", providers);
     }

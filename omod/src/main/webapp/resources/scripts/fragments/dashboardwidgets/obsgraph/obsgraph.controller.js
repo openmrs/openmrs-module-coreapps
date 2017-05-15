@@ -2,7 +2,7 @@
 var scripts = document.getElementsByTagName("script");
 var obsgraphPath = scripts[scripts.length - 1].src;
 
-function ObsGraphController($scope, openmrsRest, widgetCommons) {
+function ObsGraphController($scope, $filter, openmrsRest, widgetCommons) {
     $scope.getTemplate = function () {
         return obsgraphPath.replace(".controller.js", ".html");
     };
@@ -24,6 +24,7 @@ function ObsGraphController($scope, openmrsRest, widgetCommons) {
 
     // Init method
     ctrl.initialize = function () {
+        openmrsRest.setBaseAppPath("/coreapps");
         // Set default maxResults if not defined
         if (angular.isUndefined(ctrl.config.maxResults)) {
             ctrl.config.maxResults = 4;
@@ -36,14 +37,15 @@ function ObsGraphController($scope, openmrsRest, widgetCommons) {
                 // Set concept to display
                 ctrl.concept = obss[0].concept;
                 ctrl.series.push(ctrl.concept.display);
-                for (let obs of obss) {
+                for (var i = 0; i < obss.length; i++) {
+                    var obs = obss[i];
                     // Show numeric concepts only
                     if (obs.concept.datatype.display == 'Numeric') {
                         // Don't add obs older than maxAge
                         if (angular.isUndefined(ctrl.maxAgeInDays) || ctrl.widgetCommons.dateToDaysAgo(obs.obsDatetime) <= ctrl.maxAgeInDays) {
                             // Add obs data for chart display
-                            let date = new Date(obs.obsDatetime);
-                            ctrl.labels.unshift(date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear());
+                            var date = $filter('date')(new Date(obs.obsDatetime), ctrl.config.dateFormat);
+                            ctrl.labels.unshift(date);
                             ctrl.data[0].unshift(obs.value);
                         }
                     }

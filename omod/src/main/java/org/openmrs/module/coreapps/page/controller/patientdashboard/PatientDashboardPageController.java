@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
@@ -41,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PatientDashboardPageController {
 
    public Object controller(@RequestParam("patientId") Patient patient,
+                            @RequestParam(value = "visitId", required = false) Visit visit,
          @RequestParam(value = "tab", defaultValue = "visits") String selectedTab,
          PageModel model,
          @InjectBeans PatientDomainWrapper patientDomainWrapper,
@@ -59,8 +61,10 @@ public class PatientDashboardPageController {
       }
 
       patientDomainWrapper.setPatient(patient);
+
       model.addAttribute("patient", patientDomainWrapper);
       model.addAttribute("selectedTab", selectedTab);
+      model.addAttribute("selectedVisit", visit);
 
       Location visitLocation = null;
       try {

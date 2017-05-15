@@ -31,6 +31,15 @@
         "requiredPrivilege": "Task: coreapps.mergeVisits"
     },
     {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.markPatientDead",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "Link",
+        "label": "coreapps.markPatientDead.label",
+        "url": "coreapps/markPatientDead.page?patientId={{patient.uuid}}",
+        "icon": "icon-plus-sign-alt",
+        "order": 24
+    },
+    {
         "id": "${project.parent.groupId}.${project.parent.artifactId}.deletePatient",
         "extensionPointId": "patientDashboard.overallActions",
         "type": "script",

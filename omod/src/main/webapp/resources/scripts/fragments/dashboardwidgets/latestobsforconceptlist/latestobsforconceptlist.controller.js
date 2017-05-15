@@ -17,11 +17,14 @@ function LatestObsForConceptListController($scope, openmrsRest, widgetCommons) {
 
     // Init method
     ctrl.initialize = function () {
+        openmrsRest.setBaseAppPath("/coreapps");
         ctrl.maxAgeInDays = ctrl.widgetCommons.maxAgeToDays(ctrl.config.maxAge);
         // Remove whitespaces
         ctrl.config.concepts = ctrl.config.concepts.replace(/\s/g,'');
         const concepts = ctrl.config.concepts.split(",");
-        for (let concept of concepts) {
+        var i;
+        for (i = 0; i < concepts.length; i++) {
+            var concept = concepts[i];
             // Fetch last obs for concept
             openmrsRest.list('obs',{patient: ctrl.config.patientUuid, v: 'full', concept: concept}).then(function (resp) {
                 // Don't add more items if max concept count is reached

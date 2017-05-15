@@ -189,6 +189,11 @@
     </globalProperty>
 
     <privilege>
+        <name>Task: coreapps.editRelationships</name>
+        <description>Able to edit relationships</description>
+    </privilege>
+
+    <privilege>
         <name>Task: coreapps.endVisit</name>
         <description>Able to end a visit</description>
     </privilege>
