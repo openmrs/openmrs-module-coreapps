@@ -86,7 +86,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
         fetchLocations();
         fetchProgram().then(function (response) {
             fetchOutcomes();
-            fetchPatientProgram();
+            fetchPatientProgram(ctrl.config.patientProgram);
         })
 
     }
@@ -285,7 +285,9 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
             : ctrl.patientProgram ? ctrl.patientProgram.dateEnrolled : new Date()*/
 
         // date completed can never be before date enrollment
-        ctrl.datePopup.completion.options.minDate = ctrl.patientProgram.dateEnrolled;
+        if (ctrl.patientProgram) {
+            ctrl.datePopup.completion.options.minDate = ctrl.patientProgram.dateEnrolled;
+        }
 
         angular.forEach(ctrl.program.allWorkflows, function(workflow) {
             ctrl.datePopup.workflow[workflow.uuid] = {
