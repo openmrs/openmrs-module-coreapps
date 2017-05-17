@@ -18,6 +18,7 @@ function ProgramsController(openmrsRest, $scope, $filter) {
 
     ctrl.patientPrograms= [];
 
+    // TODO did this work?
     ctrl.dateFormat = (ctrl.config.dateFormat == '' || angular.isUndefined(ctrl.config.dateFormat))
         ? 'yyyy-MM-dd' : ctrl.config.dateFormat;
 
