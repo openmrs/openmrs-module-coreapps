@@ -69,11 +69,11 @@ public class ProgramHistoryFragmentController {
         List<String> programJson = new ArrayList<String>();
 
         Boolean includeActive = appConfig.get("includeActive") != null ? appConfig.get("includeActive").getBooleanValue() : true;
-        Boolean includeInActive = appConfig.get("includeInActive") != null ? appConfig.get("includeInActive").getBooleanValue() : true;
+        Boolean includeInactive = appConfig.get("includeInactive") != null ? appConfig.get("includeInactive").getBooleanValue() : true;
 
         for (PatientProgram patientProgram : patientPrograms) {
             if ((patientProgram.getDateCompleted() == null && includeActive)
-                || (patientProgram.getDateCompleted() != null && includeInActive)) {
+                || (patientProgram.getDateCompleted() != null && includeInactive)) {
                 appConfig.put("patientProgram", patientProgram.getUuid());
                 programJson.add(appConfig.toString().replace('\"', '\''));
             }
