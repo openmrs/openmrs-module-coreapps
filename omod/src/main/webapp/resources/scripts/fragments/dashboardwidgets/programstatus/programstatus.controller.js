@@ -9,6 +9,7 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
 
     // TODO fix giant date widget--figure out how to bundle in bootstrap.css?
     // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)
+    // TODO need way to fully delete program enrollment
 
     // TODO localization of text
     // TODO validation elements--can't change state without selecting date, etc
@@ -184,14 +185,16 @@ function ProgramStatusController(openmrsRest, $scope, $filter, $q) {
     }
 
     function enrollInProgram() {
-        openmrsRest.create('programenrollment', {
-            patient: ctrl.config.patientUuid,
-            program: ctrl.config.program,
-            dateEnrolled: ctrl.input.dateEnrolled,
-            location: ctrl.input.enrollmentLocation
-        }).then(function(response) {
-            fetchPatientProgram(); // refresh display
-        })
+        if (ctrl.input.dateEnrolled && ctrl.input.enrollmentLocation) {
+            openmrsRest.create('programenrollment', {
+                patient: ctrl.config.patientUuid,
+                program: ctrl.config.program,
+                dateEnrolled: ctrl.input.dateEnrolled,
+                location: ctrl.input.enrollmentLocation
+            }).then(function (response) {
+                fetchPatientProgram(); // refresh display
+            })
+        }
     }
 
 

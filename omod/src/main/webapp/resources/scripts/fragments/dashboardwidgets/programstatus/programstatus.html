@@ -1,6 +1,6 @@
 <!-- // NOTE: work-in-progress, consider this not yet an "official" release of this widgets, future changes may not be backwards-compatible and change functionality signficantly -->
 
-<!-- TODO: move css? -->
+<!-- TODO: move css to separate file -->
 <!-- TODO need to figure out how to not use hardcoded margins and padding in the expanded element -->
 
 <style>
@@ -72,17 +72,14 @@ li  {
                     ng-options="location.uuid as location.display for location in ctrl.programLocations">
                     <option value=""></option>
             </select>
-            <button ng-click="ctrl.enroll()">Enroll</button>
+            <button class="confirm" ng-click="ctrl.enroll()">Enroll</button>
         </li>
     </ul>
 
     <ul ng-class="{'eighty-percent-font': !ctrl.expanded}" ng-if="ctrl.patientProgram">
         <li ng-if="!ctrl.edit.enrollment">
-            <!-- TODO these first two link needs to be moved to the header level -->
-            <i ng-if="ctrl.expanded" ng-click="ctrl.toggleExpanded()" class="icon-remove right no-padding"/>
-            <i ng-if="!ctrl.expanded" ng-click="ctrl.toggleExpanded()" class="icon-pencil right no-padding"/>
-
-            <i ng-if="ctrl.expanded && !ctrl.edit.enrollment" ng-click="ctrl.toggleEdit.enrollment()" class="icon-pencil right no-padding"/>
+            <!-- TODO these first two link should/could be moved to the header level -->
+            <i ng-if="!ctrl.expanded && !ctrl.edit.enrollment" ng-click="ctrl.toggleEdit.enrollment()" class="icon-pencil right no-padding"/>
             <b>Enrolled:</b> {{ ctrl.patientProgram.dateEnrolled | date:ctrl.dateFormat }} <span ng-if="ctrl.patientProgram.location">at {{ ctrl.patientProgram.location.display }}</span>
         </li>
 
@@ -125,7 +122,7 @@ li  {
         </li>
 
         <li ng-if="ctrl.edit.enrollment">
-            <button ng-click="ctrl.updatePatientProgram()">Save</button>  <button ng-click="ctrl.cancelEdit()">Cancel</button>
+            <button class="confirm" ng-click="ctrl.updatePatientProgram()">Save</button>  <button class="cancel" ng-click="ctrl.cancelEdit()">Cancel</button>
         </li>
 
         <div ng-repeat="workflow in ctrl.program.allWorkflows track by $index" ng-if="ctrl.program.allWorkflows.length != 0">

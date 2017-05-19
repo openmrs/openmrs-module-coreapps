@@ -18,6 +18,12 @@ function ProgramsController(openmrsRest, $scope, $filter) {
 
     ctrl.patientPrograms= [];
 
+    ctrl.showAddProgram = false;
+
+    ctrl.input = {
+        program: ""
+    }
+
     // TODO did this work?
     ctrl.dateFormat = (ctrl.config.dateFormat == '' || angular.isUndefined(ctrl.config.dateFormat))
         ? 'yyyy-MM-dd' : ctrl.config.dateFormat;
@@ -91,12 +97,21 @@ function ProgramsController(openmrsRest, $scope, $filter) {
 
     }
 
-    ctrl.gotoProgramDashboard = function(programUuid) {
-        if (programUuid && ctrl.config.enableProgramDashboards) {
+    ctrl.addProgram = function() {
+        ctrl.showAddProgram = true
+    }
+
+    ctrl.cancelAddProgram = function() {
+        ctrl.showAddProgram = false
+        ctrl.input.program = ""
+    }
+
+    ctrl.gotoProgramDashboard = function() {
+        if (ctrl.input.program && ctrl.config.enableProgramDashboards) {
             var destinationPage = "";
             destinationPage = Handlebars.compile(ctrl.patientPage)({
                 patientUuid: ctrl.config.patientUuid,
-                dashboard: programUuid
+                dashboard: ctrl.input.program
             });
             openmrsRest.getServerUrl().then(function (url) {
                 window.location.href = url + destinationPage;
