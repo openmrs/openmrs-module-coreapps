@@ -97,41 +97,45 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 			} %>
 			
         </div>
-        <div class="action-container column">
-            <div class="action-section">
-                <% if (activeVisit) { %>
-                    <ul class="float-left">
-                        <h3 >${ ui.message("coreapps.clinicianfacing.activeVisitActions") }</h3>
-                        <% visitActions.each { ext -> %>
-                        <li class="float-left">
-                            <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
-                                <i class="${ ext.icon } float-left"></i>
-                                ${ ui.message(ext.label) }
-                            </a>
-                        </li>
-                        <% } %>
-                    </ul>
-                <% } %>
-                <ul class="float-left">
-                    <h3>${ ui.message("coreapps.clinicianfacing.overallActions") }</h3>
-                    <%
-                        overallActions.each { ext -> %>
+        <% if ((visitActions && visitActions.size() > 0) || (overallActions && overallActions.size() > 0) || (otherActions && otherActions.size() > 0))  { %>
+            <div class="action-container column">
+                <div class="action-section">
+                    <% if (activeVisit && visitActions && visitActions.size() > 0) { %>
+                        <ul class="float-left">
+                            <h3 >${ ui.message("coreapps.clinicianfacing.activeVisitActions") }</h3>
+                            <% visitActions.each { ext -> %>
                             <li class="float-left">
                                 <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
                                     <i class="${ ext.icon } float-left"></i>
                                     ${ ui.message(ext.label) }
                                 </a>
                             </li>
+                            <% } %>
+                        </ul>
                     <% } %>
-                </ul>
-                <%
-                 def cxtModel = [ patientId: patient.id, activeVisitId: activeVisit ? activeVisit.visit.id : null]
-                 otherActions.each { action -> %>
-                <a id="${ action.id }" class="button medium" href="${ ui.escapeJs(action.url("/" + ui.contextPath(), cxtModel)) }" class="float-left">
-                    <i class="${ action.icon } float-left"></i>${ ui.message(action.label) }
-                </a>
-                <% } %>
+                    <% if (overallActions && overallActions.size() > 0) { %>
+                        <ul class="float-left">
+                            <h3>${ ui.message("coreapps.clinicianfacing.overallActions") }</h3>
+                            <%
+                                overallActions.each { ext -> %>
+                                    <li class="float-left">
+                                        <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
+                                            <i class="${ ext.icon } float-left"></i>
+                                            ${ ui.message(ext.label) }
+                                        </a>
+                                    </li>
+                            <% } %>
+                        </ul>
+                    <% } %>
+                    <%
+                     def cxtModel = [ patientId: patient.id, activeVisitId: activeVisit ? activeVisit.visit.id : null]
+                     otherActions.each { action -> %>
+                    <a id="${ action.id }" class="button medium" href="${ ui.escapeJs(action.url("/" + ui.contextPath(), cxtModel)) }" class="float-left">
+                        <i class="${ action.icon } float-left"></i>${ ui.message(action.label) }
+                    </a>
+                    <% } %>
+                </div>
             </div>
-        </div>
+        <% } %>
     </div>
 </div>
