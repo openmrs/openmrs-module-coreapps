@@ -106,12 +106,17 @@ function ProgramsController(openmrsRest, $scope, $filter) {
         ctrl.input.program = ""
     }
 
-    ctrl.gotoProgramDashboard = function() {
-        if (ctrl.input.program && ctrl.config.enableProgramDashboards) {
+    ctrl.gotoProgramDashboard = function(programUuid) {
+
+        if (!programUuid) {
+            programUuid = ctrl.input.program
+        }
+
+        if (programUuid && ctrl.config.enableProgramDashboards) {
             var destinationPage = "";
             destinationPage = Handlebars.compile(ctrl.patientPage)({
                 patientUuid: ctrl.config.patientUuid,
-                dashboard: ctrl.input.program
+                dashboard: programUuid
             });
             openmrsRest.getServerUrl().then(function (url) {
                 window.location.href = url + destinationPage;
