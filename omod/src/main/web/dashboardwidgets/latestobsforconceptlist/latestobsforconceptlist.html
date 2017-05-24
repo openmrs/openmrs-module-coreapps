@@ -1,0 +1,12 @@
+<ul>
+    <li ng-repeat="obs in $ctrl.obs">
+        <div style="display: block; overflow: hidden; padding-right: 5px; padding-bottom: 2px">
+            <span style="float: left">
+                {{obs.concept.name.display}}: <strong>{{obs.value}}</strong>
+            </span>
+            <span style="float: right; font-size: small; color: #939393">
+                {{$ctrl.widgetsCommons.dateToDaysAgoMessage(obs.obsDatetime)}}
+            </span>
+        </div>
+    </li>
+</ul>

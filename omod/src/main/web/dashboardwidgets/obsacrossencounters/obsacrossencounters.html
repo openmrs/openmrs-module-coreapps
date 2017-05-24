@@ -1,0 +1,17 @@
+<table ng-if="$ctrl.encounters.length != 0">
+    <thead>
+        <tr>
+            <th>Encounter</th>
+            <th ng-repeat="concept in $ctrl.concepts">{{concept.display}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="encounter in $ctrl.encounters| orderBy: '-encounterDatetime'">
+            <th style="white-space: nowrap;">{{encounter.encounterDatetime | date: $ctrl.config.dateFormat}}</th>
+            <th ng-repeat="ob in encounter.obs">
+                {{ob.value}}
+            </th>
+        </tr>
+    </tbody>
+</table>
+<p ng-if="$ctrl.encounters.length == 0">None</p>
