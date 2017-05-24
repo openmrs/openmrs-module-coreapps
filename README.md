@@ -9,6 +9,9 @@ Provides apps for performing the common tasks
 
 You need to have Node 6.x installed. We recommend using [nvm](https://github.com/creationix/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows) to install Node.
 
+The code is at omod/src/main/web
+The generated code is at omod/target/classes/web/module/resources/scripts/web
+
 Installing dependencies: `npm install` (once after code checkout or when dependencies change)
 
 Development build: `npm run build:dev`

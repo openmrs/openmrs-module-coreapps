@@ -1,6 +1,6 @@
 <%
-    ui.includeJavascript("coreapps", "ui/coreapps.vendor.js")
-    ui.includeJavascript("coreapps", "ui/coreapps.dashboardwidgets.js")
+    ui.includeJavascript("coreapps", "web/coreapps.vendor.js")
+    ui.includeJavascript("coreapps", "web/coreapps.dashboardwidgets.js")
     ui.includeJavascript("uicommons", "handlebars/handlebars.js")
 %>
 <div id="coreapps-${config.id}" class="info-section">
