@@ -25,7 +25,7 @@ var config = {
 	plugins: [
 		new webpack.optimize.CommonsChunkPlugin({
 			name: "vendor",
-			minChunks: module => /node_modules/.test(module.resource)
+			minChunks: function (module) { return /node_modules/.test(module.resource) }
 		}),
 		new ngAnnotatePlugin()
 	],
