@@ -42,10 +42,6 @@ var config = {
 				loader: 'babel?presets[]=es2015'
 			}, 
 			{
-				test: /\.css$/,
-				loader: 'css'
-			}, 
-			{
 				test: /\.(png|jpg|jpeg|gif|svg)$/,
 				loader: 'url'
 			},
@@ -57,11 +53,6 @@ var config = {
 				test: /\.html$/,
 				loader: 'raw'
 			}, 
-			{
-				test: /\.scss$/,
-				loader: "style!css!sass?outputStyle=expanded&includePaths[]=" 
-					+ path.resolve(__dirname, "./node_modules/compass-mixins/lib")
-			},
 			{test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: 'url'},
 			{test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: 'url'},
 			{test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url'},
