@@ -79,9 +79,9 @@ export default class ProgramStatusController {
         
         this.activate();
 
-        //TODO: Move to separate toggleEdit and toggleDatePopup to separate classes
         let ctrl = this;
 
+        //TODO: Migrate to new format-maybe just forget about this nested function idea?
         // functions that control showing/hiding elements for editing enrollment or states
         this.toggleEdit = {}
 
@@ -134,6 +134,13 @@ export default class ProgramStatusController {
             this.fetchPatientProgram(this.config.patientProgram);
         });
 
+    }
+
+    setInputsToStartingValues() {
+        this.input.dateEnrolled = new Date(this.patientProgram.dateEnrolled);
+        this.input.dateCompleted = this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
+        this.input.enrollmentLocation = this.patientProgram.location ? this.patientProgram.location.uuid : null;
+        this.input.outcome = this.patientProgram.outcome ? this.patientProgram.outcome.uuid : null;
     }
 
     fetchProgram() {
@@ -201,15 +208,6 @@ export default class ProgramStatusController {
         }
     }
 
-    deletePatientProgram() {
-        this.openmrsRest.remove('programenrollment/', {
-            uuid: this.patientProgram.uuid
-        }).then((response) => {
-            this.patientProgram = null;
-            this.fetchPatientProgram(); // refresh display
-        })
-    }
-
     getActiveProgram(patientPrograms) {
 
         // only patient programs of the specified type
@@ -229,13 +227,6 @@ export default class ProgramStatusController {
         }
     }
 
-    setInputsToStartingValues() {
-        this.input.dateEnrolled = new Date(this.patientProgram.dateEnrolled);
-        this.input.dateCompleted = this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
-        this.input.enrollmentLocation = this.patientProgram.location ? this.patientProgram.location.uuid : null;
-        this.input.outcome = this.patientProgram.outcome ? this.patientProgram.outcome.uuid : null;
-    }
-
     enrollInProgram() {
         if (this.input.dateEnrolled && this.input.enrollmentLocation) {
             this.openmrsRest.create('programenrollment', {
@@ -249,7 +240,6 @@ export default class ProgramStatusController {
         }
     }
 
-
     updatePatientProgram() {
         this.openmrsRest.update('programenrollment/' + this.patientProgram.uuid, {
             dateEnrolled: this.input.dateEnrolled,
@@ -258,6 +248,15 @@ export default class ProgramStatusController {
             outcome: this.input.outcome
         }).then((response) => {
             this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
+        })
+    }
+
+    deletePatientProgram() {
+        this.openmrsRest.remove('programenrollment/', {
+            uuid: this.patientProgram.uuid
+        }).then((response) => {
+            this.patientProgram = null;
+            this.fetchPatientProgram(); // refresh display
         })
     }
 
@@ -275,6 +274,18 @@ export default class ProgramStatusController {
         })
     }
 
+    getWorkflowForState(state) {
+        let result;
+        angular.forEach(this.program.allWorkflows, (workflow) => {
+            angular.forEach(workflow.states, (workflowState) => {
+                if (state.uuid == workflowState.uuid) {
+                    result = workflow;
+                }
+            })
+        })
+        return result;
+    }
+
     voidPatientStates(patientStateUuids) {
 
         let voidCalls = [];
@@ -290,6 +301,39 @@ export default class ProgramStatusController {
             // TODO: handle error cases--what if the widget rejects the change?
             this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
         });
+
+    }
+
+    updatePatientState(workflowUuid, stateUuid) {
+        this.edit.workflow[workflowUuid] = false;
+        this.createPatientState(this.input.changeToStateByWorkflow[workflowUuid])
+    }
+
+    deleteMostRecentPatientStates() {
+        if (this.patientStateHistory.length > 0) {
+            var stateUuids = [];
+            for (var workflow in this.patientStateHistory[0].patientStatesByWorkflow) {
+                stateUuids.push(this.patientStateHistory[0].patientStatesByWorkflow[workflow].uuid)
+            }
+            this.voidPatientStates(stateUuids);
+        }
+    }
+
+    getMostRecentStateForWorkflow(workflowUuid) {
+        var result = null;
+        angular.forEach(this.patientStateHistory, (history) => {
+            if (workflowUuid in history['patientStatesByWorkflow'] && result == null) {
+                result = history['patientStatesByWorkflow'][workflowUuid]
+            }
+        });
+        return result;
+    }
+
+    isNotCurrentState(workflow) {
+        return (state) => {
+            var currentState = this.getMostRecentStateForWorkflow(workflow.uuid);
+            return !currentState || currentState.state.uuid != state.uuid;
+        }
 
     }
 
@@ -357,16 +401,10 @@ export default class ProgramStatusController {
         })
     }
 
-    getWorkflowForState(state) {
-        let result;
-        angular.forEach(this.program.allWorkflows, (workflow) => {
-            angular.forEach(workflow.states, (workflowState) => {
-                if (state.uuid == workflowState.uuid) {
-                    result = workflow;
-                }
-            })
-        })
-        return result;
+    update() {
+        this.cancelAllEditModes();
+        this.updatePatientProgram();
+        this.setInputsToStartingValues();
     }
 
     cancelAllEditModes() {
@@ -376,56 +414,13 @@ export default class ProgramStatusController {
         }
     }
 
-    enroll() {
-       this.enrollInProgram();
-    }
-
-    update() {
-        this.cancelAllEditModes();
-        this.updatePatientProgram();
-        this.setInputsToStartingValues();
-    }
-
     cancelEdit() {
         this.cancelAllEditModes();
         this.setInputsToStartingValues();
     }
 
-    updatePatientState(workflowUuid, stateUuid) {
-        this.edit.workflow[workflowUuid] = false;
-        this.createPatientState(this.input.changeToStateByWorkflow[workflowUuid])
-    }
-
-    deleteMostRecentPatientStates() {
-        if (this.patientStateHistory.length > 0) {
-            var stateUuids = [];
-            for (var workflow in this.patientStateHistory[0].patientStatesByWorkflow) {
-                stateUuids.push(this.patientStateHistory[0].patientStatesByWorkflow[workflow].uuid)
-            }
-            this.voidPatientStates(stateUuids);
-        }
-    }
-
     hasHistory() {
         return this.patientStateHistory.length > 0;
-    }
-
-    isNotCurrentState(workflow) {
-        return (state) => {
-            var currentState = this.getMostRecentStateForWorkflow(workflow.uuid);
-            return !currentState || currentState.state.uuid != state.uuid;
-        }
-
-    }
-
-    getMostRecentStateForWorkflow(workflowUuid) {
-        var result = null;
-        angular.forEach(this.patientStateHistory, (history) => {
-            if (workflowUuid in history['patientStatesByWorkflow'] && result == null) {
-                result = history['patientStatesByWorkflow'][workflowUuid]
-            }
-        });
-        return result;
     }
 
     toggleHistory() {
