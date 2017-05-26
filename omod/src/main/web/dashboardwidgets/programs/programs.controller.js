@@ -38,8 +38,8 @@ export default class ProgramsController {
         }
 
         this.fetchPrograms()
-            .then(this.fetchPatientPrograms)
-            .then(this.determineUnenrolledPrograms)
+            .then(this.fetchPatientPrograms.bind(this))
+            .then(this.determineUnenrolledPrograms.bind(this))
     }
 
     fetchPrograms() {
@@ -52,7 +52,7 @@ export default class ProgramsController {
 
     fetchPatientPrograms() {
         return this.openmrsRest.get('programenrollment', {
-            patient: ctrl.config.patientUuid,
+            patient: this.config.patientUuid,
             voided: false,
             limit: this.getMaxRecords(),
             v: 'custom:program:(uuid,display),dateEnrolled,dateCompleted'
