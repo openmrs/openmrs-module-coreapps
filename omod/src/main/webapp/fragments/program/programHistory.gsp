@@ -1,11 +1,7 @@
 <%
-    ui.includeJavascript("coreapps", "fragments/openmrs-contrib-uicommons.bundle.min.js")
-    ui.includeJavascript("coreapps", "fragments/dashboardWidgetsCommons.service.js")
+    ui.includeJavascript("coreapps", "web/coreapps.vendor.js")
+    ui.includeJavascript("coreapps", "web/coreapps.dashboardwidgets.js")
     ui.includeJavascript("uicommons", "handlebars/handlebars.js")
-
-
-    ui.includeJavascript("coreapps", "fragments/dashboardwidgets/programstatus/programstatus.controller.js")
-    ui.includeJavascript("coreapps", "fragments/dashboardwidgets/programstatus/programstatus.component.js")
 %>
 
 <% config.programJson.eachWithIndex { json, idx -> %>

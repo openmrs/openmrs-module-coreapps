@@ -122,7 +122,7 @@ li  {
         </li>
 
         <li ng-if="$ctrl.edit.enrollment">
-            <button class="confirm" ng-click="$ctrl.updatePatientProgram()">Save</button>  <button class="cancel" ng-click="$ctrl.cancelEdit()">Cancel</button>
+            <button class="confirm" ng-click="$ctrl.update()">Save</button>  <button class="cancel" ng-click="$ctrl.cancelEdit()">Cancel</button>
         </li>
 
         <div ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-if="$ctrl.program.allWorkflows.length != 0">

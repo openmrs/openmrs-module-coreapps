@@ -246,7 +246,7 @@ export default class ProgramStatusController {
 
 
     updatePatientProgram() {
-        this.openmrsRest.create('programenrollment/' + this.patientProgram.uuid, {
+        this.openmrsRest.update('programenrollment/' + this.patientProgram.uuid, {
             dateEnrolled: this.input.dateEnrolled,
             dateCompleted: this.input.dateCompleted,
             location: this.input.enrollmentLocation,
@@ -375,7 +375,7 @@ export default class ProgramStatusController {
        this.enrollInProgram();
     }
 
-    updatePatientProgram() {
+    update() {
         this.cancelAllEditModes();
         this.updatePatientProgram();
         this.setInputsToStartingValues();
