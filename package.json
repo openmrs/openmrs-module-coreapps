@@ -11,7 +11,7 @@
   },
   "config": {
     "sourceDir": "omod/src/main/web",
-    "targetDir": "omod/target/classes/web/module/resources/scripts/web"
+    "targetDir": "omod/src/main/webapp/resources/scripts/web"
   },
   "dependencies": {
     "@openmrs/angularjs-openmrs-api": "^0.5.1",
