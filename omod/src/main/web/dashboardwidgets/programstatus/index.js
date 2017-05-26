@@ -1,5 +1,6 @@
 import angular from 'angular';
 import openmrsApi from '@openmrs/angularjs-openmrs-api';
+import uiBootstrap from 'angular-ui-bootstrap';
 
 import { ProgramStatusComponent } from './programstatus.component';
 
