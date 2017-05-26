@@ -348,7 +348,7 @@
 						</goals>
 						<phase>generate-resources</phase>
 						<configuration>
-							<arguments>install</arguments>
+							<arguments>install --no-optional</arguments>
 							<workingDirectory>../</workingDirectory>
 						</configuration>
 					</execution>
