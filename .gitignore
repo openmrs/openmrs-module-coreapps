@@ -20,3 +20,7 @@ omod/src/main/compass/sass-external/*
 # Rubygems build directories #
 omod/.rubygems
 omod/.rubygems-provided
+
+# JS
+node
+node_modules

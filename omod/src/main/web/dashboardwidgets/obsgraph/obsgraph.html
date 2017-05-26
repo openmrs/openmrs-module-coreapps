@@ -1,0 +1,12 @@
+<div ng-if="$ctrl.series.length > 0">
+    <div style="padding-bottom: 10px">
+        <strong>
+            {{$ctrl.concept.display}}
+        </strong>
+    </div>
+    <canvas class="chart chart-line" chart-data="$ctrl.data" chart-labels="$ctrl.labels"
+            chart-series="$ctrl.series"></canvas>
+</div>
+<div ng-if="$ctrl.series.length === 0">
+    None
+</div>

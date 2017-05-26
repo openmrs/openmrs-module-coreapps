@@ -1,0 +1,11 @@
+<ul>
+    <li ng-if="$ctrl.visits.length != 0" ng-repeat="visit in $ctrl.visits track by $index">
+        <a href="{{$ctrl.serverUrl}}/coreapps/patientdashboard/patientDashboard.page?patientId={{$ctrl.config.patientUuid}}&visitId={{visit.uuid}}">
+            {{visit.startDatetime | date: $ctrl.config.dateFormat}}
+        </a>
+        <div class="tag" ng-if="visit.encounterType !== ''">{{visit.encounterType}}</div>
+    </li>
+    <p ng-if="$ctrl.visits.length == 0">
+        None
+    </p>
+</ul>

@@ -1,16 +1,7 @@
 <%
-    ui.includeJavascript("coreapps", "fragments/openmrs-contrib-uicommons.bundle.min.js")
-    ui.includeJavascript("coreapps", "fragments/dashboardWidgetsCommons.service.js")
+    ui.includeJavascript("coreapps", "web/coreapps.vendor.js")
+    ui.includeJavascript("coreapps", "web/coreapps.dashboardwidgets.js")
     ui.includeJavascript("uicommons", "handlebars/handlebars.js")
-
-    // Load chart library only when obsGraph widget is present
-    if (config.widget.equals('obsgraph')) {
-        ui.includeJavascript("coreapps", "fragments/Chart.min.js")
-        ui.includeJavascript("coreapps", "fragments/angular-chart.min.js")
-    }
-
-    ui.includeJavascript("coreapps", "fragments/dashboardwidgets/" + config.widget + "/" + config.widget + ".controller.js")
-    ui.includeJavascript("coreapps", "fragments/dashboardwidgets/" + config.widget + "/" + config.widget + ".component.js")
 %>
 <div id="coreapps-${config.id}" class="info-section">
     <div class="info-header">
