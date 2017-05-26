@@ -3,17 +3,14 @@
 export default class ProgramStatusController {
 
     // TODO fix giant date widget--figure out how to bundle in bootstrap.css?
-    // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)
-    // TODO need way to fully delete program enrollment
+    // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
+    // TODO ability to delete enrollment--add are you sure?
 
+    // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)
     // TODO localization of text
     // TODO validation elements--can't change state without selecting date, etc
-    // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
-    // TODO ability to "void" enrollment
 
     // TODO unit tests? clean up?
-
-    // TODO fix voided issue in REST module
 
     constructor(openmrsRest, $filter, $q) {
         'ngInject';
@@ -204,6 +201,14 @@ export default class ProgramStatusController {
         }
     }
 
+    deletePatientProgram() {
+        this.openmrsRest.remove('programenrollment/', {
+            uuid: this.patientProgram.uuid
+        }).then((response) => {
+            this.patientProgram = null;
+            this.fetchPatientProgram(); // refresh display
+        })
+    }
 
     getActiveProgram(patientPrograms) {
 

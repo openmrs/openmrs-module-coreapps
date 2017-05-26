@@ -78,7 +78,7 @@ li  {
 
     <ul ng-class="{'eighty-percent-font': !$ctrl.expanded}" ng-if="$ctrl.patientProgram">
         <li ng-if="!$ctrl.edit.enrollment">
-            <!-- TODO these first two link should/could be moved to the header level -->
+            <i ng-if="!$ctrl.expanded && !$ctrl.edit.enrollment" ng-click="$ctrl.deletePatientProgram()" class="icon-remove right no-padding"/>
             <i ng-if="!$ctrl.expanded && !$ctrl.edit.enrollment" ng-click="$ctrl.toggleEdit.enrollment()" class="icon-pencil right no-padding"/>
             <b>Enrolled:</b> {{ $ctrl.patientProgram.dateEnrolled | date:$ctrl.dateFormat }} <span ng-if="$ctrl.patientProgram.location">at {{ $ctrl.patientProgram.location.display }}</span>
         </li>
