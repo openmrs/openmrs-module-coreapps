@@ -37,6 +37,10 @@
 			}
 		}
 	}
+
+	angular.element(document).ready(function() {
+		angular.bootstrap('#coreapps-fragment-stickyNote', [ 'coreapps.fragment.stickyNote' ]);
+	});
 </script>
 
 <style type="text/css">
@@ -57,7 +61,7 @@
 </style>
 
 <div class="stickyNote">
-	<div ng-app="coreapps.fragment.stickyNote" ng-controller="stickyNoteCtrl">
+	<div id="coreapps-fragment-stickyNote" ng-controller="stickyNoteCtrl">
 		<coreapps-click-to-edit-obs config="config" module="module"></coreapps-click-to-edit-obs>
 	</div>
 </div>

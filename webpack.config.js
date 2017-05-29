@@ -14,7 +14,7 @@ var minifiedDependencies = [
 
 var config = {
 	entry: {
-		dashboardwidgets: path.join(sourceDir, "dashboardwidgets/dashboardwidgets")
+		dashboardwidgets: path.join(sourceDir, "dashboardwidgets")
 	},
 	output: {
 		path: targetDir,
