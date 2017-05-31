@@ -12,7 +12,6 @@
 	
 	ui.includeJavascript("uicommons", "moment.min.js")
 	
-	ui.includeCss("uicommons", "xeditable.min.css")
 %>
 
 <%
@@ -21,7 +20,7 @@
 	ui.includeJavascript("coreapps", "stickyNote/app.js")
 	ui.includeJavascript("coreapps", "stickyNote/controllers/stickyNoteCtrl.js")
 	
-	ui.includeCss("coreapps", "stickyNoteIcon.css")
+	ui.includeCss("coreapps", "stickynote/stickyNoteIcon.css")
 	ui.includeJavascript("coreapps", "stickyNote/directives/clickToEditObs.js")
 %>
 <script type="text/javascript">
