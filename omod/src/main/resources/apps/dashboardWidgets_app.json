@@ -107,7 +107,8 @@
       "widget": "relationships",
       "icon": "icon-group",
       "label": "FAMILY",
-      "maxRecords": "5"
+      "maxRecords": "3",
+         "patientPage": "/coreapps/patientdashboard/patientDashboard.page?patientId={{patient.uuid}}5&visitId={{visit.uuid}}"
     },
     "extensions": [
       {
