@@ -5,6 +5,7 @@ export let LatestObsForConceptListComponent = {
     template,
     controller: LatestObsForConceptListController,
     selector: 'latestobsforconceptlist',
+	scope: {},
     bindings: {
         config: '<'
     }
