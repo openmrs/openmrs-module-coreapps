@@ -68,7 +68,7 @@
     "clean": "rimraf %npm_package_config_targetDir% && rimraf $npm_package_config_targetDir",
     "build:dev": "webpack --progress --colors --env=dev",
     "build:prod": "webpack --progress --colors  --env=prod",
-    "build": "npm run clean && npm run test && npm run build:prod",
+    "build": "npm run clean && karma start && npm run build:prod",
     "watch": "webpack --progress --colors --watch --env=dev",
     "test": "karma start",
     "test:dev": "karma start --singleRun=false",
