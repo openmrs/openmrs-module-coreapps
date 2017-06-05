@@ -14,7 +14,7 @@ module.exports = function(config) {
 				base: 'Chrome',
 				flags: ['--disable-web-security']
 			},
-			FirefoxOnTravis: {
+			FirefoxNoSandbox: {
 				base: 'Firefox',
 				flags: ['--no-sandbox']
 			}
@@ -41,7 +41,7 @@ module.exports = function(config) {
     };
 	
 	if (process.env.TRAVIS) {
-		karmaConfig.browsers = ['FirefoxOnTravis'];
+		karmaConfig.browsers = ['FirefoxNoSandbox'];
 	}
 	
 	config.set(karmaConfig);

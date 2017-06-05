@@ -73,6 +73,8 @@
     "watch": "webpack --progress --colors --watch --env=dev",
     "test": "karma start",
     "test:dev": "karma start --singleRun=false",
+	"test:dev-chrome": "karma start --singleRun=false --browsers=ChromeWithoutSecurity",
+	"test:dev-firefox": "karma start --singleRun=false --browsers=FirefoxNoSandbox",
     "lint": "eslint ./",
     "lint:fix": "eslint --fix ./"
   },
