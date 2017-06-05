@@ -11,8 +11,9 @@ The widgets are built as part of the module (`mvn clean install`) without having
 
 You need to have Node 6.x installed. We recommend using [nvm](https://github.com/creationix/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows) to install Node.
 
-The code is at omod/src/main/web
-The generated code is at omod/target/classes/web/module/resources/scripts/web
+The code is at **omod/src/main/web**
+
+The generated code is at **omod/target/classes/web/module/resources/scripts/web**
 
 Installing dependencies: `npm install --no-optional` (once after code checkout or when dependencies change)
 
