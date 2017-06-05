@@ -4,7 +4,7 @@ module.exports = function(config) {
 	webpackConfig.devtool = 'inline-source-map';
 	
 	//Disable CommonsChunkPlugin as it breaks tests.
-	const commonsChunkPluginIndex = webpackConfig.plugins.findIndex(plugin => plugin.chunkNames);
+	var commonsChunkPluginIndex = webpackConfig.plugins.findIndex(function(plugin) { return plugin.chunkNames });
 	webpackConfig.plugins.splice(commonsChunkPluginIndex, 1);
 	
     var karmaConfig = {
