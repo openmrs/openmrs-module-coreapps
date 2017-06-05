@@ -8,7 +8,7 @@ module.exports = function(config) {
 	webpackConfig.plugins.splice(commonsChunkPluginIndex, 1);
 	
     var karmaConfig = {
-        browsers: ['ChromeWithoutSecurity'],
+        browsers: ['PhantomJS'],
 		customLaunchers: {
 			ChromeWithoutSecurity: {
 				base: 'Chrome',
