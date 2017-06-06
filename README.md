@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/openmrs/openmrs-module-coreapps.svg?branch=master)](https://travis-ci.org/openmrs/openmrs-module-coreapps) 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8282d20655f84632876d16f71a8b3c2e)](https://www.codacy.com/app/openmrs/openmrs-module-coreapps?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=openmrs/openmrs-module-coreapps&amp;utm_campaign=Badge_Grade)
 [![dependencies Status](https://david-dm.org/openmrs/openmrs-module-coreapps/status.svg)](https://david-dm.org/openmrs/openmrs-module-coreapps)
-[![devDependencies Status](https://david-dm.org/codacy/node-codacy-coverage/dev-status.svg)](https://david-dm.org/codacy/node-codacy-coverage?type=dev)
+[![devDependencies Status](https://david-dm.org/openmrs/openmrs-module-coreapps/dev-status.svg)](https://david-dm.org/openmrs/openmrs-module-coreapps?type=dev)
 
 OpenMRS Core Apps Module
 =======================
