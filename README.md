@@ -23,7 +23,7 @@ Development build: `npm run build:dev`
 
 Continuous development build: `npm run watch` (whenever you make a change, a new UI build will be triggered)
 
-Continuous test execution: `npm run test:dev` (whenever you make a change, tests will be run again)
+Continuous test execution: `npm run test:dev` (in PhantomJS), `npm run test:dev-chrome` (in Chrome), `npm run test:dev-firefox` (in Firefox) (whenever you make a change, tests will be run again)
 
 Clean development build: `npm run clean && npm run build:dev`
 
