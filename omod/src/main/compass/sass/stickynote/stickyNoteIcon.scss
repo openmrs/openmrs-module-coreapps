@@ -1,0 +1,20 @@
+@font-face {
+  font-family: 'fontawesome-stickyNote';
+  src:  url('../../fonts/fontawesome-stickyNote.eot');
+  src:  url('../../fonts/fontawesome-stickyNote.eot#iefix') format('embedded-opentype'),
+    url('../../fonts/fontawesome-stickyNote.ttf') format('truetype'),
+    url('../../fonts/fontawesome-stickyNote.woff') format('woff'),
+    url('../../fonts/fontawesome-stickyNote.svg#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.icon-sticky-note-o:before {
+  font-family: 'fontawesome-stickyNote' !important;
+  content: "\e900";
+}
+.icon-sticky-note:before {
+  font-family: 'fontawesome-stickyNote' !important;
+  content: "\e901";
+}
+
