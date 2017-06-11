@@ -150,6 +150,11 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
+		
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>metadatamapping-api</artifactId>
+		</dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>

@@ -191,6 +191,12 @@
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>uicommons-api</artifactId>
 		</dependency>
+	
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>metadatamapping-api</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>providermanagement-api</artifactId>
