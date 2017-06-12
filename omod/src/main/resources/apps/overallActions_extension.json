@@ -37,7 +37,8 @@
         "label": "coreapps.markPatientDead.label",
         "url": "coreapps/markPatientDead.page?patientId={{patient.uuid}}",
         "icon": "icon-plus-sign-alt",
-        "order": 24
+        "order": 24,
+        "requiredPrivilege": "Task: coreapps.markPatientDead"
     },
     {
         "id": "${project.parent.groupId}.${project.parent.artifactId}.deletePatient",
