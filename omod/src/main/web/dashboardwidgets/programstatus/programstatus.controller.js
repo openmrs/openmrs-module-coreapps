@@ -1,5 +1,7 @@
 // NOTE: work-in-progress, consider this not yet an "official" release of this widgets, future changes may not be backwards-compatible and change functionality signficantly
 
+import angular from 'angular';
+
 export default class ProgramStatusController {
 
     // TODO fix giant date widget--figure out how to bundle in bootstrap.css?
