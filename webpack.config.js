@@ -29,7 +29,7 @@ var config = {
 		rules: [
 			{
 				test: /\.js$/,
-				exclude: /node_modules/,
+				include: sourceDir,
 				use: {
 					loader: 'babel-loader?cacheDirectory',
 					options: {
@@ -38,19 +38,30 @@ var config = {
 				}
 			}, 
 			{
+				test: /\.css$/,
+				include: [ 
+					sourceDir,
+					path.join(nodeModulesDir, "angular-ui-bootstrap") 
+				],
+				use: ['style-loader', 'css-loader']
+			},
+			{
 				test: /\.(png|jpg|jpeg|gif|svg)$/,
+				include: sourceDir,
 				use: {
 					loader: 'url-loader'
 				}
 			},
 			{
 				test: /\.json$/,
+				include: sourceDir,
 				use: {
 					loader: 'json-loader'
 				}
 			},
 			{
 				test: /\.html$/,
+				include: sourceDir,
 				use: {
 					loader: 'raw-loader'
 				}
@@ -66,7 +77,9 @@ var config = {
 };
 
 if (env === 'dev') {
-
+	config.plugins.push(new webpack.SourceMapDevToolPlugin({
+      exclude: ["coreapps.vendor.js"]
+    }));
 } else if (env === 'prod') {
 	config.devtool = 'source-map';
 	

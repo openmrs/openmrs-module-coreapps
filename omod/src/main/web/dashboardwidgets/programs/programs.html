@@ -21,7 +21,7 @@
     <!-- TODO: localize all text -->
 
 <ul>
-    <li ng-if="$ctrl.patientPrograms.length != 0" ng-repeat="patientProgram in $ctrl.patientPrograms | orderBy: '-dateEnrolled'">
+    <li ng-show="$ctrl.patientPrograms.length != 0" ng-repeat="patientProgram in $ctrl.patientPrograms | orderBy: '-dateEnrolled'">
         <a ng-click="$ctrl.gotoProgramDashboard(patientProgram.program.uuid)">
             {{ patientProgram.program.display }}
         </a>
@@ -30,7 +30,7 @@
         <div ng-show="patientProgram.dateCompleted" class="tag">{{ patientProgram.dateEnrolled | date:dateFormat }} - {{ patientProgram.dateCompleted | date:dateFormat }}</div>
     </li>
 
-    <li ng-if="$ctrl.patientPrograms.length == 0">
+    <li ng-show="$ctrl.patientPrograms.length == 0">
         None
     </li>
 
