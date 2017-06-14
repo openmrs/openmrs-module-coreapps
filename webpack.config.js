@@ -65,13 +65,7 @@ var config = {
 				use: {
 					loader: 'raw-loader'
 				}
-			},
-            {
-                test: /\.css$/,
-                use: {
-                	loader: 'css-loader'
-                }
-            }
+			}
 		]
 	}
 };
