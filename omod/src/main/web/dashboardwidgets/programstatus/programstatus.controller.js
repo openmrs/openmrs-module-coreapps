@@ -5,12 +5,13 @@ import angular from 'angular';
 export default class ProgramStatusController {
 
     // TODO fix giant date widget--figure out how to bundle in bootstrap.css?
-    // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
     // TODO ability to delete enrollment--add are you sure?
-
     // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)
     // TODO localization of text
+    // TODO limit enrollment locations
+
     // TODO validation elements--can't change state without selecting date, etc
+    // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
 
     // TODO unit tests? clean up?
 
@@ -83,51 +84,8 @@ export default class ProgramStatusController {
 
         let ctrl = this;
 
-        //TODO: Migrate to new format-maybe just forget about this nested function idea?
-        // functions that control showing/hiding elements for editing enrollment or states
-        this.toggleEdit = {}
-
-        this.toggleEdit.enrollment = function() {
-            var currentStatus = ctrl.edit.enrollment;
-            ctrl.cancelAllEditModes()
-            ctrl.edit.enrollment = !currentStatus;
-        }
-
-        /*  this.toggleEdit.completion = function() {
-         var currentStatus = this.edit.completion;
-         cancelAllEditModes();
-         this.edit.completion = !currentStatus;
-         }*/
-
-        this.toggleEdit.workflow = function(workflowUuid) {
-            var currentStatus = ctrl.edit.workflow[workflowUuid];
-            ctrl.cancelAllEditModes();
-
-            // the first time we hit this, we need to initialize the workflw
-            if (!workflowUuid in ctrl.edit.workflow) {
-                ctrl.edit.workflow[workflowUuid] = true
-            }
-            else {
-                ctrl.edit.workflow[workflowUuid] = !currentStatus;
-            }
-        }
-
-        // functions that open the datepicker widgets for various input elements
-        this.toggleDatePopup = {};
-
-        this.toggleDatePopup.enrollment = function() {
-            ctrl.datePopup.enrollment.opened = !ctrl.datePopup.enrollment.opened;
-        }
-
-        this.toggleDatePopup.completion = function() {
-            ctrl.datePopup.completion.opened = !ctrl.datePopup.completion.enrollment;
-        }
-
-        this.toggleDatePopup.workflow = function(workflowUuid) {
-            ctrl.datePopup.workflow[workflowUuid].opened = !ctrl.datePopup.workflow[workflowUuid].opened;
-        }
     }
-    
+
     activate() {
         this.openmrsRest.setBaseAppPath("/coreapps");
         this.fetchLocations();
@@ -139,10 +97,44 @@ export default class ProgramStatusController {
     }
 
     setInputsToStartingValues() {
-        this.input.dateEnrolled = new Date(this.patientProgram.dateEnrolled);
-        this.input.dateCompleted = this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
-        this.input.enrollmentLocation = this.patientProgram.location ? this.patientProgram.location.uuid : null;
-        this.input.outcome = this.patientProgram.outcome ? this.patientProgram.outcome.uuid : null;
+        if (this.patientProgram) {
+            this.input.dateEnrolled = new Date(this.patientProgram.dateEnrolled);
+            this.input.dateCompleted = this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
+            this.input.enrollmentLocation = this.patientProgram.location ? this.patientProgram.location.uuid : null;
+            this.input.outcome = this.patientProgram.outcome ? this.patientProgram.outcome.uuid : null;
+        }
+    }
+
+    toggleEditEnrollment() {
+        let currentStatus = this.edit.enrollment;
+        this.cancelAllEditModes()
+        this.edit.enrollment = !currentStatus;
+    }
+
+    // TODO this refactoring has not yet been tetsed
+    toggleEditWorkflow(workflowUuid) {
+        let currentStatus = this.edit.workflow[workflowUuid];
+        this.cancelAllEditModes();
+
+        // the first time we hit this, we need to initialize the workflw
+        if (!workflowUuid in this.edit.workflow) {
+            this.edit.workflow[workflowUuid] = true
+        }
+        else {
+            this.edit.workflow[workflowUuid] = !currentStatus;
+        }
+    }
+
+    toggleDatePopupEnrollment() {
+        this.datePopup.enrollment.opened = !this.datePopup.enrollment.opened;
+    }
+
+    toggleDatePopupCompletion() {
+        this.datePopup.completion.opened = !this.datePopup.completion.enrollment;
+    }
+
+    toggleDatePopupWorkflow(workflowUuid) {
+        this.datePopup.workflow[workflowUuid].opened = !this.datePopup.workflow[workflowUuid].opened;
     }
 
     fetchProgram() {
@@ -162,7 +154,6 @@ export default class ProgramStatusController {
         });
     }
 
-
     fetchPatientProgram(patientProgramUuid) {
         if (!patientProgramUuid) {
             // we haven't been been given a patient program uuid, so load the programs and pick the active program (if it exists)
@@ -173,6 +164,7 @@ export default class ProgramStatusController {
                 this.getActiveProgram(response.results);
                 this.groupAndSortPatientStates();
                 this.configDatePopups();
+                this.setInputsToStartingValues();
             });
         }
         else {
@@ -185,6 +177,7 @@ export default class ProgramStatusController {
                 this.patientProgram = response;
                 this.groupAndSortPatientStates();
                 this.configDatePopups();
+                this.setInputsToStartingValues();
             })
         }
     }
@@ -219,13 +212,11 @@ export default class ProgramStatusController {
         });
 
         if (patientPrograms.length > 0) {
-
             patientPrograms = this.$filter('orderBy')(patientPrograms, (patientProgram) => {
                 return -patientPrograms.startDate;
             });
 
             this.patientProgram = patientPrograms[0];
-            this.setInputsToStartingValues();
         }
     }
 
@@ -406,7 +397,6 @@ export default class ProgramStatusController {
     update() {
         this.cancelAllEditModes();
         this.updatePatientProgram();
-        this.setInputsToStartingValues();
     }
 
     cancelAllEditModes() {
