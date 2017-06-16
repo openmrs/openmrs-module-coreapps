@@ -1,6 +1,8 @@
- let services = angular.module('dashboardwidgets.services', []);
+import angular from 'angular';
+import WidgetsCommons from './dashboardwidgetscommons.service';
+
+let services = angular.module('dashboardwidgets.services', []);
+
+services.service('widgetsCommons', WidgetsCommons);
  
- import WidgetsCommons from './dashboardwidgetscommons.service';
- services.service('widgetsCommons', WidgetsCommons);
- 
- export default services.name;
+export default services.name;

@@ -14,14 +14,15 @@
     "targetDir": "omod/target/classes/web/module/resources/scripts/web"
   },
   "dependencies": {
-    "@openmrs/angularjs-openmrs-api": "^0.5.1",
-    "angular": "^1.5.5",
-    "angular-animate": "^1.6.4",
+    "@openmrs/angularjs-openmrs-api": "0.5.3",
+    "angular": "1.5.8",
+    "angular-resource": "1.5.8",
+    "angular-animate": "1.5.8",
     "angular-chart.js": "^1.1.1",
     "angular-ui-bootstrap": "^2.5.0"
   },
   "devDependencies": {
-    "angular-mocks": "^1.5.3",
+    "angular-mocks": "1.5.8",
     "babel-core": "^6.24.1",
     "babel-eslint": "6.0.0-beta.3",
     "babel-loader": "^7.0.0",

@@ -29,7 +29,7 @@ export default class WidgetsCommons {
 
         // Method used to parse maxAge to day count
         maxAgeToDays(maxAge) {
-            if (angular.isUndefined(maxAge)) {
+            if (typeof maxAge === 'undefined') {
                 return undefined;
             } else {
                 let days = 0;
@@ -53,7 +53,7 @@ export default class WidgetsCommons {
         };
 
         maxAgeToDate(maxAge) {
-            if(angular.isUndefined(maxAge))
+            if(typeof maxAge === 'undefined')
                 return null;
 
             var today = new Date();

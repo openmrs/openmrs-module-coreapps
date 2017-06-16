@@ -1,22 +1,20 @@
-// Sand-boxing widgets so that they use its own version of angular regardless of the version loaded globally.
-// Borrowed from http://www.mattburkedev.com/multiple-angular-versions-on-the-same-page/
-(function() {
-    // Save a copy of the existing angular for later restoration.
-    var existingWindowDotAngular = window.angular;
+import angular from 'angular';
 
-    // Create a new window.angular and a closure variable for
-    // angular.js to load itself into.
-    var angular = (window.angular = {});
+import DataIntegrityViolations from './dataintegrityviolations';
+import LatestObsForConceptList from './latestobsforconceptlist';
+import ObsAcrossEncounters from './obsacrossencounters';
+import ObsGraph from './obsgraph';
+import Programs from './programs';
+import ProgramStatus from './programstatus';
+import Relationships from './relationships';
+import VisitByEncounterType from './visitbyencountertype';
 
-    var dashboardWidgets = require('./dashboardwidgets');
+export default angular.module("openmrs-contrib-dashboardwidgets", [ DataIntegrityViolations, LatestObsForConceptList,
+    ObsAcrossEncounters, ObsGraph, Programs, ProgramStatus, Relationships, VisitByEncounterType]).name;
 
-    //Manually bootstrap with our angular version.
-    angular.element(document).ready(function() {
-        for (var dashboardwidget of document.getElementsByClassName('openmrs-contrib-dashboardwidgets')) {
-            angular.bootstrap(dashboardwidget, [ 'openmrs-contrib-dashboardwidgets' ]);
-        }
 
-        // Restore the old angular version.
-        window.angular = existingWindowDotAngular;
-    });
-})();
+angular.element(document).ready(function() {
+    for (var dashboardwidget of document.getElementsByClassName('openmrs-contrib-dashboardwidgets')) {
+        angular.bootstrap(dashboardwidget, [ 'openmrs-contrib-dashboardwidgets' ]);
+    }
+});
