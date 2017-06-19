@@ -15,16 +15,16 @@
 <p id="filter-tags" class="filters">
     ${ui.message("Filters")}
     <% visitTypesWithAttr.each { type, attr -> %>
-    <span class="filter disabled" value="${type.id}"/>
+    <span class="filter disabled" value="${type}"/>
         <script type="text/javascript">
             jq(document).ready(function () {
                 if ('${attr.color}' != null) {
-                    jq("#visittype-tag-${type.id}.tag").css("background",'${attr.color}');
+                    jq("#visittype-tag-${type}.tag").css("background",'${attr.color}');
                 }
             })
             </script>
-        <span id="visittype-tag-${type.id}" class="tag ${attr.shortName}" style="cursor:pointer;" >
-                ${ui.format(type.name)}
+        <span id="visittype-tag-${type}" class="tag ${attr.shortName}" style="cursor:pointer;" >
+                ${ui.format(attr.name)}
         </span>
     </span>
     <% } %>
@@ -84,14 +84,10 @@
 				</td>
                 <td>
                     <% if (v.visit.visitType) { %>
-                        <% visitsWithAttr.each { visitId, attr -> %>
-                            <% if (visitId   == v.visit.id) { %>
-                                <span style="display:none">${v.visit.visitType.id}</span>
-                                <span id="visittype-tag-${attr.shortName}" style="background: ${attr.color}" class="tag" >
-                                    ${ui.format(v.visit.visitType)}
-                                </span>
-                            <% } %>
-                            <% } %>
+                        <span style="display:none">${v.visit.visitType.id}</span>
+                        <span id="visittype-tag-${ visitTypesWithAttr[v.visit.visitType.id].shortName }" style="background: ${ visitTypesWithAttr[v.visit.visitType.id].color }" class="tag" >
+                            ${ui.format(v.visit.visitType)}
+                        </span>
                         <br/>
                     <% } %>
                 </td>

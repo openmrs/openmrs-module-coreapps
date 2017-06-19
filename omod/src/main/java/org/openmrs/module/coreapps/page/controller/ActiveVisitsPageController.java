@@ -16,6 +16,7 @@ package org.openmrs.module.coreapps.page.controller;
 import org.openmrs.Location;
 import org.openmrs.VisitType;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
@@ -34,7 +35,7 @@ import java.util.HashMap;
 public class ActiveVisitsPageController {
 	
 	public String get(UiSessionContext sessionContext, PageModel model, @SpringBean AdtService service,
-	                @SpringBean("locationService") LocationService locationService, @RequestParam("app") AppDescriptor app,
+	                @SpringBean("visitService") VisitService visitService, @RequestParam("app") AppDescriptor app,
 				    @SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper) {
 		
 		Location sessionLocation = sessionContext.getSessionLocation();
@@ -48,8 +49,8 @@ public class ActiveVisitsPageController {
 		if (visitLocation == null) {
 			throw new IllegalStateException("Configuration required: no visit location found based on session location");
 		}
-		
-		model.addAttribute("visitSummaries", service.getActiveVisits(visitLocation));
+		List<VisitDomainWrapper> activeVisits = service.getActiveVisits(visitLocation);
+		model.addAttribute("visitSummaries", activeVisits);
 
 		String patientPageUrl = app.getConfig().get("patientPageUrl").getTextValue();
 		model.addAttribute("patientPageUrl", patientPageUrl);
@@ -57,17 +58,13 @@ public class ActiveVisitsPageController {
         // used to determine whether or not we display a link to the patient in the results list
         model.addAttribute("canViewVisits", Context.hasPrivilege(CoreAppsConstants.PRIVILEGE_PATIENT_VISITS));
 
-		// retrieve color and short names
-		Map<Integer, Map<String, Object>> activeVisitsWithAttr =
-				visitTypeHelper.getVisitColorAndShortName(service.getActiveVisits(visitLocation));
-		model.addAttribute("visitsWithAttr", activeVisitsWithAttr);
-
 		// retrieve all different visit types, with their color and short name
-		List<VisitDomainWrapper> activeVisits = service.getActiveVisits(visitLocation);
-		Map <VisitType, Object> visitTypesWithAttr = new HashMap<VisitType, Object>();
-		for (VisitDomainWrapper vdw : activeVisits) {
-			Map<String, Object> typeAttr = visitTypeHelper.getVisitTypeColorAndShortName(vdw.getVisit().getVisitType());
-			visitTypesWithAttr.put(vdw.getVisit().getVisitType(), typeAttr);
+		Map <Integer, Object> visitTypesWithAttr = new HashMap<Integer, Object>();
+
+		List<VisitType> allVisitTypes = visitService.getAllVisitTypes();
+		for (VisitType type : allVisitTypes) {
+			Map<String, Object> typeAttr = visitTypeHelper.getVisitTypeColorAndShortName(type);
+			visitTypesWithAttr.put(type.getVisitTypeId(), typeAttr);
 		}
 
 		model.addAttribute("visitTypesWithAttr", visitTypesWithAttr);

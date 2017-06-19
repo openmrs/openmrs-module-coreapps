@@ -169,7 +169,7 @@ public class VisitTypeHelper {
 		if (colorAndShortName.get("shortName") == null) {
 			colorAndShortName.put("shortName", "N/A");
 		}
-
+		colorAndShortName.put("name", type.getName());
 		return colorAndShortName;
 	}
 
