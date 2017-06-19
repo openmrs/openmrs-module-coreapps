@@ -83,6 +83,12 @@ li  {
             <b>Enrolled:</b> {{ $ctrl.patientProgram.dateEnrolled | date:$ctrl.dateFormat }} <span ng-show="$ctrl.patientProgram.location">at {{ $ctrl.patientProgram.location.display }}</span>
         </li>
 
+        <li ng-show="$ctrl.confirmDelete">
+            Are you sure you want to delete this enrollment?
+            <br/><br/>
+            <button class="confirm" ng-click="$ctrl.deletePatientProgram()">Delete</button>  <button class="cancel" ng-click="$ctrl.cancelDelete()">Cancel</button>
+        </li>
+
         <li ng-show="$ctrl.edit.enrollment">
             <b>Enrolled:</b>
             <input class="inline-block" type="text" uib-datepicker-popup="{{$ctrl.dateFormat}}" datepicker-options="$ctrl.datePopup.enrollment.options" ng-model="$ctrl.input.dateEnrolled"

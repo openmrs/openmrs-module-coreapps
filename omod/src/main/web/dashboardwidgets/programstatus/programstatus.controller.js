@@ -6,11 +6,12 @@ export default class ProgramStatusController {
 
     // TODO fix giant date widget--figure out how to bundle in bootstrap.css?
     // TODO ability to delete enrollment--add are you sure?
-    // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)
     // TODO localization of text
+    // TODO outcomes
     // TODO limit enrollment locations
 
-    // TODO validation elements--can't change state without selecting date, etc
+    // TODO validation elements--can't change state without
+    // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)selecting date, etc
     // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
 
     // TODO unit tests? clean up?
@@ -57,6 +58,10 @@ export default class ProgramStatusController {
             workflow: {}
         }
 
+
+        // controls whether the "confirm delete" message is displayed
+        this.confirmDelete = false;
+
         // controls the state and options of the various date popups
         this.datePopup = {
             enrollment: {
@@ -97,12 +102,11 @@ export default class ProgramStatusController {
     }
 
     setInputsToStartingValues() {
-        if (this.patientProgram) {
-            this.input.dateEnrolled = new Date(this.patientProgram.dateEnrolled);
-            this.input.dateCompleted = this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
-            this.input.enrollmentLocation = this.patientProgram.location ? this.patientProgram.location.uuid : null;
-            this.input.outcome = this.patientProgram.outcome ? this.patientProgram.outcome.uuid : null;
-        }
+        this.input.dateEnrolled = this.patientProgram ? new Date(this.patientProgram.dateEnrolled) : null;
+        this.input.dateCompleted = this.patientProgram && this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
+        this.input.enrollmentLocation = this.patientProgram && this.patientProgram.location ? this.patientProgram.location.uuid : null;
+        this.input.outcome = this.patientProgram && this.patientProgram.outcome ? this.patientProgram.outcome.uuid : null;
+
     }
 
     toggleEditEnrollment() {
@@ -245,12 +249,19 @@ export default class ProgramStatusController {
     }
 
     deletePatientProgram() {
-        this.openmrsRest.remove('programenrollment/', {
-            uuid: this.patientProgram.uuid
-        }).then((response) => {
-            this.patientProgram = null;
-            this.fetchPatientProgram(); // refresh display
-        })
+
+        if (!this.confirmDelete) {
+            this.confirmDelete = true;
+        }
+        else {
+            this.confirmDelete = false;
+            this.openmrsRest.remove('programenrollment/', {
+                uuid: this.patientProgram.uuid
+            }).then((response) => {
+                this.patientProgram = null;
+                this.fetchPatientProgram(); // refresh display
+            })
+        }
     }
 
     createPatientState(state) {
@@ -410,6 +421,11 @@ export default class ProgramStatusController {
         this.cancelAllEditModes();
         this.setInputsToStartingValues();
     }
+
+    cancelDelete() {
+        this.confirmDelete = false;
+    }
+
 
     hasHistory() {
         return this.patientStateHistory.length > 0;
