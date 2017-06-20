@@ -1,6 +1,5 @@
 <!-- NOTE: work-in-progress, consider this not yet an "official" release of this widgets, future changes may not be backwards-compatible and change functionality signficantly -->
 
-
 <!-- TODO move styles to separate file? -->
 
 <style>
@@ -16,22 +15,18 @@
         font-size: 0.8em;;
     }
 </style>
-
-
-    <!-- TODO: localize all text -->
-
 <ul>
     <li ng-show="$ctrl.patientPrograms.length != 0" ng-repeat="patientProgram in $ctrl.patientPrograms | orderBy: '-dateEnrolled'">
         <a ng-click="$ctrl.gotoProgramDashboard(patientProgram.program.uuid)">
             {{ patientProgram.program.display }}
         </a>
 
-        <div ng-show="!patientProgram.dateCompleted" class="tag">{{ patientProgram.dateEnrolled | date:dateFormat }} - Current</div>
+        <div ng-show="!patientProgram.dateCompleted" class="tag">{{ patientProgram.dateEnrolled | date:dateFormat }} - {{'coreapps.dashboardwidgets.programs.current' | translate }}</div>
         <div ng-show="patientProgram.dateCompleted" class="tag">{{ patientProgram.dateEnrolled | date:dateFormat }} - {{ patientProgram.dateCompleted | date:dateFormat }}</div>
     </li>
 
     <li ng-show="$ctrl.patientPrograms.length == 0">
-        None
+        {{'coreapps.none' | translate }}
     </li>
 
 </ul>
@@ -39,7 +34,7 @@
 
 <div ng-show="!$ctrl.showAddProgram && $ctrl.config.enableProgramDashboards && $ctrl.unenrolledPrograms && $ctrl.unenrolledPrograms.length > 0">
     <a ng-click="$ctrl.addProgram()">
-        <i class="icon-plus-sign" title="Add program"/>
+        <i class="icon-plus-sign" title="{{'coreapps.dashboardwidgets.programs.addProgram' | translate }}"/>
     </a>
 </div>
 
@@ -47,12 +42,12 @@
     <div>
         <select  ng-model="$ctrl.input.program"
                  ng-options="program.uuid as program.display for program in $ctrl.unenrolledPrograms">
-            <option value="">Select program:</option>
+            <option value="">{{'coreapps.dashboardwidgets.programs.selectProgram' | translate }}:</option>
         </select>
         <br/>
     </div>
     <div>
-        <button id="enroll-button" class="confirm" ng-click="$ctrl.gotoProgramDashboard()">Enroll</button>
-        <button id="cancel-button" class="cancel" ng-click="$ctrl.cancelAddProgram()">Cancel</button>
+        <button id="enroll-button" class="confirm" ng-click="$ctrl.gotoProgramDashboard()">{{'coreapps.enroll' | translate }}</button>
+        <button id="cancel-button" class="cancel" ng-click="$ctrl.cancelAddProgram()">{{'coreapps.cancel' | translate }}</button>
     </div>
 </div>

@@ -61,18 +61,18 @@ li  {
 <div ng-class="{expanded: $ctrl.expanded}">
     <ul ng-class="{'eighty-percent-font': !$ctrl.expanded}" ng-show="!$ctrl.patientProgram">
         <li>
-            <b>Enrollment Date:</b>
+            <b>{{'coreapps.dashboardwidgets.programstatus.enrollmentdate' | translate }}:</b>
             <input type="text" uib-datepicker-popup="{{$ctrl.dateFormat}}" datepicker-options="$ctrl.datePopup.enrollment.options" ng-model="$ctrl.input.dateEnrolled"
-                   is-open="$ctrl.datePopup.enrollment.opened" close-text="Close" />
+                   is-open="$ctrl.datePopup.enrollment.opened" close-text="{{'coreapps.close' | translate }}" />
             <i class="icon-calendar" ng-click="$ctrl.toggleDatePopupEnrollment()"/>
         </li>
         <li>
-            <b>Enrollment Location:</b>
+            <b>{{'coreapps.dashboardwidgets.programstatus.enrollmentlocation' | translate }}:</b>
             <select ng-model="$ctrl.input.enrollmentLocation"
                     ng-options="location.uuid as location.display for location in $ctrl.programLocations">
                     <option value=""></option>
             </select>
-            <button class="confirm" ng-disabled="!$ctrl.input.enrollmentLocation || !$ctrl.input.dateEnrolled" ng-click="$ctrl.enrollInProgram()">Enroll</button>
+            <button class="confirm" ng-disabled="!$ctrl.input.enrollmentLocation || !$ctrl.input.dateEnrolled" ng-click="$ctrl.enrollInProgram()">{{'coreapps.enroll' | translate }}</button>
         </li>
     </ul>
 
@@ -80,24 +80,24 @@ li  {
         <li ng-show="!$ctrl.edit.enrollment">
             <i ng-show="!$ctrl.expanded && !$ctrl.edit.enrollment" ng-click="$ctrl.deletePatientProgram()" class="icon-remove right no-padding"/>
             <i ng-show="!$ctrl.expanded && !$ctrl.edit.enrollment" ng-click="$ctrl.toggleEditEnrollment()" class="icon-pencil right no-padding"/>
-            <b>Enrolled:</b> {{ $ctrl.patientProgram.dateEnrolled | date:$ctrl.dateFormat }} <span ng-show="$ctrl.patientProgram.location">at {{ $ctrl.patientProgram.location.display }}</span>
+            <b>{{'coreapps.dashboardwidgets.programstatus.enrolled' | translate }}:</b> {{ $ctrl.patientProgram.dateEnrolled | date:$ctrl.dateFormat }} <span ng-show="$ctrl.patientProgram.location">{{'coreapps.at' | translate }} {{ $ctrl.patientProgram.location.display }}</span>
         </li>
 
         <li ng-show="$ctrl.confirmDelete">
-            Are you sure you want to delete this enrollment?
+            {{'coreapps.dashboardwidgets.programstatus.confirmDelete' | translate }}
             <br/><br/>
-            <button class="confirm" ng-click="$ctrl.deletePatientProgram()">Delete</button>  <button class="cancel" ng-click="$ctrl.cancelDelete()">Cancel</button>
+            <button class="confirm" ng-click="$ctrl.deletePatientProgram()">{{'coreapps.delete' | translate }}</button>  <button class="cancel" ng-click="$ctrl.cancelDelete()">{{'coreapps.cancel' | translate }}</button>
         </li>
 
         <li ng-show="$ctrl.edit.enrollment">
-            <b>Enrolled:</b>
+            <b>{{'coreapps.dashboardwidgets.programstatus.enrolled' | translate }}:</b>
             <input class="inline-block" type="text" uib-datepicker-popup="{{$ctrl.dateFormat}}" datepicker-options="$ctrl.datePopup.enrollment.options" ng-model="$ctrl.input.dateEnrolled"
-                   is-open="$ctrl.datePopup.enrollment.opened" close-text="Close"/>
+                   is-open="$ctrl.datePopup.enrollment.opened" close-text="{{'coreapps.close' | translate }}"/>
             <i class="icon-calendar inline-block" ng-click="$ctrl.toggleDatePopupEnrollment()"/>
         </li>
 
         <li ng-show="$ctrl.edit.enrollment">
-            <b>Location:</b>
+            <b>{{'coreapps.location' | translate }}:</b>
             <select ng-model="$ctrl.input.enrollmentLocation"
                     ng-options="location.uuid as location.display for location in $ctrl.programLocations">
                 <option value=""></option>
@@ -105,22 +105,22 @@ li  {
         </li>
 
         <li ng-show="!$ctrl.edit.enrollment && $ctrl.patientProgram.dateCompleted">
-            <b>Completed:</b> {{ $ctrl.patientProgram.dateCompleted | date:$ctrl.dateFormat }}
+            <b>{{'coreapps.dashboardwidgets.programstatus.completed' | translate }}:</b> {{ $ctrl.patientProgram.dateCompleted | date:$ctrl.dateFormat }}
         </li>
 
         <li ng-show="$ctrl.edit.enrollment">
-            <b>Completed:</b>
+            <b>{{'coreapps.dashboardwidgets.programstatus.completed' | translate }}</b>
             <input class="inline-block" type="text" uib-datepicker-popup="{{$ctrl.dateFormat}}" datepicker-options="$ctrl.datePopup.completion.options" ng-model="$ctrl.input.dateCompleted"
-                   is-open="$ctrl.datePopup.completion.opened" close-text="Close"/>
+                   is-open="$ctrl.datePopup.completion.opened" close-text="{{'coreapps.close' | translate }}"/>
             <i class="icon-calendar inline-block" ng-click="$ctrl.toggleDatePopupCompletion()"/>
         </li>
 
         <li ng-show="$ctrl.programOutcomes && !$ctrl.edit.enrollment && $ctrl.patientProgram.dateCompleted">
-            <b>Outcome:</b> {{ $ctrl.patientProgram.outcome.display }}
+            <b>{{'coreapps.dashboardwidgets.programstatus.outcome' | translate }}:</b> {{ $ctrl.patientProgram.outcome.display }}
         </li>
 
         <li ng-show="$ctrl.programOutcomes && $ctrl.edit.enrollment">
-            <b>Outcome:</b>
+            <b>{{'coreapps.dashboardwidgets.programstatus.outcome' | translate }}:</b>
             <select ng-model="$ctrl.input.outcome"
                     ng-options="outcome.uuid as outcome.display for outcome in $ctrl.programOutcomes">
                 <option value=""></option>
@@ -128,7 +128,7 @@ li  {
         </li>
 
         <li ng-show="$ctrl.edit.enrollment">
-            <button class="confirm" ng-click="$ctrl.update()">Save</button>  <button class="cancel" ng-click="$ctrl.cancelEdit()">Cancel</button>
+            <button class="confirm" ng-click="$ctrl.update()">{{'coreapps.save' | translate }}:</button>  <button class="cancel" ng-click="$ctrl.cancelEdit()">{{'coreapps.cancel' | translate }}</button>
         </li>
 
         <div ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
@@ -140,7 +140,7 @@ li  {
             <li ng-show="$ctrl.edit.workflow[workflow.uuid]">
                 <icon class="icon-remove right"  ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)" />
                 <icon class="icon-check right" ng-click="$ctrl.updatePatientState(workflow.uuid)"/>
-                Transition to:
+                {{'coreapps.dashboardwidgets.programstatus.transitionTo' | translate }}:
                 <select ng-model="$ctrl.input.changeToStateByWorkflow[workflow.uuid].state"
                         ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isNotCurrentState(workflow) ">
                      <option value=""></option>
@@ -148,8 +148,8 @@ li  {
             </li>
 
             <li ng-show="$ctrl.edit.workflow[workflow.uuid]">
-                on: <input type="text" uib-datepicker-popup="{{$ctrl.dateFormat}}" datepicker-options="$ctrl.datePopup.workflow[workflow.uuid].options" ng-model="$ctrl.input.changeToStateByWorkflow[workflow.uuid].date"
-                       is-open="$ctrl.datePopup.workflow[workflow.uuid].opened" close-text="Close" />
+                {{'coreapps.on' | translate }}: <input type="text" uib-datepicker-popup="{{$ctrl.dateFormat}}" datepicker-options="$ctrl.datePopup.workflow[workflow.uuid].options" ng-model="$ctrl.input.changeToStateByWorkflow[workflow.uuid].date"
+                       is-open="$ctrl.datePopup.workflow[workflow.uuid].opened" close-text="{{'coreapps.close' | translate }}" />
                 <i class="icon-calendar" ng-click="$ctrl.toggleDatePopupWorkflow(workflow.uuid)"/>
             </li>
         </div>
@@ -157,14 +157,14 @@ li  {
 
     <div ng-show="$ctrl.hasHistory()">
         <span ng-class="{'eighty-percent-font': !$ctrl.expanded}">
-            <b>History</b>
+            <b>{{'coreapps.dashboardwidgets.programstatus.history' | translate }}:</b>
             <i ng-click="$ctrl.toggleHistory()" ng-show="!$ctrl.expanded && !$ctrl.history.expanded" class="icon-plus"/>
             <i ng-click="$ctrl.toggleHistory()" ng-show="!$ctrl.expanded && $ctrl.history.expanded" class="icon-minus"/>
         </span>
 
         <table ng-show="$ctrl.history.expanded" ng-class="{'sixty-percent-font': !$ctrl.expanded}">
             <tr>
-                <th>Date</th>
+                <th>{{'coreapps.date' | translate }}</th>
                 <th ng-repeat="workflow in $ctrl.program.allWorkflows">
                     {{ workflow.concept.display }}
                 </th>

@@ -5,10 +5,8 @@ import angular from 'angular';
 export default class ProgramStatusController {
 
     // TODO fix giant date widget--figure out how to bundle in bootstrap.css?
-    // TODO ability to delete enrollment--add are you sure?
     // TODO localization of text
     // TODO outcomes
-    // TODO limit enrollment locations
 
     // TODO validation elements--can't change state without
     // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)selecting date, etc
