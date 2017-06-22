@@ -67,6 +67,9 @@ var config = {
 				}
 			}
 		]
+	},
+	resolve: {
+		modules: [path.resolve(__dirname, "node_modules")]
 	}
 };
 
