@@ -128,7 +128,7 @@ li  {
         </li>
 
         <li ng-show="$ctrl.edit.enrollment">
-            <button class="confirm" ng-click="$ctrl.update()">{{'coreapps.save' | translate }}:</button>  <button class="cancel" ng-click="$ctrl.cancelEdit()">{{'coreapps.cancel' | translate }}</button>
+            <button class="confirm" ng-click="$ctrl.update()">{{'coreapps.save' | translate }}</button>  <button class="cancel" ng-click="$ctrl.cancelEdit()">{{'coreapps.cancel' | translate }}</button>
         </li>
 
         <div ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
