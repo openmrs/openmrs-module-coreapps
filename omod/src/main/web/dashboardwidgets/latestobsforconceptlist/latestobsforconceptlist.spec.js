@@ -2,7 +2,6 @@ import LatestObsForConceptList from './';
 import 'angular-mocks';
 
 describe('LatestObsForConceptList', () => {
-
 	let $componentController;
 	let $scope;
 	let $httpBackend;
@@ -10,10 +9,12 @@ describe('LatestObsForConceptList', () => {
 	beforeEach(() => {
 		angular.mock.module(LatestObsForConceptList);
 		inject((_$componentController_, $rootScope, _$httpBackend_) => {
-			$componentController = _$componentController_
+			$componentController = _$componentController_;
 			$scope = $rootScope.$new();
 			$httpBackend = _$httpBackend_;
 		});
+		
+		$httpBackend.expectGET('/openmrs/module/uicommons/messages/messages.json?lang=en').respond({});
 	});
 
     it('should use maxAge from config', () => {

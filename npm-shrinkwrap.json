@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "dependencies": {
     "@openmrs/angularjs-openmrs-api": {
-      "version": "0.5.3",
-      "from": "@openmrs/angularjs-openmrs-api@>=0.5.2 <0.6.0",
-      "resolved": "https://registry.npmjs.org/@openmrs/angularjs-openmrs-api/-/angularjs-openmrs-api-0.5.3.tgz"
+      "version": "0.5.6",
+      "from": "@openmrs/angularjs-openmrs-api@0.5.6",
+      "resolved": "https://registry.npmjs.org/@openmrs/angularjs-openmrs-api/-/angularjs-openmrs-api-0.5.6.tgz"
     },
     "angular": {
       "version": "1.5.8",
@@ -31,6 +31,11 @@
       "version": "2.15.1",
       "from": "angular-translate@>=2.15.1 <2.16.0",
       "resolved": "https://registry.npmjs.org/angular-translate/-/angular-translate-2.15.1.tgz"
+    },
+    "angular-translate-loader-url": {
+      "version": "2.15.1",
+      "from": "angular-translate-loader-url@>=2.11.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/angular-translate-loader-url/-/angular-translate-loader-url-2.15.1.tgz"
     },
     "angular-ui-bootstrap": {
       "version": "2.5.0",
