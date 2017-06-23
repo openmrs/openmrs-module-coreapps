@@ -123,6 +123,7 @@ public class PatientPageController {
         model.addAttribute("otherActions", otherActions);
 
         model.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl() + "&dashboard=" + dashboard);
+        model.addAttribute("dashboard", dashboard);
 
         applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 

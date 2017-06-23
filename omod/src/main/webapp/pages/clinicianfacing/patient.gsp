@@ -38,9 +38,16 @@
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, activeVisit: activeVisit, appContextModel: appContextModel ]) }
 
+
 <div class="clear"></div>
 <div class="container">
     <div class="dashboard clear">
+        <!-- only show the title div if a title has been defined in the messages.properties -->
+        <% if (ui.message(dashboard + ".custom.title") != dashboard + ".custom.title") { %>
+        <div class="title">
+            <h3>${ ui.message(dashboard + ".custom.title") }</h3>
+        </div>
+        <% } %>
         <div class="info-container column">
             <% if (firstColumnFragments) {
 			    firstColumnFragments.each {
@@ -57,32 +64,6 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 
         </div>
         <div class="info-container column">
-            <%/*
-            <div class="info-section">
-                <div class="info-header">
-                    <i class="icon-medicine"></i>
-                    <h3>${ ui.message("coreapps.clinicianfacing.prescribedMedication").toUpperCase() }</h3>
-                </div>
-                <div class="info-body">
-                    <ul>
-                        <li></li>
-                    </ul>
-                    <a class="view-more">${ ui.message("coreapps.clinicianfacing.showMoreInfo") } ></a>
-                </div>
-            </div>
-            <div class="info-section">
-                <div class="info-header">
-                    <i class="icon-medical"></i>
-                    <h3>${ ui.message("coreapps.clinicianfacing.allergies").toUpperCase() }</h3>
-                </div>
-                <div class="info-body">
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-            </div>
-            */%>
-            
             <% if (secondColumnFragments) {
 			    secondColumnFragments.each {
                     // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
