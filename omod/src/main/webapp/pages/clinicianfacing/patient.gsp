@@ -7,8 +7,13 @@
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" ,
-            link: '${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: patient.patient.id ] ) }'}
+            link: '${ ui.urlBind("/" + contextPath + baseDashboardUrl, [ patientId: patient.patient.id ] ) }'}
     ];
+
+    // add on breadcrumb if it has been defined in messages.properties
+    <% if (ui.message(dashboard + ".breadcrumb") != dashboard + ".breadcrumb") { %>
+        breadcrumbs.push({ label: "${ ui.message(dashboard + ".breadcrumb") }"})
+    <% } %>
 
     jq(function(){
         jq(".tabs").tabs();

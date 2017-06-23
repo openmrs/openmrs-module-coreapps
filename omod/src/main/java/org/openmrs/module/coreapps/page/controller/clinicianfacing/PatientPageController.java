@@ -122,7 +122,7 @@ public class PatientPageController {
         Collections.sort(otherActions);
         model.addAttribute("otherActions", otherActions);
 
-        model.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl() + "&dashboard=" + dashboard);
+        model.addAttribute("baseDashboardUrl", coreAppsProperties.getDashboardUrl());  // used for breadcrumbs to link back to the base dashboard in the case when this is used to render a context-specific dashboard
         model.addAttribute("dashboard", dashboard);
 
         applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
