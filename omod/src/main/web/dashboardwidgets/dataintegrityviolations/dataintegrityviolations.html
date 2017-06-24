@@ -1,13 +1,17 @@
 <div ng-if="$ctrl.dataViolations.length != 0">
     <ul>
         <li ng-repeat="dataViolation in $ctrl.dataViolations">
-            {{dataViolation.rule.ruleName}}
-            <div class="tag" ng-if="dataViolation.actionUrl">
-                <a style="color: white" href="{{$ctrl.serverUrl}}/{{dataViolation.actionUrl}}">
-                    <strong>
-                        Fix
-                    </strong>
-                </a>
+            <div style="margin: 5px">
+                <div class="tag" ng-if="dataViolation.actionUrl">
+                    <a style="color: white" href="{{$ctrl.serverUrl}}/{{dataViolation.actionUrl}}">
+                        <strong>
+                            Fix
+                        </strong>
+                    </a>
+                </div>
+                <div>
+                    {{ dataViolation.notes ? dataViolation.notes : dataViolation.rule.ruleName}}
+                </div>
             </div>
         </li>
     </ul>
