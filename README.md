@@ -30,7 +30,7 @@ Clean development build: `npm run clean && npm run build:dev`
 
 Production build: `npm run build`
 
-For continous development we recommend setting up a server using OpenMRS SDK and adding the coreapps module to watched projects (supported in UI Framework 3.12.0+). Next start the server and use the npm run watch command to have js code instantly transpiled and deployed to the server. Do remember to disable caching for your browser or use Ctrl + F5 to refresh page and its cache to see changes.
+For continous development we recommend setting up a server using OpenMRS SDK and adding the coreapps module to watched projects (**requires UI Framework 3.12.0+**). Next start the server and use the npm run watch command to have js code instantly transpiled and deployed to the server. Do remember to disable caching for your browser or use Ctrl + F5 to refresh page and its cache to see changes.
 
 ## Linking
 
