@@ -38,7 +38,7 @@ function createAddSupervisorDialog(relationshipTypeId, relationshipId) {
         actions: {
             confirm: function() {
                 var supervisorId = jq("#supervisorId").val();
-                var superviseeId = jq("#superviseeId").val();
+                var superviseeId = jq("#add-supervisor-dialog-superviseeId").val();
                 var relationshipStartDateField = jq("#supevisor-relationshipStartDate-field").val();
                 emr.getFragmentActionWithCallback('providermanagement', 'providerEdit', 'editSupervisor'
                     , { supervisee: superviseeId,

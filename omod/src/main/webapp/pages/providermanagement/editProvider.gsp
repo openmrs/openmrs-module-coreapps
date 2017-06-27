@@ -184,7 +184,7 @@
         <h3>${ ui.message("providermanagement.createRelationship") }</h3>
     </div>
     <div class="dialog-content">
-        <input type="hidden" id="superviseeId" value="${account.person.personId}"/>
+        <input type="hidden" id="add-supervisor-dialog-superviseeId" value="${account.person.personId}"/>
         <input type="hidden" id="supervisorId" value=""/>
 
         <span>${ ui.message("providermanagement.assignSupervisor") }</span>
