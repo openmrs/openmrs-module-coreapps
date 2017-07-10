@@ -70,7 +70,6 @@ li  {
             <b>{{'coreapps.dashboardwidgets.programstatus.enrollmentlocation' | translate }}:</b>
             <select ng-model="$ctrl.input.enrollmentLocation"
                     ng-options="location.uuid as location.display for location in $ctrl.programLocations">
-                    <option value=""></option>
             </select>
             <button class="confirm" ng-disabled="!$ctrl.input.enrollmentLocation || !$ctrl.input.dateEnrolled" ng-click="$ctrl.enrollInProgram()">{{'coreapps.enroll' | translate }}</button>
         </li>
@@ -99,8 +98,7 @@ li  {
         <li ng-show="$ctrl.edit.enrollment">
             <b>{{'coreapps.location' | translate }}:</b>
             <select ng-model="$ctrl.input.enrollmentLocation"
-                    ng-options="location.uuid as location.display for location in $ctrl.programLocations">
-                <option value=""></option>
+                    ng-options="location.uuid as location.display for location in $ctrl.programLocations">>
             </select>
         </li>
 

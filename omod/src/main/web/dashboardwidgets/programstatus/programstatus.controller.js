@@ -91,20 +91,26 @@ export default class ProgramStatusController {
 
     activate() {
         this.openmrsRest.setBaseAppPath("/coreapps");
-        this.fetchLocations();
-        this.fetchProgram().then((response) => {
-            this.fetchOutcomes();
-            this.fetchPatientProgram(this.config.patientProgram);
+        this.fetchLocations().then((response) => {
+            this.fetchProgram().then((response) => {
+                this.fetchOutcomes();
+                this.fetchPatientProgram(this.config.patientProgram);
+            });
         });
-
     }
 
     setInputsToStartingValues() {
         this.input.dateEnrolled = this.patientProgram ? new Date(this.patientProgram.dateEnrolled) : null;
         this.input.dateCompleted = this.patientProgram && this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
-        this.input.enrollmentLocation = this.patientProgram && this.patientProgram.location ? this.patientProgram.location.uuid : null;
         this.input.outcome = this.patientProgram && this.patientProgram.outcome ? this.patientProgram.outcome.uuid : null;
 
+        if (this.patientProgram && this.patientProgram.location) {
+            this.input.enrollmentLocation = this.patientProgram.location.uuid;
+        }
+        // if there is only possible location, set it as the default (this is why loading locations (in activate) needs to happen before patient programs)
+        else if (this.programLocations && this.programLocations.length == 1) {
+            this.input.enrollmentLocation = this.programLocations[0].uuid;
+        }
     }
 
     toggleEditEnrollment() {
@@ -185,7 +191,7 @@ export default class ProgramStatusController {
     }
 
     fetchLocations() {
-        this.openmrsRest.get('location', {
+        return this.openmrsRest.get('location', {
             v: 'custom:display,uuid',
             tag: this.config.locationTag,
         }).then((response) => {
@@ -196,7 +202,7 @@ export default class ProgramStatusController {
 
     fetchOutcomes() {
         if (this.program.outcomesConcept) {
-            this.openmrsRest.get('concept', {
+            return this.openmrsRest.get('concept', {
                 v: 'custom:answers:(display,uuid)',
                 uuid: this.program.outcomesConcept.uuid,
             }).then((response) => {
