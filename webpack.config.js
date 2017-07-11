@@ -39,20 +39,7 @@ var config = {
 			}, 
 			{
 				test: /\.css$/,
-				exclude: /node_modules/,
-				use: [
-					{ loader: 'style-loader' }, 
-					{ loader: 'css-loader', options: { modules: true } }
-				]
-			},
-			{
-				//import node_modules without scoping css
-				test: /\.css$/,
-				include: /node_modules/,
-				use: [
-					{ loader: 'style-loader'}, 
-					{ loader: 'css-loader', options: { modules: false } }
-				]
+				use: ['style-loader', 'css-loader']
 			},
 			{
 				test: /\.json$/,
