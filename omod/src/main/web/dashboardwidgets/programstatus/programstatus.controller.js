@@ -65,13 +65,15 @@ export default class ProgramStatusController {
             enrollment: {
                 "opened": false,
                 "options": {
-                    "maxDate": new Date()
+                    "maxDate": new Date(),
+                    "showWeeks": false
                 }
             },
             completion: {
                 "opened": false,
                 "options": {
-                    "maxDate": new Date()
+                    "maxDate": new Date(),
+                    "showWeeks": false
                 }
             },
             workflow: {}
@@ -400,6 +402,7 @@ export default class ProgramStatusController {
             this.datePopup.workflow[workflow.uuid] = {
                 "opened": false,
                 "options": {
+                    "showWeeks": false,
                     "maxDate": new Date(),
                     // TODO minDate should be most recent date + 1!
                     "minDate": this.getMostRecentStateForWorkflow(workflow.uuid) ? this.getMostRecentStateForWorkflow(workflow.uuid).startDate
