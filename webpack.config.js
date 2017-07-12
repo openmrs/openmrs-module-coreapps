@@ -19,6 +19,10 @@ var config = {
 		libraryTarget: "umd"
 	},
 	plugins: [
+		new webpack.ProvidePlugin({
+			$: "jquery",
+			jQuery: "jquery"
+		}),
 		new webpack.optimize.CommonsChunkPlugin({
 			name: "vendor",
 			minChunks: function (module) { return /node_modules/.test(module.resource) }

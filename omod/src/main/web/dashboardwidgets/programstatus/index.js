@@ -1,9 +1,9 @@
 import angular from 'angular';
 import openmrsApi from '@openmrs/angularjs-openmrs-api';
-import datepickerPopup from 'angular-ui-bootstrap/src/datepickerPopup';
-import 'bootstrap/dist/css/bootstrap.css'
+import bootstrapDatepicker from 'bootstrap-datepicker';
+import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.css';
 
 import { ProgramStatusComponent } from './programstatus.component';
 
-export default angular.module("openmrs-contrib-dashboardwidgets.programstatus", [ openmrsApi, datepickerPopup ])
+export default angular.module("openmrs-contrib-dashboardwidgets.programstatus", [ openmrsApi ])
 	.component(ProgramStatusComponent.selector, ProgramStatusComponent).name;

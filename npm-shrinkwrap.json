@@ -39,13 +39,13 @@
     },
     "angular-ui-bootstrap": {
       "version": "2.5.0",
-      "from": "angular-ui-bootstrap@>=2.5.0 <3.0.0",
+      "from": "angular-ui-bootstrap@latest",
       "resolved": "https://registry.npmjs.org/angular-ui-bootstrap/-/angular-ui-bootstrap-2.5.0.tgz"
     },
-    "bootstrap": {
-      "version": "3.3.7",
-      "from": "bootstrap@latest",
-      "resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-3.3.7.tgz"
+    "bootstrap-datepicker": {
+      "version": "1.7.1",
+      "from": "bootstrap-datepicker@latest",
+      "resolved": "https://registry.npmjs.org/bootstrap-datepicker/-/bootstrap-datepicker-1.7.1.tgz"
     },
     "chart.js": {
       "version": "2.3.0",
@@ -71,6 +71,11 @@
       "version": "1.1.2",
       "from": "color-name@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/color-name/-/color-name-1.1.2.tgz"
+    },
+    "jquery": {
+      "version": "3.2.1",
+      "from": "jquery@latest",
+      "resolved": "https://registry.npmjs.org/jquery/-/jquery-3.2.1.tgz"
     },
     "moment": {
       "version": "2.18.1",
