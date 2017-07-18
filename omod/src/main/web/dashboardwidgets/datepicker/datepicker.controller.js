@@ -42,7 +42,7 @@ export default class DatepickerController  {
             if (mappings[match]) {
                 return mappings[match];
             } else {
-                match;
+                return match;
             }
         });
         return dateFormat;
