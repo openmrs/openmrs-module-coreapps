@@ -1,10 +1,10 @@
 import angular from 'angular';
 
 export default class DatepickerController  {
-    constructor($document, $element) {
+    constructor($document, $element, $scope) {
         'ngInject';
 
-        Object.assign(this, { $document, $element });
+        Object.assign(this, { $document, $element, $scope });
     }
 
     $onInit() {
@@ -12,11 +12,19 @@ export default class DatepickerController  {
             $(this.$element).datepicker({
                 format: this.convertDateFormat(this.format),
                 autoclose: true,
+                container: "html"
             }).on("changeDate", (e) => {
-                this.$element.scope().$apply(() => {
-                    this.ngModel = e.date;
-                });
+                if (e.date && this.ngModel && this.ngModel.getTime() !== e.date.getTime()) {
+                    //apply changes if not triggered by the watch
+                    this.$scope.$apply(() => {
+                        this.ngModel = e.date;
+                    });
+                }
             });
+
+            this.$scope.$watch(() => { return this.ngModel; },
+                (value) => { $(this.$element).datepicker("setDate", value); }
+            );
         });
     }
 
