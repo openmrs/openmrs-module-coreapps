@@ -17,6 +17,7 @@ export default class DatepickerController  {
                     this.ngModel = e.date;
                 });
             });
+            $(this.$element).datepicker("setDate", this.ngModel);
         });
     }
 
