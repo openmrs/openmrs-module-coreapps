@@ -30,13 +30,13 @@ export default class DatepickerController  {
                 (value) => { $(this.$element).datepicker("setDate", value); }
             );
 
-            this.$scope.$watch(() => { return this.startDate; },
+         /*   this.$scope.$watch(() => { return this.startDate; },
                 (value) => { $(this.$element).datepicker("setStartDate", value); }
             );
 
             this.$scope.$watch(() => { return this.endDate; },
                 (value) => { $(this.$element).datepicker("setEndDate", value); }
-            );
+            );*/
         });
     }
 
