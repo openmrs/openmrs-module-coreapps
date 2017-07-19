@@ -63,17 +63,15 @@ export default class ProgramStatusController {
         // controls the state and options of the various date popups
         this.datePopup = {
             enrollment: {
-                "opened": false,
                 "options": {
-                    "maxDate": new Date(),
-                    "showWeeks": false
+                    "startDate": null,
+                    "endDate": new Date()
                 }
             },
             completion: {
-                "opened": false,
                 "options": {
-                    "maxDate": new Date(),
-                    "showWeeks": false
+                    "startDate": null,
+                    "endDate": new Date()
                 }
             },
             workflow: {}
@@ -386,30 +384,35 @@ export default class ProgramStatusController {
     configDatePopups() {
 
         // date enrolled can never be before the first state change
-        if (this.patientStateHistory.length > 0) {
-            this.datePopup.enrollment.options.maxDate = new Date(this.patientStateHistory[this.patientStateHistory.length - 1].startDate);
+      /*  if (this.patientStateHistory.length > 0) {
+            this.datePopup.enrollment.options.endDate = new Date(this.patientStateHistory[this.patientStateHistory.length - 1].startDate);
         }
-
-     /*   this.datePopup.completion.options.minDate = this.patientStateHistory.length > 0 ? this.patientStateHistory[0].startDate
+*/
+     /*   this.datePopup.completion.options.startDate = this.patientStateHistory.length > 0 ? this.patientStateHistory[0].startDate
             : this.patientProgram ? this.patientProgram.dateEnrolled : new Date()*/
 
         // date completed can never be before date enrollment
         if (this.patientProgram) {
-            this.datePopup.completion.options.minDate = this.patientProgram.dateEnrolled;
+            this.datePopup.completion.options.startDate = new Date(this.patientProgram.dateEnrolled);
         }
 
+        // date enrolled can never be after date completed
+        if (this.patientProgram && this.patientProgram.dateCompleted) {
+            this.datePopup.enrollment.options.endDate = new Date(this.patientProgram.dateCompleted);
+        }
+/*
         angular.forEach(this.program.allWorkflows, (workflow) => {
             this.datePopup.workflow[workflow.uuid] = {
                 "opened": false,
                 "options": {
                     "showWeeks": false,
-                    "maxDate": new Date(),
-                    // TODO minDate should be most recent date + 1!
-                    "minDate": this.getMostRecentStateForWorkflow(workflow.uuid) ? this.getMostRecentStateForWorkflow(workflow.uuid).startDate
+                    "endDate": new Date(),
+                    // TODO startDate should be most recent date + 1!
+                    "startDate": this.getMostRecentStateForWorkflow(workflow.uuid) ? new Date(this.getMostRecentStateForWorkflow(workflow.uuid).startDate)
                         : this.patientProgram ? this.patientProgram.dateEnrolled : new Date()
                 }
             }
-        })
+        })*/
     }
 
     update() {

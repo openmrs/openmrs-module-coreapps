@@ -62,7 +62,7 @@ li  {
     <ul ng-class="{'eighty-percent-font': !$ctrl.expanded}" ng-show="!$ctrl.patientProgram">
         <li>
             <b>{{'coreapps.dashboardwidgets.programstatus.enrollmentdate' | translate }}:</b>
-			<openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}"/>
+			<openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" start-date="$ctrl.datePopup.enrollment.options.startDate" end-date="$ctrl.datePopup.enrollment.options.endDate"/>
         </li>
         <li>
             <b>{{'coreapps.dashboardwidgets.programstatus.enrollmentlocation' | translate }}:</b>
@@ -88,7 +88,7 @@ li  {
 
         <li ng-show="$ctrl.edit.enrollment">
             <b>{{'coreapps.dashboardwidgets.programstatus.enrolled' | translate }}:</b>
-            <openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}"/>
+            <openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" start-date="$ctrl.datePopup.enrollment.options.startDate" end-date="$ctrl.datePopup.enrollment.options.endDate"/>
         </li>
 
         <li ng-show="$ctrl.edit.enrollment">
@@ -104,7 +104,7 @@ li  {
 
         <li ng-show="$ctrl.edit.enrollment">
             <b>{{'coreapps.dashboardwidgets.programstatus.completed' | translate }}</b>
-            <openmrs-datepicker ng-model="$ctrl.input.dateCompleted" format="{{$ctrl.dateFormat}}"/>
+            <openmrs-datepicker ng-model="$ctrl.input.dateCompleted" format="{{$ctrl.dateFormat}}" start-date="$ctrl.datePopup.completion.options.startDate" end-date="$ctrl.datePopup.completion.options.endDate"/>
         </li>
 
         <li ng-show="$ctrl.programOutcomes && !$ctrl.edit.enrollment && $ctrl.patientProgram.dateCompleted">
