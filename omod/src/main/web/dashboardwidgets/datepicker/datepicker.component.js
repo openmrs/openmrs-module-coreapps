@@ -7,6 +7,8 @@ export let DatepickerComponent = {
     selector: 'openmrsDatepicker',
     bindings: {
         ngModel: '=',
-        format: '@'
+        format: '@',
+        startDate: '<',
+        endDate: "<"
     }
 };

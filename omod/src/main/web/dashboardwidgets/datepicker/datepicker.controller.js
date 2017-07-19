@@ -11,6 +11,8 @@ export default class DatepickerController  {
         this.$document.ready(() => {
             $(this.$element).datepicker({
                 format: this.convertDateFormat(this.format),
+                startDate: this.startDate,
+                endDate: this.endDate,
                 autoclose: true,
                 container: "html"
             }).on("changeDate", (e) => {
@@ -26,6 +28,14 @@ export default class DatepickerController  {
 
             this.$scope.$watch(() => { return this.ngModel; },
                 (value) => { $(this.$element).datepicker("setDate", value); }
+            );
+
+            this.$scope.$watch(() => { return this.startDate; },
+                (value) => { $(this.$element).datepicker("setStartDate", value); }
+            );
+
+            this.$scope.$watch(() => { return this.endDate; },
+                (value) => { $(this.$element).datepicker("setEndDate", value); }
             );
         });
     }
