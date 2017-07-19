@@ -11,7 +11,8 @@ export default class DatepickerController  {
         this.$document.ready(() => {
             $(this.$element).datepicker({
                 format: this.convertDateFormat(this.format),
-                autoclose: true
+                autoclose: true,
+                container: "html"
             }).on("changeDate", (e) => {
                 if (e.date && this.ngModel && this.ngModel.getTime() !== e.date.getTime()) {
                     //apply changes if not triggered by the watch
