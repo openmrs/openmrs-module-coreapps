@@ -14,11 +14,13 @@ export default class DatepickerController  {
                 autoclose: true,
                 container: "html"
             }).on("changeDate", (e) => {
-                if (e.date && this.ngModel && this.ngModel.getTime() !== e.date.getTime()) {
-                    //apply changes if not triggered by the watch
-                    this.$scope.$apply(() => {
-                        this.ngModel = e.date;
-                    });
+                if (e.date != null) {
+					if (this.ngModel == null || this.ngModel.getTime() !== e.date.getTime()) {
+						//apply changes if not triggered by the watch
+						this.$scope.$apply(() => {
+							this.ngModel = e.date;
+						});
+					}
                 }
             });
 
