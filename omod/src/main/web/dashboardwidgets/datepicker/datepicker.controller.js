@@ -30,6 +30,7 @@ export default class DatepickerController  {
                 (value) => { $(this.$element).datepicker("setDate", value); }
             );
 
+            /* TODO: this wasn't working properly, but in the future we'd like to make the start and end date values of the datpicker update when the underlying startDate and endDate module objects change */
          /*   this.$scope.$watch(() => { return this.startDate; },
                 (value) => { $(this.$element).datepicker("setStartDate", value); }
             );
