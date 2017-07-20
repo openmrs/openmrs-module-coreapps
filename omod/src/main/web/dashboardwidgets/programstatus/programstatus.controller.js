@@ -19,6 +19,9 @@ export default class ProgramStatusController {
         this.dateFormat = (this.config.dateFormat == '' || angular.isUndefined(this.config.dateFormat))
             ? 'dd-MMM-yyyy' : this.config.dateFormat;
 
+        this.language = (this.config.language == '' || angular.isUndefined(this.config.language))
+            ? 'en' : this.config.language;
+
         this.today = new Date();
 
         this.program = null;

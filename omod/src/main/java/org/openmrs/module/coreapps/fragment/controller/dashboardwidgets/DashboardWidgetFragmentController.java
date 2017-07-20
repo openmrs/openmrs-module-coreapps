@@ -49,6 +49,9 @@ public class DashboardWidgetFragmentController {
             appConfig.put("dateFormat", adminService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATE_FORMAT, "yyyy-MM-dd"));
         }
 
+        appConfig.put("locale", Context.getLocale().toString());
+        appConfig.put("language", Context.getLocale().getLanguage().toString());
+
         Map<String, Object> appConfigMap = mapper.convertValue(appConfig, Map.class);
         config.merge(appConfigMap);
         config.addAttribute("json", appConfig.toString().replace('\"', '\''));

@@ -14,7 +14,8 @@ export default class DatepickerController  {
                 startDate: this.startDate,
                 endDate: this.endDate,
                 autoclose: true,
-                container: "html"
+                container: "html",
+                language:  this.language ? this.language : 'en'
             }).on("changeDate", (e) => {
                 if (e.date != null) {
 					if (this.ngModel == null || this.ngModel.getTime() !== e.date.getTime()) {

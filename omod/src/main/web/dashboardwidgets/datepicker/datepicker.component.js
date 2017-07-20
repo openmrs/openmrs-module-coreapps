@@ -8,7 +8,8 @@ export let DatepickerComponent = {
     bindings: {
         ngModel: '=',
         format: '@',
+        language: '@',
         startDate: '<',
-        endDate: "<"
+        endDate: '<'
     }
 };
