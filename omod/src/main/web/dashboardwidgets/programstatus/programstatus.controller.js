@@ -7,20 +7,23 @@ export default class ProgramStatusController {
     // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
     // TODO unit tests? clean up?
 
-    constructor(openmrsRest, $filter, $q) {
+    constructor($filter, $q, openmrsRest, openmrsTranslate) {
         'ngInject';
 
-        Object.assign(this, {$filter, openmrsRest, $q});
+        Object.assign(this, {$filter, $q, openmrsRest, openmrsTranslate});
     }
 
     $onInit() {
+
+        this.language = (this.config.language == '' || angular.isUndefined(this.config.language))
+            ? 'en' : this.config.language;
+
+        this.openmrsTranslate.changeLanguage(this.language);
+
         this.vPatientProgram = 'custom:uuid,program:(uuid),dateEnrolled,dateCompleted,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
 
         this.dateFormat = (this.config.dateFormat == '' || angular.isUndefined(this.config.dateFormat))
             ? 'dd-MMM-yyyy' : this.config.dateFormat;
-
-        this.language = (this.config.language == '' || angular.isUndefined(this.config.language))
-            ? 'en' : this.config.language;
 
         this.today = new Date();
 
