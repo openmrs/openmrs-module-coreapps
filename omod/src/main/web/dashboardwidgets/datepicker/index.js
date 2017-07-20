@@ -64,6 +64,7 @@ import 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.th.min.js';
 import 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.tr.min.js';
 import 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.uk.min.js';
 import 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.vi.min.js';
+import './locales/bootstrap-datepicker.ht.js';
 
 import { DatepickerComponent } from './datepicker.component';
 
