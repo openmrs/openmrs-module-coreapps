@@ -1,5 +1,3 @@
-<!-- // NOTE: work-in-progress, consider this not yet an "official" release of this widgets, future changes may not be backwards-compatible and change functionality signficantly -->
-
 <!-- TODO: move css to separate file -->
 <!-- TODO need to figure out how to not use hardcoded margins and padding in the expanded element -->
 
@@ -62,14 +60,14 @@ li  {
     <ul ng-class="{'eighty-percent-font': !$ctrl.expanded}" ng-show="!$ctrl.patientProgram">
         <li>
             <b>{{'coreapps.dashboardwidgets.programstatus.enrollmentdate' | translate }}:</b>
-			<openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" start-date="$ctrl.datePopup.enrollment.options.startDate" end-date="$ctrl.datePopup.enrollment.options.endDate"/>
+			<openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" end-date="$ctrl.today"/>
         </li>
         <li>
             <b>{{'coreapps.dashboardwidgets.programstatus.enrollmentlocation' | translate }}:</b>
             <select ng-model="$ctrl.input.enrollmentLocation"
                     ng-options="location.uuid as location.display for location in $ctrl.programLocations">
             </select>
-            <button class="confirm" ng-disabled="!$ctrl.input.enrollmentLocation || !$ctrl.input.dateEnrolled" ng-click="$ctrl.enrollInProgram()">{{'coreapps.enroll' | translate }}</button>
+            <button class="confirm" ng-disabled="!$ctrl.enrollmentValid()" ng-click="$ctrl.enrollInProgram()">{{'coreapps.enroll' | translate }}</button>
         </li>
     </ul>
 
@@ -88,7 +86,7 @@ li  {
 
         <li ng-show="$ctrl.edit.enrollment">
             <b>{{'coreapps.dashboardwidgets.programstatus.enrolled' | translate }}:</b>
-            <openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" start-date="$ctrl.datePopup.enrollment.options.startDate" end-date="$ctrl.datePopup.enrollment.options.endDate"/>
+            <openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" end-date="$ctrl.today"/>
         </li>
 
         <li ng-show="$ctrl.edit.enrollment">
@@ -104,7 +102,7 @@ li  {
 
         <li ng-show="$ctrl.edit.enrollment">
             <b>{{'coreapps.dashboardwidgets.programstatus.completed' | translate }}</b>
-            <openmrs-datepicker ng-model="$ctrl.input.dateCompleted" format="{{$ctrl.dateFormat}}" start-date="$ctrl.datePopup.completion.options.startDate" end-date="$ctrl.datePopup.completion.options.endDate"/>
+            <openmrs-datepicker ng-model="$ctrl.input.dateCompleted" format="{{$ctrl.dateFormat}}" end-date="$ctrl.today"/>
         </li>
 
         <li ng-show="$ctrl.programOutcomes && !$ctrl.edit.enrollment && $ctrl.patientProgram.dateCompleted">
@@ -120,7 +118,7 @@ li  {
         </li>
 
         <li ng-show="$ctrl.edit.enrollment">
-            <button class="confirm" ng-click="$ctrl.update()">{{'coreapps.save' | translate }}</button>  <button class="cancel" ng-click="$ctrl.cancelEdit()">{{'coreapps.cancel' | translate }}</button>
+            <button class="confirm" ng-disabled="!$ctrl.enrollmentValid()" ng-click="$ctrl.update()">{{'coreapps.save' | translate }}</button>  <button class="cancel" ng-click="$ctrl.cancelEdit()">{{'coreapps.cancel' | translate }}</button>
         </li>
 
         <div ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">

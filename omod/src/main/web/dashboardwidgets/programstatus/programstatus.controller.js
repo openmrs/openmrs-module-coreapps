@@ -1,17 +1,10 @@
-// NOTE: work-in-progress, consider this not yet an "official" release of this widgets, future changes may not be backwards-compatible and change functionality signficantly
 
 import angular from 'angular';
 
 export default class ProgramStatusController {
 
-    // TODO fix giant date widget--figure out how to bundle in bootstrap.css?
-    // TODO localization of text
-    // TODO outcomes
-
-    // TODO validation elements--can't change state without
     // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)selecting date, etc
     // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
-
     // TODO unit tests? clean up?
 
     constructor(openmrsRest, $filter, $q) {
@@ -25,6 +18,8 @@ export default class ProgramStatusController {
 
         this.dateFormat = (this.config.dateFormat == '' || angular.isUndefined(this.config.dateFormat))
             ? 'dd-MMM-yyyy' : this.config.dateFormat;
+
+        this.today = new Date();
 
         this.program = null;
 
@@ -60,7 +55,7 @@ export default class ProgramStatusController {
         // controls whether the "confirm delete" message is displayed
         this.confirmDelete = false;
 
-        // controls the state and options of the various date popups
+     /*   // controls the state and options of the various date popups
         this.datePopup = {
             enrollment: {
                 "options": {
@@ -75,7 +70,7 @@ export default class ProgramStatusController {
                 }
             },
             workflow: {}
-        }
+        }*/
 
         this.history = {
             expanded: false
@@ -171,7 +166,7 @@ export default class ProgramStatusController {
             }).then((response) => {
                 this.getActiveProgram(response.results);
                 this.groupAndSortPatientStates();
-                this.configDatePopups();
+               // this.configDatePopups();
                 this.setInputsToStartingValues();
             });
         }
@@ -184,7 +179,7 @@ export default class ProgramStatusController {
             }).then((response) => {
                 this.patientProgram = response;
                 this.groupAndSortPatientStates();
-                this.configDatePopups();
+                // this.configDatePopups();
                 this.setInputsToStartingValues();
             })
         }
@@ -381,15 +376,16 @@ export default class ProgramStatusController {
         }
     }
 
-    configDatePopups() {
+
+   /* configDatePopups() {
 
         // date enrolled can never be before the first state change
-      /*  if (this.patientStateHistory.length > 0) {
+        if (this.patientStateHistory.length > 0) {
             this.datePopup.enrollment.options.endDate = new Date(this.patientStateHistory[this.patientStateHistory.length - 1].startDate);
         }
-*/
-     /*   this.datePopup.completion.options.startDate = this.patientStateHistory.length > 0 ? this.patientStateHistory[0].startDate
-            : this.patientProgram ? this.patientProgram.dateEnrolled : new Date()*/
+
+        this.datePopup.completion.options.startDate = this.patientStateHistory.length > 0 ? this.patientStateHistory[0].startDate
+            : this.patientProgram ? this.patientProgram.dateEnrolled : new Date()*!/
 
         // date completed can never be before date enrollment
         if (this.patientProgram) {
@@ -400,7 +396,7 @@ export default class ProgramStatusController {
         if (this.patientProgram && this.patientProgram.dateCompleted) {
             this.datePopup.enrollment.options.endDate = new Date(this.patientProgram.dateCompleted);
         }
-/*
+
         angular.forEach(this.program.allWorkflows, (workflow) => {
             this.datePopup.workflow[workflow.uuid] = {
                 "opened": false,
@@ -412,8 +408,9 @@ export default class ProgramStatusController {
                         : this.patientProgram ? this.patientProgram.dateEnrolled : new Date()
                 }
             }
-        })*/
-    }
+        })
+    }*/
+
 
     update() {
         this.cancelAllEditModes();
@@ -458,5 +455,10 @@ export default class ProgramStatusController {
             this.history.expanded = false;
             angular.element('#overlay').remove();
         }
+    }
+
+    enrollmentValid() {
+        return this.input.enrollmentLocation && this.input.dateEnrolled &&
+            (!this.input.dateCompleted || this.input.dateCompleted >= this.input.dateEnrolled);
     }
 }
