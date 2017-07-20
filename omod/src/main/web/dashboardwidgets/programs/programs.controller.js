@@ -3,13 +3,19 @@ import angular from 'angular';
 
 export default class ProgramsController {
 
-    constructor(openmrsRest, $filter) {
+    constructor($filter, openmrsRest, openmrsTranslate) {
         'ngInject';
 
-        Object.assign(this, {$filter, openmrsRest});
+        Object.assign(this, {$filter, openmrsRest, openmrsTranslate});
     }
 
     $onInit() {
+
+        this.language = (this.config.language == '' || angular.isUndefined(this.config.language))
+            ? 'en' : this.config.language;
+
+        this.openmrsTranslate.changeLanguage(this.language);
+
         // the default patient page is the clinician dashboard
         this.patientPage = "/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}&dashboard={{dashboard}}";
 
