@@ -14,6 +14,10 @@ export default class ProgramStatusController {
     }
 
     $onInit() {
+
+        this.language = (this.config.language == '' || angular.isUndefined(this.config.language))
+            ? 'en' : this.config.language;
+
         this.vPatientProgram = 'custom:uuid,program:(uuid),dateEnrolled,dateCompleted,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
 
         this.dateFormat = (this.config.dateFormat == '' || angular.isUndefined(this.config.dateFormat))
