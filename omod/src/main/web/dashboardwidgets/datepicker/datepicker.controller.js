@@ -39,21 +39,19 @@ export default class DatepickerController  {
         });
     }
 
-    formatDate(date) {
+/*    formatDate(date) {
         if (date == null) {
             return null;
         } else {
             return this.$filter('date')(date, this.format);
         }
-    }
+    }*/
 
     updateDates() {
         //I need to update all at once due to a bug in the datepicker, which resets the selected date.
-        //I use formatDate to strip off the time part of the date so that endDate and startDate
-        //do not have to be set to end of a day and start of a day.
-        $(this.$element).datepicker("setStartDate", this.formatDate(this.startDate));
-        $(this.$element).datepicker("setEndDate", this.formatDate(this.endDate));
-        $(this.$element).datepicker("setDate", this.formatDate(this.ngModel));
+        $(this.$element).datepicker("setStartDate", this.startDate);
+        $(this.$element).datepicker("setEndDate", this.endDate);
+        $(this.$element).datepicker("setDate", this.ngModel);
     }
 
     stripTime(date) {
