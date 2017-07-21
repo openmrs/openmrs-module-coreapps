@@ -1,45 +1,67 @@
 import angular from 'angular';
 
 export default class DatepickerController  {
-    constructor($document, $element, $scope) {
+    constructor($document, $element, $scope, $filter) {
         'ngInject';
 
-        Object.assign(this, { $document, $element, $scope });
+        Object.assign(this, { $document, $element, $scope, $filter });
     }
 
     $onInit() {
         this.$document.ready(() => {
             $(this.$element).datepicker({
                 format: this.convertDateFormat(this.format),
-                startDate: this.startDate,
-                endDate: this.endDate,
                 autoclose: true,
                 container: "html",
                 language:  this.language ? this.language : 'en'
             }).on("changeDate", (e) => {
                 if (e.date != null) {
-					if (this.ngModel == null || this.ngModel.getTime() !== e.date.getTime()) {
+					if (this.ngModel == null || this.stripTime(this.ngModel).getTime() !== this.stripTime(e.date).getTime()) {
 						//apply changes if not triggered by the watch
 						this.$scope.$apply(() => {
-							this.ngModel = e.date;
+                            this.ngModel = this.stripTime(e.date);
 						});
 					}
                 }
             });
 
             this.$scope.$watch(() => { return this.ngModel; },
-                (value) => { $(this.$element).datepicker("setDate", value); }
+                (value) => { this.updateDates(); }
             );
 
-            /* TODO: this wasn't working properly, but in the future we'd like to make the start and end date values of the datpicker update when the underlying startDate and endDate module objects change */
-         /*   this.$scope.$watch(() => { return this.startDate; },
-                (value) => { $(this.$element).datepicker("setStartDate", value); }
+            this.$scope.$watch(() => { return this.startDate; },
+                (value) => { this.updateDates(); }
             );
-
+            
             this.$scope.$watch(() => { return this.endDate; },
-                (value) => { $(this.$element).datepicker("setEndDate", value); }
-            );*/
+                (value) => { this.updateDates(); }
+            )
         });
+    }
+
+    formatDate(date) {
+        if (date == null) {
+            return null;
+        } else {
+            return this.$filter('date')(date, this.format);
+        }
+    }
+
+    updateDates() {
+        //I need to update all at once due to a bug in the datepicker, which resets the selected date.
+        //I use formatDate to strip off the time part of the date so that endDate and startDate
+        //do not have to be set to end of a day and start of a day.
+        $(this.$element).datepicker("setStartDate", this.formatDate(this.startDate));
+        $(this.$element).datepicker("setEndDate", this.formatDate(this.endDate));
+        $(this.$element).datepicker("setDate", this.formatDate(this.ngModel));
+    }
+
+    stripTime(date) {
+        if (date == null) {
+            return null;
+        } else {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        }
     }
 
     convertDateFormat(dateFormat) {

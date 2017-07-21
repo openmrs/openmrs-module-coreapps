@@ -105,7 +105,7 @@ export default class ProgramStatusController {
         // if there is only possible location, set it as the default (this is why loading locations (in activate) needs to happen before patient programs)
         else if (this.programLocations && this.programLocations.length == 1) {
             this.input.enrollmentLocation = this.programLocations[0].uuid;
-        }
+        }        
     }
 
     toggleEditEnrollment() {
