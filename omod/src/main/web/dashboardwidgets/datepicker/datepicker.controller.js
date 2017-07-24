@@ -39,19 +39,11 @@ export default class DatepickerController  {
         });
     }
 
-/*    formatDate(date) {
-        if (date == null) {
-            return null;
-        } else {
-            return this.$filter('date')(date, this.format);
-        }
-    }*/
-
     updateDates() {
         //I need to update all at once due to a bug in the datepicker, which resets the selected date.
-        $(this.$element).datepicker("setStartDate", this.startDate);
-        $(this.$element).datepicker("setEndDate", this.endDate);
-        $(this.$element).datepicker("setDate", this.ngModel);
+        $(this.$element).datepicker("setStartDate", this.stripTime(this.startDate));
+        $(this.$element).datepicker("setEndDate", this.stripTime(this.endDate));
+        $(this.$element).datepicker("setDate", this.stripTime(this.ngModel));
     }
 
     stripTime(date) {
