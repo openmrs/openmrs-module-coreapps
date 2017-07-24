@@ -1,4 +1,5 @@
 import angular from 'angular';
+import openmrsApi from '@openmrs/angularjs-openmrs-api';
 import 'bootstrap-datepicker';
 import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.css';
 import 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.ar.min.js';
@@ -65,5 +66,5 @@ import './locales/bootstrap-datepicker.ht.js';
 
 import { DatepickerComponent } from './datepicker.component';
 
-export default angular.module("openmrs-contrib-dashboardwidgets.datepicker", [])
+export default angular.module("openmrs-contrib-dashboardwidgets.datepicker", [openmrsApi])
 	.component(DatepickerComponent.selector, DatepickerComponent).name;

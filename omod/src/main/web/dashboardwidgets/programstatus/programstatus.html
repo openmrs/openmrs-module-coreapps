@@ -60,7 +60,7 @@ li  {
     <ul ng-class="{'eighty-percent-font': !$ctrl.expanded}" ng-show="!$ctrl.patientProgram">
         <li>
             <b>{{'coreapps.dashboardwidgets.programstatus.enrollmentdate' | translate }}:</b>
-			<openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" end-date="$ctrl.today" language="{{$ctrl.language}}"/>
+			<openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" end-date="$ctrl.today"/>
         </li>
         <li>
             <b>{{'coreapps.dashboardwidgets.programstatus.enrollmentlocation' | translate }}:</b>

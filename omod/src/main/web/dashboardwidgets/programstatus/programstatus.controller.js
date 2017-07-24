@@ -14,10 +14,6 @@ export default class ProgramStatusController {
     }
 
     $onInit() {
-
-        this.language = (this.config.language == '' || angular.isUndefined(this.config.language))
-            ? 'en' : this.config.language;
-
         this.vPatientProgram = 'custom:uuid,program:(uuid),dateEnrolled,dateCompleted,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
 
         this.dateFormat = (this.config.dateFormat == '' || angular.isUndefined(this.config.dateFormat))
@@ -109,7 +105,7 @@ export default class ProgramStatusController {
         // if there is only possible location, set it as the default (this is why loading locations (in activate) needs to happen before patient programs)
         else if (this.programLocations && this.programLocations.length == 1) {
             this.input.enrollmentLocation = this.programLocations[0].uuid;
-        }        
+        }
     }
 
     toggleEditEnrollment() {

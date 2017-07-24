@@ -1,41 +1,43 @@
 import angular from 'angular';
 
 export default class DatepickerController  {
-    constructor($document, $element, $scope, $filter) {
+    constructor($document, $element, $scope, $filter, openmrsTranslate) {
         'ngInject';
 
-        Object.assign(this, { $document, $element, $scope, $filter });
+        Object.assign(this, { $document, $element, $scope, $filter, openmrsTranslate });
     }
 
     $onInit() {
         this.$document.ready(() => {
-            $(this.$element).datepicker({
-                format: this.convertDateFormat(this.format),
-                autoclose: true,
-                container: "html",
-                language:  this.language ? this.language : 'en'
-            }).on("changeDate", (e) => {
-                if (e.date != null) {
-					if (this.ngModel == null || this.stripTime(this.ngModel).getTime() !== this.stripTime(e.date).getTime()) {
-						//apply changes if not triggered by the watch
-						this.$scope.$apply(() => {
-                            this.ngModel = this.stripTime(e.date);
-						});
-					}
-                }
+            this.openmrsTranslate.getLanguage().then((language) => {
+                $(this.$element).datepicker({
+                    format: this.convertDateFormat(this.format),
+                    autoclose: true,
+                    container: "html",
+                    language:  language
+                }).on("changeDate", (e) => {
+                    if (e.date != null) {
+                        if (this.ngModel == null || this.stripTime(this.ngModel).getTime() !== this.stripTime(e.date).getTime()) {
+                            //apply changes if not triggered by the watch
+                            this.$scope.$apply(() => {
+                                this.ngModel = this.stripTime(e.date);
+                            });
+                        }
+                    }
+                });
+
+                this.$scope.$watch(() => { return this.ngModel; },
+                    (value) => { this.updateDates(); }
+                );
+
+                this.$scope.$watch(() => { return this.startDate; },
+                    (value) => { this.updateDates(); }
+                );
+                
+                this.$scope.$watch(() => { return this.endDate; },
+                    (value) => { this.updateDates(); }
+                )
             });
-
-            this.$scope.$watch(() => { return this.ngModel; },
-                (value) => { this.updateDates(); }
-            );
-
-            this.$scope.$watch(() => { return this.startDate; },
-                (value) => { this.updateDates(); }
-            );
-            
-            this.$scope.$watch(() => { return this.endDate; },
-                (value) => { this.updateDates(); }
-            )
         });
     }
 
