@@ -1,10 +1,10 @@
 import angular from 'angular';
 
 export default class RelationshipsController  {
-    constructor(openmrsRest) {
+    constructor(openmrsRest, openmrsTranslate) {
         'ngInject';
 
-        Object.assign(this, { openmrsRest });
+        Object.assign(this, { openmrsRest, openmrsTranslate });
     }
 
     $onInit() {
