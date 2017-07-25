@@ -261,6 +261,20 @@
         <description>Able to access the merge patient app</description>
     </privilege>
 
+    <privilege>
+        <name>Task: coreapps.enrollInProgram</name>
+        <description>Ability to enroll a patient in a program via the program status widget</description>
+    </privilege>
+
+    <privilege>
+        <name>Task: coreapps.editPatientProgram</name>
+        <description>Ability to edit a patient program via the program status widget</description>
+    </privilege>
+
+    <privilege>
+        <name>Task: coreapps.deletePatientProgram</name>
+        <description>Ability to delete a patient program via the program status widget</description>
+    </privilege>
 
 </module>
 

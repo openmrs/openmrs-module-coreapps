@@ -57,7 +57,7 @@ li  {
 
 <!-- TODO if we like this 'expanded' functionality, we need to move it up a level to operate on the main dashboard widget so we keep the header -->
 <div ng-class="{expanded: $ctrl.expanded}">
-    <ul ng-class="{'eighty-percent-font': !$ctrl.expanded}" ng-show="!$ctrl.patientProgram">
+    <ul ng-class="{'eighty-percent-font': !$ctrl.expanded}" ng-show="$ctrl.canEnrollInProgram && !$ctrl.patientProgram">
         <li>
             <b>{{'coreapps.dashboardwidgets.programstatus.enrollmentdate' | translate }}:</b>
 			<openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" end-date="$ctrl.today"/>
@@ -73,8 +73,8 @@ li  {
 
     <ul ng-class="{'eighty-percent-font': !$ctrl.expanded}" ng-show="$ctrl.patientProgram">
         <li ng-show="!$ctrl.edit.enrollment">
-            <i ng-show="!$ctrl.expanded && !$ctrl.edit.enrollment" ng-click="$ctrl.deletePatientProgram()" class="icon-remove right no-padding"/>
-            <i ng-show="!$ctrl.expanded && !$ctrl.edit.enrollment" ng-click="$ctrl.toggleEditEnrollment()" class="icon-pencil right no-padding"/>
+            <i ng-show="$ctrl.canDeleteProgram && !$ctrl.expanded && !$ctrl.edit.enrollment" ng-click="$ctrl.deletePatientProgram()" class="icon-remove right no-padding"/>
+            <i ng-show="$ctrl.canEditProgram && !$ctrl.expanded && !$ctrl.edit.enrollment" ng-click="$ctrl.toggleEditEnrollment()" class="icon-pencil right no-padding"/>
             <b>{{'coreapps.dashboardwidgets.programstatus.enrolled' | translate }}:</b> {{ $ctrl.patientProgram.dateEnrolled | date:$ctrl.dateFormat }} <span ng-show="$ctrl.patientProgram.location">{{'coreapps.at' | translate }} {{ $ctrl.patientProgram.location.display }}</span>
         </li>
 

@@ -21,6 +21,8 @@ export default class ProgramsController {
 
         this.showAddProgram = false;
 
+        this.canEnrollInProgram = false;
+
         this.input = {
             program: ""
         }
@@ -39,9 +41,23 @@ export default class ProgramsController {
             this.patientPage = this.config.patientPage;
         }
 
+        this.fetchPrivileges();
+
         this.fetchPrograms()
             .then(this.fetchPatientPrograms.bind(this))
-            .then(this.determineUnenrolledPrograms.bind(this))
+            .then(this.determineUnenrolledPrograms.bind(this));
+    }
+
+    fetchPrivileges() {
+        this.openmrsRest.get('session', {
+            v: 'custom:(privileges)'
+        }).then((response) => {
+            if (response && response.user && angular.isArray(response.user.privileges)) {
+                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                    this.canEnrollInProgram = true;
+                };
+            }
+        });
     }
 
     fetchPrograms() {

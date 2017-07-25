@@ -18,21 +18,20 @@ export default class ProgramStatusController {
 
         this.dateFormat = (this.config.dateFormat == '' || angular.isUndefined(this.config.dateFormat))
             ? 'dd-MMM-yyyy' : this.config.dateFormat;
-
         this.today = new Date();
 
         this.program = null;
-
         this.patientProgram = null;
-
         this.programLocations = null;
 
         this.programOutcomes = null;
 
+        this.canEnrollInProgram = false;
+        this.canEditProgram = false;
+        this.canDeleteProgram = false;
+
         this.statesByWorkflow = {};
-
         this.statesByUuid = {};
-
         this.patientStateHistory = [];
 
         // backs the various input fields
@@ -86,11 +85,32 @@ export default class ProgramStatusController {
 
     activate() {
         this.openmrsRest.setBaseAppPath("/coreapps");
+
+        this.fetchPrivileges();
+
         this.fetchLocations().then((response) => {
             this.fetchProgram().then((response) => {
                 this.fetchOutcomes();
                 this.fetchPatientProgram(this.config.patientProgram);
             });
+        });
+    }
+
+    fetchPrivileges() {
+        this.openmrsRest.get('session', {
+            v: 'custom:(privileges)'
+        }).then((response) => {
+            if (response && response.user && angular.isArray(response.user.privileges)) {
+                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                    this.canEnrollInProgram = true;
+                };
+                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.editPatientProgram'; })) {
+                    this.canEditProgram = true;
+                };
+                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.deletePatientProgram'; })) {
+                    this.canDeleteProgram = true;
+                };
+            }
         });
     }
 
