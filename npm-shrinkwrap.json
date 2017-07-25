@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "dependencies": {
     "@openmrs/angularjs-openmrs-api": {
-      "version": "0.7.0",
-      "from": "@openmrs/angularjs-openmrs-api@0.7.0",
-      "resolved": "https://registry.npmjs.org/@openmrs/angularjs-openmrs-api/-/angularjs-openmrs-api-0.7.0.tgz"
+      "version": "0.7.1",
+      "from": "@openmrs/angularjs-openmrs-api@0.7.1",
+      "resolved": "https://registry.npmjs.org/@openmrs/angularjs-openmrs-api/-/angularjs-openmrs-api-0.7.1.tgz"
     },
     "angular": {
       "version": "1.5.8",

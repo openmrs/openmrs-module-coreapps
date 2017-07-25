@@ -14,7 +14,7 @@ describe('LatestObsForConceptList', () => {
 			$httpBackend = _$httpBackend_;
 		});
 		
-		$httpBackend.expectGET('/openmrs/module/uicommons/messages/messages.json?localeKey=en').respond({});
+		$httpBackend.expectGET('/module/uicommons/messages/messages.json?localeKey=en').respond({});
 	});
 
     it('should use maxAge from config', () => {
