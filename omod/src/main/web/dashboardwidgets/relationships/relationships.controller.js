@@ -70,11 +70,13 @@ export default class RelationshipsController  {
             if(relationship.personA.uuid !== this.config.patientUuid){
                 rel.toPerson = relationship.personA;
                 rel.isPatient = relationship.personA.isPatient;
-                rel.type = this.openmrsTranslate.translateAs(relationship.relationshipType, 'RelationshipType', 'aIsToB');
+                rel.type = relationship.relationshipType;
+                rel.direction = 'aIsToB';
             } else {
                 rel.toPerson = relationship.personB;
                 rel.isPatient = relationship.personB.isPatient;
-                rel.type = this.openmrsTranslate.translateAs(relationship.relationshipType, 'RelationshipType', 'bIsToA');
+                rel.type = relationship.relationshipType;
+                rel.direction = 'bIsToA';
             }
             this.relationships.push(rel);
         })
@@ -131,15 +133,15 @@ export default class RelationshipsController  {
                 if (this.findRelTypeByName(type.aIsToB) == null) {
                     var relTypeA = {};
                     relTypeA.uuid = type.uuid;
-                    relTypeA.name = this.openmrsTranslate.translateAs(type, 'RelationshipType', 'aIsToB');
-                    relTypeA.type = "B";
+                    relTypeA.name = type.aIsToB;
+                    relTypeA.type = "aIsToB";
                     this.types.push(relTypeA);
                 }
                 if (this.findRelTypeByName(type.bIsToA) == null) {
                     var relTypeB = {};
                     relTypeB.uuid = type.uuid;
-                    relTypeB.name = this.openmrsTranslate.translateAs(type, 'RelationshipType', 'bIsToA');
-                    relTypeB.type = "A";
+                    relTypeB.name = type.bIsToA;
+                    relTypeB.type = "bIsToA";
                     this.types.push(relTypeB);
                 }
             }
@@ -195,10 +197,10 @@ export default class RelationshipsController  {
 
             var personA = null;
             var personB = null;
-            if (this.relationshipType.type == "A") {
+            if (this.relationshipType.type == "bIsToA") {
                 personA = this.config.patientUuid;
                 personB = this.otherPerson.uuid;
-            } else if (this.relationshipType.type == "B") {
+            } else if (this.relationshipType.type == "aIsToB") {
                 personA = this.otherPerson.uuid;
                 personB = this.config.patientUuid;
             }

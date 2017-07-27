@@ -15,12 +15,12 @@
                         <i class="icon-remove" title="Remove relationship"></i>
                     </a>
                 </span>
-                {{relationship.type}}
+                {{ relationship.type | translateAs: 'RelationshipType':relationship.direction }}
             </div>
         </div>
     </li>
     <p ng-show="$ctrl.relationships.length == 0">
-        None
+        {{ 'coreapps.none' | translate }}
     </p>
 
     <li ng-show="$ctrl.removeFlag">
@@ -39,7 +39,7 @@
 
     <li ng-show="$ctrl.edit">
         <p class="left">
-        <select class="relationship-input" ng-options="type as type.name for type in $ctrl.types"
+        <select class="relationship-input" ng-options="type as type | translateAs: 'RelationshipType':type.type for type in $ctrl.types"
                 ng-model="$ctrl.relationshipType" ng-change="$ctrl.updateRelationshipType()">
             <option value="">{{ 'coreapps.dashboardwidgets.relationships.whatType' | translate }}</option>
         </select>
