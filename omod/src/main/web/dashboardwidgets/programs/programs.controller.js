@@ -25,11 +25,17 @@ export default class ProgramsController {
 
         this.input = {
             program: ""
-        }
+        };
 
         // TODO did this work?
         this.dateFormat = (this.config.dateFormat == '' || angular.isUndefined(this.config.dateFormat))
             ? 'yyyy-MM-dd' : this.config.dateFormat;
+
+        this.supportedPrograms = [];
+
+        if (this.config.supportedPrograms) {
+            this.supportedPrograms = this.config.supportedPrograms.split(',');
+        }
 
         this.activate();
     }
@@ -81,14 +87,20 @@ export default class ProgramsController {
 
     getPrograms(programs) {
         angular.forEach(programs, (program) => {
-            this.programs.push(program)
+            // filter out any unsupported programs
+            if (this.supportedPrograms.length == 0 || this.supportedPrograms.indexOf(program.uuid) != -1) {
+                this.programs.push(program)
+            }
         });
     }
 
     getPatientPrograms(patientPrograms) {
         this.patientPrograms = [];
-        angular.forEach(patientPrograms, (patentProgram) => {
-            this.patientPrograms.push(patentProgram);
+        angular.forEach(patientPrograms, (patientProgram) => {
+            // filter out any unsupported programs
+            if (this.supportedPrograms.length == 0 || this.supportedPrograms.indexOf(patientProgram.program.uuid) != -1) {
+                this.patientPrograms.push(patientProgram);
+            }
         });
     }
 
