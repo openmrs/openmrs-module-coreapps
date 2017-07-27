@@ -70,11 +70,11 @@ export default class RelationshipsController  {
             if(relationship.personA.uuid !== this.config.patientUuid){
                 rel.toPerson = relationship.personA;
                 rel.isPatient = relationship.personA.isPatient;
-                rel.type = relationship.relationshipType.aIsToB;
+                rel.type = this.openmrsTranslate.translateAs(relationship.relationshipType, 'RelationshipType', 'aIsToB');
             } else {
                 rel.toPerson = relationship.personB;
                 rel.isPatient = relationship.personB.isPatient;
-                rel.type = relationship.relationshipType.bIsToA;
+                rel.type = this.openmrsTranslate.translateAs(relationship.relationshipType, 'RelationshipType', 'bIsToA');
             }
             this.relationships.push(rel);
         })
@@ -131,14 +131,14 @@ export default class RelationshipsController  {
                 if (this.findRelTypeByName(type.aIsToB) == null) {
                     var relTypeA = {};
                     relTypeA.uuid = type.uuid;
-                    relTypeA.name = type.aIsToB;
+                    relTypeA.name = this.openmrsTranslate.translateAs(type, 'RelationshipType', 'aIsToB');
                     relTypeA.type = "B";
                     this.types.push(relTypeA);
                 }
                 if (this.findRelTypeByName(type.bIsToA) == null) {
                     var relTypeB = {};
                     relTypeB.uuid = type.uuid;
-                    relTypeB.name = type.bIsToA;
+                    relTypeB.name = this.openmrsTranslate.translateAs(type, 'RelationshipType', 'bIsToA');
                     relTypeB.type = "A";
                     this.types.push(relTypeB);
                 }
