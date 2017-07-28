@@ -11,7 +11,7 @@ export default class ProgramsController {
 
     $onInit() {
         // the default patient page is the clinician dashboard
-        this.patientPage = "/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}&dashboard={{dashboard}}";
+        this.dashboardPage = "/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}&dashboard={{dashboard}}";
 
         this.programs = [];
 
@@ -43,8 +43,8 @@ export default class ProgramsController {
     activate() {
         this.openmrsRest.setBaseAppPath("/coreapps");
 
-        if(this.config.patientPage) {
-            this.patientPage = this.config.patientPage;
+        if(this.config.dashboardPage) {
+            this.dashboardPage = this.config.dashboardPage;
         }
 
         this.fetchPrivileges();
@@ -106,7 +106,7 @@ export default class ProgramsController {
 
     getMaxRecords() {
         if (this.config.maxRecords == '' || angular.isUndefined(this.config.maxRecords)) {
-            return 10;
+            return 20;
         } else {
             return this.config.maxRecords;
         }
@@ -142,7 +142,7 @@ export default class ProgramsController {
 
         if (programUuid && this.config.enableProgramDashboards) {
             var destinationPage = "";
-            destinationPage = Handlebars.compile(this.patientPage)({
+            destinationPage = Handlebars.compile(this.dashboardPage)({
                 patientUuid: this.config.patientUuid,
                 dashboard: programUuid
             });
