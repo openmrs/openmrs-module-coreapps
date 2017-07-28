@@ -10,7 +10,7 @@ export default class RelationshipsController  {
     $onInit() {
         this.minSearchLength = 2;
         // the default patient page is the clinician dashboard
-        this.patientPage = "/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}";
+        this.dashboardPage = "/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}";
 
         this.relationships = [];
         this.types = [];
@@ -31,8 +31,8 @@ export default class RelationshipsController  {
             this.openmrsRest.setBaseAppPath("/coreapps");
         }
 
-        if( this.config.patientPage ) {
-            this.patientPage = this.config.patientPage;
+        if( this.config.dashboardPage ) {
+            this.dashboardPage = this.config.dashboardPage;
         }
 
         if (this.config.includeRelationshipTypes) {
@@ -70,13 +70,11 @@ export default class RelationshipsController  {
             if(relationship.personA.uuid !== this.config.patientUuid){
                 rel.toPerson = relationship.personA;
                 rel.isPatient = relationship.personA.isPatient;
-                rel.type = relationship.relationshipType;
-                rel.direction = 'aIsToB';
+                rel.type = relationship.relationshipType.aIsToB;
             } else {
                 rel.toPerson = relationship.personB;
                 rel.isPatient = relationship.personB.isPatient;
-                rel.type = relationship.relationshipType;
-                rel.direction = 'bIsToA';
+                rel.type = relationship.relationshipType.bIsToA;
             }
             this.relationships.push(rel);
         })
@@ -134,14 +132,14 @@ export default class RelationshipsController  {
                     var relTypeA = {};
                     relTypeA.uuid = type.uuid;
                     relTypeA.name = type.aIsToB;
-                    relTypeA.type = "aIsToB";
+                    relTypeA.type = "B";
                     this.types.push(relTypeA);
                 }
                 if (this.findRelTypeByName(type.bIsToA) == null) {
                     var relTypeB = {};
                     relTypeB.uuid = type.uuid;
                     relTypeB.name = type.bIsToA;
-                    relTypeB.type = "bIsToA";
+                    relTypeB.type = "A";
                     this.types.push(relTypeB);
                 }
             }
@@ -176,8 +174,8 @@ export default class RelationshipsController  {
     
     navigateTo(patientId) {
         var destinationPage ="";
-        if (this.patientPage) {
-            destinationPage = Handlebars.compile(this.patientPage)({
+        if (this.dashboardPage) {
+            destinationPage = Handlebars.compile(this.dashboardPage)({
                 patientUuid: patientId
             });
         }
@@ -197,10 +195,10 @@ export default class RelationshipsController  {
 
             var personA = null;
             var personB = null;
-            if (this.relationshipType.type == "bIsToA") {
+            if (this.relationshipType.type == "A") {
                 personA = this.config.patientUuid;
                 personB = this.otherPerson.uuid;
-            } else if (this.relationshipType.type == "aIsToB") {
+            } else if (this.relationshipType.type == "B") {
                 personA = this.otherPerson.uuid;
                 personB = this.config.patientUuid;
             }
