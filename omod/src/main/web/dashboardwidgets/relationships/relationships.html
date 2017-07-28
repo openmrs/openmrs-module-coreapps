@@ -51,7 +51,7 @@
     </li>
     <li ng-show="$ctrl.showFindOtherPerson">
         <p class="left">
-            <input type="text" class="person-typeahead relationship-input" placeholder="{{ 'coreapps.relationships.find' | translate }} {{$ctrl.relationshipType | translateAs: 'RelationshipType':$ctrl.relationshipType.type }}"
+            <input type="text" class="person-typeahead relationship-input" placeholder="{{ 'coreapps.relationships.find' | translate }} {{ $ctrl.relationshipType.name }}"
                    ng-model="$ctrl.searchPerson"
                    typeahead-no-results="noResults"
                    ng-change="$ctrl.searchPersons()"
