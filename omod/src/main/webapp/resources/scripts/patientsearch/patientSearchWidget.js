@@ -174,6 +174,15 @@ function PatientSearchWidget(configuration){
         }
     }
 
+    var disableSearch = function() {
+        clearSearch();
+        jq('#patient-search').disable();
+    }
+
+    var disableSearch = function() {
+        jq('#patient-search').enable();
+    }
+
     var clearSearch = function() {
         // do a reset, but also clear the input and hide the search results
         reset();
@@ -580,7 +589,7 @@ function PatientSearchWidget(configuration){
                 case 40:
                     doKeyDown();
                     break;
-            }
+            };
 
             return false;
         }
@@ -588,6 +597,19 @@ function PatientSearchWidget(configuration){
         return true;
     });
 
+
+    /***************** Set up custom events that allow other elements to interact with the search **************/
+    jq('#patient-search-form').on('search:clear', function() {
+        clearSearch();
+    })
+
+    jq('#patient-search-form').on('search:disable', function() {
+        disableSearch();
+    })
+
+    jq('#patient-search-form').on('search:enable', function() {
+        enableSearch();
+    })
 
     /***************** Do initial search if one is specified **************/
 
