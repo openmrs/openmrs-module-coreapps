@@ -50,14 +50,14 @@ export default class RelationshipsController  {
         this.openmrsRest.get('relationship', {
             person: this.config.patientUuid,
             limit: this.getMaxRecords(),
-            v: 'custom:(uuid,personA:(uuid,display,birthdate,isPatient),personB:(uuid,display,birthdate,isPatient),relationshipType:(uuid,aIsToB,bIsToA))'
+            v: 'custom:(uuid,personA:(uuid,display,birthdate,isPatient),personB:(uuid,display,birthdate,isPatient),relationshipType:(uuid,aIsToB,bIsToA,displayAIsToB,displayBIsToA))'
         }).then((response) => {
             this.getRelationships(response.results);
         });
 
         //fetchRelationshipTypes
         this.openmrsRest.get('relationshiptype', {
-            v: 'custom:(uuid,aIsToB,bIsToA)'
+            v: 'custom:(uuid,aIsToB,bIsToA,displayAIsToB,displayBIsToA)'
         }).then((response) => {
             this.getRelationshipTypes(response.results);
         });
@@ -70,11 +70,11 @@ export default class RelationshipsController  {
             if(relationship.personA.uuid !== this.config.patientUuid){
                 rel.toPerson = relationship.personA;
                 rel.isPatient = relationship.personA.isPatient;
-                rel.type = relationship.relationshipType.aIsToB;
+                rel.type = relationship.relationshipType.displayAIsToB;
             } else {
                 rel.toPerson = relationship.personB;
                 rel.isPatient = relationship.personB.isPatient;
-                rel.type = relationship.relationshipType.bIsToA;
+                rel.type = relationship.relationshipType.displayBIsToA;
             }
             this.relationships.push(rel);
         })
@@ -128,17 +128,17 @@ export default class RelationshipsController  {
                 ((this.allowedTypes.length > 0) && (this.allowedTypes.indexOf(type.uuid) !== -1))) {
                 // if a relationship type filter was not specified then we display all types,
                 // OR if a filter was defined then we only display the types included in the filter
-                if (this.findRelTypeByName(type.aIsToB) == null) {
+                if (this.findRelTypeByName(type.displayAIsToB) == null) {
                     var relTypeA = {};
                     relTypeA.uuid = type.uuid;
-                    relTypeA.name = type.aIsToB;
+                    relTypeA.name = type.displayAIsToB;
                     relTypeA.type = "B";
                     this.types.push(relTypeA);
                 }
-                if (this.findRelTypeByName(type.bIsToA) == null) {
+                if (this.findRelTypeByName(type.displayBIsToA) == null) {
                     var relTypeB = {};
                     relTypeB.uuid = type.uuid;
-                    relTypeB.name = type.bIsToA;
+                    relTypeB.name = type.displayBIsToA;
                     relTypeB.type = "A";
                     this.types.push(relTypeB);
                 }
