@@ -1,16 +1,11 @@
 package org.openmrs.module.coreapps.fragment.controller.patientsearch;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.appframework.domain.Extension;
+import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.utils.GeneralUtils;
@@ -19,6 +14,13 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.util.OpenmrsConstants;
+
+import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Fragment controller for patient search widget; sets the min # of search characters based on global property,
@@ -29,6 +31,7 @@ public class PatientSearchWidgetFragmentController {
     public void controller(FragmentModel model, UiSessionContext sessionContext,
                            HttpServletRequest request,
                            @SpringBean("adminService") AdministrationService administrationService,
+                           @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
                            @FragmentParam(value = "showLastViewedPatients", required = false) Boolean showLastViewedPatients,
                            @FragmentParam(value = "initialSearchFromParameter", required = false) String searchByParam,
                            @FragmentParam(value = "registrationAppLink", required=false) String registrationAppLink) {
@@ -76,6 +79,11 @@ public class PatientSearchWidgetFragmentController {
         }
         model.addAttribute("listingAttributeTypeNames", listingAttributeTypeNames);
         model.addAttribute("registrationAppLink", registrationAppLink);
+
+        List<Extension> patientSearchExtensions = appFrameworkService.getExtensionsForCurrentUser("coreapps.patientSearch.extension");
+        Collections.sort(patientSearchExtensions);
+        model.addAttribute("patientSearchExtensions", patientSearchExtensions);
+
 
     }
 

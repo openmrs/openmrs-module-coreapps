@@ -82,6 +82,18 @@
 
 <form method="get" id="patient-search-form" onsubmit="return false">
     <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off" <% if (doInitialSearch) { %>value="${doInitialSearch}"<% } %>/><i id="patient-search-clear-button" class="small icon-remove-sign"></i>
+    <% if(patientSearchExtensions){
+
+        patientSearchExtensions.each {
+            // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
+            def configs = [:];
+            if(it.extensionParams.fragmentConfig != null){
+                configs = it.extensionParams.fragmentConfig;
+            }
+        %>
+            ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs) }
+        <%}
+    } %>
 </form>
 
 <div id="patient-search-results"></div>

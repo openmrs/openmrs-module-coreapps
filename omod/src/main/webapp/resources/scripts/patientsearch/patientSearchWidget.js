@@ -136,6 +136,24 @@ function PatientSearchWidget(configuration){
         }
     }
 
+    // see https://issues.openmrs.org/browse/RA-1404 for potential use cases
+    var addPatientToResults = function(identifier) {
+
+        if(!jq('#'+config.searchResultsDivId).is(':visible')){
+            jq('#'+config.searchResultsDivId).show();
+        }
+
+        emr.getJSON(searchUrl, {identifier: identifier, v: customRep })
+            .done(function (data) {
+                if (data && data.results && data.results.length > 0) {
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();   // TODO is this what we want here?
+            });
+    }
+
     var searchOnExactIdentifierMatchThenIdentifierAndName = function(query, currRequestCount, autoSelectIfExactIdentifierMatch) {
         emr.getJSON(searchUrl, {identifier: query, v: customRep })
             .done(function (data) {
@@ -176,11 +194,11 @@ function PatientSearchWidget(configuration){
 
     var disableSearch = function() {
         clearSearch();
-        jq('#patient-search').disable();
+        jq('#patient-search').prop('disabled',true);
     }
 
-    var disableSearch = function() {
-        jq('#patient-search').enable();
+    var enableSearch = function() {
+        jq('#patient-search').prop('disabled', false);
     }
 
     var clearSearch = function() {
@@ -599,6 +617,7 @@ function PatientSearchWidget(configuration){
 
 
     /***************** Set up custom events that allow other elements to interact with the search **************/
+    // see https://issues.openmrs.org/browse/RA-1404 for potential use cases
     jq('#patient-search-form').on('search:clear', function() {
         clearSearch();
     })
@@ -609,6 +628,10 @@ function PatientSearchWidget(configuration){
 
     jq('#patient-search-form').on('search:enable', function() {
         enableSearch();
+    })
+
+    jq('#patient-search-form').on('search:add', function(event, identifier) {
+        addPatientToResults(identifier);
     })
 
     /***************** Do initial search if one is specified **************/
