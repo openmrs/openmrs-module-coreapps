@@ -63,7 +63,7 @@ function createAddSupervisorDialog(relationshipTypeId, relationshipId) {
 
 function showAddSupervisorDialog(supervisorId, supervisorLabel){
     addSupervisorDialog.show();
-    if (supervisors.length > 0 ) {
+    if ((typeof supervisors !== 'undefined') && (supervisors != null) && supervisors.length > 0 ) {
         if (supervisorId != null && supervisorLabel != null && supervisorLabel.length > 0) {
             jq("#availableSupervisors").val(supervisorLabel);
             jq("#supervisorId").val(supervisorId);
@@ -105,7 +105,7 @@ function createAddSuperviseeDialog() {
 
 function showAddSuperviseeDialog(){
     addSuperviseeDialog.show();
-    if (supervisees.length > 0 ) {
+    if ((typeof supervisees !== 'undefined') && (supervisees != null) && supervisees.length > 0 ) {
         jq("#availableSupervisees").autocomplete("search", "");
     }
 }
