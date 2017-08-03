@@ -46,7 +46,7 @@
         <serialization.xstreamVersion>0.2.12</serialization.xstreamVersion>
         <calculationVersion>1.2</calculationVersion>
         <reportingVersion>0.10.4</reportingVersion>
-        <providermanagementVersion>2.6.1-SNAPSHOT</providermanagementVersion>
+        <providermanagementVersion>2.7.0</providermanagementVersion>
         <idgenVersion>4.4.0</idgenVersion>
 		<metadatamappingVersion>1.3.2</metadatamappingVersion>
         <uicommonsVersion>2.3.0</uicommonsVersion>
