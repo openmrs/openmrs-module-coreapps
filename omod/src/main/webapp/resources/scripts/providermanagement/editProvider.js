@@ -1,3 +1,43 @@
+function isFieldEmpty(fieldName) {
+    var fieldValue = jq.trim(jq("#" + fieldName).val());
+    //check if empty
+    if (fieldValue === '') {
+        return true;
+    }
+    return false;
+}
+
+function showError(fieldId, message) {
+    var errorField = jq("#" + fieldId).nextAll(".field-error");
+    errorField.text(message);
+    errorField.show();
+}
+
+function hideError(fieldId) {
+    var errorField = jq("#" + fieldId).nextAll(".field-error");
+    errorField.text("");
+    errorField.hide();
+}
+
+function validateProviderIdentifier(fieldId) {
+    var dfd = jq.Deferred();
+    if (isFieldEmpty(fieldId) == false) {
+        // a value has been manually entered
+        var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/provider?q=' + jq.trim(jq("#" + fieldId).val());
+        jq.getJSON(url, function( provider ) {
+            if (provider !=null && provider.results != null && (provider.results.length == 1) ) {
+                dfd.resolve(false);
+            } else {
+                dfd.resolve(true);
+            }
+        });
+    } else {
+        dfd.resolve(true);
+    }
+
+    return dfd.promise();
+}
+
 function createAddPatientDialog() {
     addPatientDialog = emr.setupConfirmationDialog({
         selector: '#add-patient-dialog',
