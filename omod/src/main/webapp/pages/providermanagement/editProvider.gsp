@@ -32,10 +32,20 @@
         }
     }
     def editDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd")
-    def  formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
-
+    def formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
+    def fieldClasses = ["required", "validateField"]
 
 %>
+
+<style>
+span.field-error {
+    padding: 1px 6px 1px 6px;
+    margin-left: 4px;
+    margin-right: 4px;
+    vertical-align: middle;
+    color: red;
+}
+</style>
 
 <script type="text/javascript">
     var breadcrumbs = [
@@ -164,6 +174,53 @@
             getSupervisors(parseInt(selectedProviderRole));
             getSupervisees(parseInt(selectedProviderRole));
         }
+
+        jq("#accountForm").submit(function(e) {
+            var returnValue = true;
+
+            var thisForm = this;
+            e.preventDefault();
+            e.returnValue = false;
+
+            jq('.validateField').each(function(i, item) {
+                var fieldId = jq(item).attr("id");
+                if (isFieldEmpty(fieldId) === true) {
+                    showError(fieldId, "Field is required");
+                    returnValue = false;
+                    return false;
+                }
+            });
+
+            if (returnValue == true) {
+                var fieldId = "providerIdentifier-field";
+                jq.when(validateProviderIdentifier(fieldId)).then(function (status) {
+                    if (status == false) {
+                        showError(fieldId, "Identifier in use already");
+                    }
+                    if (status == true ) {
+                        thisForm.submit();
+                    }
+                    return status;
+                }, function (status) {
+                    return status;
+                });
+            } else {
+                return returnValue;
+            }
+
+        });
+
+        jq(".validateField").change(function() {
+            var fieldId = jq(this).attr("id");
+            if (isFieldEmpty(fieldId) !== true) {
+                hideError(fieldId);
+            }
+        });
+
+        jq("#providerIdentifier-field").change(function() {
+            var fieldId = jq(this).attr("id");
+            hideError(fieldId);
+        });
 
     });
 
@@ -408,13 +465,17 @@
 
                     ${ ui.includeFragment("uicommons", "field/text", [
                             label: ui.message("coreapps.person.givenName"),
+                            id: "givenName",
                             formFieldName: "givenName",
+                            classes: fieldClasses,
                             initialValue: (account.givenName ?: '')
                     ])}
 
                     ${ ui.includeFragment("uicommons", "field/text", [
                             label: ui.message("coreapps.person.familyName"),
                             formFieldName: "familyName",
+                            id: "familyName",
+                            classes: fieldClasses,
                             initialValue: (account.familyName ?: '')
                     ])}
 
@@ -428,6 +489,7 @@
                     ${ ui.includeFragment("uicommons", "field/text", [
                             label: ui.message("providermanagement.identifier"),
                             formFieldName: "providerIdentifier",
+                            id: "providerIdentifier",
                             initialValue: (account.provider ? account.provider.identifier: '')
                     ])}
 
@@ -445,6 +507,7 @@
                                     formFieldName: "providerRole",
                                     initialValue: (account.providerRole?.id ?: ''),
                                     options: providerRolesOptions,
+                                    classes: fieldClasses,
                                     hideEmptyLabel: true,
                                     expanded: true
                             ])}
