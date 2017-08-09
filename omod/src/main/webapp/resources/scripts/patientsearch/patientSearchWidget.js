@@ -148,6 +148,9 @@ function PatientSearchWidget(configuration){
                 if (data && data.results && data.results.length > 0) {
                     updateSearchResults(data.results);
                 }
+                else {
+                    displayNoMatchesFound();
+                }
             })
             .fail(function (jqXHR) {
                 failSearch();   // TODO is this what we want here?
@@ -290,9 +293,18 @@ function PatientSearchWidget(configuration){
             pageCount = Math.floor(rowCount/dTable.fnSettings()._iDisplayLength)+1;
         }
         if(rowCount == 0){
-            jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noMatchesFound);
+           displayNoMatchesFound();
         }
         gotoFirstPage(); // always return back to the first page when refreshing the table
+    }
+
+    var displayNoMatchesFound = function() {
+
+        if(!jq('#'+config.searchResultsDivId).is(':visible')){
+            jq('#'+config.searchResultsDivId).show();
+        }
+
+        jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noMatchesFound);
     }
 
     var isTableEmpty = function(){
@@ -632,6 +644,11 @@ function PatientSearchWidget(configuration){
 
     jq('#patient-search-form').on('search:add', function(event, identifier) {
         addPatientToResults(identifier);
+    })
+
+    jq('#patient-search-form').on('search:no-matches', function(event, identifier) {
+        clearSearch();
+        displayNoMatchesFound();
     })
 
     /***************** Do initial search if one is specified **************/
