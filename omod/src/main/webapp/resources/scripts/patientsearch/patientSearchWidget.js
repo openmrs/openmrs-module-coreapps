@@ -136,25 +136,39 @@ function PatientSearchWidget(configuration){
         }
     }
 
-    // see https://issues.openmrs.org/browse/RA-1404 for potential use cases
-    var addPatientToResults = function(identifier) {
+    // not meant to be called based on entry into the search widget, takes in an array of identifiers: see https://issues.openmrs.org/browse/RA-1404 for potential use cases
+    var searchOnIdentifiers = function(identifiers) {
 
         if(!jq('#'+config.searchResultsDivId).is(':visible')){
             jq('#'+config.searchResultsDivId).show();
         }
 
-        emr.getJSON(searchUrl, {identifier: identifier, v: customRep })
-            .done(function (data) {
-                if (data && data.results && data.results.length > 0) {
-                    updateSearchResults(data.results);
-                }
-                else {
+        var deferredList = [];
+
+        jq.each(identifiers, function (idx, identifier) {
+            var deferred = emr.getJSON(searchUrl, {identifier: identifier, v: customRep})
+                .then(function (data) {
+                    if (data && data.results && data.results.length > 0) {
+                        updateSearchResults(data.results);
+                    }
+                })
+            deferredList.push(deferred);
+        });
+
+        // after all the getJSON calls are complete
+        jq.when.apply(null, deferredList)
+            .done(function () {
+                if (searchResultsData.length == 0) {
                     displayNoMatchesFound();
+                }
+                else if (searchResultsData.length == 1) {
+                    selectRow(0);  // auto-select if one match, may want to make this configurable
                 }
             })
             .fail(function (jqXHR) {
                 failSearch();   // TODO is this what we want here?
             });
+
     }
 
     var searchOnExactIdentifierMatchThenIdentifierAndName = function(query, currRequestCount, autoSelectIfExactIdentifierMatch) {
@@ -224,8 +238,8 @@ function PatientSearchWidget(configuration){
     var updateSearchResults = function(results){
         var dataRows = [];
         if(results){
-            searchResultsData = results;
-            _.each(searchResultsData, function(patient) {
+            searchResultsData = searchResultsData.concat(results);
+            _.each(results, function(patient) {
                 var birthdate = '';
                 var widgetBirthdate = patient.person.birthdate;
                 if(patient.person.birthdate){
@@ -642,8 +656,12 @@ function PatientSearchWidget(configuration){
         enableSearch();
     })
 
-    jq('#patient-search-form').on('search:add', function(event, identifier) {
-        addPatientToResults(identifier);
+    // takes in an array of identifiers and searches for those identifiers
+    jq('#patient-search-form').on('search:identifiers', function(event) {
+        // I'm gathering the arguments this way because function(event, identifiers) wasn't working because it appeared that the passed-in array was being "spread" and "identifiers" was only getting set to the first element in the array
+        var args = Array.from(arguments);
+        args.shift();
+        searchOnIdentifiers(args);
     })
 
     jq('#patient-search-form').on('search:no-matches', function(event, identifier) {
