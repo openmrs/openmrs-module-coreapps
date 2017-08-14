@@ -19,17 +19,27 @@ function hideError(fieldId) {
     errorField.hide();
 }
 
-function validateProviderIdentifier(fieldId) {
+function validateProviderIdentifier(fieldId, personId) {
     var dfd = jq.Deferred();
+    var existingPersonId = jq.trim(personId);
+    if (existingPersonId === 'null' || existingPersonId === '') {
+        existingPersonId = 0;
+    }
+    var inputValue = jq.trim(jq("#" + fieldId).val());
     if (isFieldEmpty(fieldId) == false) {
         // a value has been manually entered
-        var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/provider?q=' + jq.trim(jq("#" + fieldId).val());
-        jq.getJSON(url, function( provider ) {
-            if (provider !=null && provider.results != null && (provider.results.length == 1) ) {
-                dfd.resolve(false);
-            } else {
-                dfd.resolve(true);
+        var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/provider?v=custom:(uuid,identifier,display,person:(uuid,personId,display,gender,age,birthdate,birthdateEstimated,names,identifiers:(uuid,identifier)))' +
+            '&q=' + inputValue;
+        jq.getJSON(url, function( data ) {
+            if (data !=null && data.results != null && (data.results.length == 1) ) {
+                var provider = data.results[0];
+                if ( provider.identifier === inputValue
+                        && ( parseInt(provider.person.personId) !== parseInt(existingPersonId) ) ) {
+                    // the user entered Identifier that is already assigned to a different provider
+                    dfd.resolve(false);
+                }
             }
+            dfd.resolve(true);
         });
     } else {
         dfd.resolve(true);

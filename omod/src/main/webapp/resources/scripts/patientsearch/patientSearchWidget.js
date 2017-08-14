@@ -111,7 +111,7 @@ function PatientSearchWidget(configuration){
      *  WebKit (Safari/Chrome): 91 (Left command key) or 93 (Right command key)
      */
     var keyboardControlKeys = [16,17,18,20,27,35,36,37,39,91,93,224];
-    var customRep = 'custom:(uuid,' +
+    var customRep = 'custom:(patientId,uuid,' +
                     'patientIdentifier:(uuid,identifier),' +
                     'person:(gender,age,birthdate,birthdateEstimated,personName),' +
                     'attributes:(value,attributeType:(name)))';

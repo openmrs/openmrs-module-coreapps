@@ -19,7 +19,7 @@
 
 <h2>${ ui.message("Provider.manage") }</h2>
 
-<a href="${ ui.pageLink("coreapps", "providermanagement/editProvider") }">
+<a href="${ ui.pageLink("coreapps", "providermanagement/findPatient") }">
     <button id="create-account-button">${ ui.message("coreapps.provider.createProviderAccount") }</button>
 </a>
 <hr>
