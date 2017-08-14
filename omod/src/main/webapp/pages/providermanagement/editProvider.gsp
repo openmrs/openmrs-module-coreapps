@@ -9,7 +9,7 @@
     def genderOptions = [ [label: ui.message("emr.gender.M"), value: 'M'],
                           [label: ui.message("emr.gender.F"), value: 'F'] ]
 
-    def createAccount = (account.person.personId == null ? true : false);
+    def createAccount = (account.person.personId == null || account.provider == null) ? true : false;
 
     def afterSelectedUrl = '/coreapps/providermanagement/editProvider.page?patientId={{patientId}}&personId=' + account.person.personId
 
@@ -191,9 +191,9 @@ span.field-error {
                 }
             });
 
-            if (returnValue == true) {
+            if ( returnValue == true ) {
                 var fieldId = "providerIdentifier-field";
-                jq.when(validateProviderIdentifier(fieldId)).then(function (status) {
+                jq.when(validateProviderIdentifier(fieldId, '${account.person.personId}')).then(function (status) {
                     if (status == false) {
                         showError(fieldId, "Identifier in use already");
                     }
