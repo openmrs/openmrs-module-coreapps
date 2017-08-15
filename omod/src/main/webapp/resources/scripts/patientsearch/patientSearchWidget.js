@@ -669,6 +669,10 @@ function PatientSearchWidget(configuration){
         displayNoMatchesFound();
     })
 
+    jq('#patient-search-form').on('search:placeholder', function(event, placeholder) {
+        jq('#patient-search').attr('placeholder', placeholder);
+    })
+
     /***************** Do initial search if one is specified **************/
 
     if (config.doInitialSearch) {
