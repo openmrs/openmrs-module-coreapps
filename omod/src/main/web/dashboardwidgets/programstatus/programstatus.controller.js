@@ -478,7 +478,8 @@ export default class ProgramStatusController {
     }
 
     enrollmentValid() {
-        return this.input.enrollmentLocation && this.input.dateEnrolled &&
-            (!this.input.dateCompleted || this.input.dateCompleted >= this.input.dateEnrolled);
+        return this.input.enrollmentLocation && this.input.dateEnrolled &&  // must have enrollmentLocation and date enrolled
+            (!this.input.dateCompleted || this.input.dateCompleted >= this.input.dateEnrolled) &&  // date completed must be after date enrolled
+            ((!this.input.dateCompleted && !this.input.outcome) || (this.input.dateCompleted && this.input.outcome));  // if there's a completion date, must specific an outcome (and vice versa)
     }
 }
