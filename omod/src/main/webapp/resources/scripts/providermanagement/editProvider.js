@@ -28,7 +28,7 @@ function validateProviderIdentifier(fieldId, personId) {
     var inputValue = jq.trim(jq("#" + fieldId).val());
     if (isFieldEmpty(fieldId) == false) {
         // a value has been manually entered
-        var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/provider?v=custom:(uuid,identifier,display,person:(uuid,personId,display,gender,age,birthdate,birthdateEstimated,names,identifiers:(uuid,identifier)))' +
+        var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/provider?v=custom:(uuid,identifier,display,person:(uuid,personId,display,gender,age,birthdate,birthdateEstimated,names))' +
             '&q=' + inputValue;
         jq.getJSON(url, function( data ) {
             if (data !=null && data.results != null && (data.results.length == 1) ) {
@@ -341,5 +341,31 @@ function getCodedConcepts(conceptId, elementName, selectedValue){
             }
             options.append(option);
         });
+    });
+}
+
+function getLocations(tagId, elementName, selectedValue){
+
+    var url = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/location?v=custom:(id,uuid,name)';
+    if ( tagId ) {
+        url = url + '&tag=' + tagId;
+    }
+
+    jq.getJSON(url, function( data ) {
+        if ( data !=null && data.results != null ) {
+            var options;
+            options = jq("select[name='" + elementName + "']");
+            options.empty();
+            var results = data.results;
+            options.append(jq("<option>", {"value":'', "text": ''}));
+            jq.each(results, function(i, obj){
+                var option = jq("<option>", {"value": obj.uuid, "text": obj.name});
+                option.attr('class', 'dialog-drop-down small');
+                if(selectedValue === obj.uuid){
+                    option.attr('selected', 'selected');
+                }
+                options.append(option);
+            });
+        }
     });
 }

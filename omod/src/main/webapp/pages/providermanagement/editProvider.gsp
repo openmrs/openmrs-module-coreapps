@@ -519,31 +519,39 @@ span.field-error {
                             <% if (createAccount != true ) {
                                 if ( account.provider.attributes !=null && account.provider.attributes.size() > 0 ) {
                                     account.provider.attributes.each { attribute ->
+                                                if ( attribute.attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.LocationDatatype' ) { %>
 
-                                        if ( attribute.attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
-                                            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
-                                                    id: "providerAttributeId_" + attribute.providerAttributeId,
-                                                    formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
-                                                    label: attribute.attributeType.name,
-                                                    defaultDate: formatter.parse(attribute.valueReference),
-                                                    useTime: false,
-                                            ])}
-                                            <% } else if ( attribute.attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype' ) { %>
-                                                <label>${attribute.attributeType.name}</label>
-                                                <select id="coded-data-types" name="providerAttributeId_${attribute.providerAttributeId}"></select>
-                                                <script>
-                                                    var conceptId = '${attribute.attributeType.datatypeConfig}';
-                                                    getCodedConcepts(conceptId, 'providerAttributeId_${attribute.providerAttributeId}', '${attribute.valueReference}');
-                                                </script>
-                                        <% } else { %>
-                                            ${ ui.includeFragment("uicommons", "field/text", [
-                                                    label: attribute.attributeType.name,
-                                                    formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
-                                                    initialValue: attribute.valueReference
-                                            ])}
-                                        <% } %>
-                                <% } %>
-                            <% }
+                                                        <label>${attribute.attributeType.name}</label>
+                                                        <select id="location-data-types" name="attributeTypeId_${attribute.providerAttributeId}"></select>
+                                                        <script>
+                                                            var tagId = '${attribute.attributeType.datatypeConfig}';
+                                                            getLocations(tagId, 'attributeTypeId_${attribute.providerAttributeId}', '${attribute.valueReference}');
+                                                        </script>
+
+                                            <% } else if ( attribute.attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
+                                                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                                                            id: "providerAttributeId_" + attribute.providerAttributeId,
+                                                            formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
+                                                            label: attribute.attributeType.name,
+                                                            defaultDate: formatter.parse(attribute.valueReference),
+                                                            useTime: false,
+                                                ])}
+                                                <% } else if ( attribute.attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype' ) { %>
+                                                    <label>${attribute.attributeType.name}</label>
+                                                    <select id="coded-data-types" name="providerAttributeId_${attribute.providerAttributeId}"></select>
+                                                    <script>
+                                                        var conceptId = '${attribute.attributeType.datatypeConfig}';
+                                                        getCodedConcepts(conceptId, 'providerAttributeId_${attribute.providerAttributeId}', '${attribute.valueReference}');
+                                                    </script>
+                                            <% } else { %>
+                                                ${ ui.includeFragment("uicommons", "field/text", [
+                                                        label: attribute.attributeType.name,
+                                                        formFieldName: "providerAttributeId_" + attribute.providerAttributeId,
+                                                        initialValue: attribute.valueReference
+                                                ])}
+                                            <% } %>
+                                    <% } %>
+                                <% }
                             if (providerAttributeTypes != null && providerAttributeTypes.size() > 0) {
                                 providerAttributeTypes.each { attributeType ->
                                     if ( attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
@@ -560,7 +568,16 @@ span.field-error {
                                                 var conceptId = '${attributeType.datatypeConfig}';
                                                 getCodedConcepts(conceptId, 'attributeTypeId_${attributeType.providerAttributeTypeId}');
                                             </script>
-                                <% } else { %>
+
+                                <% } else if ( attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.LocationDatatype' ) { %>
+                                            <label>${attributeType.name}</label>
+                                            <select id="location-data-types" name="attributeTypeId_${attributeType.providerAttributeTypeId}"></select>
+                                            <script>
+                                                var tagId = '${attributeType.datatypeConfig}';
+                                                getLocations(tagId, 'attributeTypeId_${attributeType.providerAttributeTypeId}');
+                                            </script>
+
+                                    <% } else { %>
                                         ${ ui.includeFragment("uicommons", "field/text", [
                                                 label: attributeType.name,
                                                 formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId
