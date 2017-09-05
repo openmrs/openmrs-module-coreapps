@@ -3,8 +3,15 @@ import angular from 'angular';
 
 export default class ProgramStatusController {
 
+    // TODO give the user the ability to "uncomplete" a program?  how does clearing out dates work? ended up with a digest cope isse
+    // TODO better alignment of buttons and icons on right
+    // TODO organize the order of buttons and editing?
+
+    // TODO is "allWorkflows" correct?
+    // TODO review initial and terminal...
     // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)selecting date, etc
     // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
+    // TODO test with multiple workflows
     // TODO unit tests? clean up?
 
     constructor($filter, $q, openmrsRest, openmrsTranslate) {
@@ -33,6 +40,7 @@ export default class ProgramStatusController {
         this.statesByWorkflow = {};
         this.statesByUuid = {};
         this.patientStateHistory = [];
+        this.mostRecentStateByWorkflow = {};
 
         // backs the various input fields
         this.input = {
@@ -40,36 +48,18 @@ export default class ProgramStatusController {
             enrollmentLocation: null,
             dateCompleted: null,
             outcome: null,
+            initialWorkflowStateByWorkflow: {},
             changeToStateByWorkflow: {}
         }
 
         // controls the state (open/closed) of the elements to edit enrollment & state information
         this.edit = {
             enrollment: false,
-            //   completion: false,
             workflow: {}
         }
 
-
         // controls whether the "confirm delete" message is displayed
         this.confirmDelete = false;
-
-     /*   // controls the state and options of the various date popups
-        this.datePopup = {
-            enrollment: {
-                "options": {
-                    "startDate": null,
-                    "endDate": new Date()
-                }
-            },
-            completion: {
-                "options": {
-                    "startDate": null,
-                    "endDate": new Date()
-                }
-            },
-            workflow: {}
-        }*/
 
         this.history = {
             expanded: false
@@ -134,7 +124,6 @@ export default class ProgramStatusController {
         this.edit.enrollment = !currentStatus;
     }
 
-    // TODO this refactoring has not yet been tetsed
     toggleEditWorkflow(workflowUuid) {
         let currentStatus = this.edit.workflow[workflowUuid];
         this.cancelAllEditModes();
@@ -192,7 +181,6 @@ export default class ProgramStatusController {
         }
         else {
             // we've been given a specific patient program uuid, load that one
-            // TODO this still needs to be tested
             return this.openmrsRest.get('programenrollment', {
                 uuid: patientProgramUuid,
                 v: this.vPatientProgram
@@ -245,14 +233,24 @@ export default class ProgramStatusController {
 
     enrollInProgram() {
         if (this.input.dateEnrolled && this.input.enrollmentLocation) {
+
+            var states = [];
+            angular.forEach(this.input.initialWorkflowStateByWorkflow, (state) => {
+                state.startDate = this.input.dateEnrolled;
+                states.push(state);
+            });
+
             this.openmrsRest.create('programenrollment', {
                 patient: this.config.patientUuid,
                 program: this.config.program,
                 dateEnrolled: this.input.dateEnrolled,
-                location: this.input.enrollmentLocation
+                location: this.input.enrollmentLocation,
+                states: states
             }).then((response) => {
                 this.fetchPatientProgram(); // refresh display
-            })
+
+            });
+
         }
     }
 
@@ -342,27 +340,23 @@ export default class ProgramStatusController {
         }
     }
 
-    getMostRecentStateForWorkflow(workflowUuid) {
-        var result = null;
-        angular.forEach(this.patientStateHistory, (history) => {
-            if (workflowUuid in history['patientStatesByWorkflow'] && result == null) {
-                result = history['patientStatesByWorkflow'][workflowUuid]
-            }
-        });
-        return result;
-    }
-
     isNotCurrentState(workflow) {
         return (state) => {
-            var currentState = this.getMostRecentStateForWorkflow(workflow.uuid);
+            var currentState = this.mostRecentStateByWorkflow[workflow.uuid];
             return !currentState || currentState.state.uuid != state.uuid;
         }
 
     }
 
-    // TODO: definitely document what this is actually doing if we keep it!
+    // this creates the data to back the program history table and the control the start date values of some of the state transition widgets
+    // "patientStateHistory" is an array, with an entry for each row in the table
+    // each element in the array an object with two properties:
+    //      * startDate
+    //      * patientStatesByWorkflow: a map where the keys are the workflow uuids, and the value is the state for that workflow on the given state
+    // "lastStateChangeDateByWorkflow": a map from workflowUuid to the last time the state in that workflow changed
     groupAndSortPatientStates() {
         this.patientStateHistory = [];
+        this.mostRecentStateByWorkflow = {};
 
         if (this.patientProgram && this.patientProgram.states) {
             // TODO remove this first filter once the bug with the REST request returning voided elements is fixed
@@ -374,9 +368,13 @@ export default class ProgramStatusController {
             });
 
             angular.forEach(this.patientProgram.states, (patientState) => {
-                let workflow = getWorkflowForState(patientState.state);
+                let workflow = this.getWorkflowForState(patientState.state);
 
                 // TODO can't edit if today
+                // first update the lastStateChangeDateByWorkflow--since we sorting from earliest to latest, we can just overwrite and assume the last value set is the latest
+                this.mostRecentStateByWorkflow[workflow.uuid] = patientState;
+                // hack to change startDate from a UTC string to Date
+                this.mostRecentStateByWorkflow[workflow.uuid].startDate = new Date(this.mostRecentStateByWorkflow[workflow.uuid].startDate);
 
                 patientState['workflow'] = workflow;
 
@@ -387,7 +385,7 @@ export default class ProgramStatusController {
                 }
                 else {
                     var newEntry = {};
-                    newEntry['startDate'] = patientState.startDate;
+                    newEntry['startDate'] = new Date(patientState.startDate);
                     newEntry['patientStatesByWorkflow'] = {};
                     newEntry['patientStatesByWorkflow'][workflow.uuid] = patientState;
                     this.patientStateHistory.unshift(newEntry);  // add to front
@@ -396,42 +394,6 @@ export default class ProgramStatusController {
         }
     }
 
-
-   /* configDatePopups() {
-
-        // date enrolled can never be before the first state change
-        if (this.patientStateHistory.length > 0) {
-            this.datePopup.enrollment.options.endDate = new Date(this.patientStateHistory[this.patientStateHistory.length - 1].startDate);
-        }
-
-        this.datePopup.completion.options.startDate = this.patientStateHistory.length > 0 ? this.patientStateHistory[0].startDate
-            : this.patientProgram ? this.patientProgram.dateEnrolled : new Date()*!/
-
-        // date completed can never be before date enrollment
-        if (this.patientProgram) {
-            this.datePopup.completion.options.startDate = new Date(this.patientProgram.dateEnrolled);
-        }
-
-        // date enrolled can never be after date completed
-        if (this.patientProgram && this.patientProgram.dateCompleted) {
-            this.datePopup.enrollment.options.endDate = new Date(this.patientProgram.dateCompleted);
-        }
-
-        angular.forEach(this.program.allWorkflows, (workflow) => {
-            this.datePopup.workflow[workflow.uuid] = {
-                "opened": false,
-                "options": {
-                    "showWeeks": false,
-                    "endDate": new Date(),
-                    // TODO startDate should be most recent date + 1!
-                    "startDate": this.getMostRecentStateForWorkflow(workflow.uuid) ? new Date(this.getMostRecentStateForWorkflow(workflow.uuid).startDate)
-                        : this.patientProgram ? this.patientProgram.dateEnrolled : new Date()
-                }
-            }
-        })
-    }*/
-
-
     update() {
         this.cancelAllEditModes();
         this.updatePatientProgram();
@@ -439,7 +401,7 @@ export default class ProgramStatusController {
 
     cancelAllEditModes() {
         this.edit.enrollment = false;
-        for (uuid in this.edit.workflow) {
+        for (let uuid in this.edit.workflow) {
             this.edit.workflow[uuid] = false
         }
     }
@@ -458,12 +420,7 @@ export default class ProgramStatusController {
         return this.patientStateHistory.length > 0;
     }
 
-    toggleHistory() {
-        this.history.expanded = !this.history.expanded;
-    }
-
     toggleExpanded() {
-
         if (!this.expanded) {
             angular.element(document.body).prepend('<div id="overlay"></div>');
             this.expanded = true;
@@ -482,4 +439,9 @@ export default class ProgramStatusController {
             (!this.input.dateCompleted || this.input.dateCompleted >= this.input.dateEnrolled) &&  // date completed must be after date enrolled
             ((!this.input.dateCompleted && !this.input.outcome) || (this.input.dateCompleted && this.input.outcome));  // if there's a completion date, must specific an outcome (and vice versa)
     }
+
+    workflowTransitionValid(workflowUuid) {
+        return this.input.changeToStateByWorkflow[workflowUuid] && this.input.changeToStateByWorkflow[workflowUuid].date && this.input.changeToStateByWorkflow[workflowUuid].state;
+    }
+
 }
