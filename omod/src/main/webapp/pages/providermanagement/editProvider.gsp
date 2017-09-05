@@ -520,12 +520,11 @@ span.field-error {
                                 if ( account.provider.attributes !=null && account.provider.attributes.size() > 0 ) {
                                     account.provider.attributes.each { attribute ->
                                                 if ( attribute.attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.LocationDatatype' ) { %>
-
                                                         <label>${attribute.attributeType.name}</label>
-                                                        <select id="location-data-types" name="attributeTypeId_${attribute.providerAttributeId}"></select>
+                                                        <select id="location-data-types" name="providerAttributeId_${attribute.providerAttributeId}"></select>
                                                         <script>
                                                             var tagId = '${attribute.attributeType.datatypeConfig}';
-                                                            getLocations(tagId, 'attributeTypeId_${attribute.providerAttributeId}', '${attribute.valueReference}');
+                                                            getLocations(tagId, 'providerAttributeId_${attribute.providerAttributeId}', '${attribute.valueReference}');
                                                         </script>
 
                                             <% } else if ( attribute.attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
