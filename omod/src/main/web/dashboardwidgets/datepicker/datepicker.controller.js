@@ -14,7 +14,8 @@ export default class DatepickerController  {
                     format: this.convertDateFormat(this.format),
                     autoclose: true,
                     container: "html",
-                    language:  language
+                    language:  language,
+                    clearBtn: this.clearBtn
                 }).on("changeDate", (e) => {
                     if (e.date != null) {
                         if (this.ngModel == null || this.stripTime(this.ngModel).getTime() !== this.stripTime(e.date).getTime()) {
@@ -23,6 +24,12 @@ export default class DatepickerController  {
                                 this.ngModel = this.stripTime(e.date);
                             });
                         }
+                    }
+                    // clear out if necessary if set to null and model isn't null
+                    else if (this.ngModel != null) {
+                        this.$scope.$apply(() => {
+                            this.ngModel = null;
+                        })
                     }
                 });
 

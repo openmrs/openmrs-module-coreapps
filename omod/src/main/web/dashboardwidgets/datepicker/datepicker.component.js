@@ -10,6 +10,7 @@ export let DatepickerComponent = {
         format: '@',
         language: '@',
         startDate: '<',
-        endDate: '<'
+        endDate: '<',
+        clearBtn: '<'
     }
 };
