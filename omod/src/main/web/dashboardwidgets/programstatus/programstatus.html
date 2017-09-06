@@ -1,5 +1,4 @@
-<!-- TODO: move css to separate file -->
-<!-- TODO need to figure out how to not use hardcoded margins and padding in the expanded element -->
+<!-- TODO: move css to separate file? -->
 
 <style>
 
@@ -16,8 +15,18 @@
         display: inline-block;;
     }
 
+    .hidden {
+        visibility: hidden;
+    }
+
     input {
         width: 80%;
+    }
+
+    .center {
+        margin-left: 0px;
+        margin-right: 0px;
+        text-align: center;
     }
 
     .eighty-percent-font {
@@ -28,19 +37,8 @@
         font-size: 0.6em
     }
 
-    #overlay {
-        position: fixed;
-        height: 100%;
-        width: 100%;
-        z-index: 9998;
-    }
-
-
-
-
 </style>
 
-<!-- TODO if we like this 'expanded' functionality, we need to move it up a level to operate on the main dashboard widget so we keep the header -->
 <div>
     <div ng-show="$ctrl.canEnrollInProgram && !$ctrl.patientProgram">
         <fieldset>
@@ -78,8 +76,8 @@
         <!-- VIEW sections -->
 
         <fieldset ng-show="!$ctrl.edit.enrollment">
-            <i ng-show="$ctrl.canDeleteProgram && !$ctrl.edit.enrollment" ng-click="$ctrl.deletePatientProgram()" class="icon-remove right"/>
-            <i ng-show="$ctrl.canEditProgram && !$ctrl.edit.enrollment" ng-click="$ctrl.toggleEditEnrollment()" class="icon-pencil right"/>
+            <i ng-show="$ctrl.canDeleteProgram && !$ctrl.edit.enrollment && !$ctrl.confirmDelete && !$ctrl.editingAnyWorkflow()" ng-click="$ctrl.deletePatientProgram()" class="icon-remove right"/>
+            <i ng-show="$ctrl.canEditProgram && !$ctrl.edit.enrollment && !$ctrl.confirmDelete && !$ctrl.editingAnyWorkflow()" ng-click="$ctrl.toggleEditEnrollment()" class="icon-pencil right"/>
             <h3>{{'coreapps.dashboardwidgets.programstatus.enrolled' | translate }}</h3>
             <p>{{ $ctrl.patientProgram.dateEnrolled | date:$ctrl.dateFormat }}</p>
         </fieldset>
@@ -138,16 +136,13 @@
             </p>
         </fieldset>
 
-        <p ng-show="$ctrl.edit.enrollment">
-            <button class="confirm" ng-disabled="!$ctrl.enrollmentValid()" ng-click="$ctrl.update()">{{'coreapps.save' | translate }}</button>  <button class="cancel" ng-click="$ctrl.cancelEdit()">{{'coreapps.cancel' | translate }}</button>
-        </p>
-
         <!-- workflow sections -->
 
         <div ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
 
             <fieldset ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
-                <i ng-show="!$ctrl.edit.workflow[workflow.uuid]" ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)" class="icon-pencil right"/>
+                <i class="icon-remove right hidden"/> <!-- always hidden, added for alignment purposes -->
+                <i ng-show="$ctrl.canEditProgram && !$ctrl.edit.workflow[workflow.uuid]  && !$ctrl.edit.enrollment && !$ctrl.confirmDelete && !$ctrl.isToday($ctrl.mostRecentStateByWorkflow[workflow.uuid].startDate)" ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)" class="icon-pencil right"/>
                 <h3>{{ workflow.concept.display }}</h3>
                 <p>{{ $ctrl.mostRecentStateByWorkflow[workflow.uuid].state.concept.display }}</p>
             </fieldset>
@@ -168,36 +163,40 @@
                 <p>
                     <openmrs-datepicker ng-model="$ctrl.input.changeToStateByWorkflow[workflow.uuid].date"
                                         format="{{$ctrl.dateFormat}}"
-                                        start-date="$ctrl.mostRecentStateByWorkflow[workflow.uuid] ? $ctrl.mostRecentStateByWorkflow[workflow.uuid].startDate : $ctrl.input.dateEnrolled"
-                                        end-date="$ctrl.today"
+                                        start-date="$ctrl.mostRecentStateByWorkflow[workflow.uuid] ? $ctrl.mostRecentStateByWorkflow[workflow.uuid].dayAfterStartDate : $ctrl.input.dateEnrolled"
+                                        end-date="$ctrl.patientProgram && $ctrl.patientProgram.dateCompleted ? $ctrl.patientProgram.dateCompleted : $ctrl.today"
                                         language="{{$ctrl.language}}"/>
                 </p>
             </fieldset>
 
-            <p ng-show="$ctrl.edit.workflow[workflow.uuid]">
+            <div ng-show="$ctrl.edit.workflow[workflow.uuid]" class="center">
                 <button class="confirm" ng-disabled="!$ctrl.workflowTransitionValid(workflow.uuid)" ng-click="$ctrl.updatePatientState(workflow.uuid)">{{'coreapps.save' | translate }}</button>  <button class="cancel" ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)">{{'coreapps.cancel' | translate }}</button>
-            </p>
+            </div>
 
         </div>
 
+        <!-- EDIT enrollment confirmation section -->
+        <div ng-show="$ctrl.edit.enrollment" class="center">
+            <button class="confirm" ng-disabled="!$ctrl.enrollmentValid()" ng-click="$ctrl.update()">{{'coreapps.save' | translate }}</button>  <button class="cancel" ng-click="$ctrl.cancelEdit()">{{'coreapps.cancel' | translate }}</button>
+        </div>
 
         <!-- DELETE confirmation section -->
 
-        <p ng-show="$ctrl.confirmDelete">
+        <div ng-show="$ctrl.confirmDelete" class="center">
             {{'coreapps.dashboardwidgets.programstatus.confirmDelete' | translate }}
             <br/><br/>
             <button class="confirm" ng-click="$ctrl.deletePatientProgram()">{{'coreapps.delete' | translate }}</button>  <button class="cancel" ng-click="$ctrl.cancelDelete()">{{'coreapps.cancel' | translate }}</button>
-        </p>
+        </div>
     </div>
 
     <!-- Table that shows history of program enrollment -->
 
     <div ng-show="$ctrl.hasHistory()">
-        <span ng-class="{'eighty-percent-font': !$ctrl.expanded}">
+        <span class="eighty-percent-font">
             <b>{{'coreapps.dashboardwidgets.programstatus.history' | translate }}:</b>
         </span>
 
-        <table ng-class="{'sixty-percent-font': !$ctrl.expanded}">
+        <table class="sixty-percent-font">
             <tr>
                 <th>{{'coreapps.date' | translate }}</th>
                 <th ng-repeat="workflow in $ctrl.program.allWorkflows">
@@ -211,7 +210,7 @@
                         {{ row.patientStatesByWorkflow[workflow.uuid].state.concept.display }}
                     </td>
                 <td>
-                    <i ng-show="$first" class="icon-remove right" ng-click="$ctrl.deleteMostRecentPatientStates()"/>
+                    <i ng-show="$first && $ctrl.canEditProgram  && !$ctrl.edit.enrollment && !$ctrl.confirmDelete && !$ctrl.editingAnyWorkflow()" class="icon-remove right" ng-click="$ctrl.deleteMostRecentPatientStates()"/>
                 </td>
             </tr>
         </table>

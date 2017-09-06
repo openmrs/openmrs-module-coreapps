@@ -1,18 +1,12 @@
 
 import angular from 'angular';
+import moment from 'moment';
 
 export default class ProgramStatusController {
 
-    // TODO give the user the ability to "uncomplete" a program?  how does clearing out dates work? ended up with a digest cope isse
-    // TODO better alignment of buttons and icons on right
-    // TODO organize the order of buttons and editing?
-
     // TODO is "allWorkflows" correct?
-    // TODO review initial and terminal...
-    // TODO if the most recent state is today, change widget has no date, just allows you to change it, otherwise transition + date (need moment)selecting date, etc
-    // TODO handle completion + outcome? when there is outcome, then you can't change the states? deleting completion and outcome together
+    // TODO add support for special logic around "initial" and "terminal?"
     // TODO test with multiple workflows
-    // TODO unit tests? clean up?
 
     constructor($filter, $q, openmrsRest, openmrsTranslate) {
         'ngInject';
@@ -30,7 +24,6 @@ export default class ProgramStatusController {
         this.program = null;
         this.patientProgram = null;
         this.programLocations = null;
-
         this.programOutcomes = null;
 
         this.canEnrollInProgram = false;
@@ -61,12 +54,6 @@ export default class ProgramStatusController {
         // controls whether the "confirm delete" message is displayed
         this.confirmDelete = false;
 
-        this.history = {
-            expanded: false
-        }
-
-        this.expanded = false;
-        
         this.activate();
 
         let ctrl = this;
@@ -118,6 +105,13 @@ export default class ProgramStatusController {
         }
     }
 
+    convertDateEnrolledAndDateCompletedStringsToDates() {
+        if (this.patientProgram) {
+            this.patientProgram.dateEnrolled = this.patientProgram ? new Date(this.patientProgram.dateEnrolled) : null;
+            this.patientProgram.dateCompleted = this.patientProgram && this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
+        }
+    }
+
     toggleEditEnrollment() {
         let currentStatus = this.edit.enrollment;
         this.cancelAllEditModes()
@@ -128,25 +122,13 @@ export default class ProgramStatusController {
         let currentStatus = this.edit.workflow[workflowUuid];
         this.cancelAllEditModes();
 
-        // the first time we hit this, we need to initialize the workflw
+        // the first time we hit this, we need to initialize the workflow
         if (!workflowUuid in this.edit.workflow) {
             this.edit.workflow[workflowUuid] = true
         }
         else {
             this.edit.workflow[workflowUuid] = !currentStatus;
         }
-    }
-
-    toggleDatePopupEnrollment() {
-        this.datePopup.enrollment.opened = !this.datePopup.enrollment.opened;
-    }
-
-    toggleDatePopupCompletion() {
-        this.datePopup.completion.opened = !this.datePopup.completion.enrollment;
-    }
-
-    toggleDatePopupWorkflow(workflowUuid) {
-        this.datePopup.workflow[workflowUuid].opened = !this.datePopup.workflow[workflowUuid].opened;
     }
 
     fetchProgram() {
@@ -175,8 +157,8 @@ export default class ProgramStatusController {
             }).then((response) => {
                 this.getActiveProgram(response.results);
                 this.groupAndSortPatientStates();
-               // this.configDatePopups();
                 this.setInputsToStartingValues();
+                this.convertDateEnrolledAndDateCompletedStringsToDates();
             });
         }
         else {
@@ -187,8 +169,8 @@ export default class ProgramStatusController {
             }).then((response) => {
                 this.patientProgram = response;
                 this.groupAndSortPatientStates();
-                // this.configDatePopups();
                 this.setInputsToStartingValues();
+                this.convertDateEnrolledAndDateCompletedStringsToDates();;
             })
         }
     }
@@ -290,7 +272,7 @@ export default class ProgramStatusController {
                 }
             ]
         }).then((response) => {
-            // TODO: handle error cases--what if the widget rejects the change?
+            // TODO: handle error cases
             this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
         })
     }
@@ -319,7 +301,7 @@ export default class ProgramStatusController {
         });
 
         this.$q.all(voidCalls).then((response) => {
-            // TODO: handle error cases--what if the widget rejects the change?
+            // TODO: handle error cases
             this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
         });
 
@@ -369,12 +351,11 @@ export default class ProgramStatusController {
 
             angular.forEach(this.patientProgram.states, (patientState) => {
                 let workflow = this.getWorkflowForState(patientState.state);
-
-                // TODO can't edit if today
                 // first update the lastStateChangeDateByWorkflow--since we sorting from earliest to latest, we can just overwrite and assume the last value set is the latest
                 this.mostRecentStateByWorkflow[workflow.uuid] = patientState;
                 // hack to change startDate from a UTC string to Date
                 this.mostRecentStateByWorkflow[workflow.uuid].startDate = new Date(this.mostRecentStateByWorkflow[workflow.uuid].startDate);
+                this.mostRecentStateByWorkflow[workflow.uuid].dayAfterStartDate = this.getNextDay(this.mostRecentStateByWorkflow[workflow.uuid].startDate);
 
                 patientState['workflow'] = workflow;
 
@@ -420,17 +401,26 @@ export default class ProgramStatusController {
         return this.patientStateHistory.length > 0;
     }
 
-    toggleExpanded() {
-        if (!this.expanded) {
-            angular.element(document.body).prepend('<div id="overlay"></div>');
-            this.expanded = true;
-            this.history.expanded = true;
+    editingAnyWorkflow() {
+        var result = false;
+        angular.forEach(this.edit.workflow, function (value, key) {
+            if (value === true) {
+                result = true;
+            }
+        })
+        return result;
+    }
+
+    getNextDay(date) {
+        return moment(date).add(1, 'days').toDate();
+    }
+
+    isToday(date) {
+        if (!date) {
+            return false;
         }
-        else if (this.expanded) {
-            this.cancelAllEditModes();
-            this.expanded = false;
-            this.history.expanded = false;
-            angular.element('#overlay').remove();
+        else {
+           return moment(date).isSame(moment(), 'day');
         }
     }
 
