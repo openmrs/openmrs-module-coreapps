@@ -1,10 +1,10 @@
 import angular from 'angular';
 
 export default class DatepickerController  {
-    constructor($document, $element, $scope, $filter, openmrsTranslate) {
+    constructor($document, $element, $scope, $filter, $timeout, openmrsTranslate) {
         'ngInject';
 
-        Object.assign(this, { $document, $element, $scope, $filter, openmrsTranslate });
+        Object.assign(this, { $document, $element, $scope, $filter, $timeout, openmrsTranslate });
     }
 
     $onInit() {
@@ -27,7 +27,7 @@ export default class DatepickerController  {
                     }
                     // clear out if necessary if set to null and model isn't null
                     else if (this.ngModel != null) {
-                        this.$scope.$apply(() => {
+                        this.$timeout(() => {
                             this.ngModel = null;
                         })
                     }
