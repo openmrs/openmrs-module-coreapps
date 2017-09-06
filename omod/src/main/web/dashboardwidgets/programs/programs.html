@@ -33,7 +33,7 @@
 
 
 <div ng-show="$ctrl.canEnrollInProgram && !$ctrl.showAddProgram && $ctrl.config.enableProgramDashboards && $ctrl.unenrolledPrograms && $ctrl.unenrolledPrograms.length > 0">
-    <a ng-click="$ctrl.addProgram()">
+    <a class="add-link" ng-click="$ctrl.addProgram()">
         <i class="icon-plus-sign" title="{{'coreapps.dashboardwidgets.programs.addProgram' | translate }}"/>
     </a>
 </div>
