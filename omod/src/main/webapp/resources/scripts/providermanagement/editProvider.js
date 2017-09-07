@@ -19,6 +19,18 @@ function hideError(fieldId) {
     errorField.hide();
 }
 
+function enableTransferButton() {
+    var transfer = jq(".transferPatient:checked").length;
+    if (transfer > 0 ) {
+        jq("#transfer-patients").prop('disabled', false);
+        jq("#transfer-patients").removeClass('disabled');
+    } else {
+        jq("#transfer-patients").prop('disabled', true);
+        jq("#transfer-patients").addClass('disabled');
+    }
+
+}
+
 function validateProviderIdentifier(fieldId, personId) {
     var dfd = jq.Deferred();
     var existingPersonId = jq.trim(personId);
@@ -160,6 +172,50 @@ function showAddSuperviseeDialog(){
     }
 }
 
+function createTransferPatientsDialog() {
+    transferPatientsDialog = emr.setupConfirmationDialog({
+        selector: '#transfer-patients-dialog',
+        actions: {
+            confirm: function() {
+                var oldProviderId = jq("#oldProviderId").val();
+                var newProviderId = jq("#newProviderId").val();
+                var relationshipType = jq("select[name='transferRelationshipType']").val();
+                var relationshipStartDateField = jq("#transfer-start-date-field").val();
+                var relationships = [];
+                jq(".transferPatient:checkbox:checked").each(function(){
+                    var relationshipId = jq(this).attr("data-patient-relationship");
+                    if (relationshipId) {
+                        relationships.push(relationshipId);
+                    }
+                });                
+                emr.getFragmentActionWithCallback('providermanagement', 'providerEdit', 'transferPatients'
+                    , {
+                        oldProvider: oldProviderId,
+                        newProvider: newProviderId,
+                        relationshipType: relationshipType,
+                        patientRelationships: relationships,
+                        date: relationshipStartDateField
+                    }
+                    , function(data) {
+                        transferPatientsDialog.close();
+                        window.location.reload();
+                    },function(err){
+                        emr.handleError(err);
+                        transferPatientsDialog.close();
+                    });
+            },
+            cancel: function() {
+                transferPatientsDialog.close();
+            }
+        }
+    });
+}
+
+function showTransferPatientsDialog(){
+    transferPatientsDialog.show();
+
+}
+
 function createRemovePatientDialog(providerId, relationshipTypeId, relationshipId) {
     removePatientDialog = emr.setupConfirmationDialog({
         selector: '#remove-patient-dialog',
@@ -277,6 +333,39 @@ function getSupervisors(roleId) {
                     select: function (event, ui ) {
                         jq("#availableSupervisors").val(ui.item.label);
                         jq("#supervisorId").val(ui.item.value);
+                        return false;
+                    }
+                });
+            }
+        }, function(err){
+            emr.handleError(err);
+        });
+}
+
+function getAllProviders() {
+    emr.getFragmentActionWithCallback('providermanagement', 'providerSearch', 'getSupervisees'
+        , null
+        , function(data) {
+            allProviders = null;
+            allProviders = jq.map(data, function (value, key) {
+                return {
+                    label:  value.givenName + " " + value.familyName,
+                    value: value.personId
+                };
+            });
+
+            if (allProviders.length > 0 ) {
+                jq("#availableProviders").autocomplete({
+                    source: allProviders,
+                    minLength: 0,
+                    scroll: true,
+                    focus: function (event, ui ) {
+                        jq("#availableProviders").val(ui.item.label);
+                        return false;
+                    },
+                    select: function (event, ui ) {
+                        jq("#availableProviders").val(ui.item.label);
+                        jq("#newProviderId").val(ui.item.value);
                         return false;
                     }
                 });
