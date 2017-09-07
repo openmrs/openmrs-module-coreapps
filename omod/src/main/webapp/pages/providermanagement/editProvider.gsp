@@ -31,6 +31,12 @@
             assignedSupervisor = it.person.personName
         }
     }
+    def hasActivePatients = false
+    patientsList.each {
+        if ((it.relationship != null) && (it.relationship.endDate == null)) {
+            hasActivePatients = true
+        }
+    }
     def editDateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd")
     def formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
     def fieldClasses = ["required", "validateField"]
@@ -74,6 +80,7 @@ span.field-error {
     jq(function() {
 
         var addPatientDialog = null;
+        var transferPatientsDialog = null;
         var removePatientDialog = null;
         var addSupervisorDialog = null;
         var addSuperviseeDialog = null;
@@ -81,8 +88,27 @@ span.field-error {
         var retireProviderDialog = null;
         var supervisors = null;
         var supervisees = null;
+        var allProviders = null;
 
         jq('#patient-search').attr("size", "40");
+
+        if ('${hasActivePatients}' == 'true' ) {
+            jq("#retire-button").prop('disabled', true);
+            jq("#retire-button").addClass('disabled');
+        }
+
+        jq("#select-all-patients").change(function(){
+            if(this.checked){
+                jq(".transferPatient").prop("checked", true);
+            } else {
+                jq(".transferPatient").prop("checked", false);
+            }
+            enableTransferButton();
+        });
+
+        jq(".transferPatient").change(function(){
+            enableTransferButton();
+        });
 
         jq("#add-patient-button").click(function(event) {
             createAddPatientDialog();
@@ -158,6 +184,12 @@ span.field-error {
             event.preventDefault();
         });
 
+        jq("#transfer-patients").click(function(event) {
+            createTransferPatientsDialog();
+            showTransferPatientsDialog();
+            event.preventDefault();
+        });
+
         jq("select[name='providerRole']").on('change', function(event) {
             var roleId = this.value;
             getSupervisors(parseInt(roleId));
@@ -173,6 +205,7 @@ span.field-error {
         if ( (selectedProviderRole != null) && (parseInt(selectedProviderRole) > 0) ) {
             getSupervisors(parseInt(selectedProviderRole));
             getSupervisees(parseInt(selectedProviderRole));
+            getAllProviders();
         }
 
         jq("#accountForm").submit(function(e) {
@@ -264,6 +297,53 @@ span.field-error {
                     ])}
                 </p>
                 <br><br>
+
+            </fieldset>
+
+        </div>
+        <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
+    </div>
+</div>
+
+<div id="transfer-patients-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("providermanagement.transfer") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="oldProviderId" value="${account.person.personId}"/>
+        <input type="hidden" id="newProviderId" value=""/>
+
+        <span>${ ui.message("providermanagement.chw.transferPatients") }</span>
+
+        <div class="panel-body ">
+            <fieldset>
+                <p>
+                    ${ ui.message("providermanagement.provider.find") }:
+                    <input id="availableProviders" value="" autocomplete="off">
+                </p>
+                <br><br>
+                <p>
+                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                            id: "transfer-start-date",
+                            formFieldName: "transfer-start-date",
+                            label: ui.message("providermanagement.transferDate") + ": &nbsp;&nbsp;",
+                            defaultDate: new Date(),
+                            endDate: editDateFormat.format(new Date()),
+                            useTime: false,
+                    ])}
+                </p>
+                <br><br>
+                <p>
+                    ${ ui.includeFragment("uicommons", "field/dropDown", [
+                            label: ui.message("providermanagement.relationshipType"),
+                            formFieldName: "transferRelationshipType",
+                            classes: ["required"],
+                            options: relationshipTypesOptions,
+                            hideEmptyLabel: true,
+                            expanded: true
+                    ])}
+                </p>
 
             </fieldset>
 
@@ -754,6 +834,7 @@ span.field-error {
                         <table id="patients-list" width="100%" border="1" cellspacing="0" cellpadding="2">
                             <thead>
                             <tr>
+                                <th><input type="checkbox" id="select-all-patients"/></th>
                                 <th>${ ui.message("providermanagement.identifier") }</th>
                                 <th>${ ui.message("coreapps.person.name") }</th>
                                 <th>${ ui.message("providermanagement.startDate") }</th>
@@ -772,6 +853,7 @@ span.field-error {
                                 if (row.relationship && row.relationship.endDate == null) {
                             %>
                             <tr id="patient-${ row.person.id }">
+                                <td><input type="checkbox" class="transferPatient" data-patient-relationship="${row.relationship.id}"/></td>
                                 <td>${ ui.format(row.identifier) }</td>
                                 <td>${ ui.format(row.person.personName) }</td>
                                 <td>${ ui.format(row.relationship.startDate) }</td>
@@ -790,6 +872,7 @@ span.field-error {
 
                     </tbody>
                 </table>
+                <button id="transfer-patients" disabled="disabled" class="disabled">Transfer</button>
             </div>
         </div>
 
