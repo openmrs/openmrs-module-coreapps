@@ -78,7 +78,8 @@ public class EditProviderPageController {
             throws PersonIsNotProviderException, InvalidRelationshipTypeException, SuggestionEvaluationException {
 
         model.addAttribute("account", account);
-        model.addAttribute("providerRoles", providerManagementService.getAllProviderRoles(false));
+        List<ProviderRole> allProviderRoles = providerManagementService.getAllProviderRoles(false);
+        model.addAttribute("providerRoles", allProviderRoles);
         List<ProviderPersonRelationship> patientsList = new ArrayList<ProviderPersonRelationship>();
         List<RelationshipType> relationshipTypes = new ArrayList<RelationshipType>();
         Set<ProviderAttributeType> providerAttributeTypes = new HashSet<ProviderAttributeType>();
@@ -108,6 +109,10 @@ public class EditProviderPageController {
                     }
                 }
                 patientsList= ProviderManagementUtils.getAssignedPatients(provider);
+            }
+        } else {
+            for (ProviderRole providerRole : allProviderRoles) {
+                providerAttributeTypes.addAll(providerRole.getProviderAttributeTypes());
             }
         }
 
