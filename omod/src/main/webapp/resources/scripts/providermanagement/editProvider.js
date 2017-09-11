@@ -409,6 +409,21 @@ function getSupervisees(roleId) {
         });
 }
 
+function getProviderAttributes(roleId) {
+    // hide all provider attributes
+    jq(".providerAttributeDiv").addClass("hidden");
+    emr.getFragmentActionWithCallback('providermanagement', 'providerSearch', 'getProviderAttributes'
+        , { roleId: roleId
+        }
+        , function(data) {
+            jq.each(data, function( index, value) {
+                 jq("div#attributeTypeId_" + value.providerAttributeTypeId).removeClass("hidden");
+            });
+        }, function(err){
+            emr.handleError(err);
+        });
+}
+
 function getCodedConcepts(conceptId, elementName, selectedValue){
     jQuery.ajax({
         url: emr.fragmentActionLink("providermanagement", "providerView", "getCodedConcepts",   { conceptId: conceptId }),

@@ -192,6 +192,7 @@ span.field-error {
 
         jq("select[name='providerRole']").on('change', function(event) {
             var roleId = this.value;
+            getProviderAttributes(parseInt(roleId));
             getSupervisors(parseInt(roleId));
         });
 
@@ -203,6 +204,7 @@ span.field-error {
 
         var selectedProviderRole = jq("select[name='providerRole']").val();
         if ( (selectedProviderRole != null) && (parseInt(selectedProviderRole) > 0) ) {
+            getProviderAttributes(parseInt(selectedProviderRole));
             getSupervisors(parseInt(selectedProviderRole));
             getSupervisees(parseInt(selectedProviderRole));
             getAllProviders();
@@ -573,13 +575,6 @@ span.field-error {
                             initialValue: (account.provider ? account.provider.identifier: '')
                     ])}
 
-                    <% if (useAddressHierarchy == true ) { %>
-                        ${ ui.includeFragment("registrationapp", "field/personAddressWithHierarchy", [
-                                id: "providerAddress",
-                                initialValue: (account.person ? account.person.personAddress : null)
-                        ])}
-                    <% } %>
-
                     <div class="emr_providerDetails">
                         <p>
                             ${ ui.includeFragment("uicommons", "field/dropDown", [
@@ -594,6 +589,13 @@ span.field-error {
                         </p>
 
                     </div>
+
+                    <% if (useAddressHierarchy == true ) { %>
+                        ${ ui.includeFragment("registrationapp", "field/personAddressWithHierarchy", [
+                                id: "providerAddress",
+                                initialValue: (account.person ? account.person.personAddress : null)
+                        ])}
+                    <% } %>
 
                     <div id="providerAttributesDiv" class="emr_providerDetails">
                             <% if (createAccount != true ) {
@@ -631,40 +633,48 @@ span.field-error {
                                             <% } %>
                                     <% } %>
                                 <% }
+                            }
                             if (providerAttributeTypes != null && providerAttributeTypes.size() > 0) {
                                 providerAttributeTypes.each { attributeType ->
                                     if ( attributeType.datatypeClassname == 'org.openmrs.customdatatype.datatype.DateDatatype' ) {  %>
-                                            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
-                                                    id: "attributeTypeId_" + attributeType.providerAttributeTypeId,
-                                                    formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId,
-                                                    label: attributeType.name,
-                                                    useTime: false,
-                                            ])}
+                                            <div id="attributeTypeId_${attributeType.providerAttributeTypeId}" class="providerAttributeDiv hidden">
+                                                ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                                                        id: "attributeTypeId_" + attributeType.providerAttributeTypeId,
+                                                        formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId,
+                                                        label: attributeType.name,
+                                                        useTime: false,
+                                                ])}
+                                            </div>
                                      <% } else if ( attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype' ) { %>
-                                            <label>${attributeType.name}</label>
-                                            <select id="coded-data-types" name="attributeTypeId_${attributeType.providerAttributeTypeId}"></select>
-                                            <script>
-                                                var conceptId = '${attributeType.datatypeConfig}';
-                                                getCodedConcepts(conceptId, 'attributeTypeId_${attributeType.providerAttributeTypeId}');
-                                            </script>
-
+                                            <div id="attributeTypeId_${attributeType.providerAttributeTypeId}" class="providerAttributeDiv hidden">
+                                                <label>${attributeType.name}</label>
+                                                <select id="attributeTypeId_${attributeType.providerAttributeTypeId}" name="attributeTypeId_${attributeType.providerAttributeTypeId}"></select>
+                                                <script>
+                                                    var conceptId = '${attributeType.datatypeConfig}';
+                                                    getCodedConcepts(conceptId, 'attributeTypeId_${attributeType.providerAttributeTypeId}');
+                                                </script>
+                                            </div>
                                 <% } else if ( attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.LocationDatatype' ) { %>
-                                            <label>${attributeType.name}</label>
-                                            <select id="location-data-types" name="attributeTypeId_${attributeType.providerAttributeTypeId}"></select>
-                                            <script>
-                                                var tagId = '${attributeType.datatypeConfig}';
-                                                getLocations(tagId, 'attributeTypeId_${attributeType.providerAttributeTypeId}');
-                                            </script>
-
+                                            <div id="attributeTypeId_${attributeType.providerAttributeTypeId}" class="providerAttributeDiv hidden">
+                                                <label>${attributeType.name}</label>
+                                                <select id="attributeTypeId_${attributeType.providerAttributeTypeId}" name="attributeTypeId_${attributeType.providerAttributeTypeId}"></select>
+                                                <script>
+                                                    var tagId = '${attributeType.datatypeConfig}';
+                                                    getLocations(tagId, 'attributeTypeId_${attributeType.providerAttributeTypeId}');
+                                                </script>
+                                            </div>
                                     <% } else { %>
-                                        ${ ui.includeFragment("uicommons", "field/text", [
-                                                label: attributeType.name,
-                                                formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId
-                                        ])}
+                                            <div id="attributeTypeId_${attributeType.providerAttributeTypeId}" class="providerAttributeDiv hidden">
+                                                ${ ui.includeFragment("uicommons", "field/text", [
+                                                        label: attributeType.name,
+                                                        id: "attributeTypeId_" + attributeType.providerAttributeTypeId,
+                                                        formFieldName: "attributeTypeId_" + attributeType.providerAttributeTypeId
+                                                ])}
+                                            </div>
                                 <% } %>
                             <% } %>
                             <% } %>
-                        <% } %>
+
                     </div>
 
                     <div>
