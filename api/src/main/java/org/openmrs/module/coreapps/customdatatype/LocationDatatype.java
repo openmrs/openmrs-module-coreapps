@@ -6,7 +6,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.SerializingCustomDatatype;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("coreapps.LocationDatatype")
 public class LocationDatatype extends SerializingCustomDatatype<Location>{
 
     @Override
