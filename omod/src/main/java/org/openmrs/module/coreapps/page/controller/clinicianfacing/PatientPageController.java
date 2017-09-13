@@ -105,15 +105,15 @@ public class PatientPageController {
         }
         model.addAttribute("visitActions", visitActions);
 
-        List<Extension> includeFragments = appFrameworkService.getExtensionsForCurrentUser(dashboard + ".includeFragments");
+        List<Extension> includeFragments = appFrameworkService.getExtensionsForCurrentUser(dashboard + ".includeFragments", contextModel);
         Collections.sort(includeFragments);
         model.addAttribute("includeFragments", includeFragments);
 
-        List<Extension> firstColumnFragments = appFrameworkService.getExtensionsForCurrentUser(dashboard + ".firstColumnFragments");
+        List<Extension> firstColumnFragments = appFrameworkService.getExtensionsForCurrentUser(dashboard + ".firstColumnFragments", contextModel);
         Collections.sort(firstColumnFragments);
         model.addAttribute("firstColumnFragments", firstColumnFragments);
 
-        List<Extension> secondColumnFragments = appFrameworkService.getExtensionsForCurrentUser(dashboard + ".secondColumnFragments");
+        List<Extension> secondColumnFragments = appFrameworkService.getExtensionsForCurrentUser(dashboard + ".secondColumnFragments", contextModel);
         Collections.sort(secondColumnFragments);
         model.addAttribute("secondColumnFragments", secondColumnFragments);
 
