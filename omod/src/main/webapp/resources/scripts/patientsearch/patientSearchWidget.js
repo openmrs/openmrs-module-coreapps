@@ -238,6 +238,7 @@ function PatientSearchWidget(configuration){
     var updateSearchResults = function(results){
         var dataRows = [];
         if(results){
+            var results = removeDuplicates(results);
             searchResultsData = searchResultsData.concat(results);
             _.each(results, function(patient) {
                 var birthdate = '';
@@ -297,6 +298,17 @@ function PatientSearchWidget(configuration){
             })
         }
         afterSearchResultsUpdated = [];
+    }
+
+    // remove any patients from a results list that are already in the search results
+    // this is necessary because the searchOnIdentifiers performs multiple searchs and could return duplicates
+    var removeDuplicates = function(results) {
+        return _.reject(results, function(result) {
+            return _.some(searchResultsData, function(existing) {
+                return existing.patientId == result.patientId;
+            })
+        });
+
     }
 
     var refreshTable = function(){
