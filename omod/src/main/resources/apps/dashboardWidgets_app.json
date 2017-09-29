@@ -55,10 +55,9 @@
     "order": 10,
     "config": {
       "widget": "visitbyencountertype",
-      "icon": "icon-group",
+      "icon": "icon-calendar",
       "label": "RECENT VISITS",
       "maxRecords": "3",
-      "maxAge": "3m",
       "combineEncounterTypes": "true"
     },
     "extensions": [
