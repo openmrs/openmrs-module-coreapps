@@ -140,7 +140,7 @@
 
         <div ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
 
-            <fieldset ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
+            <fieldset>
                 <i class="icon-remove right hidden"/> <!-- always hidden, added for alignment purposes -->
                 <i ng-show="$ctrl.canEditProgram && !$ctrl.edit.workflow[workflow.uuid]  && !$ctrl.edit.enrollment && !$ctrl.confirmDelete && !$ctrl.isToday($ctrl.mostRecentStateByWorkflow[workflow.uuid].startDate)" ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)" class="icon-pencil right"/>
                 <h3>{{ workflow.concept.display }}</h3>
