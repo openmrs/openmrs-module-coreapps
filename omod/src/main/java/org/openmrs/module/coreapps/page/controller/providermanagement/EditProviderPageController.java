@@ -78,7 +78,7 @@ public class EditProviderPageController {
             throws PersonIsNotProviderException, InvalidRelationshipTypeException, SuggestionEvaluationException {
 
         model.addAttribute("account", account);
-        List<ProviderRole> allProviderRoles = providerManagementService.getAllProviderRoles(false);
+        List<ProviderRole> allProviderRoles = providerManagementService.getRestrictedProviderRoles(false, true);
         model.addAttribute("providerRoles", allProviderRoles);
         List<ProviderPersonRelationship> patientsList = new ArrayList<ProviderPersonRelationship>();
         List<RelationshipType> relationshipTypes = new ArrayList<RelationshipType>();
