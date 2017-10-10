@@ -53,17 +53,23 @@ public class EditProviderPageController {
     protected final Log log = LogFactory.getLog(getClass());
 
     public AccountDomainWrapper getAccount(@RequestParam(value = "personId", required = false) Person person,
+                                           @RequestParam(value = "personUuid", required = false) String personUuid,
                                            @SpringBean("accountService") AccountService accountService) {
 
         AccountDomainWrapper account;
+        Person newPerson = person;
 
-        if (person == null) {
-            account = accountService.getAccountByPerson(new Person());
-        } else {
-            account = accountService.getAccountByPerson(person);
-            if (account == null)
-                throw new APIException("Failed to find user account matching person with id:" + person.getPersonId());
+        if (newPerson == null) {
+            if (StringUtils.isNotBlank(personUuid)) {
+                newPerson = Context.getPersonService().getPersonByUuid(personUuid);
+            }
+            if (newPerson == null) {
+                newPerson = new Person();
+            }
         }
+        account = accountService.getAccountByPerson(newPerson);
+        if (account == null)
+            throw new APIException("Failed to find user account matching person with id:" + person.getPersonId());
 
         return account;
     }
@@ -78,7 +84,7 @@ public class EditProviderPageController {
             throws PersonIsNotProviderException, InvalidRelationshipTypeException, SuggestionEvaluationException {
 
         model.addAttribute("account", account);
-        List<ProviderRole> allProviderRoles = providerManagementService.getRestrictedProviderRoles(false, true);
+        List<ProviderRole> allProviderRoles = providerManagementService.getRestrictedProviderRoles(false);
         model.addAttribute("providerRoles", allProviderRoles);
         List<ProviderPersonRelationship> patientsList = new ArrayList<ProviderPersonRelationship>();
         List<RelationshipType> relationshipTypes = new ArrayList<RelationshipType>();

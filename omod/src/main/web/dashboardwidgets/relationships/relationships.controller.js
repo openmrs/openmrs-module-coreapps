@@ -1,16 +1,17 @@
 import angular from 'angular';
 
 export default class RelationshipsController  {
-    constructor(openmrsRest, openmrsTranslate) {
+    constructor($q, openmrsRest, openmrsTranslate) {
         'ngInject';
 
-        Object.assign(this, { openmrsRest, openmrsTranslate });
+        Object.assign(this, { $q, openmrsRest, openmrsTranslate });
     }
 
     $onInit() {
         this.minSearchLength = 2;
         // the default patient page is the clinician dashboard
         this.dashboardPage = "/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}";
+        this.providerPage = null;
 
         this.relationships = [];
         this.types = [];
@@ -25,6 +26,12 @@ export default class RelationshipsController  {
         this.otherPerson = null;
         this.relatedPersons = [];
 
+        this.activate();
+
+        let ctrl = this;
+    }
+
+    activate() {
         if (this.config.baseAppPath) {
             this.openmrsRest.setBaseAppPath(this.config.baseAppPath);
         } else {
@@ -33,6 +40,10 @@ export default class RelationshipsController  {
 
         if( this.config.dashboardPage ) {
             this.dashboardPage = this.config.dashboardPage;
+        }
+
+        if( this.config.providerPage ) {
+            this.providerPage = this.config.providerPage;
         }
 
         if (this.config.includeRelationshipTypes) {
@@ -50,9 +61,13 @@ export default class RelationshipsController  {
         this.openmrsRest.get('relationship', {
             person: this.config.patientUuid,
             limit: this.getMaxRecords(),
-            v: 'custom:(uuid,personA:(uuid,display,birthdate,isPatient),personB:(uuid,display,birthdate,isPatient),relationshipType)'
+            v: 'custom:(uuid,personA:(uuid,display,birthdate,isPatient,personId),personB:(uuid,display,birthdate,isPatient,personId),relationshipType)'
         }).then((response) => {
             this.getRelationships(response.results);
+            if (this.providerPage) {
+                // if a provider page has been configured then check if there are any providers listed as relationships
+                this.checkForProviders();
+            }
         });
 
         //fetchRelationshipTypes
@@ -67,6 +82,7 @@ export default class RelationshipsController  {
         angular.forEach(relationships, (relationship) => {
             var rel = {};
             rel.uuid = relationship.uuid;
+            rel.isProvider = false;
             if(relationship.personA.uuid !== this.config.patientUuid){
                 rel.toPerson = relationship.personA;
                 rel.isPatient = relationship.personA.isPatient;
@@ -78,7 +94,7 @@ export default class RelationshipsController  {
 
             }
             this.relationships.push(rel);
-        })
+        });
     }
 
     relationshipsContain(personUuid) {
@@ -100,6 +116,36 @@ export default class RelationshipsController  {
                 };
             }
         }
+    }
+
+    updateProviderInfo(provider) {
+        if (provider) {
+            angular.forEach(this.relationships, (relationship) => {
+                if (relationship.toPerson.uuid === provider.person.uuid) {
+                    relationship.isProvider = true;
+                }
+            });
+        }
+    }
+
+    isProvider(personUuid, personName) {
+        return this.openmrsRest.get('provider', {
+            q: personName,
+            v: 'custom:(uuid,identifier,display,person:(uuid,personId,display,gender,age,birthdate,birthdateEstimated))'
+        }).then(function (resp) {
+            return resp.results;
+        });
+    }
+
+    checkForProviders() {
+        angular.forEach(this.relationships, (relationship) => {
+            this.isProvider(relationship.toPerson.uuid, relationship.toPerson.display).then( (response) => {
+                angular.forEach(response, (provider) => {
+                    this.updateProviderInfo(provider);
+                });
+            });
+        });
+
     }
 
     getPersons(searchString) {
@@ -173,13 +219,28 @@ export default class RelationshipsController  {
         }
     }
     
-    navigateTo(patientId) {
+    navigateTo(personUuid) {
         var destinationPage ="";
-        if (this.dashboardPage) {
-            destinationPage = Handlebars.compile(this.dashboardPage)({
-                patientUuid: patientId
-            });
-        }
+
+        angular.forEach(this.relationships, (relationship) => {
+            if (relationship.toPerson.uuid === personUuid ) {
+                if ( relationship.isPatient === true ) {
+                    if (this.dashboardPage) {
+                        destinationPage = Handlebars.compile(this.dashboardPage)({
+                            patientUuid: personUuid
+                        });
+                    }
+                } else if ( relationship.isProvider === true ) {
+                    if (this.providerPage) {
+                        destinationPage = Handlebars.compile(this.providerPage)({
+                            personUuid: personUuid
+                        });
+                    }
+                }
+            }
+        });
+
+
         this.openmrsRest.getServerUrl().then((url) => {
             window.location.href = url + destinationPage;
         });
@@ -240,8 +301,8 @@ export default class RelationshipsController  {
         }
     }
 
-    goTo(patientId) {
-        this.navigateTo(patientId);
+    goTo(personUuid) {
+        this.navigateTo(personUuid);
     }
 
     searchPersons() {
