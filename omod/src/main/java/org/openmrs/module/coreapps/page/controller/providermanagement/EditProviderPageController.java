@@ -57,16 +57,17 @@ public class EditProviderPageController {
                                            @SpringBean("accountService") AccountService accountService) {
 
         AccountDomainWrapper account;
+        Person newPerson = person;
 
-        if (person == null) {
+        if (newPerson == null) {
             if (StringUtils.isNotBlank(personUuid)) {
-                person = Context.getPersonService().getPersonByUuid(personUuid);
+                newPerson = Context.getPersonService().getPersonByUuid(personUuid);
             }
-            if (person == null) {
-                person = new Person();
+            if (newPerson == null) {
+                newPerson = new Person();
             }
         }
-        account = accountService.getAccountByPerson(person);
+        account = accountService.getAccountByPerson(newPerson);
         if (account == null)
             throw new APIException("Failed to find user account matching person with id:" + person.getPersonId());
 
