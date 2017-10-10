@@ -121,7 +121,7 @@ export default class RelationshipsController  {
     updateProviderInfo(provider) {
         if (provider) {
             angular.forEach(this.relationships, (relationship) => {
-                if (relationship.toPerson.uuid == provider.person.uuid) {
+                if (relationship.toPerson.uuid === provider.person.uuid) {
                     relationship.isProvider = true;
                 }
             });
@@ -134,8 +134,6 @@ export default class RelationshipsController  {
             v: 'custom:(uuid,identifier,display,person:(uuid,personId,display,gender,age,birthdate,birthdateEstimated))'
         }).then(function (resp) {
             return resp.results;
-        }, function (err) {
-            console.log(JSON.stringify(err, undefined, 4));
         });
     }
 
@@ -225,14 +223,14 @@ export default class RelationshipsController  {
         var destinationPage ="";
 
         angular.forEach(this.relationships, (relationship) => {
-            if (relationship.toPerson.uuid == personUuid ) {
-                if ( relationship.isPatient == true ) {
+            if (relationship.toPerson.uuid === personUuid ) {
+                if ( relationship.isPatient === true ) {
                     if (this.dashboardPage) {
                         destinationPage = Handlebars.compile(this.dashboardPage)({
                             patientUuid: personUuid
                         });
                     }
-                } else if ( relationship.isProvider == true ) {
+                } else if ( relationship.isProvider === true ) {
                     if (this.providerPage) {
                         destinationPage = Handlebars.compile(this.providerPage)({
                             personUuid: personUuid
