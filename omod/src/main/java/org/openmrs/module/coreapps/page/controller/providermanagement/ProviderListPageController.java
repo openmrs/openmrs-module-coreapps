@@ -22,7 +22,7 @@ public class ProviderListPageController {
                     ) throws PersonIsNotProviderException {
 
         Map<Provider, List<ProviderPersonRelationship>> providers = new HashMap<Provider, List<ProviderPersonRelationship>>();
-        List<ProviderRole> providerRoleList = providerManagementService.getAllProviderRoles(true);
+        List<ProviderRole> providerRoleList = providerManagementService.getRestrictedProviderRoles(false);
         if (providerRoleList != null && providerRoleList.size() > 0 ) {
             List<Provider> providersByRoles = Context.getService(ProviderManagementService.class).getProvidersByRoles(providerRoleList);
             for (Provider providerByRole : providersByRoles) {
