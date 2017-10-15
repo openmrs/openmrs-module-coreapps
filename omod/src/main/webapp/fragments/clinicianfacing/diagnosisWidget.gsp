@@ -11,7 +11,7 @@
             <% config.recentDiagnoses.each { %>
             <li>
             <% if(it.diagnosis.nonCodedAnswer) { %>
-                "${it.diagnosis.nonCodedAnswer}"
+                "${ui.escapeHtml(it.diagnosis.nonCodedAnswer)}"
             <% } else { %>
                 ${ui.format(it.diagnosis.codedAnswer)}
             <% } %>
