@@ -32,8 +32,7 @@ export default class ProgramStatusController {
 
         this.statesByWorkflow = {};
         this.statesByUuid = {};
-        this.patientStateHistory = [];
-        this.mostRecentStateByWorkflow = {};
+        this.sortedStatesByWorkflow = {};
 
         // backs the various input fields
         this.input = {
@@ -289,21 +288,16 @@ export default class ProgramStatusController {
         return result;
     }
 
-    voidPatientStates(patientStateUuids) {
+    voidPatientState(patientStateUuid) {
 
-        let voidCalls = [];
-
-        angular.forEach(patientStateUuids, (patientStateUuid) => {
-            voidCalls.push(this.openmrsRest.remove('programenrollment/' + this.patientProgram.uuid + "/state/" + patientStateUuid, {
+        this.openmrsRest.remove('programenrollment/' + this.patientProgram.uuid + "/state/" + patientStateUuid, {
                 voided: "true",
                 voidReason: "voided via UI"
-            }));
-        });
-
-        this.$q.all(voidCalls).then((response) => {
-            // TODO: handle error cases
-            this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
-        });
+            })
+            .then((response) => {
+                // TODO: handle error cases
+                this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
+            });
 
     }
 
@@ -312,33 +306,23 @@ export default class ProgramStatusController {
         this.createPatientState(this.input.changeToStateByWorkflow[workflowUuid])
     }
 
-    deleteMostRecentPatientStates() {
-        if (this.patientStateHistory.length > 0) {
-            var stateUuids = [];
-            for (var workflow in this.patientStateHistory[0].patientStatesByWorkflow) {
-                stateUuids.push(this.patientStateHistory[0].patientStatesByWorkflow[workflow].uuid)
-            }
-            this.voidPatientStates(stateUuids);
+    deleteMostRecentPatientState(workflowUuid) {
+        if (workflowUuid in this.sortedStatesByWorkflow && this.sortedStatesByWorkflow[workflowUuid].length > 0) {
+            this.voidPatientState(this.sortedStatesByWorkflow[workflowUuid].uuid);
         }
     }
 
     isNotCurrentState(workflow) {
         return (state) => {
-            var currentState = this.mostRecentStateByWorkflow[workflow.uuid];
+            var currentState = (workflow.uuid in this.sortedStatesByWorkflow) ? this.sortedStatesByWorkflow[workflow.uuid][0] : null;
             return !currentState || currentState.state.uuid != state.uuid;
         }
 
     }
 
-    // this creates the data to back the program history table and the control the start date values of some of the state transition widgets
-    // "patientStateHistory" is an array, with an entry for each row in the table
-    // each element in the array an object with two properties:
-    //      * startDate
-    //      * patientStatesByWorkflow: a map where the keys are the workflow uuids, and the value is the state for that workflow on the given state
-    // "lastStateChangeDateByWorkflow": a map from workflowUuid to the last time the state in that workflow changed
     groupAndSortPatientStates() {
-        this.patientStateHistory = [];
-        this.mostRecentStateByWorkflow = {};
+
+        this.sortedStatesByWorkflow = {};
 
         if (this.patientProgram && this.patientProgram.states) {
             // TODO remove this first filter once the bug with the REST request returning voided elements is fixed
@@ -351,26 +335,20 @@ export default class ProgramStatusController {
 
             angular.forEach(this.patientProgram.states, (patientState) => {
                 let workflow = this.getWorkflowForState(patientState.state);
-                // first update the lastStateChangeDateByWorkflow--since we sorting from earliest to latest, we can just overwrite and assume the last value set is the latest
-                this.mostRecentStateByWorkflow[workflow.uuid] = patientState;
-                // hack to change startDate from a UTC string to Date
-                this.mostRecentStateByWorkflow[workflow.uuid].startDate = new Date(this.mostRecentStateByWorkflow[workflow.uuid].startDate);
-                this.mostRecentStateByWorkflow[workflow.uuid].dayAfterStartDate = this.getNextDay(this.mostRecentStateByWorkflow[workflow.uuid].startDate);
 
-                patientState['workflow'] = workflow;
+                if (!(workflow.uuid in this.sortedStatesByWorkflow)) {
+                    this.sortedStatesByWorkflow[workflow.uuid] = [];
+                }
 
-                if (this.patientStateHistory.length > 0 &&
-                    this.patientStateHistory[0].startDate == patientState.startDate) {
-                    // assumption: only one state per workflow per day
-                    this.patientStateHistory[0]['patientStatesByWorkflow'][workflow.uuid] = patientState;
+                var newEntry = {
+                    startDate:  new Date(patientState.startDate),
+                    dayAfterStartDate: this.getNextDay(patientState.startDate),
+                    endDate: patientState.endDate ? new Date(patientState.endDate) : null,
+                    state: patientState.state,
+                    uuid: patientState.uuid
                 }
-                else {
-                    var newEntry = {};
-                    newEntry['startDate'] = new Date(patientState.startDate);
-                    newEntry['patientStatesByWorkflow'] = {};
-                    newEntry['patientStatesByWorkflow'][workflow.uuid] = patientState;
-                    this.patientStateHistory.unshift(newEntry);  // add to front
-                }
+
+                this.sortedStatesByWorkflow[workflow.uuid].unshift(newEntry);  // add to front
             })
         }
     }
