@@ -50,8 +50,16 @@ export default class ProgramStatusController {
             workflow: {}
         }
 
+        // controls the state (opened/closed) of the expanded view of workflows
+        this.expanded = {
+            workflow: {}
+        }
+
         // controls whether the "confirm delete" message is displayed
-        this.confirmDelete = false;
+        this.confirmDelete = {
+            enrollment: false,
+            workflow: {}
+        };
 
         this.activate();
 
@@ -127,6 +135,16 @@ export default class ProgramStatusController {
         }
         else {
             this.edit.workflow[workflowUuid] = !currentStatus;
+        }
+    }
+
+    toggleExpandedWorkflow(workflowUuid) {
+        // the first time we hit this, we need to initialize the workflow
+        if (!workflowUuid in this.expanded.workflow) {
+            this.expanded.workflow[workflowUuid] = true;
+        }
+        else {
+            this.expanded.workflow[workflowUuid] = !this.expanded.workflow[workflowUuid];
         }
     }
 
@@ -247,18 +265,29 @@ export default class ProgramStatusController {
     }
 
     deletePatientProgram() {
-
-        if (!this.confirmDelete) {
-            this.confirmDelete = true;
+        if (!this.confirmDelete.enrollment) {
+            this.confirmDelete.enrollment= true;
         }
         else {
-            this.confirmDelete = false;
+            this.confirmDelete.enrollment = false;
             this.openmrsRest.remove('programenrollment/', {
                 uuid: this.patientProgram.uuid
             }).then((response) => {
                 this.patientProgram = null;
                 this.fetchPatientProgram(); // refresh display
             })
+        }
+    }
+
+    deleteMostRecentPatientState(workflowUuid) {
+        if (!this.confirmDelete.workflow[workflowUuid]) {
+            this.confirmDelete.workflow[workflowUuid] = true;
+        }
+        else {
+            this.confirmDelete.workflow[workflowUuid] = false;
+            if (workflowUuid in this.sortedStatesByWorkflow && this.sortedStatesByWorkflow[workflowUuid].length > 0) {
+                this.voidPatientState(this.sortedStatesByWorkflow[workflowUuid][0].uuid);
+            }
         }
     }
 
@@ -304,12 +333,6 @@ export default class ProgramStatusController {
     updatePatientState(workflowUuid, stateUuid) {
         this.edit.workflow[workflowUuid] = false;
         this.createPatientState(this.input.changeToStateByWorkflow[workflowUuid])
-    }
-
-    deleteMostRecentPatientState(workflowUuid) {
-        if (workflowUuid in this.sortedStatesByWorkflow && this.sortedStatesByWorkflow[workflowUuid].length > 0) {
-            this.voidPatientState(this.sortedStatesByWorkflow[workflowUuid].uuid);
-        }
     }
 
     isNotCurrentState(workflow) {
@@ -371,15 +394,29 @@ export default class ProgramStatusController {
     }
 
     cancelDelete() {
-        this.confirmDelete = false;
+        this.confirmDelete = {
+            enrollment: false,
+            workflow:{}
+        }
     }
 
-
-    hasHistory() {
-        return this.patientStateHistory.length > 0;
+    inConfirmDelete() {
+        if (this.confirmDelete.enrollment === true) {
+            return true;
+        }
+        var result = false;
+        angular.forEach(this.confirmDelete.workflow, function (value, key) {
+            if (value === true) {
+                result = true;
+            }
+        })
+        return result;
     }
 
-    editingAnyWorkflow() {
+    inEditMode() {
+        if (this.edit.enrollment === true) {
+            return true;
+        }
         var result = false;
         angular.forEach(this.edit.workflow, function (value, key) {
             if (value === true) {
@@ -388,6 +425,12 @@ export default class ProgramStatusController {
         })
         return result;
     }
+
+    hasHistory() {
+        return this.patientStateHistory.length > 0;
+    }
+
+
 
     getNextDay(date) {
         return moment(date).add(1, 'days').toDate();
