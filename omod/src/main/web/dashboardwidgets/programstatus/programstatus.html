@@ -128,7 +128,7 @@
             <p class="programstatus-field">
                 <openmrs-datepicker ng-model="$ctrl.input.dateCompleted"
                                 format="{{$ctrl.dateFormat}}"
-                                start-date="$ctrl.patientStateHistory.length > 0 ? $ctrl.patientStateHistory[0].startDate : $ctrl.input.dateEnrolled"
+                                start-date="$ctrl.getMostRecentStateChangeDate() ? $ctrl.getMostRecentStateChangeDate() : $ctrl.input.dateEnrolled"
                                 end-date="$ctrl.today"
                                 clear-btn="true"
                                 language="{{$ctrl.language}}"/>

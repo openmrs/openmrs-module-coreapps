@@ -4,9 +4,7 @@ import moment from 'moment';
 
 export default class ProgramStatusController {
 
-    // TODO is "allWorkflows" correct?
     // TODO add support for special logic around "initial" and "terminal?"
-    // TODO test with multiple workflows
 
     constructor($filter, $q, openmrsRest, openmrsTranslate) {
         'ngInject';
@@ -254,14 +252,27 @@ export default class ProgramStatusController {
     }
 
     updatePatientProgram() {
+        // we need to make sure that the most recent state for each workflow has an end date = completion date
+        // (this should really be handled by the api?)
+        let states = [];
+        angular.forEach(this.sortedStatesByWorkflow, (workflow) => {
+            if (workflow.length > 0) {
+                states.push({
+                    uuid: workflow[0].uuid,
+                    endDate: this.input.dateCompleted
+                })
+            }
+        })
+
         this.openmrsRest.update('programenrollment/' + this.patientProgram.uuid, {
             dateEnrolled: this.input.dateEnrolled,
             dateCompleted: this.input.dateCompleted,
             location: this.input.enrollmentLocation,
-            outcome: this.input.outcome
+            outcome: this.input.outcome,
+            states: states
         }).then((response) => {
             this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
-        })
+        });
     }
 
     deletePatientProgram() {
@@ -376,6 +387,20 @@ export default class ProgramStatusController {
         }
     }
 
+    getMostRecentStateChangeDate() {
+        let mostRecentStateChangeDate = null
+
+        angular.forEach(this.sortedStatesByWorkflow, (workflow) => {
+            if (workflow.length > 0) {
+                if (!mostRecentStateChangeDate || workflow[0].startDate > mostRecentStateChangeDate){
+                    mostRecentStateChangeDate = workflow[0].startDate
+                }
+            }
+        })
+
+        return mostRecentStateChangeDate;
+    }
+
     update() {
         this.cancelAllEditModes();
         this.updatePatientProgram();
@@ -425,12 +450,6 @@ export default class ProgramStatusController {
         })
         return result;
     }
-
-    hasHistory() {
-        return this.patientStateHistory.length > 0;
-    }
-
-
 
     getNextDay(date) {
         return moment(date).add(1, 'days').toDate();
