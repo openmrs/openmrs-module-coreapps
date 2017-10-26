@@ -237,6 +237,11 @@
     </privilege>
 
     <privilege>
+        <name>App: coreapps.summaryDashboard</name>
+        <description>Able to access summary dashboards</description>
+    </privilege>
+
+    <privilege>
         <name>App: coreapps.patientVisits</name>
         <description>Able to access the patient visits screen</description>
     </privilege>

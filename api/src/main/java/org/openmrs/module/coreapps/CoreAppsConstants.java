@@ -21,6 +21,7 @@ public class CoreAppsConstants {
    public static final String VITALS_ENCOUNTER_TYPE_UUID = "67a71486-1a54-468f-ac3e-7091a9a79584";
 
    public static final String PRIVILEGE_PATIENT_DASHBOARD = "App: coreapps.patientDashboard";
+   public static final String PRIVILEGE_SUMMARY_DASHBOARD = "App: coreapps.summaryDashboard";
    public static final String PRIVILEGE_PATIENT_VISITS = "App: coreapps.patientVisits";
    public static final String PRIVILEGE_START_VISIT = "Task: coreapps.createVisit";
    public static final String PRIVILEGE_END_VISIT = "Task: coreapps.endVisit";
