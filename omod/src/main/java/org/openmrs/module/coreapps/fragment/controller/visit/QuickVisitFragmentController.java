@@ -79,7 +79,7 @@ public class QuickVisitFragmentController {
 		}
 
 		request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
-		    uiUtils.message("coreapps.visit.createQuickVisit.successMessage", uiUtils.format(patient)));
+		    uiUtils.message("coreapps.visit.createQuickVisit.successMessage", uiUtils.encodeHtml(uiUtils.format(patient))));
 		request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         SimpleObject result = SimpleObject.create("id", visit.getId().toString(), "uuid", visit.getUuid());
