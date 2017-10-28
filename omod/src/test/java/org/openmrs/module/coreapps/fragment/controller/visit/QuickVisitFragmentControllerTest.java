@@ -27,7 +27,6 @@ import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 
 import java.util.Date;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -53,13 +52,16 @@ public class QuickVisitFragmentControllerTest {
 
 	private VisitService visitService;
 
-	@Before
+    private String successMessage;
+
+    @Before
 	public void setUp() {
 		controller = new QuickVisitFragmentController();
 		uiUtils = mock(UiUtils.class);
 		emrContext = mock(UiSessionContext.class);
 		adtService = mock(AdtService.class);
 		visitService = mock(VisitService.class);
+        successMessage = uiUtils.encodeHtml("Success message");
 	}
 	
 	@Test
@@ -67,7 +69,6 @@ public class QuickVisitFragmentControllerTest {
 		Patient patient = new Patient();
         Location visitLocation = new Location();
 
-		String successMessage = "Success message";
 		String formattedPatient = "Patient name";
 		when(uiUtils.format(patient)).thenReturn(formattedPatient);
 		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
@@ -111,7 +112,6 @@ public class QuickVisitFragmentControllerTest {
 	    Patient patient = new Patient();
 	    Location visitLocation = new Location();
 
-	    String successMessage = "Success message";
 	    String formattedPatient = "Patient name";
 	    when(uiUtils.format(patient)).thenReturn(formattedPatient);
 	    when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
@@ -142,7 +142,6 @@ public class QuickVisitFragmentControllerTest {
 		Patient patient = new Patient();
 		Location visitLocation = new Location();
 
-		String successMessage = "Success message";
 		String formattedPatient = "Patient name";
 		when(uiUtils.format(patient)).thenReturn(formattedPatient);
 		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
@@ -182,7 +181,6 @@ public class QuickVisitFragmentControllerTest {
 		Patient patient = new Patient();
 		Location visitLocation = new Location();
 
-		String successMessage = "Success message";
 		String formattedPatient = "Patient name";
 		when(uiUtils.format(patient)).thenReturn(formattedPatient);
 		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
@@ -232,7 +230,6 @@ public class QuickVisitFragmentControllerTest {
 
 		Location visitLocation = new Location();
 
-		String successMessage = "Success message";
 		String formattedPatient = "Patient name";
 		when(uiUtils.format(patient)).thenReturn(formattedPatient);
 		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
@@ -279,7 +276,6 @@ public class QuickVisitFragmentControllerTest {
 
 		Location visitLocation = new Location();
 
-		String successMessage = "Success message";
 		String formattedPatient = "Patient name";
 		when(uiUtils.format(patient)).thenReturn(formattedPatient);
 		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
@@ -341,7 +337,6 @@ public class QuickVisitFragmentControllerTest {
 
 		Location visitLocation = new Location();
 
-		String successMessage = "Success message";
 		String formattedPatient = "Patient name";
 		when(uiUtils.format(patient)).thenReturn(formattedPatient);
 		when(uiUtils.message("coreapps.visit.createQuickVisit.successMessage", formattedPatient)).thenReturn(successMessage);
