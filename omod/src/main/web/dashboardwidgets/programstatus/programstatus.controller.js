@@ -19,6 +19,8 @@ export default class ProgramStatusController {
             ? 'dd-MMM-yyyy' : this.config.dateFormat;
         this.today = new Date();
 
+        this.loaded = false;
+
         this.program = null;
         this.patientProgram = null;
         this.programLocations = null;
@@ -48,8 +50,9 @@ export default class ProgramStatusController {
             workflow: {}
         }
 
-        // controls the state (opened/closed) of the expanded view of workflows
+        // controls the state (opened/closed) of the expanded view of enrollment & workflows
         this.expanded = {
+            enrollment: false,
             workflow: {}
         }
 
@@ -73,7 +76,9 @@ export default class ProgramStatusController {
         this.fetchLocations().then((response) => {
             this.fetchProgram().then((response) => {
                 this.fetchOutcomes();
-                this.fetchPatientProgram(this.config.patientProgram);
+                this.fetchPatientProgram(this.config.patientProgram).then((response) => {
+                    this.loaded = true;
+                })
             });
         });
     }
@@ -108,6 +113,9 @@ export default class ProgramStatusController {
         else if (this.programLocations && this.programLocations.length == 1) {
             this.input.enrollmentLocation = this.programLocations[0].uuid;
         }
+
+        this.input.initialWorkflowStateByWorkflow = {};
+        this.input.changeToStateByWorkflow = {};
     }
 
     convertDateEnrolledAndDateCompletedStringsToDates() {
@@ -119,13 +127,16 @@ export default class ProgramStatusController {
 
     toggleEditEnrollment() {
         let currentStatus = this.edit.enrollment;
-        this.cancelAllEditModes()
+        this.cancelAllEditModes();
+        this.setInputsToStartingValues();
+
         this.edit.enrollment = !currentStatus;
     }
 
     toggleEditWorkflow(workflowUuid) {
         let currentStatus = this.edit.workflow[workflowUuid];
         this.cancelAllEditModes();
+        this.setInputsToStartingValues();
 
         // the first time we hit this, we need to initialize the workflow
         if (!workflowUuid in this.edit.workflow) {
@@ -330,7 +341,7 @@ export default class ProgramStatusController {
 
     voidPatientState(patientStateUuid) {
 
-        this.openmrsRest.remove('programenrollment/' + this.patientProgram.uuid + "/state/" + patientStateUuid, {
+        return this.openmrsRest.remove('programenrollment/' + this.patientProgram.uuid + "/state/" + patientStateUuid, {
                 voided: "true",
                 voidReason: "voided via UI"
             })
@@ -415,6 +426,11 @@ export default class ProgramStatusController {
 
     cancelEdit() {
         this.cancelAllEditModes();
+        this.setInputsToStartingValues();
+    }
+
+    cancelEnrollment() {
+        this.expanded.enrollment = false;
         this.setInputsToStartingValues();
     }
 

@@ -46,10 +46,14 @@
         text-align: center;
     }
 
+    .bold {
+        font-weight: bold;
+    }
+
 </style>
 
-<div>
-    <div ng-show="$ctrl.canEnrollInProgram && !$ctrl.patientProgram">
+<div ng-show="$ctrl.loaded">
+    <div ng-show="$ctrl.canEnrollInProgram && !$ctrl.patientProgram && $ctrl.expanded.enrollment">
         <fieldset class="programstatus-fieldset">
             <h3>{{'coreapps.dashboardwidgets.programstatus.enrollmentdate' | translate }}</h3>
 			<p class="programstatus-field">
@@ -77,6 +81,16 @@
         </div>
         <div class="center">
             <button class="confirm" ng-disabled="!$ctrl.enrollmentValid()" ng-click="$ctrl.enrollInProgram()">{{'coreapps.enroll' | translate }}</button>
+            <button class="cancel" ng-click="$ctrl.cancelEnrollment()">{{'coreapps.cancel' | translate }}</button>
+        </div>
+    </div>
+
+    <div ng-show="$ctrl.canEnrollInProgram && !$ctrl.patientProgram && !$ctrl.expanded.enrollment">
+        <div class="center">
+            {{ 'coreapps.dashboardwidgets.programstatus.notCurrentlyEnrolled' | translate }}
+        </div>
+        <div class="center">
+            <button class="confirm" ng-click="$ctrl.expanded.enrollment = true">{{'coreapps.enroll' | translate }}</button>
         </div>
     </div>
 
@@ -195,7 +209,7 @@
                     <td class="workflow-cell">
                         {{ row.startDate | date:$ctrl.dateFormat }} {{'coreapps.to' | translate}} {{ row.endDate ? (row.endDate | date:$ctrl.dateFormat) : ('coreapps.present' | translate) }}
                     </td>
-                    <td class="workflow-cell">
+                    <td class="workflow-cell" ng-class="{bold:$first}">
                         {{ row.state.concept.display }}
                     </td>
                     <td class="workflow-cell">
@@ -208,7 +222,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="workflow-cell" colspan="4" ng-show="$ctrl.expanded.workflow[workflow.uuid]">
+                    <td class="workflow-cell" colspan="4" ng-show="$ctrl.expanded.workflow[workflow.uuid] && $ctrl.sortedStatesByWorkflow[workflow.uuid] && $ctrl.sortedStatesByWorkflow[workflow.uuid].length > 1">
                         <a ng-click="$ctrl.toggleExpandedWorkflow(workflow.uuid)">{{ 'coreapps.showLess' | translate }}</a>
                     </td>
                 </tr>
