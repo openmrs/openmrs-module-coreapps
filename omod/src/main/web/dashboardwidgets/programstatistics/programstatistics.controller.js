@@ -9,24 +9,32 @@ export default class ProgramStatisticsController {
     }
 
     $onInit() {
-
-        this.everEnrolled;
-
         this.activate();
         let ctrl = this;
     }
 
     activate() {
         this.openmrsRest.setBaseAppPath("/coreapps");
-        this.getEnrolledInProgram();
+        this.getEverEnrolledInProgram();
+        this.getCurrentlyEnrolledInProgram();
     }
 
-    getEnrolledInProgram() {
+    getEverEnrolledInProgram() {
         return this.openmrsRest.update('reportingrest/cohort', {
             uuid: 'reporting.library.cohortDefinition.builtIn.patientsWithEnrollment',
             programs: [this.config.program]
         }).then((response) => {
             this.everEnrolled = (response && response.members ? response.members.length : 0);
+        });
+    }
+
+    getCurrentlyEnrolledInProgram() {
+        return this.openmrsRest.update('reportingrest/cohort', {
+            uuid: 'reporting.library.cohortDefinition.builtIn.patientsInProgram',
+            programs: [this.config.program],
+            onDate: new Date
+        }).then((response) => {
+            this.currentlyEnrolled = (response && response.members ? response.members.length : 0);
     });
     }
 
