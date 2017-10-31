@@ -27,23 +27,22 @@ public class DashboardWidgetFragmentController {
         if (patient == null ) {
             patient = config.get("patientId");
         }
-        if (patient == null) {
-            config.require("patient");
-        }
 
         ObjectNode appConfig = app.getConfig();
 
-        if (patient instanceof Patient) {
-            patientWrapper.setPatient((Patient) patient);
-        } else if (patient instanceof PatientDomainWrapper) {
-            patientWrapper = (PatientDomainWrapper) patient;
-        } else if (patient instanceof Integer) {
-            // assume we have patientId
-            patientWrapper.setPatient(Context.getPatientService().getPatient((Integer) patient));
-        } else {
-            throw new IllegalArgumentException("Patient must be of type Patient or PatientDomainWrapper");
+        if (patient != null) {
+            if (patient instanceof Patient) {
+                patientWrapper.setPatient((Patient) patient);
+            } else if (patient instanceof PatientDomainWrapper) {
+                patientWrapper = (PatientDomainWrapper) patient;
+            } else if (patient instanceof Integer) {
+                // assume we have patientId
+                patientWrapper.setPatient(Context.getPatientService().getPatient((Integer) patient));
+            } else {
+                throw new IllegalArgumentException("Patient must be of type Patient or PatientDomainWrapper");
+            }
+            appConfig.put("patientUuid", patientWrapper.getPatient().getUuid());
         }
-        appConfig.put("patientUuid", patientWrapper.getPatient().getUuid());
 
         if (appConfig.get("dateFormat") == null) {
             appConfig.put("dateFormat", adminService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATE_FORMAT, "yyyy-MM-dd"));
