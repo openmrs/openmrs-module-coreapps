@@ -20,21 +20,23 @@ export default class ProgramStatisticsController {
     }
 
     getEverEnrolledInProgram() {
-        return this.openmrsRest.update('reportingrest/cohort', {
+        return this.openmrsRest.get('reportingrest/cohort', {
+            v: "ref",
             uuid: 'reporting.library.cohortDefinition.builtIn.patientsWithEnrollment',
             programs: [this.config.program]
         }).then((response) => {
-            this.everEnrolled = (response && response.members ? response.members.length : 0);
+            this.everEnrolled = (response && response.count ? response.count : this.$filter('translate')('coreapps.dashboardwidgets.programstatistics.error'));
         });
     }
 
     getCurrentlyEnrolledInProgram() {
-        return this.openmrsRest.update('reportingrest/cohort', {
+        return this.openmrsRest.get('reportingrest/cohort', {
+            v: "ref",
             uuid: 'reporting.library.cohortDefinition.builtIn.patientsInProgram',
             programs: [this.config.program],
             onDate: new Date
         }).then((response) => {
-            this.currentlyEnrolled = (response && response.members ? response.members.length : 0);
+            this.currentlyEnrolled = (response && response.count ? response.count : this.$filter('translate')('coreapps.dashboardwidgets.programstatistics.error'));
     });
     }
 
