@@ -480,6 +480,10 @@ export default class ProgramStatusController {
         }
     }
 
+    programIsCompleted() {
+        return this.patientProgram && this.patientProgram.dateCompleted ? true : false;
+    }
+
     enrollmentValid() {
         return this.input.enrollmentLocation && this.input.dateEnrolled &&  // must have enrollmentLocation and date enrolled
             (!this.input.dateCompleted || this.input.dateCompleted >= this.input.dateEnrolled) &&  // date completed must be after date enrolled

@@ -110,12 +110,12 @@
             <p class="programstatus-field">{{ $ctrl.patientProgram.location.display }}</p>
         </fieldset>
 
-        <fieldset class="programstatus-fieldset" ng-show="!$ctrl.edit.enrollment && $ctrl.patientProgram.dateCompleted">
+        <fieldset class="programstatus-fieldset" ng-show="!$ctrl.edit.enrollment && $ctrl.programIsCompleted()">
             <h3>{{'coreapps.dashboardwidgets.programstatus.completed' | translate }}</h3>
             <p class="programstatus-field">{{ $ctrl.patientProgram.dateCompleted | date:$ctrl.dateFormat }}</p>
         </fieldset>
 
-        <fieldset class="programstatus-fieldset" ng-show="$ctrl.programOutcomes && !$ctrl.edit.enrollment && $ctrl.patientProgram.dateCompleted">
+        <fieldset class="programstatus-fieldset" ng-show="$ctrl.programOutcomes && !$ctrl.edit.enrollment && $ctrl.programIsCompleted()">
             <h3>{{'coreapps.dashboardwidgets.programstatus.outcome' | translate }}</h3>
             <p class="programstatus-field">{{ $ctrl.patientProgram.outcome.display }}</p>
         </fieldset>
@@ -176,7 +176,7 @@
         <div class="workflow-section" ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
             <!-- TODO review the use of the "isToday" functionality -->
             <h3 class="workflow-header">{{ workflow.concept.display }}
-                <i ng-show="$ctrl.canEditProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete() && !$ctrl.isToday($ctrl.sortedStatesByWorkflow[workflow.uuid].startDate)" ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)" class="icon-pencil"/>
+                <i ng-show="!$ctrl.programIsCompleted() && $ctrl.canEditProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete() && !$ctrl.isToday($ctrl.sortedStatesByWorkflow[workflow.uuid].startDate)" ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)" class="icon-pencil"/>
             </h3>
 
             <fieldset class="programstatus-fieldset" ng-show="$ctrl.edit.workflow[workflow.uuid]">
@@ -195,7 +195,7 @@
                     <openmrs-datepicker ng-model="$ctrl.input.changeToStateByWorkflow[workflow.uuid].date"
                                         format="{{$ctrl.dateFormat}}"
                                         start-date="$ctrl.sortedStatesByWorkflow[workflow.uuid] ? $ctrl.sortedStatesByWorkflow[workflow.uuid][0].dayAfterStartDate : $ctrl.input.dateEnrolled"
-                                        end-date="$ctrl.patientProgram && $ctrl.patientProgram.dateCompleted ? $ctrl.patientProgram.dateCompleted : $ctrl.today"
+                                        end-date="$ctrl.programIsCompleted() ? $ctrl.patientProgram.dateCompleted : $ctrl.today"
                                         language="{{$ctrl.language}}"/>
                 </p>
             </fieldset>
@@ -213,7 +213,7 @@
                         {{ row.state.concept.display }}
                     </td>
                     <td class="workflow-cell">
-                        <i ng-show="$first && $ctrl.canEditProgram  && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete()" class="icon-remove right" ng-click="$ctrl.deleteMostRecentPatientState(workflow.uuid)"/>
+                        <i ng-show="$first && !$ctrl.programIsCompleted() && $ctrl.canEditProgram  && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete()" class="icon-remove right" ng-click="$ctrl.deleteMostRecentPatientState(workflow.uuid)"/>
                     </td>
                 </tr>
                 <tr>
