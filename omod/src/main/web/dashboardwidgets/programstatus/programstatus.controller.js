@@ -283,15 +283,14 @@ export default class ProgramStatusController {
 
     updatePatientProgram() {
 
-        // we need to reload the entire page if either: 1) program has been completed or
-        // 2) dates have been changed and there is more than one program
-        // because both of these have an effect outside of he current widget
-
+        // we need to reload the entire page if date of enrollment or completion has changed, because may affect other program widget on the same page
+        // (reloading can be disabled by using the "disable reload page" config parameter
         var needToReloadPage =
+            !this.config.disableReloadPage &&
+            (this.input.dateEnrolled.getTime() != this.patientProgram.dateEnrolled.getTime()) ||
             (this.input.dateCompleted && !this.patientProgram.dateCompleted) ||
-            (this.patientPrograms.length > 1 &&
-            ((this.input.dateEnrolled.getTime() != this.patientProgram.dateEnrolled.getTime()) ||
-            (this.input.dateCompleted.getTime() != this.patientProgram.dateCompleted.getTime())));
+            (!this.input.dateCompleted && this.patientProgram.dateCompleted) ||
+            (this.input.dateCompleted && this.patientProgram.dateCompleted && this.input.dateCompleted.getTime() != this.patientProgram.dateCompleted.getTime());
 
         // we need to make sure that the most recent state for each workflow has an end date = completion date
         // (this should really be handled by the api?)
@@ -340,7 +339,9 @@ export default class ProgramStatusController {
                 }
                 else {
                     this.deleted = true;
-                    this.reloadPage();
+                    if (!this.config.disableReloadPage) {
+                        this.reloadPage();
+                    }
                 }
             })
         }
