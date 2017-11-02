@@ -6,10 +6,10 @@ export default class ProgramStatusController {
 
     // TODO add support for special logic around "initial" and "terminal?"
 
-    constructor($filter, $q, openmrsRest, openmrsTranslate) {
+    constructor($filter, $window, $q, openmrsRest, openmrsTranslate) {
         'ngInject';
 
-        Object.assign(this, {$filter, $q, openmrsRest, openmrsTranslate});
+        Object.assign(this, {$filter, $window, $q, openmrsRest, openmrsTranslate});
     }
 
     $onInit() {
@@ -24,6 +24,7 @@ export default class ProgramStatusController {
 
         this.program = null;
         this.patientProgram = null;
+        this.patientPrograms = null;
         this.programLocations = null;
         this.programOutcomes = null;
 
@@ -50,23 +51,7 @@ export default class ProgramStatusController {
             changeToStateByWorkflow: {}
         }
 
-        // controls the state (open/closed) of the elements to edit enrollment & state information
-        this.edit = {
-            enrollment: false,
-            workflow: {}
-        }
-
-        // controls the state (opened/closed) of the expanded view of enrollment & workflows
-        this.expanded = {
-            enrollment: false,
-            workflow: {}
-        }
-
-        // controls whether the "confirm delete" message is displayed
-        this.confirmDelete = {
-            enrollment: false,
-            workflow: {}
-        };
+        this.resetWindowStates();
 
         this.activate();
 
@@ -82,9 +67,7 @@ export default class ProgramStatusController {
         this.fetchLocations().then((response) => {
             this.fetchProgram().then((response) => {
                 this.fetchOutcomes();
-                this.fetchPatientProgram().then((response) => {
-                    this.loaded = true;
-                })
+                this.fetchPatientProgram()
             });
         });
     }
@@ -181,14 +164,21 @@ export default class ProgramStatusController {
     }
 
     fetchPatientProgram() {
+
+        this.loaded = false;
+        this.patientProgram = null;
+        this.resetWindowStates();
+
         return this.openmrsRest.get('programenrollment', {
             patient: this.config.patientUuid,
             v: this.vPatientProgram
         }).then((response) => {
-            this.getPatientProgramFromPatientProgramList(response.results);
+            this.patientPrograms = response.results;
+            this.getPatientProgramFromPatientProgramList();
             this.groupAndSortPatientStates();
             this.setInputsToStartingValues();
             this.convertDateEnrolledAndDateCompletedStringsToDates();
+            this.loaded = true;
         });
     }
 
@@ -214,32 +204,32 @@ export default class ProgramStatusController {
     }
 
     // get the patient program that this widget will be displaying/manipulating
-    getPatientProgramFromPatientProgramList(patientPrograms, patientProgramUuid) {
+    getPatientProgramFromPatientProgramList() {
 
         // first, filter to only patient programs of the specified type
-        patientPrograms = this.$filter('filter') (patientPrograms, (patientProgram) => {
+        this.patientPrograms = this.$filter('filter') (this.patientPrograms, (patientProgram) => {
             return (patientProgram.program.uuid == this.config.program);
         });
 
 
-        if (patientPrograms.length > 0) {
+        if (this.patientPrograms.length > 0) {
 
             // sort programs in order
-            patientPrograms = this.$filter('orderBy')(patientPrograms, (patientProgram) => {
-                return -patientPrograms.startDate;
+            this.patientPrograms = this.$filter('orderBy')(this.patientPrograms, (patientProgram) => {
+                return -this.patientPrograms.startDate;
             });
 
             // find the matching program, and set the min/max for enroll/complete based on the surrounding programs
             if (!this.displayActiveProgram()) {
 
-                angular.forEach(patientPrograms, (patientProgram, i) => {
+                angular.forEach(this.patientPrograms, (patientProgram, i) => {
                     if (patientProgram.uuid == this.config.patientProgram) {
                         this.patientProgram = patientProgram;
                         if (i > 0) {
-                            this.maxCompletionDate = this.getPreviousDay(new Date(patientPrograms[i-1].dateEnrolled));
+                            this.maxCompletionDate = this.getPreviousDay(new Date(this.patientPrograms[i-1].dateEnrolled));
                         }
-                        if (i + 1 < patientPrograms.length) {
-                            this.minEnrollmentDate = this.getNextDay(new Date(patientPrograms[i+1].dateCompleted));
+                        if (i + 1 < this.patientPrograms.length) {
+                            this.minEnrollmentDate = this.getNextDay(new Date(this.patientPrograms[i+1].dateCompleted));
                         }
                     }
                 })
@@ -249,18 +239,19 @@ export default class ProgramStatusController {
             // this widget is meant to show the active program, or if no active program, will render a widget for enrolling in the program
             else {
                 // there's an active program
-                if (!patientPrograms[0].dateCompleted) {
-                    this.patientProgram = patientPrograms[0];
-                    if (patientPrograms.length > 1) {
+                if (!this.patientPrograms[0].dateCompleted) {
+                    this.patientProgram = this.patientPrograms[0];
+                    if (this.patientPrograms.length > 1) {
                         // enrollment date cannot be shifted to before completion date of previous program
-                        this.minEnrollmentDate = this.getNextDay(new Date(patientPrograms[1].dateCompleted))
+                        this.minEnrollmentDate = this.getNextDay(new Date(this.patientPrograms[1].dateCompleted))
 
                     }
                 }
                 // no active program
                 else {
                     // enrollment date for a new program can't be set before the completion date of any previous program
-                    this.minEnrollmentDate = this.getNextDay(new Date(patientPrograms[0].dateCompleted))
+
+                    this.minEnrollmentDate = this.getNextDay(new Date(this.patientPrograms[0].dateCompleted))
                 }
 
             }
@@ -291,6 +282,17 @@ export default class ProgramStatusController {
     }
 
     updatePatientProgram() {
+
+        // we need to reload the entire page if either: 1) program has been completed or
+        // 2) dates have been changed and there is more than one program
+        // because both of these have an effect outside of he current widget
+
+        var needToReloadPage =
+            (this.input.dateCompleted && !this.patientProgram.dateCompleted) ||
+            (this.patientPrograms.length > 1 &&
+            ((this.input.dateEnrolled.getTime() != this.patientProgram.dateEnrolled.getTime()) ||
+            (this.input.dateCompleted.getTime() != this.patientProgram.dateCompleted.getTime())));
+
         // we need to make sure that the most recent state for each workflow has an end date = completion date
         // (this should really be handled by the api?)
         let states = [];
@@ -310,7 +312,12 @@ export default class ProgramStatusController {
             outcome: this.input.outcome,
             states: states
         }).then((response) => {
-            this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
+            if (!needToReloadPage) {
+                this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
+            }
+            else {
+                this.reloadPage();  // closing a program affects other widgets, so we need to reload the entire page
+            }
         });
     }
 
@@ -326,13 +333,14 @@ export default class ProgramStatusController {
                 this.patientProgram = null;
 
                 // if this widget was set to display the "active program" (ie, no patient program uuid passed in)
-                // then reload, otherwise just render a "patient program deleted" message
+                // then reload, otherwise render a "patient program deleted" message and reload entire page
 
                 if (this.displayActiveProgram()) {
                     this.fetchPatientProgram(); // refresh display
                 }
                 else {
                     this.deleted = true;
+                    this.reloadPage();
                 }
             })
         }
@@ -527,7 +535,7 @@ export default class ProgramStatusController {
     }
 
     programIsCompleted() {
-        return this.patientProgram && this.patientProgram.dateCompleted ? true : false;
+        return (this.patientProgram && this.patientProgram.dateCompleted ? true : false);
     }
 
     enrollmentValid() {
@@ -540,4 +548,27 @@ export default class ProgramStatusController {
         return this.input.changeToStateByWorkflow[workflowUuid] && this.input.changeToStateByWorkflow[workflowUuid].date && this.input.changeToStateByWorkflow[workflowUuid].state;
     }
 
+    resetWindowStates() {
+        // controls the state (open/closed) of the elements to edit enrollment & state information
+        this.edit = {
+            enrollment: false,
+            workflow: {}
+        }
+
+        // controls the state (opened/closed) of the expanded view of enrollment & workflows
+        this.expanded = {
+            enrollment: false,
+            workflow: {}
+        }
+
+        // controls whether the "confirm delete" message is displayed
+        this.confirmDelete = {
+            enrollment: false,
+            workflow: {}
+        };
+    }
+
+    reloadPage() {
+        this.$window.location.reload();
+    }
 }
