@@ -20,11 +20,17 @@ export default class ProgramStatusController {
         this.today = new Date();
 
         this.loaded = false;
+        this.deleted = false;
 
         this.program = null;
         this.patientProgram = null;
         this.programLocations = null;
         this.programOutcomes = null;
+
+        // we calculate these two values based on the completion date of the previous program and the enrollment date of any subsequent program
+        // we populate these on initial load
+        this.minEnrollmentDate = null;
+        this.maxCompletionDate = null;
 
         this.canEnrollInProgram = false;
         this.canEditProgram = false;
@@ -76,7 +82,7 @@ export default class ProgramStatusController {
         this.fetchLocations().then((response) => {
             this.fetchProgram().then((response) => {
                 this.fetchOutcomes();
-                this.fetchPatientProgram(this.config.patientProgram).then((response) => {
+                this.fetchPatientProgram().then((response) => {
                     this.loaded = true;
                 })
             });
@@ -174,31 +180,16 @@ export default class ProgramStatusController {
         });
     }
 
-    fetchPatientProgram(patientProgramUuid) {
-        if (!patientProgramUuid) {
-            // we haven't been been given a patient program uuid, so load the programs and pick the active program (if it exists)
-            return this.openmrsRest.get('programenrollment', {
-                patient: this.config.patientUuid,
-                v: this.vPatientProgram
-            }).then((response) => {
-                this.getActiveProgram(response.results);
-                this.groupAndSortPatientStates();
-                this.setInputsToStartingValues();
-                this.convertDateEnrolledAndDateCompletedStringsToDates();
-            });
-        }
-        else {
-            // we've been given a specific patient program uuid, load that one
-            return this.openmrsRest.get('programenrollment', {
-                uuid: patientProgramUuid,
-                v: this.vPatientProgram
-            }).then((response) => {
-                this.patientProgram = response;
-                this.groupAndSortPatientStates();
-                this.setInputsToStartingValues();
-                this.convertDateEnrolledAndDateCompletedStringsToDates();;
-            })
-        }
+    fetchPatientProgram() {
+        return this.openmrsRest.get('programenrollment', {
+            patient: this.config.patientUuid,
+            v: this.vPatientProgram
+        }).then((response) => {
+            this.getPatientProgramFromPatientProgramList(response.results);
+            this.groupAndSortPatientStates();
+            this.setInputsToStartingValues();
+            this.convertDateEnrolledAndDateCompletedStringsToDates();
+        });
     }
 
     fetchLocations() {
@@ -222,20 +213,58 @@ export default class ProgramStatusController {
         }
     }
 
-    getActiveProgram(patientPrograms) {
+    // get the patient program that this widget will be displaying/manipulating
+    getPatientProgramFromPatientProgramList(patientPrograms, patientProgramUuid) {
 
-        // only patient programs of the specified type
+        // first, filter to only patient programs of the specified type
         patientPrograms = this.$filter('filter') (patientPrograms, (patientProgram) => {
-            return (patientProgram.program.uuid == this.config.program
-                && patientProgram.dateCompleted == null);
+            return (patientProgram.program.uuid == this.config.program);
         });
 
+
         if (patientPrograms.length > 0) {
+
+            // sort programs in order
             patientPrograms = this.$filter('orderBy')(patientPrograms, (patientProgram) => {
                 return -patientPrograms.startDate;
             });
 
-            this.patientProgram = patientPrograms[0];
+            // find the matching program, and set the min/max for enroll/complete based on the surrounding programs
+            if (!this.displayActiveProgram()) {
+
+                angular.forEach(patientPrograms, (patientProgram, i) => {
+                    if (patientProgram.uuid == this.config.patientProgram) {
+                        this.patientProgram = patientProgram;
+                        if (i > 0) {
+                            this.maxCompletionDate = this.getPreviousDay(new Date(patientPrograms[i-1].dateEnrolled));
+                        }
+                        if (i + 1 < patientPrograms.length) {
+                            this.minEnrollmentDate = this.getNextDay(new Date(patientPrograms[i+1].dateCompleted));
+                        }
+                    }
+                })
+
+                // TODO error case: no match found
+            }
+            // this widget is meant to show the active program, or if no active program, will render a widget for enrolling in the program
+            else {
+                // there's an active program
+                if (!patientPrograms[0].dateCompleted) {
+                    this.patientProgram = patientPrograms[0];
+                    if (patientPrograms.length > 1) {
+                        // enrollment date cannot be shifted to before completion date of previous program
+                        this.minEnrollmentDate = this.getNextDay(new Date(patientPrograms[1].dateCompleted))
+
+                    }
+                }
+                // no active program
+                else {
+                    // enrollment date for a new program can't be set before the completion date of any previous program
+                    this.minEnrollmentDate = this.getNextDay(new Date(patientPrograms[0].dateCompleted))
+                }
+
+            }
+
         }
     }
 
@@ -256,7 +285,6 @@ export default class ProgramStatusController {
                 states: states
             }).then((response) => {
                 this.fetchPatientProgram(); // refresh display
-
             });
 
         }
@@ -296,7 +324,16 @@ export default class ProgramStatusController {
                 uuid: this.patientProgram.uuid
             }).then((response) => {
                 this.patientProgram = null;
-                this.fetchPatientProgram(); // refresh display
+
+                // if this widget was set to display the "active program" (ie, no patient program uuid passed in)
+                // then reload, otherwise just render a "patient program deleted" message
+
+                if (this.displayActiveProgram()) {
+                    this.fetchPatientProgram(); // refresh display
+                }
+                else {
+                    this.deleted = true;
+                }
             })
         }
     }
@@ -471,6 +508,10 @@ export default class ProgramStatusController {
         return moment(date).add(1, 'days').toDate();
     }
 
+    getPreviousDay(date) {
+        return moment(date).add(-1, 'days').toDate();
+    }
+
     isToday(date) {
         if (!date) {
             return false;
@@ -478,6 +519,11 @@ export default class ProgramStatusController {
         else {
            return moment(date).isSame(moment(), 'day');
         }
+    }
+
+    // if no program uuid is passed in, this widget will display the active program, or an "enroll in program" option if no active program
+    displayActiveProgram() {
+        return this.config.patientProgram ? false : true;
     }
 
     programIsCompleted() {

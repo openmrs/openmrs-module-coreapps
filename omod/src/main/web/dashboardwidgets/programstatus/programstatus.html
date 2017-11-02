@@ -52,12 +52,19 @@
 
 </style>
 
-<div ng-show="$ctrl.loaded">
+<div ng-show="$ctrl.deleted">
+    {{ 'coreapps.dashboardwidgets.programstatus.programDeleted' | translate }}
+</div>
+
+<div ng-show="$ctrl.loaded && !$ctrl.deleted">
     <div ng-show="$ctrl.canEnrollInProgram && !$ctrl.patientProgram && $ctrl.expanded.enrollment">
         <fieldset class="programstatus-fieldset">
             <h3>{{'coreapps.dashboardwidgets.programstatus.enrollmentdate' | translate }}</h3>
 			<p class="programstatus-field">
-                <openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" end-date="$ctrl.today"/>
+                <openmrs-datepicker ng-model="$ctrl.input.dateEnrolled"
+                                    format="{{$ctrl.dateFormat}}"
+                                    start-date="$ctrl.minEnrollmentDate"
+                                    end-date="$ctrl.today"/>
             </p>
         </fieldset>
         <fieldset class="programstatus-fieldset">
@@ -124,7 +131,11 @@
         <fieldset class="programstatus-fieldset" ng-show="$ctrl.edit.enrollment">
             <h3>{{'coreapps.dashboardwidgets.programstatus.enrolled' | translate }}</h3>
             <p class="programstatus-field">
-                <openmrs-datepicker ng-model="$ctrl.input.dateEnrolled" format="{{$ctrl.dateFormat}}" end-date="$ctrl.today" language="{{$ctrl.language}}"/>
+                <openmrs-datepicker ng-model="$ctrl.input.dateEnrolled"
+                                    format="{{$ctrl.dateFormat}}"
+                                    start-date="$ctrl.minEnrollmentDate"
+                                    end-date="$ctrl.input.dateCompleted ? $ctrl.input.dateCompleted : $ctrl.today"
+                                    language="{{$ctrl.language}}"/>
             </p>
         </fieldset>
 
@@ -143,7 +154,7 @@
                 <openmrs-datepicker ng-model="$ctrl.input.dateCompleted"
                                 format="{{$ctrl.dateFormat}}"
                                 start-date="$ctrl.getMostRecentStateChangeDate() ? $ctrl.getMostRecentStateChangeDate() : $ctrl.input.dateEnrolled"
-                                end-date="$ctrl.today"
+                                end-date="$ctrl.maxCompletionDate ? $ctrl.maxCompletionDate : $ctrl.today"
                                 clear-btn="true"
                                 language="{{$ctrl.language}}"/>
             </p>
