@@ -275,7 +275,12 @@ export default class ProgramStatusController {
                 location: this.input.enrollmentLocation,
                 states: states
             }).then((response) => {
-                this.fetchPatientProgram(); // refresh display
+                if (this.config.disableReloadPage) {
+                    this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
+                }
+                else {
+                    this.reloadPage();  // closing a program affects other widgets, so we need to reload the entire page
+                }
             });
 
         }
@@ -530,6 +535,10 @@ export default class ProgramStatusController {
         }
     }
 
+    isMostRecentProgram() {
+        return !this.patientPrograms || this.patientPrograms.length == 0 || !this.patientProgram || this.patientPrograms[0].uuid === this.patientProgram.uuid;
+    }
+
     // if no program uuid is passed in, this widget will display the active program, or an "enroll in program" option if no active program
     displayActiveProgram() {
         return this.config.patientProgram ? false : true;
@@ -542,7 +551,8 @@ export default class ProgramStatusController {
     enrollmentValid() {
         return this.input.enrollmentLocation && this.input.dateEnrolled &&  // must have enrollmentLocation and date enrolled
             (!this.input.dateCompleted || this.input.dateCompleted >= this.input.dateEnrolled) &&  // date completed must be after date enrolled
-            ((!this.input.dateCompleted && !this.input.outcome) || (this.input.dateCompleted && this.input.outcome));  // if there's a completion date, must specific an outcome (and vice versa)
+            ((!this.input.dateCompleted && !this.input.outcome) || (this.input.dateCompleted && this.input.outcome)) &&  // if there's a completion date, must specific an outcome (and vice versa)
+            (this.isMostRecentProgram() || this.input.dateCompleted);  // must be the most recent program or have a date completed
     }
 
     workflowTransitionValid(workflowUuid) {
