@@ -149,7 +149,7 @@ export default class ProgramStatusController {
     fetchProgram() {
         return this.openmrsRest.get('program', {
             uuid: this.config.program,
-            v: 'custom:display,uuid,outcomesConcept:(uuid),allWorkflows:(uuid,concept:(display),states:(uuid,concept:(display))'
+            v: 'custom:display,uuid,outcomesConcept:(uuid),allWorkflows:(uuid,concept:(display),states:(uuid,initial,terminal,concept:(display))'
         }).then((response) => {
             // TODO handle error cases, program doesn't exist
             this.program = response;
@@ -375,7 +375,12 @@ export default class ProgramStatusController {
             ]
         }).then((response) => {
             // TODO: handle error cases
-            this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
+            if (this.statesByUuid[state.state].terminal) {
+                this.reloadPage()
+            }
+            else {
+                this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
+            }
         })
     }
 
