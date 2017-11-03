@@ -80,7 +80,7 @@
                 <h3>{{ workflow.concept.display }}</h3>
                 <p class="programstatus-field">
                     <select ng-model="$ctrl.input.initialWorkflowStateByWorkflow[workflow.uuid].state"
-                            ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isNotCurrentState(workflow) ">
+                            ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isInitialState()  ">
                         <option value=""></option>
                     </select>
                 </p>

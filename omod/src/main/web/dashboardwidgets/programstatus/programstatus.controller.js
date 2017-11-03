@@ -422,6 +422,10 @@ export default class ProgramStatusController {
 
     }
 
+    isInitialState() {
+        return (state) => { return state.initial };
+    }
+
     groupAndSortPatientStates() {
 
         this.sortedStatesByWorkflow = {};
