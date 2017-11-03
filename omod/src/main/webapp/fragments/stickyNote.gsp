@@ -27,12 +27,12 @@
 	// check if 'coreapps' global variable already exists (possibly set somewhere else in the module)
 	if ("coreapps" in window) {
 		window.coreapps.stickyNote = {
-			config: ${ui.encodeHtml(jsonConfig)}
+			config: ${jsonConfig}
 		}
 	} else {
 		window.coreapps = {
 			stickyNote: {
-				config: ${ui.encodeHtml(jsonConfig)}
+				config: ${jsonConfig}
 			}
 		}
 	}
