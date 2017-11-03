@@ -25,7 +25,7 @@ export default class ProgramStatisticsController {
             uuid: 'reporting.library.cohortDefinition.builtIn.patientsWithEnrollment',
             programs: [this.config.program]
         }).then((response) => {
-            this.everEnrolled = (response && response.count ? response.count : this.$filter('translate')('coreapps.dashboardwidgets.programstatistics.error'));
+            this.everEnrolled = (response && 'count' in response ? response.count : this.$filter('translate')('coreapps.dashboardwidgets.programstatistics.error'));
         });
     }
 
@@ -36,7 +36,7 @@ export default class ProgramStatisticsController {
             programs: [this.config.program],
             onDate: new Date
         }).then((response) => {
-            this.currentlyEnrolled = (response && response.count ? response.count : this.$filter('translate')('coreapps.dashboardwidgets.programstatistics.error'));
+            this.currentlyEnrolled = (response && 'count' in response  ? response.count : this.$filter('translate')('coreapps.dashboardwidgets.programstatistics.error'));
     });
     }
 

@@ -1,4 +1,4 @@
 <ul>
-    <li>{{'coreapps.dashboardwidgets.programstatistics.currentlyEnrolled' | translate }}: {{  $ctrl.currentlyEnrolled ? $ctrl.currentlyEnrolled : 'coreapps.dashboardwidgets.programstatistics.loading' | translate }}</li>
-    <li>{{'coreapps.dashboardwidgets.programstatistics.everEnrolled' | translate }}: {{  $ctrl.everEnrolled ? $ctrl.everEnrolled : 'coreapps.dashboardwidgets.programstatistics.loading' | translate }}</li>
+    <li>{{'coreapps.dashboardwidgets.programstatistics.currentlyEnrolled' | translate }}: {{  $ctrl.currentlyEnrolled != null ? $ctrl.currentlyEnrolled : 'coreapps.dashboardwidgets.programstatistics.loading' | translate }}</li>
+    <li>{{'coreapps.dashboardwidgets.programstatistics.everEnrolled' | translate }}: {{  $ctrl.everEnrolled != null ? $ctrl.everEnrolled : 'coreapps.dashboardwidgets.programstatistics.loading' | translate }}</li>
 </ul>
