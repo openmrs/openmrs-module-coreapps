@@ -297,9 +297,10 @@ export default class ProgramStatusController {
             (!this.input.dateCompleted && this.patientProgram.dateCompleted) ||
             (this.input.dateCompleted && this.patientProgram.dateCompleted && this.input.dateCompleted.getTime() != this.patientProgram.dateCompleted.getTime());
 
+        // (disabling this... keeping most recent state with no end date for consistency with current workflow)
         // we need to make sure that the most recent state for each workflow has an end date = completion date
         // (this should really be handled by the api?)
-        let states = [];
+      /*  let states = [];
         angular.forEach(this.sortedStatesByWorkflow, (workflow) => {
             if (workflow.length > 0) {
                 states.push({
@@ -307,14 +308,14 @@ export default class ProgramStatusController {
                     endDate: this.input.dateCompleted
                 })
             }
-        })
+        })*/
 
         this.openmrsRest.update('programenrollment/' + this.patientProgram.uuid, {
             dateEnrolled: this.input.dateEnrolled,
             dateCompleted: this.input.dateCompleted,
             location: this.input.enrollmentLocation,
-            outcome: this.input.outcome,
-            states: states
+            outcome: this.input.outcome//,
+            //states: states
         }).then((response) => {
             if (!needToReloadPage) {
                 this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
