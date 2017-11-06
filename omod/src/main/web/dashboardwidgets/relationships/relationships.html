@@ -4,9 +4,9 @@
             <div class="fifty-percent relationship-inner">
                 <span>
                     <a ng-show="relationship.isPatient || relationship.isProvider" ng-click="$ctrl.goTo(relationship.toPerson.uuid)">
-                        {{relationship.toPerson.display}}
+                        {{relationship.toPerson.display ? relationship.toPerson.display : relationship.toPerson.personName.display}}
                     </a>
-                    <span ng-show="!relationship.isPatient && !relationship.isProvider">{{relationship.toPerson.display}}</span>
+                    <span ng-show="!relationship.isPatient && !relationship.isProvider">{{relationship.toPerson.display ? relationship.toPerson.display : relationship.toPerson.personName.display}}</span>
                 </span>
             </div>
             <div class="tag forty-percent relationship-inner">
