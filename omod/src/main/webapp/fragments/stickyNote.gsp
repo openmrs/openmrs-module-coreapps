@@ -24,15 +24,17 @@
 	ui.includeJavascript("coreapps", "stickyNote/directives/clickToEditObs.js")
 %>
 <script type="text/javascript">
+	var strConfig = '${ui.encodeJavaScript(jsonConfig)}';
+	var jsonConfig = JSON.parse(strConfig);
 	// check if 'coreapps' global variable already exists (possibly set somewhere else in the module)
 	if ("coreapps" in window) {
 		window.coreapps.stickyNote = {
-			config: ${jsonConfig}
+			config: jsonConfig
 		}
 	} else {
 		window.coreapps = {
 			stickyNote: {
-				config: ${jsonConfig}
+				config: jsonConfig
 			}
 		}
 	}
