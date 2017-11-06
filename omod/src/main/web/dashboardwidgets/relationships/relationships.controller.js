@@ -61,7 +61,7 @@ export default class RelationshipsController  {
         this.openmrsRest.get('relationship', {
             person: this.config.patientUuid,
             limit: this.getMaxRecords(),
-            v: 'custom:(uuid,personA:(uuid,display,birthdate,isPatient,personId),personB:(uuid,display,birthdate,isPatient,personId),relationshipType)'
+            v: 'custom:(uuid,personA:(uuid,display,personName,birthdate,isPatient,personId),personB:(uuid,display,personName,birthdate,isPatient,personId),relationshipType)'
         }).then((response) => {
             this.getRelationships(response.results);
             if (this.providerPage) {
