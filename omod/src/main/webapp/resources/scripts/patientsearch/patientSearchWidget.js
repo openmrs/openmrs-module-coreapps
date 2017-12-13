@@ -1,4 +1,5 @@
 function PatientSearchWidget(configuration){
+
     var defaults = {
         minSearchCharacters: 3,
         searchInputId: 'patient-search',
@@ -54,6 +55,10 @@ function PatientSearchWidget(configuration){
     // set the locale for Moment.js
     // Creole not currently supported by Moment and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
     moment.locale([configuration.locale, configuration.defaultLocale, 'en']);
+
+    this.setHandleRowSelection = function(handleRowSelection) {
+        config.handleRowSelection = handleRowSelection;
+    }
 
     function formatAge(widgetBirthdate){
         var bdate = moment(widgetBirthdate, 'YYYY-MM-DD');
@@ -117,6 +122,9 @@ function PatientSearchWidget(configuration){
                     'attributes:(value,attributeType:(name)))';
 
     var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
+
+        // clear out existing search results
+        reset();
 
         // set a flag to denote that we are starting a new search
         performingSearch = true;
@@ -234,6 +242,7 @@ function PatientSearchWidget(configuration){
         highlightedMouseRowIndex = undefined;
         jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noData);
     }
+    this.reset = reset;
 
     var updateSearchResults = function(results){
         var dataRows = [];
@@ -251,11 +260,14 @@ function PatientSearchWidget(configuration){
                         birthdate = "&nbsp;&nbsp; "+birthdate;
                     }
                 }
-                var identifier = patient.patientIdentifier.identifier;
+                var identifier = patient.patientIdentifier != null ? patient.patientIdentifier.identifier : null;
                 if(_.contains(initialPatientUuids, patient.uuid)){
-                    identifier = patient.patientIdentifier.identifier+
-                        " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
+                    identifier += " <span class='recent-lozenge'>" + config.messages.recent + "</span>";
                 }
+                if (patient.onlyInMpi === true) {
+                    identifier += " <span class='recent-lozenge'>" + config.messages.onlyInMpi + "</span>";
+                }
+
                 var age = patient.person.age;
                 if(age == '' && widgetBirthdate != ''){
                     age = formatAge(widgetBirthdate);
@@ -299,6 +311,8 @@ function PatientSearchWidget(configuration){
         }
         afterSearchResultsUpdated = [];
     }
+    this.updateSearchResults = updateSearchResults;
+
 
     // remove any patients from a results list that are already in the search results
     // this is necessary because the searchOnIdentifiers performs multiple searchs and could return duplicates
@@ -363,7 +377,7 @@ function PatientSearchWidget(configuration){
             }
             else {
                 // otherwise, perform a new search, triggering it to auto-select if an exact identifier match
-                prepareForNewSearch();
+                cancelAnyExistingSearch();
                 doSearch(input.val(), 0, true);
                 return;
             }
@@ -373,12 +387,11 @@ function PatientSearchWidget(configuration){
         selectRow(highlightedKeyboardRowIndex);
     }
 
-    var prepareForNewSearch = function(){
+    var cancelAnyExistingSearch = function(){
         //if there is any search delay in progress, cancel it
         if(searchDelayTimer != undefined){
             window.clearTimeout(searchDelayTimer);
         }
-        reset();
     }
 
     var doKeyDown = function() {
@@ -589,7 +602,7 @@ function PatientSearchWidget(configuration){
             return false;
         }
 
-        prepareForNewSearch();
+        cancelAnyExistingSearch();
 
         var text = jq.trim(input.val());
         if(text.length >= config.minSearchCharacters){

@@ -27,21 +27,20 @@ import java.util.Date;
 public class MarkPatientDeadPageController {
     protected final Log log = LogFactory.getLog(this.getClass());
 
-    public void get(@SpringBean PageModel pageModel, @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride, @SpringBean("patientService") PatientService patientService, @RequestParam("patientId") String patientId) {
+    public void get(@SpringBean PageModel pageModel, @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride, @SpringBean("patientService") PatientService patientService, @RequestParam("patientId") Patient patient) {
         String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
 
-        Patient patient = patientService.getPatientByUuid(patientId);
+
         pageModel.put("birthDate", patient.getBirthdate());
         pageModel.put("patient", patient);
-        pageModel.put("patientId", patientId);
+        pageModel.put("patientId", patient.getId());
         pageModel.put("breadcrumbOverride", breadcrumbOverride);
         if (conceptId != null && !conceptId.contains("[a-zA-Z]+")) {
             pageModel.put("conceptAnswers", getConceptAnswers(Integer.parseInt(conceptId)));
         }
     }
 
-    public String post(@SpringBean("patientService") PatientService patientService, @RequestParam(value = "causeOfDeath", required = false) String causeOfDeath, @RequestParam(value = "dead", required = false) Boolean dead, @RequestParam(value = "deathDate", required = false) Date deathDate, @RequestParam("patientId") String patientId, UiUtils ui, @RequestParam(value = "returnUrl", required = false) String returnUrl) {
-        Patient patient = patientService.getPatientByUuid(patientId);
+    public String post(@SpringBean("patientService") PatientService patientService, @RequestParam(value = "causeOfDeath", required = false) String causeOfDeath, @RequestParam(value = "dead", required = false) Boolean dead, @RequestParam(value = "deathDate", required = false) Date deathDate, @RequestParam("patientId") Patient patient, UiUtils ui, @RequestParam(value = "returnUrl", required = false) String returnUrl) {
         try {
             Date date = new Date();
             if (dead != null && StringUtils.isNotBlank(causeOfDeath) && deathDate != null && !deathDate.before(patient.getBirthdate()) && !deathDate.after(date)) {
