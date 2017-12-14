@@ -29,7 +29,7 @@ export default class ObsAcrossEncountersController {
     fetchEncounters() {
         this.openmrsRest.get("encounter", {
             patient: this.config.patientUuid,
-            v: 'custom:(uuid,encounterDatetime,obs:(uuid,value,concept:(uuid))',
+            v: 'custom:(uuid,encounterDatetime,obs:(uuid,value,concept:(uuid),groupMembers)',
             limit: this.getMaxRecords(),
             fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge),
             order: this.order
@@ -75,8 +75,25 @@ export default class ObsAcrossEncountersController {
 
     getObservationForConcept(observations, conceptUuid) {
         for(var i = 0; i < observations.length; i++){
-            if(observations[i].concept.uuid === conceptUuid){
-                return observations[i];
+            var obs = observations[i];
+            if (angular.isDefined(obs.groupMembers) && obs.groupMembers.length != 0) {
+                //it is a group obs
+                for (var j = 0; j < obs.groupMembers.length; j++) {
+                    var groupMember = obs.groupMembers[j];
+                    if (groupMember.concept.uuid === conceptUuid) {
+                        obs = groupMember;
+                        break;
+                    }
+                }
+            }
+
+            if (obs.value != null && obs.concept.uuid === conceptUuid) {
+                if (angular.isDefined(obs.value.display)) {
+                    //If value is a concept
+                    obs.value = obs.value.display;
+                }
+
+                return obs;
             }
         }
         return {value: '-'};
