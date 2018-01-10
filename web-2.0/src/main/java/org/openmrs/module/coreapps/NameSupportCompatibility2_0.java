@@ -22,7 +22,7 @@ import org.openmrs.layout.name.NameTemplate;
 import org.springframework.stereotype.Component;
 
 @Component("coreapps.NameSupportCompatibility")
-@OpenmrsProfile(openmrsPlatformVersion = "2.0")
+@OpenmrsProfile(openmrsPlatformVersion = "2.*")
 public class NameSupportCompatibility2_0 implements NameSupportCompatibility {
 
 	@Override
