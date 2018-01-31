@@ -49,4 +49,7 @@ public class CoreAppsConstants {
    
    // the Sticky Note concept global property name
    public static final String CONCEPT_STICKY_NOTE_PROPERTY_NAME = "coreapps.conceptStickyNote";
+
+   // Condition list
+   public static final String MANAGE_CONDITIONS_PRIVILEGE = "Task: Manage Condition Lists";
 }

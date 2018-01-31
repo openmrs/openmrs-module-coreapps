@@ -137,6 +137,12 @@
         	</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
+				<artifactId>emrapi-condition-list</artifactId>
+				<scope>provided</scope>
+				<version>${emrapiVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
 				<artifactId>metadatamapping-api</artifactId>
 				<scope>provided</scope>
 				<version>${metadatamappingVersion}</version>

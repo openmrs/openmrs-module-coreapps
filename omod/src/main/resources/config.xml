@@ -345,5 +345,10 @@
         <description>Ability to delete a patient program via the program status widget</description>
     </privilege>
 
+    <privilege>
+        <name>Task: Manage Condition Lists</name>
+        <description>Able to activate/inactivate/void condition lists.</description>
+    </privilege>
+
 </module>
 

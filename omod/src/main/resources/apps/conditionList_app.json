@@ -1,0 +1,19 @@
+[
+  {
+    "id": "coreapps.conditionlist",
+    "label": "coreapps.conditionui.conditions",
+    "icon": "icon-medical",
+    "order": 100,
+    "extensions": [
+      {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.conditionlist",
+        "appId": "coreapps.conditionlist",
+        "extensionPointId": "patientDashboard.secondColumnFragments",
+        "extensionParams": {
+          "provider": "${project.parent.artifactId}",
+          "fragment": "conditionlist/conditions"
+        }
+      }
+    ]
+  }
+]
