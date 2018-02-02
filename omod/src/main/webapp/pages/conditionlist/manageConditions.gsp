@@ -105,7 +105,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
         <button class="cancel"
                 onclick="location.href = '${ ui.encodeHtml(returnUrl) }'">${ui.message("coreapps.cancel")}</button>
         <button id="conditionui-addNewCondition" class="confirm right"
-                onclick="location.href = '${ ui.pageLink("coreapps/conditionlist", "addcondition", [patientId: patient.uuid, returnUrl: returnUrl]) }'">
+                onclick="location.href = '${ ui.pageLink("coreapps/conditionlist", "addCondition", [patientId: patient.uuid, returnUrl: returnUrl]) }'">
             ${ui.message("coreapps.conditionui.addNewCondition")}
         </button>
     </div>

@@ -14,7 +14,6 @@
     ui.includeJavascript("coreapps", "conditionlist/lib/restangular.min.js")
     ui.includeJavascript("coreapps", "conditionlist/restful-services/restful-service.js");
     ui.includeJavascript("coreapps", "conditionlist/models/model.module.js")
-    ui.includeJavascript("coreapps", "conditionlist/models/condition.history.model.js")
     ui.includeJavascript("coreapps", "conditionlist/models/concept.model.js")
     ui.includeJavascript("coreapps", "conditionlist/models/condition.model.js")
     ui.includeJavascript("coreapps", "conditionlist/emr.messages.js")
@@ -33,7 +32,7 @@
         },
         {
             label: "${ ui.message("coreapps.conditionui.conditions") }",
-            link: '${ui.pageLink("coreapps/conditionlist", "manageconditions", [patientId: patient.id, returnUrl: returnUrl])}'
+            link: '${ui.pageLink("coreapps/conditionlist", "manageConditions", [patientId: patient.id, returnUrl: returnUrl])}'
         },
         {label: "${ui.message('coreapps.conditionui.addNewCondition')}"}
     ];
@@ -81,7 +80,7 @@
         <input type="submit" id="addConditionBtn" class="confirm right"
                value="${ui.message("coreapps.save")}" ng-click="validateCondition()"/>
         <button class="cancel"
-                onclick="location.href='${ui.pageLink("coreapps/conditionlist", "manageconditions", [patientId: patient.uuid, returnUrl: returnUrl])}'">
+                onclick="location.href='${ui.pageLink("coreapps/conditionlist", "manageConditions", [patientId: patient.uuid, returnUrl: returnUrl])}'">
             ${ ui.message("coreapps.cancel") }
         </button>
     </div>

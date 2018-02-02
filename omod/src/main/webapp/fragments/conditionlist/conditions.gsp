@@ -27,7 +27,7 @@
 
         <h3>${ui.message('coreapps.conditionui.conditions').toUpperCase()}</h3>
         <i class="icon-pencil edit-action right" title="${ui.message("coreapps.edit")}"
-           onclick="location.href = '${ui.pageLink("coreapps/conditionlist", "manageconditions", [patientId: patient.patient.uuid])}'"></i>
+           onclick="location.href = '${ui.pageLink("coreapps/conditionlist", "manageConditions", [patientId: patient.patient.uuid])}'"></i>
     </div>
 
     <div class="info-body">

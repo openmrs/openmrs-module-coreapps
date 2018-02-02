@@ -1,0 +1,66 @@
+.conditionStatus {
+  font-weight: bold;
+}
+
+form {
+  display: inline;
+}
+
+td {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+label {
+  padding-right: 10px;
+}
+
+.heading {
+  margin-bottom: 10px;
+}
+
+#status label {
+  display: inline;
+  padding-right: 20px;
+}
+
+.inline {
+  display: inline;
+}
+
+#condition > form {
+  width: 100%;
+}
+
+.horizontal {
+  display: table;
+}
+
+.horizontal > * {
+  display: table-cell;
+}
+
+form > div {
+  margin-bottom: 15px;
+
+}
+
+.conditions-table {
+  border: none;
+  width: 100%;
+}
+
+ul#concept-and-date {
+  min-width: 200px;
+  list-style: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+ul#concept-and-date .group {
+  display: inline;
+  padding-right: 20px;
+}
+
+.actions {
+  margin-top: 15px;
+}

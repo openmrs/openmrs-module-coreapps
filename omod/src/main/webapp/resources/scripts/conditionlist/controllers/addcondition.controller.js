@@ -25,7 +25,7 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
             RestfulService.post('condition', conditions, function (data) {
                 //emr.successAlert("conditionlist.updateCondition.success"); Messages not being resolved
                 emr.successAlert("Condition added successfully")
-                window.location = '/' + OPENMRS_CONTEXT_PATH + '/coreapps/conditionlist/manageconditions.page?patientId=' + $scope.patientUuid + '&';
+                window.location = '/' + OPENMRS_CONTEXT_PATH + '/coreapps/conditionlist/manageConditions.page?patientId=' + $scope.patientUuid + '&';
             }, function (error) {
                 //emr.errorAlert("conditionlist.updateCondition.error");
                 emr.errorAlert("Error Saving condition");
