@@ -24,7 +24,7 @@ import java.util.Collections;
  * 
  * @author owais.hussain@ihsinformatics.com
  */
-public class ManageconditionsPageController {
+public class ManageConditionsPageController {
 	
 	public void controller(PageModel model, @RequestParam("patientId") Patient patient,
 	        @RequestParam(value = "returnUrl", required = false) String returnUrl, UiUtils ui) {
