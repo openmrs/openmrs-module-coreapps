@@ -12,6 +12,7 @@ import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.adt.reporting.query.AwaitingAdmissionVisitQuery;
 import org.openmrs.module.reporting.common.SortCriteria;
 import org.openmrs.module.reporting.data.converter.MapElementConverter;
+import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.converter.PropertyConverter;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.visit.definition.VisitDataDefinition;
@@ -66,11 +67,11 @@ public class AwaitingAdmissionPageController {
 
         dsd.addColumn("mostRecentAdmissionRequestFromLocation",
                 libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
-                "", new MapElementConverter("fromLocation", null));
+                "", new MapElementConverter("fromLocation", new ObjectFormatter()));
 
         dsd.addColumn("mostRecentAdmissionRequestToLocation",
                 libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
-                "", new MapElementConverter("toLocation", null));
+                "", new MapElementConverter("toLocation", new ObjectFormatter()));
 
         dsd.addColumn("mostRecentAdmissionRequestDatetime",
                 libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
@@ -78,11 +79,11 @@ public class AwaitingAdmissionPageController {
 
         dsd.addColumn("mostRecentAdmissionRequestProvider",
                 libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
-                "", new MapElementConverter("provider", null));
+                "", new MapElementConverter("provider", new ObjectFormatter()));
 
         dsd.addColumn("mostRecentAdmissionRequestDiagnoses",
                 libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
-                "", new MapElementConverter("diagnoses", null));
+                "", new MapElementConverter("diagnoses", new AwaitingAdmissionDiagnosisFormatter()));
 
 
         // add the paper record identifier, if the definition is available (provided by the paper record module)

@@ -180,9 +180,7 @@
         </td>
         <td>${ ui.format(v.mostRecentAdmissionRequestToLocation) }</td>
         <td>
-            <% v.mostRecentAdmissionRequestDiagnoses.each { %>
-                ${ ui.format(it.diagnosis.codedAnswer ?: it.diagnosis.nonCodedAnswer) }${ it != v.mostRecentAdmissionRequestDiagnoses.last() ? ', ' : '' }
-            <% } %>
+            ${ ui.format(v.mostRecentAdmissionRequestDiagnoses) }
         </td>
         <td>
             <!-- TODO is there a better way to do this?  -->
