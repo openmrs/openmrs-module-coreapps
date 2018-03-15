@@ -96,7 +96,7 @@ public class DiagnosesFragmentController {
                                              @RequestParam("nonCodedObsId") Integer nonCodedObsId,
                                              @RequestParam("diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
                                              @SpringBean("obsService") ObsService obsService,
-                                             @SpringBean("diagnosisService") DiagnosisService diagnosisService,
+                                             @SpringBean("emrDiagnosisService") DiagnosisService diagnosisService,
                                              @SpringBean("conceptService") ConceptService conceptService
                                              ) throws Exception {
 
