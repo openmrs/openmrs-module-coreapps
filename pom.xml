@@ -32,6 +32,7 @@
 		<module>web-1.9</module>
 		<module>web-2.0</module>
 		<module>omod</module>
+		<module>api-2.2</module>
 	</modules>
 	
 	<properties>

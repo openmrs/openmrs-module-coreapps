@@ -52,6 +52,15 @@
     </require_modules>
 	<!-- / Required Modules -->
 
+	<!-- Conditional Resources -->
+	<conditionalResources>
+		<conditionalResource>
+			<path>/lib/coreapps-api-2.2-${project.parent.version}.jar</path>
+			<openmrsVersion>2.2.*</openmrsVersion>
+		</conditionalResource>
+	</conditionalResources>
+	<!-- / Conditional Resources -->
+
     <aware_of_modules>
         <aware_of_module version="${addresshierarchyVersion}">
             org.openmrs.module.addresshierarchy
