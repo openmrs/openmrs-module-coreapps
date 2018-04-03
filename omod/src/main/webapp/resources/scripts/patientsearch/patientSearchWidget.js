@@ -118,6 +118,9 @@ function PatientSearchWidget(configuration){
 
     var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
 
+        // clear out existing search results
+        reset();
+
         // set a flag to denote that we are starting a new search
         performingSearch = true;
         lastQuery = query;
@@ -363,7 +366,7 @@ function PatientSearchWidget(configuration){
             }
             else {
                 // otherwise, perform a new search, triggering it to auto-select if an exact identifier match
-                prepareForNewSearch();
+                cancelAnyExistingSearch();
                 doSearch(input.val(), 0, true);
                 return;
             }
@@ -373,12 +376,11 @@ function PatientSearchWidget(configuration){
         selectRow(highlightedKeyboardRowIndex);
     }
 
-    var prepareForNewSearch = function(){
+    var cancelAnyExistingSearch = function(){
         //if there is any search delay in progress, cancel it
         if(searchDelayTimer != undefined){
             window.clearTimeout(searchDelayTimer);
         }
-        reset();
     }
 
     var doKeyDown = function() {
@@ -589,7 +591,7 @@ function PatientSearchWidget(configuration){
             return false;
         }
 
-        prepareForNewSearch();
+        cancelAnyExistingSearch();
 
         var text = jq.trim(input.val());
         if(text.length >= config.minSearchCharacters){
