@@ -58,6 +58,11 @@
 			<path>/lib/coreapps-api-2.2-${project.parent.version}.jar</path>
 			<openmrsVersion>2.2.*</openmrsVersion>
 		</conditionalResource>
+
+		<conditionalResource>
+			<path>/lib/coreapps-api-pre2.2-${project.parent.version}.jar</path>
+			<openmrsVersion>1.9.* - 2.1.*</openmrsVersion>
+		</conditionalResource>
 	</conditionalResources>
 	<!-- / Conditional Resources -->
 
