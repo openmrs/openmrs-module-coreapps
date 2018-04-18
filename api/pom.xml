@@ -14,6 +14,13 @@
 
 	<dependencies>
 	
+		<dependency>
+		    <groupId>${project.parent.groupId}</groupId>
+		    <artifactId>${project.parent.artifactId}-api-pre2.2</artifactId>
+		    <version>${project.parent.version}</version>
+		    <scope>provided</scope>
+	    </dependency>
+	
 		<!-- 
 		Add other dependencies from parent's pom:
 		<dependency>
