@@ -54,7 +54,7 @@ public class EncounterDiagnosesFragmentController {
                 SimpleObject simple = diagnosesFragmentController.simplify(csr, ui, Context.getLocale());
                 jsDiagnosis = simple.toJson();
             }
-            jsForDiagnoses.add("{ diagnosis: diagnoses.CodedOrFreeTextConceptAnswer(" + jsDiagnosis + "), confirmed: " + (d.getCertainty().equals(Diagnosis.Certainty.CONFIRMED)) + ", primary: " + (d.getOrder().equals(Diagnosis.Order.PRIMARY)) + ", existingObs: " + d.getExistingObs().getId() + " }");
+            jsForDiagnoses.add("{ diagnosis: diagnoses.CodedOrFreeTextConceptAnswer(" + jsDiagnosis + "), confirmed: " + (d.getCertainty().equals(Diagnosis.Certainty.CONFIRMED)) + ", primary: " + (d.getOrder().equals(Diagnosis.Order.PRIMARY)) + ", existingObs: " + (d.getExistingObs() != null ? d.getExistingObs().getId() : "") + " }");
         }
 
         return jsForDiagnoses;
