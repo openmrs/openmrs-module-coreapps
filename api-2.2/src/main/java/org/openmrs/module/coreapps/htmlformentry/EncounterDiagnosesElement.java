@@ -16,10 +16,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Date;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
@@ -69,6 +73,10 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private HiddenFieldWidget hiddenDiagnoses;
     private ErrorWidget errorWidget;
 
+    private static final String VISIT_NOTE_ENCOUNTER_TYPE_UUID = "d7151f82-c1f3-4152-a605-2f9ea7414a79";
+    private static final Integer DIAGNOSIS_RANK_PRIMARY = 1;
+    private static final Integer DIAGNOSIS_RANK_SECONDARY = 2;
+
     public EncounterDiagnosesElement() {
     }
 
@@ -83,7 +91,8 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
             CodedOrFreeText coded = coreDiagnosis.getDiagnosis();
             diagnosis.setDiagnosis(new CodedOrFreeTextAnswer(coded.getCoded(), coded.getSpecificName(), coded.getNonCoded()));
             diagnosis.setCertainty(coreDiagnosis.getCertainty() == ConditionVerificationStatus.CONFIRMED ? Diagnosis.Certainty.CONFIRMED : Diagnosis.Certainty.PRESUMED);
-            diagnosis.setOrder(coreDiagnosis.getRank() == 1 ? Diagnosis.Order.PRIMARY : Diagnosis.Order.SECONDARY);
+            diagnosis.setOrder(coreDiagnosis.getRank() == DIAGNOSIS_RANK_PRIMARY ? Diagnosis.Order.PRIMARY : Diagnosis.Order.SECONDARY);
+            diagnosis.setExistingDiagnosis(coreDiagnosis.getDiagnosisId());
             diagnoses.add(diagnosis);
         }
         return diagnoses;
@@ -141,7 +150,6 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                     // and the UiUtils we have access to doesn't have a FragmentIncluder. That's okay, because we don't actually
                     // need to generate the HTML, so we can pass on this exception.
                     // (This is hacky, but I don't see a better way to do it.)
-                    ex.printStackTrace();
                     return "Submitting the form, so we don't generate HTML";
                 }
             }
@@ -159,7 +167,10 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         }
 
         try {
-            List<Diagnosis> diagnoses = parseDiagnoses(submitted, null);
+
+            JsonNode submittedList = new ObjectMapper().readTree(submitted);
+
+            List<Diagnosis> diagnoses = parseDiagnoses(submittedList, null);
             if (diagnoses.size() == 0 && required) {
                 return Collections.singleton(new FormSubmissionError(hiddenDiagnoses, "Required"));
             }
@@ -182,16 +193,21 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         return null;
     }
 
-    private List<Diagnosis> parseDiagnoses(String jsonList, Map<Integer, Obs> existingDiagnosisObs) throws IOException {
+    private List<Diagnosis> parseDiagnoses(JsonNode list, Map<Integer, Obs> existingDiagnosisObs) throws IOException {
         // low-priority: refactor this so that a Diagnosis can parse itself via jackson.
         // requires changing org.openmrs.module.emrapi.diagnosis.ConceptCodeDeserializer to also handle parse by id.
         List<Diagnosis> parsed = new ArrayList<Diagnosis>();
-        JsonNode list = new ObjectMapper().readTree(jsonList);
+
         for (JsonNode node : list) {
             CodedOrFreeTextAnswer answer = new CodedOrFreeTextAnswer(node.get("diagnosis").getTextValue(), conceptService);
             Diagnosis.Order diagnosisOrder = Diagnosis.Order.valueOf(node.get("order").getTextValue());
             Diagnosis.Certainty certainty = Diagnosis.Certainty.valueOf(node.get("certainty").getTextValue());
             Obs existingObs = null;
+            Integer existingDiagnosis = null;
+
+            if (node.path("existingDiagnosis").getNumberValue() != null) {
+                existingDiagnosis = node.get("existingDiagnosis").getIntValue();
+            }
             if (existingDiagnosisObs != null && node.path("existingObs").getNumberValue() != null) {
                 existingObs = existingDiagnosisObs.get(node.get("existingObs").getNumberValue());
             }
@@ -199,6 +215,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
             Diagnosis diagnosis = new Diagnosis(answer, diagnosisOrder);
             diagnosis.setCertainty(certainty);
             diagnosis.setExistingObs(existingObs);
+            diagnosis.setExistingDiagnosis(existingDiagnosis);
             parsed.add(diagnosis);
         }
         return parsed;
@@ -209,27 +226,68 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
         try {
             String jsonList = request.getParameter("encounterDiagnoses");
+
             JsonNode list = new ObjectMapper().readTree(jsonList);
+
+            FormEntryContext formEntrycontext = formEntrySession.getContext();
+
+            Set<org.openmrs.Diagnosis> existingDiagnoses = new HashSet<org.openmrs.Diagnosis>(Context.getDiagnosisService().getDiagnoses(formEntrycontext.getExistingPatient(), null));
+            Set<org.openmrs.Diagnosis> resubmittedDiagnoses = new HashSet<org.openmrs.Diagnosis>();
+
             for (JsonNode node : list) {
                 CodedOrFreeTextAnswer answer = new CodedOrFreeTextAnswer(node.get("diagnosis").getTextValue(), conceptService);
                 Diagnosis.Order diagnosisOrder = Diagnosis.Order.valueOf(node.get("order").getTextValue());
                 Diagnosis.Certainty certainty = Diagnosis.Certainty.valueOf(node.get("certainty").getTextValue());
+                Integer existingDiagnosis = null;
 
                 if (node.path("existingObs").getNumberValue() != null) {
                     JsonNode nd = node.get("existingObs");
                     System.out.println(nd);
                 }
 
-                org.openmrs.Diagnosis diagnosis = new org.openmrs.Diagnosis();
-                diagnosis.setEncounter(formEntrySession.getEncounter());
-                diagnosis.setCertainty(certainty == Diagnosis.Certainty.CONFIRMED ? ConditionVerificationStatus.CONFIRMED : ConditionVerificationStatus.PROVISIONAL);
-                diagnosis.setRank(diagnosisOrder == Diagnosis.Order.PRIMARY ? 1 : 2);
-                diagnosis.setPatient(formEntrySession.getPatient());
-                diagnosis.setDiagnosis(new CodedOrFreeText(answer.getCodedAnswer(), answer.getSpecificCodedAnswer(), answer.getNonCodedAnswer()));
+                if (node.path("existingDiagnosis").getNumberValue() != null) {
+                    existingDiagnosis = node.get("existingDiagnosis").getIntValue();
+                }
 
-                diagnosis.getEncounter().setEncounterType(Context.getEncounterService().getEncounterTypeByUuid("d7151f82-c1f3-4152-a605-2f9ea7414a79"));
-                Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
-                Context.getDiagnosisService().save(diagnosis);
+                org.openmrs.Diagnosis diagnosis;
+
+                Integer rank = diagnosisOrder == Diagnosis.Order.PRIMARY ? DIAGNOSIS_RANK_PRIMARY : DIAGNOSIS_RANK_SECONDARY;
+                ConditionVerificationStatus certaintyStatus = certainty == Diagnosis.Certainty.CONFIRMED ? ConditionVerificationStatus.CONFIRMED : ConditionVerificationStatus.PROVISIONAL;
+
+                if(existingDiagnosis !=null){
+
+                    diagnosis = Context.getDiagnosisService().getDiagnosis(existingDiagnosis);
+                    resubmittedDiagnoses.add(diagnosis);
+
+                    if(!diagnosis.getRank().equals(rank) || !diagnosis.getCertainty().equals(certaintyStatus)){
+                        diagnosis.setRank(rank);
+                        diagnosis.setCertainty(certaintyStatus);
+                        diagnosis.setDateChanged(new Date());
+                        diagnosis.setChangedBy(Context.getAuthenticatedUser());
+                        Context.getDiagnosisService().save(diagnosis);
+                    }
+
+                }else{
+                    diagnosis = new org.openmrs.Diagnosis();
+                    diagnosis.setDiagnosis(new CodedOrFreeText(answer.getCodedAnswer(), answer.getSpecificCodedAnswer(), answer.getNonCodedAnswer()));
+                    diagnosis.setEncounter(formEntrySession.getEncounter());
+                    diagnosis.setCertainty(certaintyStatus);
+                    diagnosis.setRank(rank);
+                    diagnosis.setPatient(formEntrySession.getPatient());
+                    diagnosis.getEncounter().setEncounterType(Context.getEncounterService().getEncounterTypeByUuid(VISIT_NOTE_ENCOUNTER_TYPE_UUID));
+                    Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
+                    Context.getDiagnosisService().save(diagnosis);
+                }
+
+            }
+
+            if (formEntrySession.getContext().getMode().equals(FormEntryContext.Mode.EDIT)) {
+                // Remove Diagnoses that were not resubmitted
+                Collection<org.openmrs.Diagnosis> diagnosesToVoid = CollectionUtils
+                        .subtract(existingDiagnoses, resubmittedDiagnoses);
+                for (org.openmrs.Diagnosis diagnosisToVoid : diagnosesToVoid) {
+                    Context.getDiagnosisService().voidDiagnosis(diagnosisToVoid, "Deleted Diagnosis");
+                }
             }
         }
         catch (JsonProcessingException ex) {
