@@ -34,9 +34,17 @@ public class PatientSearchWidgetFragmentController {
                            @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
                            @FragmentParam(value = "showLastViewedPatients", required = false) Boolean showLastViewedPatients,
                            @FragmentParam(value = "initialSearchFromParameter", required = false) String searchByParam,
-                           @FragmentParam(value = "registrationAppLink", required=false) String registrationAppLink) {
+                           @FragmentParam(value = "registrationAppLink", required=false) String registrationAppLink,
+                           @FragmentParam(value = "searchOnExactIdentifier", required=false) Boolean searchOnExactIdentifier) {
 
         showLastViewedPatients = showLastViewedPatients != null ? showLastViewedPatients : false;
+
+        // Determine version of OpenMRS to modify config parameter "searchOnExactIdentifier"
+        if(Double.valueOf(OpenmrsConstants.OPENMRS_VERSION_SHORT.substring(0,2)) >= 2.1) {
+            model.addAttribute("searchOnExactIdentifier", false);
+        }
+        else
+            model.addAttribute("searchOnExactIdentifier", true);
 
         model.addAttribute("minSearchCharacters",
                 administrationService.getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, "1"));

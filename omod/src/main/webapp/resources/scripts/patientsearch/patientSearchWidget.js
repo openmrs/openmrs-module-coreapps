@@ -6,7 +6,7 @@ function PatientSearchWidget(configuration){
         clearButtonId: 'patient-search-clear-button',
         dateFormat: 'DD MMM YYYY',
         locale: 'en',
-        defaultLocale: 'en'
+        defaultLocale: 'en',
     };
 
     var config = jq.extend({}, defaults, configuration);
@@ -50,6 +50,7 @@ function PatientSearchWidget(configuration){
     var performingSearch = false;  // flag to check if we are currently updating the search results
     var afterSearchResultsUpdated = [];  // stores a set of functions to execute after we update search results (currently we are only using this for the doEnter function)
     var lastQuery = null;
+    var searchOnExactIdentifier = false;
 
     // set the locale for Moment.js
     // Creole not currently supported by Moment and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
@@ -116,7 +117,7 @@ function PatientSearchWidget(configuration){
                     'person:(gender,age,birthdate,birthdateEstimated,personName),' +
                     'attributes:(value,attributeType:(name)))';
 
-    var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
+    var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch, searchOnExactIdentifier){
 
         // clear out existing search results
         reset();
@@ -131,12 +132,14 @@ function PatientSearchWidget(configuration){
         }
 
         query = jq.trim(query);
-        if (query.indexOf(' ') >= 0) {
+
+        // Add searchOnExactIdentifier to make search calls configurable.
+        // This is for OpenMRS 2.1 > due to inclusion of Lucene.
+        if (query.indexOf(' ') >= 0 || searchOnExactIdentifier === false) {
             searchOnIdentifierAndName(query, currRequestCount);
         }
-        else {
+        else
             searchOnExactIdentifierMatchThenIdentifierAndName(query, currRequestCount, autoSelectIfExactIdentifierMatch);
-        }
     }
 
     // not meant to be called based on entry into the search widget, takes in an array of identifiers: see https://issues.openmrs.org/browse/RA-1404 for potential use cases
@@ -241,7 +244,7 @@ function PatientSearchWidget(configuration){
     var updateSearchResults = function(results){
         var dataRows = [];
         if(results){
-            var results = removeDuplicates(results);
+            results = removeDuplicates(results);
             searchResultsData = searchResultsData.concat(results);
             _.each(results, function(patient) {
                 var birthdate = '';
