@@ -76,7 +76,7 @@ export default class ObsAcrossEncountersController {
     getObservationForConcept(observations, conceptUuid) {
         for(var i = 0; i < observations.length; i++){
             var obs = observations[i];
-            if (angular.isDefined(obs.groupMembers) && obs.groupMembers.length != 0) {
+            if (angular.isDefined(obs.groupMembers) && obs.groupMembers != null && obs.groupMembers.length != 0) {
                 //it is a group obs
                 for (var j = 0; j < obs.groupMembers.length; j++) {
                     var groupMember = obs.groupMembers[j];
