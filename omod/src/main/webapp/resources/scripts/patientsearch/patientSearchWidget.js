@@ -254,7 +254,7 @@ function PatientSearchWidget(configuration){
                         birthdate = "&nbsp;&nbsp; "+birthdate;
                     }
                 }
-                var identifier = patient.patientIdentifier.identifier;
+                var identifier = patient.patientIdentifier != null ? patient.patientIdentifier.identifier : null;
                 if(_.contains(initialPatientUuids, patient.uuid)){
                     identifier = patient.patientIdentifier.identifier+
                         " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
