@@ -85,11 +85,13 @@
             api.confirmed = !! item.confirmed;
             api.primary = !! item.primary;
             api.existingObs = item.existingObs;
+            api.existingDiagnosis = item.existingDiagnosis;
         } else {
             api.diagnosis = item;
             api.confirmed = false;
             api.primary = false;
             api.existingObs = null;
+            api.existingDiagnosis = null;
         }
 
         api.certainty = function() {
@@ -105,7 +107,8 @@
                 certainty: api.certainty(),
                 order: api.order(),
                 diagnosis: api.diagnosis.valueToSubmit(),
-                existingObs: api.existingObs
+                existingObs: api.existingObs,
+                existingDiagnosis: api.existingDiagnosis
             });
         };
 

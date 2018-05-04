@@ -155,7 +155,8 @@ describe("Diagnoses library", function() {
             certainty: "PRESUMED",
             order: "PRIMARY",
             diagnosis: "Non-Coded:Swine Flu",
-            existingObs: null
+            existingObs: null,
+            existingDiagnosis:null
         }));
     });
 
@@ -168,13 +169,15 @@ describe("Diagnoses library", function() {
             certainty: "PRESUMED",
             order: "PRIMARY",
             diagnosis: "Non-Coded:Swine Flu",
-            existingObs: null
+            existingObs: null,
+            existingDiagnosis:null
         }));
         expect(encounterDiagnoses.diagnoses[1].valueToSubmit()).toBe(JSON.stringify({
             certainty: "PRESUMED",
             order: "SECONDARY",
             diagnosis: "Non-Coded:Bird Flu",
-            existingObs: null
+            existingObs: null,
+            existingDiagnosis:null
         }));
     });
 
@@ -186,7 +189,8 @@ describe("Diagnoses library", function() {
             certainty: "PRESUMED",
             order: "PRIMARY",
             diagnosis: "ConceptName:840",
-            existingObs: null
+            existingObs: null,
+            existingDiagnosis:null
         }));
     });
 
@@ -250,13 +254,15 @@ describe("Diagnoses library", function() {
             certainty: "PRESUMED",
             order: "PRIMARY",
             diagnosis: "Non-Coded:Swine Flu",
-            existingObs: null
+            existingObs: null,
+            existingDiagnosis:null
         }));
         expect(encounterDiagnoses.diagnoses[1].valueToSubmit()).toBe(JSON.stringify({
             certainty: "PRESUMED",
             order: "SECONDARY",
             diagnosis: "Non-Coded:Bird Flu",
-            existingObs: null
+            existingObs: null,
+            existingDiagnosis:null
         }));
     });
 });
