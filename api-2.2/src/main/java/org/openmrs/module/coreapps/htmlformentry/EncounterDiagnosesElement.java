@@ -281,13 +281,12 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
             }
 
-            if (formEntrySession.getContext().getMode().equals(FormEntryContext.Mode.EDIT)) {
-                // Remove Diagnoses that were not resubmitted
-                Collection<org.openmrs.Diagnosis> diagnosesToVoid = CollectionUtils
-                        .subtract(existingDiagnoses, resubmittedDiagnoses);
-                for (org.openmrs.Diagnosis diagnosisToVoid : diagnosesToVoid) {
-                    Context.getDiagnosisService().voidDiagnosis(diagnosisToVoid, "Deleted Diagnosis");
-                }
+            // Remove Diagnoses that were not resubmitted
+            Collection<org.openmrs.Diagnosis> diagnosesToVoid = CollectionUtils
+                    .subtract(existingDiagnoses, resubmittedDiagnoses);
+
+            for (org.openmrs.Diagnosis diagnosisToVoid : diagnosesToVoid) {
+                Context.getDiagnosisService().voidDiagnosis(diagnosisToVoid, "Deleted Diagnosis");
             }
         }
         catch (JsonProcessingException ex) {
