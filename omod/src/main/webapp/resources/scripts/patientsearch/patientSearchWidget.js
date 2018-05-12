@@ -135,11 +135,13 @@ function PatientSearchWidget(configuration){
 
         // Add searchOnExactIdentifier to make search calls configurable.
         // This is for OpenMRS 2.1 > due to inclusion of Lucene.
+        // For more: https://issues.openmrs.org/browse/RA-1474
         if (query.indexOf(' ') >= 0 || searchOnExactIdentifier === false) {
             searchOnIdentifierAndName(query, currRequestCount);
         }
-        else
+        else {
             searchOnExactIdentifierMatchThenIdentifierAndName(query, currRequestCount, autoSelectIfExactIdentifierMatch);
+        }
     }
 
     // not meant to be called based on entry into the search widget, takes in an array of identifiers: see https://issues.openmrs.org/browse/RA-1404 for potential use cases

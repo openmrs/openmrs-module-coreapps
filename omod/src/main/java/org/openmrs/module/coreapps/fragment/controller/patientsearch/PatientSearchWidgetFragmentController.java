@@ -43,8 +43,9 @@ public class PatientSearchWidgetFragmentController {
         if(Double.valueOf(OpenmrsConstants.OPENMRS_VERSION_SHORT.substring(0,2)) >= 2.1) {
             model.addAttribute("searchOnExactIdentifier", false);
         }
-        else
+        else {
             model.addAttribute("searchOnExactIdentifier", true);
+        }
 
         model.addAttribute("minSearchCharacters",
                 administrationService.getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, "1"));
