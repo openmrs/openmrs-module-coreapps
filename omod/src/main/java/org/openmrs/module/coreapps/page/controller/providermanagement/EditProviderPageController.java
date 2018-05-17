@@ -39,14 +39,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public class EditProviderPageController {
 
@@ -138,6 +131,8 @@ public class EditProviderPageController {
     }
 
     public String post(@MethodParam("getAccount") @BindParams AccountDomainWrapper account, BindingResult errors,
+                       @RequestParam(value = "birthdate", required = false) Date birthdate,
+                       @RequestParam(value = "birthdateEstimated", required = false) Boolean birthdateEstimated,
                        @RequestParam(value = "userEnabled", defaultValue = "false") boolean userEnabled,
                        @RequestParam(value = "providerIdentifier", required = false) String providerIdentifier,
                        @ModelAttribute("personAddress") @BindParams PersonAddress address,
@@ -161,6 +156,12 @@ public class EditProviderPageController {
                 if (address != null ) {
                     address.setPreferred(true);
                     person.addAddress(address);
+                }
+                if (birthdate != null) {
+                    person.setBirthdate(birthdate);
+                    if ( birthdateEstimated != null && birthdateEstimated) {
+                        person.setBirthdateEstimated(birthdateEstimated);
+                    }
                 }
                 Provider provider = account.getProvider();
 
