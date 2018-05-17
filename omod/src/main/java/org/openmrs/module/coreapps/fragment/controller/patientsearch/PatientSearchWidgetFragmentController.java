@@ -34,8 +34,7 @@ public class PatientSearchWidgetFragmentController {
                            @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
                            @FragmentParam(value = "showLastViewedPatients", required = false) Boolean showLastViewedPatients,
                            @FragmentParam(value = "initialSearchFromParameter", required = false) String searchByParam,
-                           @FragmentParam(value = "registrationAppLink", required=false) String registrationAppLink,
-                           @FragmentParam(value = "searchOnExactIdentifier", required=false) Boolean searchOnExactIdentifier) {
+                           @FragmentParam(value = "registrationAppLink", required=false) String registrationAppLink) {
 
         showLastViewedPatients = showLastViewedPatients != null ? showLastViewedPatients : false;
 
