@@ -568,6 +568,20 @@ span.field-error {
                             options: genderOptions
                     ])}
 
+
+                    ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                            id: "birthdate",
+                            formFieldName: "birthdate",
+                            label: ui.message("coreapps.birthdate"),
+                            defaultDate: account.person.birthdate ? account.person.birthdate : null,
+                            useTime: false])}
+                <p>
+                    <label> ${ ui.message("uicommons.multipleInputDate.estimated.label") }</label>
+                    <input name="birthdateEstimated" type="checkbox" ${ account.person.birthdateEstimated ? 'checked' : '' }/>
+                    <span class="field-error"></span>
+                </p>
+
+
                     ${ ui.includeFragment("uicommons", "field/text", [
                             label: ui.message("providermanagement.identifier"),
                             formFieldName: "providerIdentifier",

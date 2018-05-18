@@ -1,8 +1,8 @@
 export default class ObsAcrossEncountersController {
-    constructor(openmrsRest, widgetsCommons) {
+    constructor($filter, openmrsRest, widgetsCommons) {
         'ngInject';
 
-        Object.assign(this, { openmrsRest, widgetsCommons });
+        Object.assign(this, { $filter, openmrsRest, widgetsCommons });
     }
 
     $onInit() {
@@ -29,7 +29,7 @@ export default class ObsAcrossEncountersController {
     fetchEncounters() {
         this.openmrsRest.get("encounter", {
             patient: this.config.patientUuid,
-            v: 'custom:(uuid,encounterDatetime,obs:(uuid,value,concept:(uuid),groupMembers)',
+            v: 'custom:(uuid,encounterDatetime,obs:(uuid,value,concept:(uuid,datatype),groupMembers)',
             limit: this.getMaxRecords(),
             fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge),
             order: this.order
@@ -65,24 +65,33 @@ export default class ObsAcrossEncountersController {
                 encounterDatetime: encounter.encounterDatetime,
                 obs: []
             };
+            var nullRow = true;
             angular.forEach(this.getConfigConceptsAsArray(this.config.concepts), (concept) => {
-                enc.obs.push(this.getObservationForConcept(encounter.obs, concept));
+                let obsValue = this.getObservationForConcept(encounter.obs, concept);
+                enc.obs.push(obsValue);
+                if(obsValue.value !== '-') {
+                    nullRow = false;
+                }
             });
 
-            this.encounters.push(enc);
+            if(!nullRow) {
+                this.encounters.push(enc);
+            }
         });
     }
 
     getObservationForConcept(observations, conceptUuid) {
         for(var i = 0; i < observations.length; i++){
             var obs = observations[i];
-            if (angular.isDefined(obs.groupMembers) && obs.groupMembers.length != 0) {
-                //it is a group obs
-                for (var j = 0; j < obs.groupMembers.length; j++) {
-                    var groupMember = obs.groupMembers[j];
-                    if (groupMember.concept.uuid === conceptUuid) {
-                        obs = groupMember;
-                        break;
+            if (obs.groupMembers != null) {
+                if (obs.groupMembers.length !== 0) {
+                    //it is a group obs
+                    for (var j = 0; j < obs.groupMembers.length; j++) {
+                        var groupMember = obs.groupMembers[j];
+                        if (groupMember.concept.uuid === conceptUuid) {
+                            obs = groupMember;
+                            break;
+                        }
                     }
                 }
             }
@@ -91,6 +100,13 @@ export default class ObsAcrossEncountersController {
                 if (angular.isDefined(obs.value.display)) {
                     //If value is a concept
                     obs.value = obs.value.display;
+                }
+                else if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
+                        '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
+                        '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].indexOf(obs.concept.datatype.uuid) > -1) {
+                    //If value is date, time or datetime
+                    var date = this.$filter('date')(new Date(obs.value), this.config.dateFormat);
+                    obs.value = date;
                 }
 
                 return obs;

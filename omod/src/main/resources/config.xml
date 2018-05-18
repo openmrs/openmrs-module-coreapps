@@ -268,9 +268,9 @@
 
     <globalProperty>
         <property>coreapps.conceptStickyNote</property>
-        <defaultValue>CIEL:162169</defaultValue>
+        <defaultValue>CIEL:165095</defaultValue>
         <description>
-            Mapping of the concept used for the Sticky Note. In the form of SOURCE:NUMBER.
+            Mapping of the concept used for the Sticky Note. In the form of SOURCE:CODE.
         </description>
     </globalProperty>
 
