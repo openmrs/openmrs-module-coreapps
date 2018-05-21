@@ -162,7 +162,7 @@ public class EditProviderPageController {
                     if ( birthdateEstimated != null && birthdateEstimated) {
                         person.setBirthdateEstimated(birthdateEstimated);
                     } else {
-                        person.setBirthdateEstimated(new Boolean(false));
+                        person.setBirthdateEstimated(Boolean.FALSE);
                     }
                 }
                 Provider provider = account.getProvider();

@@ -574,6 +574,7 @@ span.field-error {
                             formFieldName: "birthdate",
                             label: ui.message("coreapps.birthdate"),
                             defaultDate: account.person.birthdate ? account.person.birthdate : null,
+                            endDate: editDateFormat.format(new Date()),
                             useTime: false])}
                 <p>
                     <label> ${ ui.message("uicommons.multipleInputDate.estimated.label") }</label>
