@@ -633,7 +633,7 @@ span.field-error {
                                                 ])}
                                                 <% } else if ( attribute.attributeType.datatypeClassname == 'org.openmrs.module.coreapps.customdatatype.CodedConceptDatatype' ) { %>
                                                     <label>${attribute.attributeType.name}</label>
-                                                    <select id="coded-data-types" name="providerAttributeId_${attribute.providerAttributeId}"></select>
+                                                    <select id="coded-data-types_${attribute.providerAttributeId}" name="providerAttributeId_${attribute.providerAttributeId}"></select>
                                                     <script>
                                                         var conceptId = '${attribute.attributeType.datatypeConfig}';
                                                         getCodedConcepts(conceptId, 'providerAttributeId_${attribute.providerAttributeId}', '${attribute.valueReference}');
