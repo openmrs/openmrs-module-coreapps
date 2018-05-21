@@ -46,6 +46,7 @@
         var widgetConfig = {
             initialPatients: lastViewedPatients,
             doInitialSearch: ${ doInitialSearch ? "\"" + ui.escapeJs(doInitialSearch) + "\"" : "null" },
+            searchOnExactIdentifier: searchOnExactIdentifier,
             minSearchCharacters: ${ config.minSearchCharacters ?: 3 },
             afterSelectedUrl: '${ ui.escapeJs(config.afterSelectedUrl) }',
             breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }',

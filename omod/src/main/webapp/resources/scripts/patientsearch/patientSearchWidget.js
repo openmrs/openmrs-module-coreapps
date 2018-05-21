@@ -50,7 +50,6 @@ function PatientSearchWidget(configuration){
     var performingSearch = false;  // flag to check if we are currently updating the search results
     var afterSearchResultsUpdated = [];  // stores a set of functions to execute after we update search results (currently we are only using this for the doEnter function)
     var lastQuery = null;
-    var searchOnExactIdentifier = false;
 
     // set the locale for Moment.js
     // Creole not currently supported by Moment and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
