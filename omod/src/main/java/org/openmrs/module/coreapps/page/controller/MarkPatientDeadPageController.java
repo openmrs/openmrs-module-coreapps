@@ -1,4 +1,3 @@
-
 package org.openmrs.module.coreapps.page.controller;
 
 import org.apache.commons.lang.StringUtils;
@@ -7,8 +6,10 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
 import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -27,21 +29,27 @@ import java.util.Date;
 public class MarkPatientDeadPageController {
     protected final Log log = LogFactory.getLog(this.getClass());
 
-    public void get(@SpringBean PageModel pageModel, @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride, @SpringBean("patientService") PatientService patientService, @RequestParam("patientId") String patientId) {
+    public void get(@SpringBean PageModel pageModel, @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride, @SpringBean("patientService") PatientService patientService, @RequestParam("patientId") Patient patient) {
         String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
 
-        Patient patient = patientService.getPatientByUuid(patientId);
+
         pageModel.put("birthDate", patient.getBirthdate());
         pageModel.put("patient", patient);
-        pageModel.put("patientId", patientId);
+        pageModel.put("patientId", patient.getId());
         pageModel.put("breadcrumbOverride", breadcrumbOverride);
         if (conceptId != null && !conceptId.contains("[a-zA-Z]+")) {
             pageModel.put("conceptAnswers", getConceptAnswers(Integer.parseInt(conceptId)));
         }
+        List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
+
+        if(visits.size() > 0){
+            pageModel.put("lastVisitDate", visits.get(0).getStartDatetime());
+        } else {
+            pageModel.put("lastVisitDate", null);
+        }
     }
 
-    public String post(@SpringBean("patientService") PatientService patientService, @RequestParam(value = "causeOfDeath", required = false) String causeOfDeath, @RequestParam(value = "dead", required = false) Boolean dead, @RequestParam(value = "deathDate", required = false) Date deathDate, @RequestParam("patientId") String patientId, UiUtils ui, @RequestParam(value = "returnUrl", required = false) String returnUrl) {
-        Patient patient = patientService.getPatientByUuid(patientId);
+    public String post(@SpringBean("patientService") PatientService patientService, @RequestParam(value = "causeOfDeath", required = false) String causeOfDeath, @RequestParam(value = "dead", required = false) Boolean dead, @RequestParam(value = "deathDate", required = false) Date deathDate, @RequestParam("patientId") Patient patient, UiUtils ui, @RequestParam(value = "returnUrl", required = false) String returnUrl) {
         try {
             Date date = new Date();
             if (dead != null && StringUtils.isNotBlank(causeOfDeath) && deathDate != null && !deathDate.before(patient.getBirthdate()) && !deathDate.after(date)) {
@@ -54,7 +62,12 @@ public class MarkPatientDeadPageController {
                 patient.setCauseOfDeath(null);
             }
 
+
             patientService.savePatient(patient);
+
+            if (patient.isDead() && patient.getDeathDate() != null) {
+                actionAfterDeath(patient, patient.getDeathDate());
+            }
             return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "returnUrl", returnUrl));
         } catch (APIException e) {
             log.error(e.getMessage(), e);
@@ -69,6 +82,17 @@ public class MarkPatientDeadPageController {
             conceptAnswers = concept.getAnswers();
         }
         return conceptAnswers;
+    }
+
+    /**
+     * This Method closes all active visits when a patient dies.
+     */
+    private void actionAfterDeath(Patient patient, Date deathDate) {
+        VisitService visitService = Context.getVisitService();
+        List<Visit> visitList = visitService.getActiveVisitsByPatient(patient);
+        for (Visit visit : visitList) {
+            visitService.endVisit(visit, deathDate);
+        }
     }
 }
 

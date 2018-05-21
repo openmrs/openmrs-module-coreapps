@@ -81,6 +81,9 @@
             </span>
             <span class="death-info-extension">
                 <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.deathInfo", contextModel: appContextModel ]) %>
+                <% if (context.hasPrivilege("Task: Edit Vital Status")) { %>
+                <a href="${ ui.pageLink("coreapps", "markPatientDead",[patientId: patient.id]) }"><i class="icon-pencil edit-action" title="${ ui.message("coreapps.edit") }"></i></a>
+                <% } %>
             </span>
         </div>
     <% } %>
