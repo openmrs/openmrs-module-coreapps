@@ -6,7 +6,7 @@ function PatientSearchWidget(configuration){
         clearButtonId: 'patient-search-clear-button',
         dateFormat: 'DD MMM YYYY',
         locale: 'en',
-        defaultLocale: 'en'
+        defaultLocale: 'en',
     };
 
     var config = jq.extend({}, defaults, configuration);
@@ -116,7 +116,7 @@ function PatientSearchWidget(configuration){
                     'person:(gender,age,birthdate,birthdateEstimated,personName),' +
                     'attributes:(value,attributeType:(name)))';
 
-    var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
+    var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch, searchOnExactIdentifier){
 
         // clear out existing search results
         reset();
@@ -131,7 +131,11 @@ function PatientSearchWidget(configuration){
         }
 
         query = jq.trim(query);
-        if (query.indexOf(' ') >= 0) {
+
+        // Add searchOnExactIdentifier to make search calls configurable.
+        // This is for OpenMRS 2.1 > due to inclusion of Lucene.
+        // For more: https://issues.openmrs.org/browse/RA-1474
+        if (query.indexOf(' ') >= 0 || searchOnExactIdentifier === false) {
             searchOnIdentifierAndName(query, currRequestCount);
         }
         else {
@@ -241,7 +245,7 @@ function PatientSearchWidget(configuration){
     var updateSearchResults = function(results){
         var dataRows = [];
         if(results){
-            var results = removeDuplicates(results);
+            results = removeDuplicates(results);
             searchResultsData = searchResultsData.concat(results);
             _.each(results, function(patient) {
                 var birthdate = '';
