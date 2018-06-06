@@ -1,4 +1,4 @@
-function loadTemplates (visitId, patientId, fromEncounter, encounterCount) {
+function loadTemplates (visitId, patientId, fromEncounter, encounterCount,userId) {
     function loadVisit(visitElement) {
         var localVisitId = visitElement.data('visit-id');
 
@@ -7,7 +7,8 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount) {
             emr.fragmentActionLink("coreapps", "visit/visitDetails", "getVisitDetails", {
                 visitId: localVisitId,
                 fromEncounter: fromEncounter,
-                encounterCount: encounterCount
+                encounterCount: encounterCount,
+                userId:userId
             })
             ).success(function(data) {
                 $('.viewVisitDetails').removeClass('selected');
