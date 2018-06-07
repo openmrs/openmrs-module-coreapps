@@ -7,8 +7,8 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount,userId
             emr.fragmentActionLink("coreapps", "visit/visitDetails", "getVisitDetails", {
                 visitId: localVisitId,
                 fromEncounter: fromEncounter,
-                encounterCount: encounterCount,
-                userId:userId
+                encounterCount,
+                userId
             })
             ).success(function(data) {
                 $('.viewVisitDetails').removeClass('selected');
