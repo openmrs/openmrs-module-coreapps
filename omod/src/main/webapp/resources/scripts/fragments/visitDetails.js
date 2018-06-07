@@ -1,4 +1,4 @@
-function loadTemplates (visitId, patientId, fromEncounter, encounterCount,currntUserId) {
+function loadTemplates (visitId, patientId, fromEncounter, encounterCount,userId) {
     function loadVisit(visitElement) {
         var localVisitId = visitElement.data('visit-id');
 
@@ -8,7 +8,7 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount,currnt
                 visitId: localVisitId,
                 fromEncounter: fromEncounter,
                 encounterCount: encounterCount,
-                userId:currntUserId
+                userId:userId
             })
             ).success(function(data) {
                 $('.viewVisitDetails').removeClass('selected');
