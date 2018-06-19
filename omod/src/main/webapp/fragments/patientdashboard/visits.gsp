@@ -63,7 +63,7 @@
         <% if (param.encounterCount != null) { %>
             encounterCount = ${ param.encounterCount }; // This variable is defined in patientdashboard/patientDashboard.gsp
         <% } %>
-        loadTemplates(visitId, ${ patient.id }, fromEncounter, encounterCount);
+        loadTemplates(visitId, ${ patient.id }, fromEncounter, encounterCount,${userId});
 
         <%
             if ( activeVisit != null){

@@ -143,10 +143,9 @@ public class VisitDetailsFragmentControllerTest {
       UiUtils uiUtils = new TestUiUtils(administrationService);
       VisitDetailsFragmentController controller = new VisitDetailsFragmentController();
 
-      SimpleObject response = controller.getVisitDetails(mock(EmrApiProperties.class), coreAppsProperties, appFrameworkService, encounterService,
-            visit, null, null, uiUtils, sessionContext);
-      List<SimpleObject> actualEncounters = (List<SimpleObject>) response.get("encounters");
-      SimpleObject actualEncounter = actualEncounters.get(0);
+        SimpleObject response = controller.getVisitDetails(mock(EmrApiProperties.class), coreAppsProperties, appFrameworkService, encounterService, visit, authenticatedUser, null, null, uiUtils, sessionContext);
+        List<SimpleObject> actualEncounters = (List<SimpleObject>) response.get("encounters");
+        SimpleObject actualEncounter = actualEncounters.get(0);
 
       assertThat(response.get("startDatetime"), notNullValue());
       assertThat(response.get("stopDatetime"), notNullValue());
@@ -224,21 +223,29 @@ public class VisitDetailsFragmentControllerTest {
       VisitDetailsFragmentController controller = new VisitDetailsFragmentController();
       List<SimpleObject> encounters;
 
-      encounters = controller.getEncounterListAsJson(parseEncounterToJson, visitWrapper, new User(), 0, 50);
-      assertThat(encounters.size(), is(50));
+        UiSessionContext sessionContext = mock(UiSessionContext.class);
+        User authenticatedUser = new User();
+        when(sessionContext.getCurrentUser()).thenReturn(authenticatedUser);
+        AppContextModel appContextModel = new AppContextModel();
+        when(sessionContext.generateAppContextModel()).thenReturn(appContextModel);
 
-      encounters = controller.getEncounterListAsJson(parseEncounterToJson, visitWrapper, new User(), 50, 50);
-      assertThat(encounters.size(), is(50));
+        authenticatedUser.addRole(createRoleForUser());
 
-      encounters = controller.getEncounterListAsJson(parseEncounterToJson, visitWrapper, new User(), 0, 200);
-      assertThat(encounters.size(), is(100));
+        encounters = controller.getEncounterListAsJson(authenticatedUser, parseEncounterToJson, visitWrapper, new User(), 0, 50);
+        assertThat(encounters.size(), is(50));
 
-      encounters = controller.getEncounterListAsJson(parseEncounterToJson, visitWrapper, new User(), 99, 25);
-      assertThat(encounters.size(), is(1));
+        encounters = controller.getEncounterListAsJson(authenticatedUser, parseEncounterToJson, visitWrapper, new User(), 50, 50);
+        assertThat(encounters.size(), is(50));
 
-      encounters = controller.getEncounterListAsJson(parseEncounterToJson, visitWrapper, new User(), 100, 25);
-      assertThat(encounters.isEmpty(), is(true));
-   }
+        encounters = controller.getEncounterListAsJson(authenticatedUser, parseEncounterToJson, visitWrapper, new User(), 0, 200);
+        assertThat(encounters.size(), is(100));
+
+        encounters = controller.getEncounterListAsJson(authenticatedUser, parseEncounterToJson, visitWrapper, new User(), 99, 25);
+        assertThat(encounters.size(), is(1));
+
+        encounters = controller.getEncounterListAsJson(authenticatedUser, parseEncounterToJson, visitWrapper, new User(), 100, 25);
+        assertThat(encounters.isEmpty(), is(true));
+    }
 
    private List<Encounter> getTestEncounterList(int size) {
       List<Encounter> encounters = new ArrayList<Encounter>();
