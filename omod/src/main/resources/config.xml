@@ -364,5 +364,10 @@
         <description>Able to activate/inactivate/void condition lists.</description>
     </privilege>
 
+    <privilege>
+        <name>Task: coreapps.markPatientDead</name>
+        <description>Ability to Mark a patient dead/deceased.</description>
+    </privilege>
+
 </module>
 
