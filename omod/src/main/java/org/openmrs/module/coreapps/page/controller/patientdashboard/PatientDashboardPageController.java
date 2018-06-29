@@ -51,7 +51,7 @@ public class PatientDashboardPageController {
          @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
          @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
          @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
-         UiSessionContext sessionContext) 
+         UiSessionContext sessionContext)
    {
       if (!Context.hasPrivilege(CoreAppsConstants.PRIVILEGE_PATIENT_VISITS)) {
          return new Redirect("coreapps", "noAccess", "");
@@ -108,6 +108,8 @@ public class PatientDashboardPageController {
       model.addAttribute("encounterCount", coreAppsProperties.getPatientDashboardEncounterCount());
 
       applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
+
+      model.addAttribute("userId", sessionContext.getCurrentUser().getUserId());
 
       return null;
    }
