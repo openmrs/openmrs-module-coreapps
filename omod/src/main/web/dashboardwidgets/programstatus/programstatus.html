@@ -80,7 +80,7 @@
                 <h3>{{ workflow.concept.display }}</h3>
                 <p class="programstatus-field">
                     <select ng-model="$ctrl.input.initialWorkflowStateByWorkflow[workflow.uuid].state"
-                            ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isInitialState()  ">
+                            ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isInitialState() | orderBy: 'concept.display' ">
                         <option value=""></option>
                     </select>
                 </p>
@@ -164,7 +164,7 @@
             <h3>{{'coreapps.dashboardwidgets.programstatus.outcome' | translate }}:</h3>
             <p class="programstatus-field">
                 <select ng-model="$ctrl.input.outcome"
-                    ng-options="outcome.uuid as outcome.display for outcome in $ctrl.programOutcomes">
+                    ng-options="outcome.uuid as outcome.display for outcome in $ctrl.programOutcomes | orderBy: 'display' ">
                     <option value=""></option>
                 </select>
             </p>
@@ -194,7 +194,7 @@
                 <h3>{{'coreapps.dashboardwidgets.programstatus.transitionTo' | translate }}</h3>
                 <p class="programstatus-field">
                     <select ng-model="$ctrl.input.changeToStateByWorkflow[workflow.uuid].state"
-                            ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isNotCurrentState(workflow) ">
+                            ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isNotCurrentState(workflow) | orderBy: 'concept.display' ">
                         <option value=""></option>
                     </select>
                 </p>
