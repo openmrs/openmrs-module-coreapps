@@ -1,5 +1,4 @@
 <%
-    config.require("afterSelectedUrl")
     def breadcrumbOverride = config.breadcrumbOverride ?: ""
 
     ui.includeCss("uicommons", "datatables/dataTables_jui.css")
@@ -36,9 +35,18 @@
     <%      }
         }%>
     function handlePatientRowSelection() {
+    	var afterSelectedUrl = '${ ui.escapeJs(config.afterSelectedUrl) }';
         this.handle = function (row) {
             var uuid = row.uuid;
-            location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel('${ ui.escapeJs(config.afterSelectedUrl) }', { patientId: uuid, breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }'});
+            if(afterSelectedUrl && afterSelectedUrl != 'null') {
+            	location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel(afterSelectedUrl, { patientId: uuid, breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }'});
+        	} else {
+        		jQuery("#patient-search").attr("selected_uuid", uuid);
+        		jQuery("#patient-search").attr("selected_name", row.person.personName.display);
+        		jQuery("#patient-search").val("");
+        		jQuery("#patient-search-results-table tbody").html("");
+        		jQuery("#patient-search").change();
+        	}
         }
     }
     var handlePatientRowSelection =  new handlePatientRowSelection();
