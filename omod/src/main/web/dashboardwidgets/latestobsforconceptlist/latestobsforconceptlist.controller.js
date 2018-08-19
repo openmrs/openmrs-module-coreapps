@@ -51,7 +51,7 @@ export default class LatestObsForConceptListController {
                 }
             });
 
-	        if (angular.isUndefined(this.maxAgeInDays)) {
+            if (angular.isUndefined(this.maxAgeInDays)) {
                 this.noDataMessage = this.allObsInConceptList.length > 0 ? '' : 'None in the past ' + this.maxAgeInDays + ' days', '';
             } else {
                 this.noDataMessage = 'None';

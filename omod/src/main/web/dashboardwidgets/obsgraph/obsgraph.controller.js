@@ -17,7 +17,7 @@ export default class ObsGraphController {
         this.labels = [];
         this.data = [[]];
         
-        this.noDataMessage = undefined;
+        this.noDataMessage = void 0;
 
         this.openmrsRest.setBaseAppPath("/coreapps");
 

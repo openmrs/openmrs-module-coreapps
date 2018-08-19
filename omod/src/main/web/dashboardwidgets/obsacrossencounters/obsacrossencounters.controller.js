@@ -21,7 +21,7 @@ export default class ObsAcrossEncountersController {
         if (angular.isDefined(this.maxAgeInDays)) {
             this.noDataMessage = this.encounters.length > 0 ? '' : 'None in the past ' + this.maxAgeInDays + ' days', '';
         } else {
-	        this.noDataMessage = 'None';
+            this.noDataMessage = 'None';
         }
 
 
