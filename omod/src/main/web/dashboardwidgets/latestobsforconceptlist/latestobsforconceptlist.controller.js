@@ -7,8 +7,9 @@ export default class LatestObsForConceptListController {
 
     $onInit() {
         this.maxConceptCount = 10;
-        this.maxAgeInDays = undefined;
+        this.maxAgeInDays = void 0;
         this.obs = [];
+        this.allObsInConceptList = [];
 
         this.openmrsRest.setBaseAppPath("/coreapps");
 
@@ -45,9 +46,17 @@ export default class LatestObsForConceptListController {
                         }
 
                         this.obs.push(obs);
+                        this.allObsInConceptList.push(obs);
                     }
                 }
             });
+
+	        if (angular.isUndefined(this.maxAgeInDays)) {
+                this.noDataMessage = this.allObsInConceptList.length > 0 ? '' : 'None in the past ' + this.maxAgeInDays + ' days', '';
+            } else {
+                this.noDataMessage = 'None';
+            }
+
         }
     }
 }

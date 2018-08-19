@@ -6,6 +6,6 @@
         <div class="tag" ng-if="visit.encounterType !== ''">{{visit.encounterType}}</div>
     </li>
     <p ng-if="$ctrl.visits.length == 0">
-        None
+    	{{$ctrl.noDataMessage}}
     </p>
 </ul>

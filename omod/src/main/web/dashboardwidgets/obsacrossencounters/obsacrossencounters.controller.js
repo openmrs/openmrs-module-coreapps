@@ -9,11 +9,22 @@ export default class ObsAcrossEncountersController {
         this.order = 'desc';
         this.concepts = [];
         this.encounters = [];
+        this.maxAgeInDays = void 0;
 
         this.openmrsRest.setBaseAppPath("/coreapps");
 
+        this.maxAgeInDays = this.widgetsCommons.maxAgeToDays(this.config.maxAge);
+
         this.fetchConcepts();
         this.fetchEncounters();
+
+        if (angular.isDefined(this.maxAgeInDays)) {
+            this.noDataMessage = this.encounters.length > 0 ? '' : 'None in the past ' + this.maxAgeInDays + ' days', '';
+        } else {
+	        this.noDataMessage = 'None';
+        }
+
+
     }
 
     fetchConcepts() {
