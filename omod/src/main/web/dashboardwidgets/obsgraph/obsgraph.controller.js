@@ -16,6 +16,8 @@ export default class ObsGraphController {
         this.series = [];
         this.labels = [];
         this.data = [[]];
+        
+        this.noDataMessage = void 0;
 
         this.openmrsRest.setBaseAppPath("/coreapps");
 
@@ -47,5 +49,12 @@ export default class ObsGraphController {
                 }
             }
         })
+        
+        if (angular.isDefined(this.maxAgeInDays)) {
+            this.noDataMessage = this.series.length > 0 ? '' : 'None in the past ' + this.maxAgeInDays + ' days', '';
+        } else {
+            this.noDataMessage = 'None';
+        }    
+        
     }
 }
