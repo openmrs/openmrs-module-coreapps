@@ -8,5 +8,5 @@
             chart-series="$ctrl.series"></canvas>
 </div>
 <div ng-if="$ctrl.series.length === 0">
-    None
+    {{$ctrl.noDataMessage}}
 </div>

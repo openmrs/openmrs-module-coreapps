@@ -9,10 +9,19 @@ export default class VisitByEncounterTypeController {
         this.visits = [];
         this.serverUrl = "";
 
+        // Placeholder message for when no data is present
+        this.noDataMessage = void 0;
+
+        // Max age of visits to display 
+        this.maxAgeInDays = void 0;
+
         this.openmrsRest.setBaseAppPath("/coreapps");
         this.openmrsRest.getServerUrl().then((result) => {
             this.serverUrl = result;
         });
+
+        // Parse maxAge to day count
+        this.maxAgeInDays = this.widgetsCommons.maxAgeToDays(this.config.maxAge);
 
         //fetchVisits
         this.openmrsRest.get('visit', {
@@ -23,6 +32,12 @@ export default class VisitByEncounterTypeController {
         }).then((response) => {
             this.getVisits(response.results);
         })
+
+        if (angular.isDefined(this.maxAgeInDays)) {
+        	   this.noDataMessage = this.visits.length > 0 ? '' : 'None in the past ' + this.maxAgeInDays + ' days', '';
+        } else {
+        				this.noDataMessage = 'None';
+        }
     }
 
     getVisits(visits) {

@@ -7,7 +7,7 @@ export default class ObsGraphController {
     
     $onInit() {
         // Max age of obs to display
-        this.maxAgeInDays = undefined;
+        this.maxAgeInDays = void 0;
 
         // Concept info
         this.concept = {};
@@ -16,6 +16,9 @@ export default class ObsGraphController {
         this.series = [];
         this.labels = [];
         this.data = [[]];
+
+        // Placeholder message for when no data is present
+        this.noDataMessage = void 0;
 
         this.openmrsRest.setBaseAppPath("/coreapps");
 
@@ -47,5 +50,11 @@ export default class ObsGraphController {
                 }
             }
         })
+
+        if (angular.isDefined(this.maxAgeInDays)) {
+        				this.noDataMessage = this.series.length > 0 ? '' : 'None in the past ' + this.maxAgeInDays + ' days', '';
+        } else {
+        				this.noDataMessage = 'None';
+        }
     }
 }
