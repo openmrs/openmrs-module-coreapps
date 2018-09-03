@@ -81,7 +81,8 @@
                 birthdateColHeader: '${ ui.message("coreapps.birthdate") }',
                 ageInMonths: '${ ui.message("coreapps.age.months") }',
                 ageInDays: '${ ui.message("coreapps.age.days") }'
-            }
+            },
+            hideFilters: ${ config.hideFilters }
         };
 
         new PatientSearchWidget(widgetConfig);
@@ -90,8 +91,15 @@
 
 <form method="get" id="patient-search-form" onsubmit="return false">
     <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off" <% if (doInitialSearch) { %>value="${doInitialSearch}"<% } %>/><i id="patient-search-clear-button" class="small icon-remove-sign"></i>
+    <div id="patient-search-filter" <%  if (config.hideFilters) { %>hidden<% } %>>
+	    <input type="number" id="filter-age" placeholder="${ ui.message('coreapps.age') }"  onchange="jQuery('#patient-search').focus();"/>
+		<select id="filter-gender" onchange="jQuery('#patient-search').focus();">
+			<option value="" selected>${ ui.message("coreapps.gender") }</option>
+			<option value="M">${ ui.message("coreapps.gender.M") }</option>
+			<option value="F">${ ui.message("coreapps.gender.F") }</option>
+		</select>
+	</div>
     <% if(patientSearchExtensions){
-
         patientSearchExtensions.each {
             // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
             def configs = [:];

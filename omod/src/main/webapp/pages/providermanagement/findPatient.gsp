@@ -49,7 +49,8 @@ ${ ui.message("coreapps.provider.search") }
                 [ afterSelectedUrl: afterSelectedUrl,
                   rowSelectionHandler: "selectPatientHandler",
                   initialSearchFromParameter: "search",
-                  showLastViewedPatients: 'false' ])}
+                  showLastViewedPatients: 'false',
+                  hideFilters: true ])}
     </div>
 
 </div>
