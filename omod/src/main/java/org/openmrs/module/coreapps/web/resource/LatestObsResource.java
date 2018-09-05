@@ -36,7 +36,7 @@ import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.PatientR
 
 @Resource(name = RestConstants.VERSION_1 + "/latestobs", order = 1, supportedClass = Obs.class, supportedOpenmrsVersions = {
 		"1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*" })
-public class ObsResource extends ObsResource1_11 {
+public class LatestObsResource extends ObsResource1_11 {
 	
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
