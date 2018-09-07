@@ -37,6 +37,9 @@
     function handlePatientRowSelection() {
     	var afterSelectedUrl = '${ ui.escapeJs(config.afterSelectedUrl) }';
         this.handle = function (row) {
+            if(!row || !row.uuid) {
+            	return;
+            }
             var uuid = row.uuid;
             if(afterSelectedUrl && afterSelectedUrl != 'null') {
             	location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel(afterSelectedUrl, { patientId: uuid, breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }'});
@@ -92,8 +95,8 @@
 <form method="get" id="patient-search-form" onsubmit="return false">
     <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off" <% if (doInitialSearch) { %>value="${doInitialSearch}"<% } %>/><i id="patient-search-clear-button" class="small icon-remove-sign"></i>
     <div id="patient-search-filter" <%  if (config.hideFilters) { %>hidden<% } %>>
-	    <input type="number" id="filter-age" placeholder="${ ui.message('coreapps.age') }"  onchange="jQuery('#patient-search').focus();"/>
-		<select id="filter-gender" onchange="jQuery('#patient-search').focus();">
+	    <input class="patient-filter" type="number" id="filter-age" placeholder="${ ui.message('coreapps.age') }"  onchange="jQuery('#patient-search').focus();"/>
+		<select class="patient-filter" id="filter-gender" onchange="jQuery('#patient-search').focus();">
 			<option value="" selected>${ ui.message("coreapps.gender") }</option>
 			<option value="M">${ ui.message("coreapps.gender.M") }</option>
 			<option value="F">${ ui.message("coreapps.gender.F") }</option>
