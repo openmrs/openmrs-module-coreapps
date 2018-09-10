@@ -265,7 +265,10 @@ function PatientSearchWidget(configuration){
                 
             // apply filters
             var matchedPatient = true;
-            if(jq("#filter-age").val()) {
+            if(jq("#filter-age").val() && jq("#filter-gender").val()) {
+            	matchedPatient = age == jq("#filter-age").val() &&
+            		patient.person.gender == jq("#filter-gender").val()
+            } else if(jq("#filter-age").val()) {
             	matchedPatient = age == jq("#filter-age").val();
            	} else if(jq("#filter-gender").val()) {
            		matchedPatient = patient.person.gender == jq("#filter-gender").val();
@@ -364,7 +367,7 @@ function PatientSearchWidget(configuration){
     var doKeyEnter = function() {
         // if no rows are currently highlighted
         if (highlightedKeyboardRowIndex == undefined){
-            if(dTable && dTable.fnGetNodes().length == 1) {
+            if(dTable && dTable.fnGetNodes().length == 1 && !"patient-filter" == this.event.target.className) {
                 // if there is only one row in the result set, automatically select that row
                 // (so that you can scan a patient id and have it automatically  load that patient dashboard)
                 selectRow(0);
