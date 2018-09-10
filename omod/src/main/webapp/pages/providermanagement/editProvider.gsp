@@ -498,7 +498,8 @@ span.field-error {
                     ${ ui.includeFragment("coreapps", "patientsearch/patientSearchWidget",
                             [ afterSelectedUrl: afterSelectedUrl,
                               rowSelectionHandler: "selectPatientHandler",
-                              showLastViewedPatients: 'false' ])}
+                              showLastViewedPatients: 'false',
+                              hideFilters: true ])}
                 </p>
                 <br><br>
                 <p>

@@ -75,7 +75,7 @@ function PatientSearchWidget(configuration){
 
     if(config.initialPatients){
         _.each(config.initialPatients, function(p){
-            //only add the uuid since it is only one we need to reference later
+        	//only add the uuid since it is only one we need to reference later
             initialPatientData.push({uuid: p.uuid});
             initialPatientUuids.push(p.uuid);
             var widgetBirthdate = p.widgetBirthdate;
@@ -240,55 +240,63 @@ function PatientSearchWidget(configuration){
 
     var updateSearchResults = function(results){
         var dataRows = [];
-        if(results){
-            var results = removeDuplicates(results);
-            searchResultsData = searchResultsData.concat(results);
-            _.each(results, function(patient) {
-                var birthdate = '';
-                var widgetBirthdate = patient.person.birthdate;
-                if(patient.person.birthdate){
-                    birthdate = moment(patient.person.birthdate).format(configuration.dateFormat);
-                    if( patient.person.birthdateEstimated ){
-                        birthdate = "~ "+birthdate;
-                    }else{
-                        birthdate = "&nbsp;&nbsp; "+birthdate;
-                    }
+        var results = removeDuplicates(results);
+        searchResultsData = searchResultsData.concat(results);
+        _.each(results, function(patient) {
+        	var birthdate = '';
+            var widgetBirthdate = patient.person.birthdate;
+            if(patient.person.birthdate){
+            	birthdate = moment(patient.person.birthdate).format(configuration.dateFormat);
+                if( patient.person.birthdateEstimated ){
+                	birthdate = "~ "+birthdate;
+                }else{
+                	birthdate = "&nbsp;&nbsp; "+birthdate;
                 }
-                var identifier = patient.patientIdentifier != null ? patient.patientIdentifier.identifier : null;
-                if(_.contains(initialPatientUuids, patient.uuid)){
-                    identifier = patient.patientIdentifier.identifier+
-                        " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
-                }
-                var age = patient.person.age;
-                if(age == '' && widgetBirthdate != ''){
-                    age = formatAge(widgetBirthdate);
-                }
-                var dataRow = [identifier, patient.person.personName.display, patient.person.gender,
-                    age, birthdate];
-                jq.each(attributeTypes, function(index, typeName){
-                    var attributeValue = "";
-                    jq.each(patient.attributes, function(index, attribute) {
-                        var attrType = attribute.attributeType;
-                        if (attrType != null && !attribute.voided && typeName == attrType.name) {
-                            if(attribute.value != null) {
-                                if(!attribute.value.display) {
-                                    attributeValue = attribute.value;
-                                }else{
-                                    attributeValue = attribute.value.display;
-                                }
-                            }
-                            return false;
-                        }
-                    });
-                    dataRow.push(attributeValue);
-                });
-                dataRows.push(dataRow);
-            });
-        }else if(config.initialPatients){
-            //show the recently viewed
-            searchResultsData = initialPatientData;
-            dataRows = initialData;
-        }
+            }
+            var identifier = patient.patientIdentifier != null ? patient.patientIdentifier.identifier : null;
+            if(_.contains(initialPatientUuids, patient.uuid)){
+            	identifier = patient.patientIdentifier.identifier+
+                	" <span class='recent-lozenge'>"+config.messages.recent+"</span>";
+            }
+            var age = patient.person.age;
+            if(age == '' && widgetBirthdate != ''){
+            	age = formatAge(widgetBirthdate);
+            }
+                
+            // apply filters
+            var matchedPatient = true;
+            if(jq("#filter-age").val() && jq("#filter-gender").val()) {
+            	matchedPatient = age == jq("#filter-age").val() &&
+            		patient.person.gender == jq("#filter-gender").val()
+            } else if(jq("#filter-age").val()) {
+            	matchedPatient = age == jq("#filter-age").val();
+           	} else if(jq("#filter-gender").val()) {
+           		matchedPatient = patient.person.gender == jq("#filter-gender").val();
+           	}
+            	
+            if(matchedPatient) {
+	        	var dataRow = [identifier, patient.person.personName.display, patient.person.gender,
+	            	age, birthdate];
+	            jq.each(attributeTypes, function(index, typeName){
+	            	var attributeValue = "";
+	                jq.each(patient.attributes, function(index, attribute) {
+	                	var attrType = attribute.attributeType;
+	                    if (attrType != null && !attribute.voided && typeName == attrType.name) {
+	                    	if(attribute.value != null) {
+	                        	if(!attribute.value.display) {
+	                            	attributeValue = attribute.value;
+	                            }else{
+	                            	attributeValue = attribute.value.display;
+	                            }
+	                        }
+	                        return false;
+	                    }
+	                });
+	                dataRow.push(attributeValue);
+	            });
+	            dataRows.push(dataRow);
+            }
+        });
 
         dTable.fnAddData(dataRows);
         refreshTable();
@@ -359,7 +367,7 @@ function PatientSearchWidget(configuration){
     var doKeyEnter = function() {
         // if no rows are currently highlighted
         if (highlightedKeyboardRowIndex == undefined){
-            if(dTable && dTable.fnGetNodes().length == 1) {
+            if(dTable && dTable.fnGetNodes().length == 1 && !"patient-filter" == this.event.target.className) {
                 // if there is only one row in the result set, automatically select that row
                 // (so that you can scan a patient id and have it automatically  load that patient dashboard)
                 selectRow(0);
@@ -577,6 +585,16 @@ function PatientSearchWidget(configuration){
         }
     });
 
+
+    var search = function() {
+    	if (!performingSearch) {
+            doKeyEnter();
+        }
+        else {
+            afterSearchResultsUpdated.push(doKeyEnter)
+        }
+    }
+    
     /***************** SETUP KEYBOARD AND MOUSE EVENT HANDLERS **************/
 
     // handle the clear button
@@ -615,6 +633,10 @@ function PatientSearchWidget(configuration){
         return false;
     });
 
+    jQuery(".patient-filter").change(function() {
+    	search();
+    });
+    
     //catch control keys to stop the cursor in the input box from moving.
     input.keydown(function(event) {
         var kc = event.keyCode;
@@ -623,12 +645,7 @@ function PatientSearchWidget(configuration){
         // we "cache" enter keystrokes so that they will be handled after the search is complete; this is to handle typing
         // or scanning exact-match patient identifiers without requiring an additional keystroke
         if (kc == 13) {
-            if (!performingSearch) {
-                doKeyEnter();
-            }
-            else {
-                afterSearchResultsUpdated.push(doKeyEnter)
-            }
+        	search();
             return false;
         }
 
