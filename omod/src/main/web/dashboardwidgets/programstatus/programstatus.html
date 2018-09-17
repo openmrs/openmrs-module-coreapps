@@ -75,7 +75,7 @@
                 </select>
             </p>
         </fieldset>
-        <div ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
+        <div ng-repeat="workflow in $ctrl.program.workflows track by $index" ng-show="$ctrl.program.workflows.length != 0">
             <fieldset class="programstatus-fieldset">
                 <h3>{{ workflow.concept.display }}</h3>
                 <p class="programstatus-field">
@@ -184,7 +184,7 @@
 
         <!-- workflow sections -->
 
-        <div class="workflow-section" ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
+        <div class="workflow-section" ng-repeat="workflow in $ctrl.program.workflows track by $index" ng-show="$ctrl.program.workflows.length != 0">
             <!-- TODO review the use of the "isToday" functionality -->
             <h3 class="workflow-header">{{ workflow.concept.display }}
                 <i ng-show="$ctrl.canEditProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete() && !$ctrl.isToday($ctrl.sortedStatesByWorkflow[workflow.uuid].startDate)" ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)" class="icon-pencil"/>

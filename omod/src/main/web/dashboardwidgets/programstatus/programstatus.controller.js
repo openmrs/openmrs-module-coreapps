@@ -149,12 +149,12 @@ export default class ProgramStatusController {
     fetchProgram() {
         return this.openmrsRest.get('program', {
             uuid: this.config.program,
-            v: 'custom:display,uuid,outcomesConcept:(uuid),allWorkflows:(uuid,concept:(display),states:(uuid,initial,terminal,concept:(display))'
+            v: 'custom:display,uuid,outcomesConcept:(uuid),workflows:(uuid,concept:(display),states:(uuid,initial,terminal,concept:(display))'
         }).then((response) => {
             // TODO handle error cases, program doesn't exist
             this.program = response;
 
-            angular.forEach(this.program.allWorkflows, (workflow) => {
+            angular.forEach(this.program.workflows, (workflow) => {
                 this.statesByWorkflow[workflow.uuid] = workflow.states;
                 angular.forEach(workflow.states, (state) => {
                     this.statesByUuid[state.uuid] = state;
@@ -386,7 +386,7 @@ export default class ProgramStatusController {
 
     getWorkflowForState(state) {
         let result;
-        angular.forEach(this.program.allWorkflows, (workflow) => {
+        angular.forEach(this.program.workflows, (workflow) => {
             angular.forEach(workflow.states, (workflowState) => {
                 if (state.uuid == workflowState.uuid) {
                     result = workflow;
