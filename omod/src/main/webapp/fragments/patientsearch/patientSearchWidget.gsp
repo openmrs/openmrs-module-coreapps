@@ -117,7 +117,7 @@
 
 <div id="patient-search-results"></div>
 <%  if (registrationAppLink ?: false) { %>
-<div>
-${ ui.message("coreapps.findPatient.registerPatient.label") }&nbsp;&nbsp;<a id="patient-search-register-patient" class="button" href="/${contextPath}/${registrationAppLink}">${ui.message("registrationapp.registration.label")}</a>
+<div id="register-patient-link">
+    <label>${ ui.message("coreapps.findPatient.registerPatient.label") }&nbsp;&nbsp;</label><a id="patient-search-register-patient" class="button" href="/${contextPath}/${registrationAppLink}">${ui.message("registrationapp.registration.label")}</a>
 </div>
 <%  } %>
