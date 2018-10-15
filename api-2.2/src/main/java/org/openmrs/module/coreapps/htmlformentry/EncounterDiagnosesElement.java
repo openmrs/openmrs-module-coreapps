@@ -73,7 +73,6 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private HiddenFieldWidget hiddenDiagnoses;
     private ErrorWidget errorWidget;
 
-    private static final String VISIT_NOTE_ENCOUNTER_TYPE_UUID = "d7151f82-c1f3-4152-a605-2f9ea7414a79";
     private static final Integer DIAGNOSIS_RANK_PRIMARY = 1;
     private static final Integer DIAGNOSIS_RANK_SECONDARY = 2;
 
@@ -274,7 +273,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                     diagnosis.setCertainty(certaintyStatus);
                     diagnosis.setRank(rank);
                     diagnosis.setPatient(formEntrySession.getPatient());
-                    diagnosis.getEncounter().setEncounterType(Context.getEncounterService().getEncounterTypeByUuid(VISIT_NOTE_ENCOUNTER_TYPE_UUID));
+                    diagnosis.getEncounter().setEncounterType(formEntrySession.getForm().getEncounterType());
                     Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
                     Context.getDiagnosisService().save(diagnosis);
                 }
