@@ -60,13 +60,9 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private boolean required = false;
     private UiUtils uiUtils;
     private String selectedDiagnosesTarget;
-
     private EmrApiProperties emrApiProperties;
-
     private ConceptService conceptService;
-
     private AdtService adtService;
-
     private DispositionType dispositionTypeForPriorDiagnoses = null;
 
     // we do not actually use the hiddenDiagnoses widget (the form field name is hardcoded) but we need it to register errorWidget
@@ -222,68 +218,55 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     @Override
     public void handleSubmission(FormEntrySession formEntrySession, HttpServletRequest request) {
-
         try {
             String jsonList = request.getParameter("encounterDiagnoses");
-
             JsonNode list = new ObjectMapper().readTree(jsonList);
-
             FormEntryContext formEntrycontext = formEntrySession.getContext();
 
-            Set<org.openmrs.Diagnosis> existingDiagnoses = new HashSet<org.openmrs.Diagnosis>(Context.getDiagnosisService().getDiagnoses(formEntrycontext.getExistingPatient(), null));
+            Set<org.openmrs.Diagnosis> existingDiagnoses = new HashSet<org.openmrs.Diagnosis>(Context.getDiagnosisService().getDiagnoses(
+                    formEntrycontext.getExistingPatient(), null));
             Set<org.openmrs.Diagnosis> resubmittedDiagnoses = new HashSet<org.openmrs.Diagnosis>();
 
             for (JsonNode node : list) {
                 CodedOrFreeTextAnswer answer = new CodedOrFreeTextAnswer(node.get("diagnosis").getTextValue(), conceptService);
                 Diagnosis.Order diagnosisOrder = Diagnosis.Order.valueOf(node.get("order").getTextValue());
                 Diagnosis.Certainty certainty = Diagnosis.Certainty.valueOf(node.get("certainty").getTextValue());
+                org.openmrs.Diagnosis diagnosis;
                 Integer existingDiagnosis = null;
-
-                if (node.path("existingObs").getNumberValue() != null) {
-                    JsonNode nd = node.get("existingObs");
-                    System.out.println(nd);
-                }
 
                 if (node.path("existingDiagnosis").getNumberValue() != null) {
                     existingDiagnosis = node.get("existingDiagnosis").getIntValue();
                 }
 
-                org.openmrs.Diagnosis diagnosis;
-
                 Integer rank = diagnosisOrder == Diagnosis.Order.PRIMARY ? DIAGNOSIS_RANK_PRIMARY : DIAGNOSIS_RANK_SECONDARY;
-                ConditionVerificationStatus certaintyStatus = certainty == Diagnosis.Certainty.CONFIRMED ? ConditionVerificationStatus.CONFIRMED : ConditionVerificationStatus.PROVISIONAL;
+                ConditionVerificationStatus certaintyStatus = certainty == Diagnosis.Certainty.CONFIRMED ?
+                        ConditionVerificationStatus.CONFIRMED : ConditionVerificationStatus.PROVISIONAL;
 
-                if(existingDiagnosis !=null){
-
+                if (existingDiagnosis != null) {
                     diagnosis = Context.getDiagnosisService().getDiagnosis(existingDiagnosis);
                     resubmittedDiagnoses.add(diagnosis);
 
-                    if(!diagnosis.getRank().equals(rank) || !diagnosis.getCertainty().equals(certaintyStatus)){
+                    if (!diagnosis.getRank().equals(rank) || !diagnosis.getCertainty().equals(certaintyStatus)) {
                         diagnosis.setRank(rank);
                         diagnosis.setCertainty(certaintyStatus);
                         diagnosis.setDateChanged(new Date());
                         diagnosis.setChangedBy(Context.getAuthenticatedUser());
                         Context.getDiagnosisService().save(diagnosis);
                     }
-
-                }else{
+                } else {
                     diagnosis = new org.openmrs.Diagnosis();
-                    diagnosis.setDiagnosis(new CodedOrFreeText(answer.getCodedAnswer(), answer.getSpecificCodedAnswer(), answer.getNonCodedAnswer()));
+                    diagnosis.setDiagnosis(new CodedOrFreeText(answer.getCodedAnswer(), answer.getSpecificCodedAnswer(),
+                            answer.getNonCodedAnswer()));
                     diagnosis.setEncounter(formEntrySession.getEncounter());
                     diagnosis.setCertainty(certaintyStatus);
                     diagnosis.setRank(rank);
                     diagnosis.setPatient(formEntrySession.getPatient());
-                    diagnosis.getEncounter().setEncounterType(formEntrySession.getForm().getEncounterType());
-                    Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
                     Context.getDiagnosisService().save(diagnosis);
                 }
-
             }
 
             // Remove Diagnoses that were not resubmitted
-            Collection<org.openmrs.Diagnosis> diagnosesToVoid = CollectionUtils
-                    .subtract(existingDiagnoses, resubmittedDiagnoses);
-
+            Collection<org.openmrs.Diagnosis> diagnosesToVoid = CollectionUtils.subtract(existingDiagnoses, resubmittedDiagnoses);
             for (org.openmrs.Diagnosis diagnosisToVoid : diagnosesToVoid) {
                 Context.getDiagnosisService().voidDiagnosis(diagnosisToVoid, "Deleted Diagnosis");
             }
@@ -294,7 +277,6 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         catch (IOException ex) {
             ex.printStackTrace();
         }
-
     }
 
     private Map<Integer, Obs> getExistingDiagnosisObs(FormEntryContext context, DiagnosisMetadata diagnosisMetadata) {
