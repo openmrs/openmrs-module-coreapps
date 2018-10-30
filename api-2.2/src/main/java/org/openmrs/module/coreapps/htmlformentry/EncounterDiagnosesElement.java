@@ -273,7 +273,9 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                     diagnosis.setCertainty(certaintyStatus);
                     diagnosis.setRank(rank);
                     diagnosis.setPatient(formEntrySession.getPatient());
-                    diagnosis.getEncounter().setEncounterType(formEntrySession.getForm().getEncounterType());
+                    if (diagnosis.getEncounter().getEncounterType() == null) {
+                        diagnosis.getEncounter().setEncounterType(formEntrySession.getForm().getEncounterType());
+                    }
                     Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
                     Context.getDiagnosisService().save(diagnosis);
                 }
