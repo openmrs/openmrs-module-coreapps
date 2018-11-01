@@ -1,5 +1,4 @@
 <%
-    config.require("afterSelectedUrl")
     def breadcrumbOverride = config.breadcrumbOverride ?: ""
 
     ui.includeCss("uicommons", "datatables/dataTables_jui.css")
@@ -36,9 +35,18 @@
     <%      }
         }%>
     function handlePatientRowSelection() {
+    	var afterSelectedUrl = '${ ui.escapeJs(config.afterSelectedUrl) }';
         this.handle = function (row) {
             var uuid = row.uuid;
-            location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel('${ ui.escapeJs(config.afterSelectedUrl) }', { patientId: uuid, breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }'});
+            if(afterSelectedUrl && afterSelectedUrl != 'null') {
+            	location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel(afterSelectedUrl, { patientId: uuid, breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }'});
+        	} else {
+        		jQuery("#patient-search").attr("selected_uuid", uuid);
+        		jQuery("#patient-search").attr("selected_name", row.person.personName.display);
+        		jQuery("#patient-search").val("");
+        		jQuery("#patient-search-results-table tbody").html("");
+        		jQuery("#patient-search").change();
+        	}
         }
     }
     var handlePatientRowSelection =  new handlePatientRowSelection();
@@ -101,7 +109,7 @@
 
 <div id="patient-search-results"></div>
 <%  if (registrationAppLink ?: false) { %>
-<div>
-${ ui.message("coreapps.findPatient.registerPatient.label") }&nbsp;&nbsp;<a id="patient-search-register-patient" class="button" href="/${contextPath}/${registrationAppLink}">${ui.message("registrationapp.registration.label")}</a>
+<div id="register-patient-link">
+    <label>${ ui.message("coreapps.findPatient.registerPatient.label") }&nbsp;&nbsp;</label><a id="patient-search-register-patient" class="button" href="/${contextPath}/${registrationAppLink}">${ui.message("registrationapp.registration.label")}</a>
 </div>
 <%  } %>

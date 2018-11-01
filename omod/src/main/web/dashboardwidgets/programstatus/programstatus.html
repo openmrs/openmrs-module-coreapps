@@ -75,12 +75,12 @@
                 </select>
             </p>
         </fieldset>
-        <div ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
+        <div ng-repeat="workflow in $ctrl.program.workflows track by $index" ng-show="$ctrl.program.workflows.length != 0">
             <fieldset class="programstatus-fieldset">
                 <h3>{{ workflow.concept.display }}</h3>
                 <p class="programstatus-field">
                     <select ng-model="$ctrl.input.initialWorkflowStateByWorkflow[workflow.uuid].state"
-                            ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isInitialState()  ">
+                            ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isInitialState() | orderBy: 'concept.display' ">
                         <option value=""></option>
                     </select>
                 </p>
@@ -164,7 +164,7 @@
             <h3>{{'coreapps.dashboardwidgets.programstatus.outcome' | translate }}:</h3>
             <p class="programstatus-field">
                 <select ng-model="$ctrl.input.outcome"
-                    ng-options="outcome.uuid as outcome.display for outcome in $ctrl.programOutcomes">
+                    ng-options="outcome.uuid as outcome.display for outcome in $ctrl.programOutcomes | orderBy: 'display' ">
                     <option value=""></option>
                 </select>
             </p>
@@ -184,7 +184,7 @@
 
         <!-- workflow sections -->
 
-        <div class="workflow-section" ng-repeat="workflow in $ctrl.program.allWorkflows track by $index" ng-show="$ctrl.program.allWorkflows.length != 0">
+        <div class="workflow-section" ng-repeat="workflow in $ctrl.program.workflows track by $index" ng-show="$ctrl.program.workflows.length != 0">
             <!-- TODO review the use of the "isToday" functionality -->
             <h3 class="workflow-header">{{ workflow.concept.display }}
                 <i ng-show="$ctrl.canEditProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete() && !$ctrl.isToday($ctrl.sortedStatesByWorkflow[workflow.uuid].startDate)" ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)" class="icon-pencil"/>
@@ -194,7 +194,7 @@
                 <h3>{{'coreapps.dashboardwidgets.programstatus.transitionTo' | translate }}</h3>
                 <p class="programstatus-field">
                     <select ng-model="$ctrl.input.changeToStateByWorkflow[workflow.uuid].state"
-                            ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isNotCurrentState(workflow) ">
+                            ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isNotCurrentState(workflow) | orderBy: 'concept.display' ">
                         <option value=""></option>
                     </select>
                 </p>

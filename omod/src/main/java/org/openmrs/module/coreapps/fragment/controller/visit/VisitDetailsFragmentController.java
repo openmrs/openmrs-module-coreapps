@@ -57,7 +57,7 @@ public class VisitDetailsFragmentController {
          @InjectBeans CoreAppsProperties coreAppsProperties,
          @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
          @SpringBean("encounterService") EncounterService encounterService,
-         @RequestParam("visitId") Visit visit,
+         @RequestParam("visitId") Visit visit,@RequestParam("userId") User user,
          @RequestParam(value="fromEncounter", required=false) Integer encounterIndex,
          @RequestParam(value="encounterCount", required=false) Integer encounterCount,
          UiUtils uiUtils,
@@ -90,8 +90,8 @@ public class VisitDetailsFragmentController {
 
       VisitDomainWrapper visitWrapper = new VisitDomainWrapper(visit, emrApiProperties);
 
-      List<SimpleObject> encounters = getEncounterListAsJson(parseEncounterToJson, visitWrapper, authenticatedUser, encounterIndex, encounterCount);
-      simpleObject.put("encounters", encounters);
+        List<SimpleObject> encounters = getEncounterListAsJson(user, parseEncounterToJson, visitWrapper, authenticatedUser, encounterIndex, encounterCount);
+        simpleObject.put("encounters", encounters);
 
       simpleObject.put("admitted", visitWrapper.isAdmitted());
       simpleObject.put("canDeleteVisit", verifyIfUserHasPermissionToDeleteVisit(visit, authenticatedUser, canDeleteVisit));
@@ -122,15 +122,29 @@ public class VisitDetailsFragmentController {
       return list.subList(fromIndex, toIndex);
    }
 
-   protected List<SimpleObject> getEncounterListAsJson(ParseEncounterToJson parseEncounterToJson, VisitDomainWrapper visitWrapper, User authenticatedUser, int encounterIndex, int encounterCount) {
-      List<Encounter> sortedEncounters = safeSubList(visitWrapper.getSortedEncounters(), encounterIndex, encounterCount + encounterIndex);
+    protected List<SimpleObject> getEncounterListAsJson(User user, ParseEncounterToJson parseEncounterToJson, VisitDomainWrapper visitWrapper, User authenticatedUser, int encounterIndex, int encounterCount) {
+        List<Encounter> sortedEncounters = safeSubList(visitWrapper.getSortedEncounters(), encounterIndex, encounterCount + encounterIndex);
 
-      List<SimpleObject> encounterJson = new ArrayList<SimpleObject>();
-      for (Encounter encounter : sortedEncounters) {
-         encounterJson.add(parseEncounterToJson.createEncounterJSON(authenticatedUser, encounter));
-      }
-      return encounterJson;
-   }
+        List<SimpleObject> encounterJson = new ArrayList<SimpleObject>();
+        for (Encounter encounter : sortedEncounters) {
+           boolean addEncounter = false;
+            if (encounter.getEncounterType() != null) {
+                if (encounter.getEncounterType().getViewPrivilege() != null) {
+                    if (user.getPrivileges().contains(encounter.getEncounterType().getViewPrivilege()) || user.isSuperUser()) {
+                        addEncounter = true;
+                    }
+                } else {
+                   addEncounter = true;
+                }
+            } else {
+               addEncounter = true;
+            }
+            if(addEncounter){
+               encounterJson.add(parseEncounterToJson.createEncounterJSON(authenticatedUser, encounter));
+            }
+        }
+        return encounterJson;
+    }
 
    private List<String> convertVisitActionsToSimpleObject(List<Extension> visitActions) {
 

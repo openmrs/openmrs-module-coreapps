@@ -39,6 +39,11 @@ public class ParseEncounterToJson {
         boolean canDelete = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_DELETE_ENCOUNTER);
         boolean canEdit = authenticatedUser.hasPrivilege(EmrApiConstants.PRIVILEGE_EDIT_ENCOUNTER);
 
+        if(encounter.getEncounterType().getEditPrivilege() != null && canEdit){
+            canEdit = authenticatedUser.hasPrivilege(encounter.getEncounterType().getEditPrivilege().getPrivilege());
+        }
+
+
         SimpleObject simpleEncounter = SimpleObject.fromObject(new EncounterDomainWrapper(encounter), uiUtils, "encounterId",
                 "location", "encounterDatetime", "encounterProviders.provider", "voided", "form");
 
@@ -49,17 +54,17 @@ public class ParseEncounterToJson {
                 DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy", Context.getLocale()));
         simpleEncounter.put("encounterTime",
                 DateFormatUtils.format(encounter.getEncounterDatetime(), "hh:mm a", Context.getLocale()));
-    
+
         // do the same for other date fields
         simpleEncounter.put("dateCreated",
                 DateFormatUtils.format(encounter.getDateCreated(), "dd MMM yyyy", Context.getLocale()));
         simpleEncounter.put("creator", uiUtils.format(encounter.getCreator()));
-        
+
         if (encounter.getDateChanged() != null) {
             simpleEncounter.put("dateChanged",
                     DateFormatUtils.format(encounter.getDateChanged(), "dd MMM yyyy", Context.getLocale()));
         }
-    
+
         if (encounter.getChangedBy() != null) {
             simpleEncounter.put("changedBy", uiUtils.format(encounter.getChangedBy()));
         }
@@ -107,7 +112,12 @@ public class ParseEncounterToJson {
         EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
         boolean userParticipatedInEncounter = encounterDomainWrapper.participatedInEncounter(authenticatedUser);
         boolean userIsAdmin = authenticatedUser.isSuperUser();
-        return (canEdit || userParticipatedInEncounter) || userIsAdmin;
+        boolean hasEditPrivileges = false;
+        if(encounter.getEncounterType().getEditPrivilege() != null){
+            hasEditPrivileges = authenticatedUser.hasPrivilege(encounter.getEncounterType().getEditPrivilege().getPrivilege());
+        }
+
+        return ((canEdit || userParticipatedInEncounter) || hasEditPrivileges) || userIsAdmin;
     }
 
     private EncounterRole getPrimaryEncounterRoleForEncounter(Encounter encounter) {
