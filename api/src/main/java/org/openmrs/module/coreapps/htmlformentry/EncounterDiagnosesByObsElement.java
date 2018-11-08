@@ -39,6 +39,7 @@ import org.openmrs.module.htmlformentry.widget.HiddenFieldWidget;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,12 +51,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
 
 /**
- * TODO: this is identical to EncounterDiagnosesByObsElement, but I couldn't figure out how to get around it without cyclic dependencies
+ * TODO: this is identical to EncounterDiagnosesElement in pre-2.2 package, but I couldn't figure out how to get around it without cyclic dependencies
+ * Once we no longer support versions of OpenMRS prior to 2.2 (a long way away!) can probably just delete the pre2.2 package
  */
-public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubmissionControllerAction {
+public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, FormSubmissionControllerAction {
 
     private boolean required = false;
     private UiUtils uiUtils;
@@ -73,7 +74,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private HiddenFieldWidget hiddenDiagnoses;
     private ErrorWidget errorWidget;
 
-    public EncounterDiagnosesElement() {
+    public EncounterDiagnosesByObsElement() {
     }
 
     @Override
