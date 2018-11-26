@@ -50,19 +50,17 @@ public class ParseEncounterToJson {
         // UUID is not provided by EncounterDomainWrapper, adding it here.
         simpleEncounter.put("uuid", encounter.getUuid());
         // manually set the date and time components so we can control how we format them
-        simpleEncounter.put("encounterDate",
-                DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy", Context.getLocale()));
+        simpleEncounter.put("encounterDate", uiUtils.format(encounter.getEncounterDatetime()));
         simpleEncounter.put("encounterTime",
                 DateFormatUtils.format(encounter.getEncounterDatetime(), "hh:mm a", Context.getLocale()));
 
         // do the same for other date fields
-        simpleEncounter.put("dateCreated",
-                DateFormatUtils.format(encounter.getDateCreated(), "dd MMM yyyy", Context.getLocale()));
+        simpleEncounter.put("dateCreated", uiUtils.format(encounter.getDateCreated()));
         simpleEncounter.put("creator", uiUtils.format(encounter.getCreator()));
 
         if (encounter.getDateChanged() != null) {
             simpleEncounter.put("dateChanged",
-                    DateFormatUtils.format(encounter.getDateChanged(), "dd MMM yyyy", Context.getLocale()));
+                    uiUtils.format(encounter.getDateChanged()));
         }
 
         if (encounter.getChangedBy() != null) {

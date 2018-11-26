@@ -53,7 +53,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- *
+ * TODO: this is identical to EncounterDiagnosesByObsElement, but I couldn't figure out how to get around it without cyclic dependencies
  */
 public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubmissionControllerAction {
 
