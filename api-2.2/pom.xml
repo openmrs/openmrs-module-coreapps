@@ -13,7 +13,7 @@
 	<name>Core Apps Module API 2.2</name>
 	<description>API project for CoreApps</description>
 	<properties>
-		<openMRSVersion>2.2.0-SNAPSHOT</openMRSVersion>
+		<openMRSVersion>2.2.0-alpha</openMRSVersion>
 	</properties>
 	<dependencies>
 
