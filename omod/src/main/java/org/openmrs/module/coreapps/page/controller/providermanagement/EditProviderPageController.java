@@ -19,6 +19,7 @@ import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.emrapi.account.AccountDomainWrapper;
 import org.openmrs.module.emrapi.account.AccountService;
 import org.openmrs.module.emrapi.account.AccountValidator;
+import org.openmrs.module.emrapi.domainwrapper.DomainWrapperFactory;
 import org.openmrs.module.providermanagement.Provider;
 import org.openmrs.module.providermanagement.ProviderManagementUtils;
 import org.openmrs.module.providermanagement.relationship.ProviderPersonRelationship;
@@ -47,7 +48,7 @@ public class EditProviderPageController {
 
     public AccountDomainWrapper getAccount(@RequestParam(value = "personId", required = false) Person person,
                                            @RequestParam(value = "personUuid", required = false) String personUuid,
-                                           @SpringBean("accountService") AccountService accountService) {
+                                           @SpringBean("domainWrapperFactory")DomainWrapperFactory domainWrapperFactory) {
 
         AccountDomainWrapper account;
         Person newPerson = person;
@@ -60,7 +61,7 @@ public class EditProviderPageController {
                 newPerson = new Person();
             }
         }
-        account = accountService.getAccountByPerson(newPerson);
+        account = domainWrapperFactory.newAccountDomainWrapper(newPerson);
         if (account == null)
             throw new APIException("Failed to find user account matching person with id:" + person.getPersonId());
 
@@ -71,7 +72,6 @@ public class EditProviderPageController {
                     @MethodParam("getAccount") AccountDomainWrapper account,
                     @ModelAttribute("patientId") @BindParams Patient patient,
                     @SpringBean("patientService") PatientService patientService,
-                    @SpringBean("accountService") AccountService accountService,
                     @SpringBean("adminService") AdministrationService administrationService,
                     @SpringBean("providerManagementService") ProviderManagementService providerManagementService)
             throws PersonIsNotProviderException, InvalidRelationshipTypeException, SuggestionEvaluationException {
@@ -155,7 +155,16 @@ public class EditProviderPageController {
                 Person person = account.getPerson();
                 if (address != null ) {
                     address.setPreferred(true);
-                    person.addAddress(address);
+                    PersonAddress currentAddress = person.getPersonAddress();
+                    if (currentAddress != null) {
+                        if (!currentAddress.equalsContent(address)){
+                            person.addAddress(address);
+                            currentAddress.setVoided(true);
+                        }
+                    } else {
+                        person.addAddress(address);
+                    }
+
                 }
                 if (birthdate != null) {
                     person.setBirthdate(birthdate);
