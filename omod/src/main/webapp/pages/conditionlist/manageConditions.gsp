@@ -64,7 +64,6 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                     <thead>
                     <tr>
                         <th>${ui.message("coreapps.conditionui.condition")}</th>
-                        <th>${ui.message("coreapps.conditionui.status")}</th>
                         <th>${ui.message("coreapps.conditionui.onsetdate")}</th>
                         <th ng-if="'${hasModifyConditionsPrivilege}'">${ui.message("coreapps.actions")}</th>
                     </tr>
@@ -79,7 +78,6 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                     <tr class="clickable-tr" ng-init="condition = conditionHistory.conditions[0]"
                         ng-show="condition.status===tab">
                         <td ng-style="strikeThrough(condition.voided)">{{condition.concept.name}}</td>
-                        <td ng-style="strikeThrough(condition.voided)">{{condition.status}}</td>
                         <td ng-style="strikeThrough(condition.voided)">{{formatDate(condition.onSetDate)}}</td>
                         <td ng-if="'${hasModifyConditionsPrivilege}'">
                             <i class="icon-plus-sign edit-action" title="${ui.message("coreapps.conditionui.active")}"
