@@ -93,9 +93,9 @@
 </script>
 
 <form method="get" id="patient-search-form" onsubmit="return false">
+	<div id="patient-search-filter" <%  if (config.hideFilters) { %>hidden<% } %>>
     <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off" <% if (doInitialSearch) { %>value="${doInitialSearch}"<% } %>/><i id="patient-search-clear-button" class="small icon-remove-sign"></i>
-    <div id="patient-search-filter" <%  if (config.hideFilters) { %>hidden<% } %>>
-	    <input class="patient-filter" type="number" id="filter-age" placeholder="${ ui.message('coreapps.age') }"  onchange="jQuery('#patient-search').focus();"/>
+    	    <input class="patient-filter" type="number" min="0" max="999" id="filter-age" placeholder="${ ui.message('coreapps.age') }"  onchange="jQuery('#patient-search').focus();"/>
 		<select class="patient-filter" id="filter-gender" onchange="jQuery('#patient-search').focus();">
 			<option value="" selected>${ ui.message("coreapps.gender") }</option>
 			<option value="M">${ ui.message("coreapps.gender.M") }</option>

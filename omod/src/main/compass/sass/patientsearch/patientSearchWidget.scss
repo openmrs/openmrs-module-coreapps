@@ -3,10 +3,114 @@
 $rowHighlightBackground: #F26522;
 $green: #51A351;
 
-#patient-search-form {
-  input {
+#patient-search-form input {
+  display: inline;
+  color: #363463;
+  padding: 10px 10px;
+  margin: 0;
+  margin-top: 5px;
+  background-color: #FFF;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  line-height: normal;
+  font-family: inherit;
+  font-size: 100%;
+  -webkit-appearance: textfield;
+  -webkit-rtl-ordering: logical;
+  cursor: text;
+  text-rendering: auto;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  -webkit-writing-mode: horizontal-tb !important;
+  text-align: start;
+  font: 400 13.3333px Arial;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+#patient-search-form input[type=text] {
+	min-width: 50%;
+}
+#patient-search-form input[type=number] {
+	min-width:20%;
+}
+   
+#patient-search-clear-button {
+  position: relative;
+  right: 25px;
+  color: #363463;
+}
+
+i.small {
+    font-size: 1.2em;
+}
+
+[class*=" icon-"] {
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: inherit;
+    -webkit-font-smoothing: antialiased;
+    padding: 0.2em;
     display: inline;
-  }
+    width: auto;
+    height: auto;
+    line-height: normal;
+    vertical-align: baseline;
+    background-image: none;
+    background-position: 0% 0%;
+    background-repeat: repeat;
+    margin-top: 0;
+}
+
+.icon-remove-sign:before {
+    content: "\f057";
+}
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+    text-decoration: inherit;
+    display: inline-block;
+    speak: none;
+}
+
+
+#patient-search-form select{
+    min-width: 20%;
+	color: #363463;
+    display: inline;
+	padding: 10px 10px;
+    margin: 0;
+    margin-top: 5px;
+    background-color: #FFF;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+	font-family: inherit;
+    font-size: 100%;
+	webkit-appearance: menulist;
+    box-sizing: border-box;
+    align-items: center;
+    white-space: pre;
+    -webkit-rtl-ordering: logical;
+	cursor: default;
+	text-rendering: auto;
+	letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+	text-align: start;
+	font: 400 13.3333px Arial;
+	-webkit-writing-mode: horizontal-tb !important;
+	-webkit-font-smoothing: subpixel-antialiased;
+}
+
+option {
+    font-weight: normal;
+    display: block;
+    white-space: pre;
+    min-height: 1.2em;
+    padding: 0px 2px 1px;
 }
 
 #patient-search-results {
@@ -96,9 +200,4 @@ img.search-spinner{
 
 .patient-search-error{
   color: $error;
-}
-
-#patient-search-clear-button {
-  position: relative;
-  right: 25px;
 }
