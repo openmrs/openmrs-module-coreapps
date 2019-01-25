@@ -39,7 +39,7 @@
         this.handle = function (row) {
             var uuid = row.uuid;
             if(afterSelectedUrl && afterSelectedUrl != 'null') {
-            	location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel(afterSelectedUrl, { patientId: uuid, breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }'});
+            	location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel(afterSelectedUrl, { patientId: uuid, breadcrumbOverride: '${ ui.encodeForSafeURL(breadcrumbOverride) }'});
         	} else {
         		jQuery("#patient-search").attr("selected_uuid", uuid);
         		jQuery("#patient-search").attr("selected_name", row.person.personName.display);
