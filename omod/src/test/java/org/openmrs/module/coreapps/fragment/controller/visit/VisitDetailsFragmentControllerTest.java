@@ -83,7 +83,7 @@ public class VisitDetailsFragmentControllerTest {
       authenticatedUser.addRole(createRoleForUser());
 
       AdministrationService administrationService = mock(AdministrationService.class);
-      when(administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT)).thenReturn(
+      when(administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT, "dd.MMM.yyyy, HH:mm:ss")).thenReturn(
             "dd.MMM.yyyy, HH:mm:ss");
 
       AppFrameworkService appFrameworkService = mock(AppFrameworkService.class);
