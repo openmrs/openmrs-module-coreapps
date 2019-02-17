@@ -57,14 +57,18 @@ public class PatientPageController {
                              @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
                              @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
                              UiSessionContext sessionContext) {
-
-        if (!Context.hasPrivilege(CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD)) {
+    
+      
+        
+       try{
+           if (!Context.hasPrivilege(CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD)) {
             return new Redirect("coreapps", "noAccess", "");
         }
-        else if (patient.isVoided() || patient.isPersonVoided()) {
+
+         else if (patient.isVoided() || patient.isPersonVoided()) {
             return new Redirect("coreapps", "patientdashboard/deletedPatient", "patientId=" + patient.getId());
         }
-
+      
         if (StringUtils.isEmpty(dashboard)) {
             dashboard = "patientDashboard";
         }
@@ -128,6 +132,12 @@ public class PatientPageController {
         applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 
         return null;
+
+         }catch(NullPointerException x){
+          return new Redirect("coreapps", "patientdashboard/patientNotFound", "patientId=" + "Not Found");  
+       }
+    
     }
+    
 
 }
