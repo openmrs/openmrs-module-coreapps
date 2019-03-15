@@ -55,7 +55,7 @@
                         formFieldName: "conditionStartDate",
                         label        : "",
                         useTime      : false,
-                        startDate    : new Date(),
+                        endDate    : new Date(),
                 ])}
             </li>
         </ul>
