@@ -16,7 +16,6 @@
 	<updateURL>https://dev.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
 	<require_version>1.9.3</require_version>
 	<!-- / Module Properties -->
-
 	
 	<!-- Required Modules -->
 	<require_modules>
@@ -363,6 +362,7 @@
         <name>Task: Manage Condition Lists</name>
         <description>Able to activate/inactivate/void condition lists.</description>
     </privilege>
+
 
     <privilege>
         <name>Task: coreapps.markPatientDead</name>

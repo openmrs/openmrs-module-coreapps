@@ -50,6 +50,8 @@
         }
     }
     var handlePatientRowSelection =  new handlePatientRowSelection();
+
+    var patientSearchWidget;
     jq(function() {
         var widgetConfig = {
             initialPatients: lastViewedPatients,
@@ -73,6 +75,7 @@
                 noMatchesFound: '${ ui.message("coreapps.search.noMatchesFound") }',
                 noData: '${ ui.message("coreapps.search.noData") }',
                 recent: '${ ui.message("coreapps.search.label.recent") }',
+                onlyInMpi: '${ ui.message("coreapps.search.label.onlyInMpi") }',
                 searchError: '${ ui.message("coreapps.search.error") }',
                 identifierColHeader: '${ ui.message("coreapps.search.identifier") }',
                 nameColHeader: '${ ui.message("coreapps.search.name") }',
@@ -84,7 +87,7 @@
             }
         };
 
-        new PatientSearchWidget(widgetConfig);
+        patientSearchWidget = new PatientSearchWidget(widgetConfig);
     });
 </script>
 

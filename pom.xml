@@ -53,6 +53,7 @@
 		<metadatamappingVersion>1.3.2</metadatamappingVersion>
         <uicommonsVersion>2.3.0</uicommonsVersion>
         <webservicesRestVersion>2.11</webservicesRestVersion>
+
 	</properties>
 
 	<dependencyManagement>
@@ -251,6 +252,7 @@
 				<version>${webservicesRestVersion}</version>
 				<scope>provided</scope>
 			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

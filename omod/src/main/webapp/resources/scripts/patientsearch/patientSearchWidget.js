@@ -1,4 +1,5 @@
 function PatientSearchWidget(configuration){
+
     var defaults = {
         minSearchCharacters: 3,
         searchInputId: 'patient-search',
@@ -54,6 +55,10 @@ function PatientSearchWidget(configuration){
     // set the locale for Moment.js
     // Creole not currently supported by Moment and for some reason it defaults to Japaneses if we don't explicitly set fallback options in the locale() call
     moment.locale([configuration.locale, configuration.defaultLocale, 'en']);
+
+    this.setHandleRowSelection = function(handleRowSelection) {
+        config.handleRowSelection = handleRowSelection;
+    }
 
     function formatAge(widgetBirthdate){
         var bdate = moment(widgetBirthdate, 'YYYY-MM-DD');
@@ -237,6 +242,7 @@ function PatientSearchWidget(configuration){
         highlightedMouseRowIndex = undefined;
         jq('#'+tableId).find('td.dataTables_empty').html(config.messages.noData);
     }
+    this.reset = reset;
 
     var updateSearchResults = function(results){
         var dataRows = [];
@@ -256,9 +262,12 @@ function PatientSearchWidget(configuration){
                 }
                 var identifier = patient.patientIdentifier != null ? patient.patientIdentifier.identifier : null;
                 if(_.contains(initialPatientUuids, patient.uuid)){
-                    identifier = patient.patientIdentifier.identifier+
-                        " <span class='recent-lozenge'>"+config.messages.recent+"</span>";
+                    identifier += " <span class='recent-lozenge'>" + config.messages.recent + "</span>";
                 }
+                if (patient.onlyInMpi === true) {
+                    identifier += " <span class='recent-lozenge'>" + config.messages.onlyInMpi + "</span>";
+                }
+
                 var age = patient.person.age;
                 if(age == '' && widgetBirthdate != ''){
                     age = formatAge(widgetBirthdate);
@@ -302,6 +311,8 @@ function PatientSearchWidget(configuration){
         }
         afterSearchResultsUpdated = [];
     }
+    this.updateSearchResults = updateSearchResults;
+
 
     // remove any patients from a results list that are already in the search results
     // this is necessary because the searchOnIdentifiers performs multiple searchs and could return duplicates
