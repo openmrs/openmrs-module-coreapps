@@ -15,6 +15,19 @@ export default class WidgetsCommons {
             }
         };
 
+        //Number of days since the given date
+        daysSinceDate(date) {
+            let days = 0;
+            if (date !== null) {
+              let givenDate = new Date(date).setHours(0,0,0,0);
+              let today = new Date().setHours(0,0,0,0);
+              let seconds = Math.floor((today - givenDate) / 1000);
+              days = Math.floor(seconds / 86400);
+            }
+
+            return days;
+        };
+
         // Method used to define days since given date
         dateToDaysAgo(date) {
             const time = new Date(date).getTime();
