@@ -9,7 +9,8 @@ export default angular.module("openmrs-contrib-dashboardwidgets.obsgraph", [open
 	.component(ObsGraphComponent.selector, ObsGraphComponent)
 	.config(['ChartJsProvider', function (ChartJsProvider) {
 		ChartJsProvider.setOptions({
-			chartColors: ['#00463f'],
+			chartColors: ['#00463f', '#bf4f44'],
+          	spanGaps: true,
 			elements: {
 				line: {
 					tension: 0
@@ -17,4 +18,3 @@ export default angular.module("openmrs-contrib-dashboardwidgets.obsgraph", [open
 			}
 		});
 	}]).name;
-	
