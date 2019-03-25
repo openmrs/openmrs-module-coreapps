@@ -33,6 +33,11 @@ public class FindPatientPageController {
         } else {
 	        model.addAttribute("registrationAppLink", app.getConfig().get("registrationAppLink").getTextValue());
         }
+        if(app.getConfig().has("hideFilters")) {
+            model.addAttribute("hideFilters", app.getConfig().get("hideFilters").getBooleanValue());
+        } else {
+            model.addAttribute("hideFilters", false);
+        }
         BreadcrumbHelper.addBreadcrumbsIfDefinedInApp(app, model, ui);
 	}
 

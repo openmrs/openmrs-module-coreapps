@@ -386,7 +386,7 @@ function PatientSearchWidget(configuration){
     var doKeyEnter = function() {
         // if no rows are currently highlighted
         if (highlightedKeyboardRowIndex == undefined){
-            if(dTable && dTable.fnGetNodes().length == 1) {
+            if(dTable && dTable.fnGetNodes().length == 1 && !"patient-filter" == this.event.target.className) {
                 // if there is only one row in the result set, automatically select that row
                 // (so that you can scan a patient id and have it automatically  load that patient dashboard)
                 selectRow(0);
@@ -604,6 +604,16 @@ function PatientSearchWidget(configuration){
         }
     });
 
+
+    var search = function() {
+    	if (!performingSearch) {
+            doKeyEnter();
+        }
+        else {
+            afterSearchResultsUpdated.push(doKeyEnter)
+        }
+    }
+    
     /***************** SETUP KEYBOARD AND MOUSE EVENT HANDLERS **************/
 
     // handle the clear button
@@ -642,6 +652,10 @@ function PatientSearchWidget(configuration){
         return false;
     });
 
+    jQuery(".patient-filter").change(function() {
+    	search();
+    });
+    
     //catch control keys to stop the cursor in the input box from moving.
     input.keydown(function(event) {
         var kc = event.keyCode;
@@ -650,12 +664,7 @@ function PatientSearchWidget(configuration){
         // we "cache" enter keystrokes so that they will be handled after the search is complete; this is to handle typing
         // or scanning exact-match patient identifiers without requiring an additional keystroke
         if (kc == 13) {
-            if (!performingSearch) {
-                doKeyEnter();
-            }
-            else {
-                afterSearchResultsUpdated.push(doKeyEnter)
-            }
+        	search();
             return false;
         }
 
