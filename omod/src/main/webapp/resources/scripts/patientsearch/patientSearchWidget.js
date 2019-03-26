@@ -272,7 +272,7 @@ function PatientSearchWidget(configuration){
                 if(age == '' && widgetBirthdate != ''){
                     age = formatAge(widgetBirthdate);
                 }
-            }
+            });
             var identifier = patient.patientIdentifier != null ? patient.patientIdentifier.identifier : null;
             if(_.contains(initialPatientUuids, patient.uuid)){
             	identifier = patient.patientIdentifier.identifier+
@@ -313,7 +313,7 @@ function PatientSearchWidget(configuration){
 	            });
 	            dataRows.push(dataRow);
             }
-        });
+        };
 
         dTable.fnAddData(dataRows);
         refreshTable();
