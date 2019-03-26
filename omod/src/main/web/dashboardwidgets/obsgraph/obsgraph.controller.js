@@ -4,7 +4,7 @@ export default class ObsGraphController {
 
         Object.assign(this, { $q, $filter, openmrsRest, widgetsCommons});
     }
-    
+
     $onInit() {
 
         var self = this;
@@ -188,6 +188,25 @@ export default class ObsGraphController {
           ]
         }
       };
+
+      if (this.config.type && this.config.type === 'logarithmic') {
+        this.options.scales.yAxes[0] = {
+          id: 'y-axis-1',
+          type: 'logarithmic',
+          display: true,
+          position: 'left',
+          ticks: {
+            callback: function (value, index, values) {
+              if (value.length) {
+                return Number(value).toLocaleString();
+              }
+              return value;
+            },
+            autoSkip: true,
+            maxTicksLimit: 5
+          }
+          };
+      }
 
       // Parse the comma delimited concept UUIDs into an array
       this.conceptArray = this.config.conceptId.replace(" ", "").split(",");
