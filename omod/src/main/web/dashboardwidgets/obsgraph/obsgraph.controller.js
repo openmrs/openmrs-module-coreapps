@@ -1,8 +1,8 @@
 export default class ObsGraphController {
-    constructor($q, $filter, openmrsRest, widgetsCommons) {
+    constructor( $q, $filter, openmrsRest, openmrsTranslate, widgetsCommons) {
         'ngInject';
 
-        Object.assign(this, { $q, $filter, openmrsRest, widgetsCommons});
+        Object.assign(this, { $q, $filter, openmrsRest, openmrsTranslate, widgetsCommons});
     }
 
     $onInit() {
@@ -14,7 +14,6 @@ export default class ObsGraphController {
         this.conceptRep = "custom:(uuid,display,name:(display),datatype:(uuid,display))";
         this.customRep="custom:(uuid,display,obsDatetime,value,concept:(uuid,display,name:(display),datatype:(uuid,display)))";
 
-
         // Chart data
         this.series = [];
         this.labels = [];
@@ -22,10 +21,10 @@ export default class ObsGraphController {
         this.legend = [];
 
         this.dataset = [];
-        /* Here is an example of the structure of this arrray of objects
+        /* Here is an example of the structure of this array of objects
           [
             {
-              "conceptUuid": "3ce93b62-26fe-102b-80cb-0017a47871b2",
+              "uuid": "3ce93b62-26fe-102b-80cb-0017a47871b2",
               "display": "Weight (kg)",
               "values": {
                 "9": 70, // the key indicates how many days ago this obs value was recorded
@@ -37,7 +36,7 @@ export default class ObsGraphController {
               }
             },
             {
-              "conceptUuid": "3ce93cf2-26fe-102b-80cb-0017a47871b2",
+              "uuid": "3ce93cf2-26fe-102b-80cb-0017a47871b2",
               "display": "Height (cm)",
               "values": {
                 "9": 170.2,
@@ -53,7 +52,60 @@ export default class ObsGraphController {
 
         this.openmrsRest.setBaseAppPath("/coreapps");
 
-        this.getConfig();
+
+
+        this.FunctionManager = {
+          bmi: function( height, weight ){
+            //add height and weight to the list of concepts whose obs should be retrieved
+            if (arguments && arguments.length > 0) {
+              for (let i=0; i < arguments.length; i++) {
+                let foundValue = self.conceptArray.find(element => element.uuid === arguments[i]);
+                if (self.conceptArray && (typeof foundValue === 'undefined')) {
+                  self.conceptArray.push({
+                    uuid: arguments[i],
+                    type: "obs",
+                    legend: false
+                  });
+                }
+              }
+              self.conceptArray.push({
+                uuid: null,
+                type: "function",
+                legend: true,
+                function: ["calculateBmi", height, weight]
+              });
+            }
+            return true;
+          },
+          calculateBmi: function(height, weight) {
+            if (height && weight) {
+              let heightDataset = self.dataset.find(element => element.uuid === height);
+              let weightDataset = self.dataset.find(element => element.uuid === weight);
+              if (heightDataset && weightDataset) {
+                let xAxisKeys = self.getXAxisKeys();
+                if (xAxisKeys !== null && xAxisKeys.length > 0) {
+                  let tempData = [];
+                  for (let k = 0; k < xAxisKeys.length; k++) {
+                    let heightValue = parseInt(heightDataset.values[xAxisKeys[k]]);
+                    let weightValue = parseInt(weightDataset.values[xAxisKeys[k]]);
+                    let yValue = null;
+                    if ((typeof heightValue !== undefined) && (heightValue !== null) && ( typeof weightValue !== undefined ) && (weightValue !== null)) {
+                      yValue = (( weightValue / heightValue / heightValue) * 10000 ).toFixed(1);
+                    }
+                    tempData.push(yValue);
+                  }
+                  self.series.push("BMI");
+                  self.data.push(tempData);
+                }
+              }
+            }
+            return null;
+          },
+          execute: function ( name ) {
+            return self.FunctionManager[name] && self.FunctionManager[name].apply(self.FunctionManager, [].slice.call(arguments, 1));
+          }
+        };
+
 
         // order the X Axis values from the oldest obs date the the most recent obs date
         this.orderXAxis = function() {
@@ -70,21 +122,28 @@ export default class ObsGraphController {
           if (angular.isDefined(this.dataset) && this.dataset.length > 0) {
             let xAxisKeys = this.getXAxisKeys();
             if (xAxisKeys !== null && xAxisKeys.length > 0) {
-              for (let i = 0; i < this.dataset.length; i++) {
-                let obj = this.dataset[i];
-                if (angular.isDefined(obj.values) && obj.values !== null && (Object.keys(obj.values)).length > 0) {
-                // if this concept has any obs values
-                  let tempData = [];
-                  for (let k = 0; k < xAxisKeys.length; k++) {
-                    let yValue = obj.values[xAxisKeys[k]];
-                    // all Y arrays of data need to have the same number of values
-                    // fill with null the missing values
-                    if (angular.isUndefined(yValue) || yValue == null) {
-                      yValue = null;
-                    }
-                    tempData.push(yValue);
+              for (let j=0; j < this.conceptArray.length; j++) {
+                let concept = this.conceptArray[j];
+                if (concept.legend === true) {
+                  if (concept.uuid && concept.type === "obs") {
+                    let obj = this.dataset.find(element => element.uuid === concept.uuid);
+                      if (angular.isDefined(obj.values) && obj.values !== null && (Object.keys(obj.values)).length > 0) {
+                        // if this concept has any obs values
+                        let tempData = [];
+                        for (let k = 0; k < xAxisKeys.length; k++) {
+                          let yValue = obj.values[xAxisKeys[k]];
+                          // all Y arrays of data need to have the same number of values
+                          // fill with null the missing values
+                          if (angular.isUndefined(yValue) || yValue == null) {
+                            yValue = null;
+                          }
+                          tempData.push(yValue);
+                        }
+                        this.data.push(tempData);
+                      }
+                  } else if (concept.type === "function" && concept.function) {
+                    this.FunctionManager.execute(...concept.function);
                   }
-                  this.data.push(tempData);
                 }
               }
             }
@@ -96,17 +155,25 @@ export default class ObsGraphController {
           let promises = [];
           if (this.conceptArray !== null && this.conceptArray.length > 0) {
             for (let i = 0; i < this.conceptArray.length; i++) {
-              let promisedObs = this.openmrsRest.get('concept/' + this.conceptArray[i], {
-                v: this.conceptRep
-              }).then(function(concept) {
-                return concept;
-              });
-              promises.push(promisedObs);
+              if (this.conceptArray[i].uuid) {
+                let promisedObs = this.openmrsRest.get('concept/' + this.conceptArray[i].uuid, {
+                  v: this.conceptRep
+                }).then(function (concept) {
+                  return concept;
+                });
+                promises.push(promisedObs);
+              }
             }
           }
           this.$q.all(promises).then(function(concepts) {
-            for (let j=0; j< concepts.length; j++) {
-              self.series.push(concepts[j].display);
+            for (let i=0; i < self.conceptArray.length; i++) {
+              let concept = self.conceptArray[i];
+              if (concept.legend === true) {
+                let serverConcept = concepts.find(element => element.uuid === concept.uuid);
+                if (serverConcept && serverConcept.display) {
+                  self.series.push(serverConcept.display);
+                }
+              }
             }
           });
 
@@ -116,15 +183,17 @@ export default class ObsGraphController {
           let promises = [];
           if (this.conceptArray !== null && this.conceptArray.length > 0) {
             for (let i = 0; i < this.conceptArray.length; i++) {
-              let promisedObs = this.openmrsRest.list('obs', {
-                patient: this.config.patientUuid,
-                v: this.customRep,
-                limit: this.config.maxResults,
-                concept: this.conceptArray[i]
-              }).then(function(response) {
-                return response.results;
-              });
-              promises.push(promisedObs);
+              if (this.conceptArray[i].uuid) {
+                let promisedObs = this.openmrsRest.list('obs', {
+                  patient: this.config.patientUuid,
+                  v: this.customRep,
+                  limit: this.config.maxResults,
+                  concept: this.conceptArray[i].uuid
+                }).then(function (response) {
+                  return response.results;
+                });
+                promises.push(promisedObs);
+              }
             }
           }
           this.$q.all(promises).then(function(data) {
@@ -135,7 +204,7 @@ export default class ObsGraphController {
               let obsArray = data[j];
               if (obsArray.length > 0) {
                 //we have at least one observation
-                conceptObject.conceptUuid = obsArray[0].concept.uuid;
+                conceptObject.uuid = obsArray[0].concept.uuid;
                 conceptObject.display = obsArray[0].concept.display;
                 conceptObject.values = {};
                 for (let k = 0; k < obsArray.length; k++) {
@@ -159,9 +228,9 @@ export default class ObsGraphController {
           });
       };
 
+      this.getConfig();
       this.getConceptNames();
       this.getAllObs();
-
     }
 
     getConfig() {
@@ -207,9 +276,45 @@ export default class ObsGraphController {
           }
           };
       }
-
       // Parse the comma delimited concept UUIDs into an array
-      this.conceptArray = this.config.conceptId.replace(" ", "").split(",");
+      // First, remove all whitespaces from the input string
+      let tempArray = this.config.conceptId.replace(/ /gi, "").split(",");
+
+      this.conceptArray = tempArray.map(function(concept) {
+        return {
+          uuid: concept,
+          type: "obs",
+          legend: true
+        };
+      });
+
+      if (this.config.function && this.config.function.length > 0) {
+        this.parseFunctionConfig(this.config.function)
+      }
+    }
+
+    parseFunctionConfig(fns){
+      if (fns) {
+        // remove empty spaces
+        let fnsArray = fns.replace(/ /gi, "").split(";");
+        if (angular.isDefined(fnsArray) && fnsArray !== null && fnsArray.length > 0 ) {
+          for (let i=0; i < fnsArray.length; i++) {
+            let params = fnsArray[i];
+            if (params && params.length > 0) {
+              let line = params.substring(
+                params.indexOf("(") + 1,
+                params.indexOf(")")
+              );
+              if(line && line.length > 0) {
+                let paramsArray = line.split(",");
+                if (paramsArray && paramsArray.length > 0) {
+                  this.FunctionManager.execute(...paramsArray);
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     getXAxisKeys() {
