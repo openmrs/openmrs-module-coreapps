@@ -85,6 +85,7 @@ span.field-error {
         var addSupervisorDialog = null;
         var addSuperviseeDialog = null;
         var unassignSuperviseeDialog = null;
+        var unassignSupervisorDialog = null;
         var retireProviderDialog = null;
         var supervisors = null;
         var supervisees = null;
@@ -170,6 +171,14 @@ span.field-error {
                 jq(".datetimepicker").hide();
             }, 100);
 
+        });
+
+        jq(document).on('click', '.remove-supervisor', function(event) {
+            var supervisorId = jq(event.target).attr("data-supervisor-id");            
+            var superviseeId = jq(event.target).attr("data-supervisee-id");
+
+            createUnassignSupervisorDialog(superviseeId, supervisorId);
+            showUnassignSupervisorDialog();
         });
 
         jq("#add-supervisor-button").click(function(event) {
@@ -303,6 +312,20 @@ span.field-error {
             </fieldset>
 
         </div>
+        <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
+        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
+    </div>
+</div>
+
+<div id="unassign-supervisor-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("coreapps.confirm") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="unassign-supervisor-dialog-superviseeId" value=""/>
+        <input type="hidden" id="supervisorId" value=""/>
+        <span>${ ui.message("providermanagement.confirm") }</span>
+        <br><br>
         <button class="confirm right">${ ui.message("coreapps.confirm") }</button>
         <button class="cancel">${ ui.message("coreapps.cancel") }</button>
     </div>
@@ -722,7 +745,8 @@ span.field-error {
                                     <th>${ ui.message("providermanagement.identifier") }</th>
                                     <th>${ ui.message("coreapps.person.name") }</th>
                                     <th>${ ui.message("providermanagement.startDate") }</th>
-                                    <th>&nbsp;</th>
+                                    <th>${ ui.message("coreapps.edit") }</th>                                    
+                                    <th>${ ui.message("coreapps.delete") }</th>
                                 </tr>
                                 </thead>
 
@@ -748,6 +772,11 @@ span.field-error {
                                               data-supervisor-label="${ supervisor.person.personName }"
                                               data-relationship-type="${supervisor.relationshipType.id}"
                                               data-supervisor-relationship="${ supervisor.relationship.id }"
+                                    ></i></a>
+                                    </td>
+                                    <td><a><i class="remove-supervisor icon-remove"
+                                              data-supervisee-id="${account.person.personId}"
+                                              data-supervisor-id="${ supervisor.person.personId }"                                              
                                     ></i></a>
                                     </td>
                                 </tr>
