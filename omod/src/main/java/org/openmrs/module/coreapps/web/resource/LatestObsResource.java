@@ -13,10 +13,6 @@
  */
 package org.openmrs.module.coreapps.web.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -31,12 +27,22 @@ import org.openmrs.module.webservices.rest.web.api.RestService;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
+import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_11.ObsResource1_11;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.PatientResource1_8;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 @Resource(name = RestConstants.VERSION_1 + "/latestobs", order = 1, supportedClass = Obs.class, supportedOpenmrsVersions = {
-		"1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*" })
+		"1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*" })
 public class LatestObsResource extends ObsResource1_11 {
+
+	@Override
+	protected NeedsPaging<Obs> doGetAll(RequestContext context) throws ResponseException {
+		return new NeedsPaging<Obs>(new ArrayList<Obs>(), context);
+	}
 	
 	@Override
 	protected PageableResult doSearch(RequestContext context) {

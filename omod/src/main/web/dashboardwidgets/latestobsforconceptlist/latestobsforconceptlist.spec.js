@@ -27,14 +27,24 @@ describe('LatestObsForConceptList', () => {
     });
 	
 	it('should query for concepts from config', () => {
-		let bindings = {config: { maxAge: '2w', concepts: 'uuid-1, uuid-2', patientUuid: 'patientUuid' }};
+		let bindings = {config: { maxAge: '2w', concepts: 'uuid-1,uuid-2', patientUuid: 'patientUuid' }};
 		let ctrl = $componentController('latestobsforconceptlist', {$scope}, bindings);
-		
-		$httpBackend.expectGET('/ws/rest/v1/obs?concept=uuid-1&patient=patientUuid&v=full').respond({results: []});
-		$httpBackend.expectGET('/ws/rest/v1/obs?concept=uuid-2&patient=patientUuid&v=full').respond({results: []});
-		
+
+		$httpBackend.expectGET('/ws/rest/v1/latestobs?concept=uuid-1,uuid-2&patient=patientUuid&v=full').respond({results: []});
+
 		ctrl.$onInit();
 		
 		$httpBackend.flush();
     });
+
+	it('should query for a single concept from config', () => {
+		let bindings = {config: { maxAge: '2w', concepts: 'uuid-1', patientUuid: 'patientUuid' }};
+		let ctrl = $componentController('latestobsforconceptlist', {$scope}, bindings);
+
+		$httpBackend.expectGET('/ws/rest/v1/latestobs?concept=uuid-1&patient=patientUuid&v=full').respond({results: []});
+
+		ctrl.$onInit();
+
+		$httpBackend.flush();
+	});
 });

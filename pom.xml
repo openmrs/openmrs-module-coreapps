@@ -52,7 +52,7 @@
         <idgenVersion>4.4.0</idgenVersion>
 		<metadatamappingVersion>1.3.2</metadatamappingVersion>
         <uicommonsVersion>2.3.0</uicommonsVersion>
-        <webservicesRestVersion>2.11</webservicesRestVersion>
+        <webservicesRestVersion>2.17</webservicesRestVersion>
 
 	</properties>
 
@@ -248,9 +248,36 @@
 			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-1.8</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>test</scope>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-1.11</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-1.11</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>test</scope>
+				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
 				<artifactId>webservices.rest-omod-common</artifactId>
 				<version>${webservicesRestVersion}</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-common</artifactId>
+				<version>${webservicesRestVersion}</version>
+				<scope>test</scope>
+				<classifier>tests</classifier>
 			</dependency>
 
 		</dependencies>
