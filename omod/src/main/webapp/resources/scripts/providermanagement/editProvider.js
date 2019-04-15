@@ -279,6 +279,35 @@ function showUnassignSuperviseeDialog(superviseeLabel){
 
 }
 
+function createUnassignSupervisorDialog(superviseeId, supervisorId) {
+    unassignSupervisorDialog = emr.setupConfirmationDialog({
+        selector: '#unassign-supervisor-dialog',
+        actions: {
+            confirm: function() {                
+                emr.getFragmentActionWithCallback('providermanagement', 'providerEdit', 'unassignSupervisee'
+                    , { supervisor: supervisorId,
+                        supervisee: superviseeId,                        
+                    }
+                    , function(data) {
+                        unassignSupervisorDialog.close();
+                        window.location.reload();
+                    }, function(err){
+                        emr.handleError(err);
+                        unassignSupervisorDialog.close();
+                    });
+            },
+            cancel: function() {
+                unassignSupervisorDialog.close();
+            }
+        }
+    });
+}
+
+function showUnassignSupervisorDialog(){
+    unassignSupervisorDialog.show();  
+
+}
+
 function createRetireProviderDialog(providerId) {
     retireProviderDialog = emr.setupConfirmationDialog({
         selector: '#retire-provider-dialog',
