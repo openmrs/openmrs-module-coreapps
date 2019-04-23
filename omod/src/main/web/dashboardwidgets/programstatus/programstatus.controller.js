@@ -216,7 +216,7 @@ export default class ProgramStatusController {
 
             // sort programs in order
             this.patientPrograms = this.$filter('orderBy')(this.patientPrograms, (patientProgram) => {
-                return -patientProgram.dateEnrolled;
+                return -(new Date(patientProgram.dateEnrolled));
             });
 
             // find the matching program, and set the min/max for enroll/complete based on the surrounding programs
@@ -436,7 +436,7 @@ export default class ProgramStatusController {
                 return !state.voided
             }, true);
             this.patientProgram.states = this.$filter('orderBy')(this.patientProgram.states, (state) => {
-                return state.startDate
+                return new Date(state.startDate);
             });
 
             angular.forEach(this.patientProgram.states, (patientState) => {
