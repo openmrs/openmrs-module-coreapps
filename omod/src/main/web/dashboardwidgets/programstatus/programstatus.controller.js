@@ -216,7 +216,7 @@ export default class ProgramStatusController {
 
             // sort programs in order
             this.patientPrograms = this.$filter('orderBy')(this.patientPrograms, (patientProgram) => {
-                return -this.patientPrograms.startDate;
+                return -patientProgram.dateEnrolled;
             });
 
             // find the matching program, and set the min/max for enroll/complete based on the surrounding programs
