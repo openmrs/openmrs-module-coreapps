@@ -9,4 +9,7 @@
             </span>
         </div>
     </li>
+     <p ng-show="$ctrl.obs.length == 0">
+        {{ 'coreapps.none.inLastTime' | translate }}  {{$ctrl.maxAgeInDays}}  {{ 'coreapps.days' | translate }}
+    </p>
 </ul>

@@ -42,5 +42,8 @@
                    ng-click="undoCondition(condition)" ng-if="condition.voided===true && '${hasModifyConditionsPrivilege}'"></i>
             </li>
         </ul>
+       <p ng-show="conditionHistoryList.length == 0">
+        ${ui.message("coreapps.none")}
+       </p>
     </div>
 </div>
