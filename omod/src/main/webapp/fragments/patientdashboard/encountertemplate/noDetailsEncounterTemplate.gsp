@@ -39,7 +39,7 @@
         {{  } }}
 	</span>
 
-	<div id="encounter-summary{{- encounter.encounterId }}" class="collapse">
+	<div id="encounter-summary{{- encounter.encounterId }}" class="collapse encounterview">
 	    <div class="encounter-summary-container"></div>
 	</div>
 </li>
