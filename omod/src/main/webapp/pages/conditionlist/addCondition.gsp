@@ -46,11 +46,13 @@
     <div class="horizontal">
         <ul id="concept-and-date">
             <li class="group">
+                <h3 class="inline">${ui.message('coreapps.conditionui.condition')} </h3> 
                 <coded-or-free-text-answer id="conceptId" class="concept"
                                            concept-classes="8d4918b0-c2cc-11de-8d13-0010c6dffd0f,8d492954-c2cc-11de-8d13-0010c6dffd0f,8d492b2a-c2cc-11de-8d13-0010c6dffd0f,8d491a9a-c2cc-11de-8d13-0010c6dffd0f"
                                            ng-model="concept"/>
             </li>
             <li class="group">
+                <h3 class="inline">${ui.message('coreapps.conditionui.onsetdate')} </h3> 
                 ${ui.includeFragment("uicommons", "field/datetimepicker", [
                         formFieldName: "conditionStartDate",
                         label        : "",
