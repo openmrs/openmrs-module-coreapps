@@ -46,11 +46,13 @@
     <div class="horizontal">
         <ul id="concept-and-date">
             <li class="group">
+                <h3 class="inline">${ui.message('coreapps.conditionui.condition')} </h3>
                 <coded-or-free-text-answer id="conceptId" class="concept"
                                            concept-classes="8d4918b0-c2cc-11de-8d13-0010c6dffd0f,8d492954-c2cc-11de-8d13-0010c6dffd0f,8d492b2a-c2cc-11de-8d13-0010c6dffd0f,8d491a9a-c2cc-11de-8d13-0010c6dffd0f"
                                            ng-model="concept"/>
             </li>
             <li class="group">
+                <h3 class="inline">${ui.message('coreapps.conditionui.onsetdate')} </h3>
                 ${ui.includeFragment("uicommons", "field/datetimepicker", [
                         formFieldName: "conditionStartDate",
                         label        : "",
@@ -69,10 +71,6 @@
         <p>
             <input type="radio" id="status-2" class="condition-status" value="${ui.message('coreapps.conditionui.inactive.label')}" name="status" ng-model="condition.status"/>
             <label for="status-2">${ui.message('coreapps.conditionui.inactive.label')}</label>
-        </p>
-        <p>
-            <input type="radio" id="status-3" class="condition-status" value="${ui.message('coreapps.conditionui.historyof.label')}" name="status" ng-model="condition.status"/>
-            <label for="status-3">${ui.message('coreapps.conditionui.historyof.label')}</label>
         </p>
         <i class="icon-remove delete-item" title="${ui.message("general.clear")}" ng-click="unselectStatus()"></i>
     </div>

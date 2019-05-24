@@ -84,8 +84,6 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                                ng-click="activateCondition(condition)" ng-if="condition.status==='INACTIVE' && condition.voided===false"></i>
                             <i class="icon-minus-sign edit-action" title="${ui.message("coreapps.conditionui.inactive")}"
                                ng-click="deactivateCondition(condition)" ng-if="condition.status==='ACTIVE' && condition.voided===false"></i>
-                            <i class="icon-folder-close edit-action" title="${ui.message("coreapps.conditionui.historyof")}"
-                               ng-click="moveToHistoryCondition(condition)" ng-if="condition.status!=='HISTORY_OF' && condition.voided===false"></i>
                             <i class="icon-remove delete-action" title="${ui.message("coreapps.coreapps.delete")}"
                                ng-click="removeCondition(condition)" ng-if="condition.voided===false"></i>
                             <i class="icon-undo delete-action" title="${ui.message("coreapps.conditionui.undo")}"
