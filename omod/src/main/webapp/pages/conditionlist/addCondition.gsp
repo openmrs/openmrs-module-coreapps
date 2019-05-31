@@ -44,6 +44,7 @@
     <h2 class="inline">${ui.message('coreapps.conditionui.addNewCondition')}</h2><br/>
 
     <div class="horizontal">
+    <label>${ui.message('coreapps.conditionui.condition')} </label>
         <ul id="concept-and-date">
             <li class="group">
                 <coded-or-free-text-answer id="conceptId" class="concept"
@@ -51,6 +52,7 @@
                                            ng-model="concept"/>
             </li>
             <li class="group">
+            <label> ${ui.message('coreapps.conditionui.onsetdate')} </label>
                 ${ui.includeFragment("uicommons", "field/datetimepicker", [
                         formFieldName: "conditionStartDate",
                         label        : "",
