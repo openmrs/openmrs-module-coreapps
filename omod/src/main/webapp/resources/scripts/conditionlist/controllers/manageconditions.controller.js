@@ -34,6 +34,7 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
 
     self.deactivateCondition = self.deactivateCondition || function (condition) {
             condition.status = "INACTIVE";
+            condition.endDate = new Date();
             self.saveCondition(condition);
         }
 
