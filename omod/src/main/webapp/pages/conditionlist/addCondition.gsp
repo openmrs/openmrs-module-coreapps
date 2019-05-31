@@ -70,10 +70,6 @@
             <input type="radio" id="status-2" class="condition-status" value="${ui.message('coreapps.conditionui.inactive.label')}" name="status" ng-model="condition.status"/>
             <label for="status-2">${ui.message('coreapps.conditionui.inactive.label')}</label>
         </p>
-        <p>
-            <input type="radio" id="status-3" class="condition-status" value="${ui.message('coreapps.conditionui.historyof.label')}" name="status" ng-model="condition.status"/>
-            <label for="status-3">${ui.message('coreapps.conditionui.historyof.label')}</label>
-        </p>
         <i class="icon-remove delete-item" title="${ui.message("general.clear")}" ng-click="unselectStatus()"></i>
     </div>
 
