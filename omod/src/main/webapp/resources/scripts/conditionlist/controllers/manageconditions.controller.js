@@ -37,11 +37,6 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
             self.saveCondition(condition);
         }
 
-    self.moveToHistoryCondition = self.moveToHistoryCondition || function (condition) {
-            condition.status = "HISTORY_OF";
-            self.saveCondition(condition);
-        }
-
     self.removeCondition = self.removeCondition || function (condition) {
             condition.voided = true;
             condition.endDate = new Date();
@@ -70,7 +65,6 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
     $scope.removeCondition = self.removeCondition;
     $scope.activateCondition = self.activateCondition;
     $scope.deactivateCondition = self.deactivateCondition;
-    $scope.moveToHistoryCondition = self.moveToHistoryCondition;
     $scope.undoCondition = self.undoCondition;
     $scope.formatDate = CommonFunctions.formatDate;
     $scope.strikeThrough = CommonFunctions.strikeThrough;
