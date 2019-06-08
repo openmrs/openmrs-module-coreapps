@@ -38,6 +38,11 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
             self.saveCondition(condition);
         }
 
+    self.redirectToEditCondition = self.redirectToEditCondition || function(baselink,condition)
+    {
+        window.location= baselink+'condition='+JSON.stringify(condition)+'&';
+    }     
+
     self.removeCondition = self.removeCondition || function (condition) {
             condition.voided = true;
             condition.endDate = new Date();
@@ -70,4 +75,5 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
     $scope.formatDate = CommonFunctions.formatDate;
     $scope.strikeThrough = CommonFunctions.strikeThrough;
     $scope.getConditions = self.getConditions;
+    $scope.redirectToEditCondition=self.redirectToEditCondition
 }

@@ -19,7 +19,7 @@
     ui.includeJavascript("coreapps", "conditionlist/models/condition.model.js")
     ui.includeJavascript("coreapps", "conditionlist/emr.messages.js")
     ui.includeJavascript("coreapps", "conditionlist/common.functions.js")
-    ui.includeJavascript("coreapps", "conditionlist/controllers/addcondition.controller.js")
+    ui.includeJavascript("coreapps", "conditionlist/controllers/editcondition.controller.js")
 
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
     ui.includeCss("coreapps", "conditionlist/conditions.css")
@@ -31,17 +31,17 @@
             label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.familyName))) }, ${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.givenName))) }",
             link: '${ui.pageLink("coreapps", "clinicianfacing/patient", [patientId: patient.id])}'
         },
-        {
+        { 
             label: "${ ui.message("coreapps.conditionui.conditions") }",
             link: '${ui.pageLink("coreapps/conditionlist", "manageConditions", [patientId: patient.id, returnUrl: returnUrl])}'
         },
-        {label: "${ui.message('coreapps.conditionui.addNewCondition')}"}
+        {label: "${ui.message('coreapps.conditionui.editCondition')}"}
     ];
 
 </script>
 
 <div id="condition" ng-app="conditionApp" ng-controller="ConditionController">
-    <h2 class="inline">${ui.message('coreapps.conditionui.addNewCondition')}</h2><br/>
+    <h2 class="inline">${ui.message('coreapps.conditionui.editCondition')}</h2><br/>
 
     <div class="horizontal">
     <label>${ui.message('coreapps.conditionui.condition')} </label>
@@ -57,7 +57,16 @@
                         formFieldName: "conditionStartDate",
                         label        : "",
                         useTime      : false,
-                        startDate    : new Date(),
+                        endDate    : new Date(),
+                ])}
+            </li>
+            <li class="group" ng-if="condition.status==='INACTIVE'">
+               <br/> <label>${ui.message('coreapps.stopDate.label')} </label>
+                ${ui.includeFragment("uicommons", "field/datetimepicker", [
+                        formFieldName: "conditionEndDate",
+                        label        : "",
+                        useTime      : false,
+                        endDate    : new Date(),
                 ])}
             </li>
         </ul>
