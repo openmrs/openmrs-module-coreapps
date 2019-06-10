@@ -50,23 +50,60 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
 
             var onsetDatePicker = angular.element(document.getElementsByName('conditionStartDate'))[0];     
             onsetDatePicker.value = self.convertDate1($scope.condition.onSetDate);
-            
-           /* if($scope.condition.status=='INACTIVE'){
+          
+            if($scope.condition.status=='INACTIVE'){
             var endDatePicker = angular.element(document.getElementsByName('conditionEndDate'))[0];
             console.log($scope.condition.endDate);
             console.log(self.convertDate1($scope.condition.endDate));        
             endDatePicker.value = self.convertDate1($scope.condition.endDate);
             console.log(endDatePicker);
-            } */
-          
+            } 
+
             console.log($scope.condition);        
             var inputs = document.getElementsByTagName('input');
             inputs[1].value = self.convertDate2($scope.condition.onSetDate);  
-            /*if($scope.condition.status=='INACTIVE'){
-            inputs[2].value = self.convertDate2($scope.condition.endDate);
-           }*/
+            //inputs[3].value = self.convertDate2($scope.condition.endDate);
+            self.showEndDate();
+
+           /* var groups = document.getElementsByClassName("group");
+            if($scope.condition.status=='INACTIVE'){
+            groups[2].style.visibility = "visible";
+            }
+            else{
+            groups[2].style.visibility = "hidden";    
+            }*/
 
         }
+
+    self.showEndDate = self.showEndDate || function()
+    {
+        var inputs = document.getElementsByTagName('input');
+        var groups = document.getElementsByClassName("group");
+        if($scope.condition.status=='INACTIVE'){
+        groups[2].style.visibility = "visible";
+        inputs[3].value = self.convertDate2($scope.condition.endDate);
+        }
+        else{
+        groups[2].style.visibility = "hidden";    
+        }
+        
+
+        /*var groups = document.getElementsByClassName("group");
+        if($scope.condition.status=='INACTIVE'){
+            var endDatePicker = angular.element(document.getElementsByName('conditionEndDate'))[0];
+            console.log($scope.condition.endDate);
+            console.log(self.convertDate1($scope.condition.endDate));        
+            endDatePicker.value = self.convertDate1($scope.condition.endDate);
+            console.log(endDatePicker);
+            var inputs = document.getElementsByTagName('input');
+            inputs[3].value = self.convertDate2($scope.condition.endDate);
+            groups[2].style.visibility = "visible";
+            } 
+            else
+            {
+            groups[2].style.visibility = "hidden"; 
+            }*/
+    }
 
     self.validateCondition = self.validateCondition || function () {
             var concept ;
@@ -125,4 +162,5 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
     $scope.unselectStatus = self.unselectStatus;
     $scope.convertDate1 = self.convertDate1;
     $scope.convertDate2 = self.convertDate2;
+    $scope.showEndDate = self.showEndDate;
 }
