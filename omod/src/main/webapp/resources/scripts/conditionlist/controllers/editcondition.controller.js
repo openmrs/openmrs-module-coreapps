@@ -52,30 +52,24 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
             onsetDatePicker.value = self.convertDate1($scope.condition.onSetDate);
           
             if($scope.condition.status=='INACTIVE'){
-            var endDatePicker = angular.element(document.getElementsByName('conditionEndDate'))[0];
-            console.log($scope.condition.endDate);
-            console.log(self.convertDate1($scope.condition.endDate));        
-            endDatePicker.value = self.convertDate1($scope.condition.endDate);
-            console.log(endDatePicker);
+                var endDatePicker = angular.element(document.getElementsByName('conditionEndDate'))[0];      
+                endDatePicker.value = self.convertDate1($scope.condition.endDate);
             } 
 
-            console.log($scope.condition);        
             var inputs = document.getElementsByTagName('input');
             inputs[1].value = self.convertDate2($scope.condition.onSetDate);  
-            //inputs[3].value = self.convertDate2($scope.condition.endDate);
             self.showEndDate();
         }
 
-    self.showEndDate = self.showEndDate || function()
-    {
+    self.showEndDate = self.showEndDate || function() {
         var inputs = document.getElementsByTagName('input');
         var groups = document.getElementsByClassName("group");
         if($scope.condition.status=='INACTIVE'){
-        groups[2].style.visibility = "visible";
-        inputs[3].value = self.convertDate2($scope.condition.endDate);
+            groups[2].style.visibility = "visible";
+            inputs[3].value = self.convertDate2($scope.condition.endDate);
         }
         else{
-        groups[2].style.visibility = "hidden";    
+            groups[2].style.visibility = "hidden";    
         }
     }
 
@@ -105,8 +99,6 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
 
     self.unselectStatus = self.unselectStatus || function () {
             $scope.condition.status = null;
-            console.log($scope.condition);
-            console.log($scope.concept);
         }
 
     self.getSelectedDate = self.getSelectedDate || function () {
@@ -114,13 +106,12 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
             return datePicker.value;
         }
         
-    self.getEndDate = self.getEndDate || function()
-    {
-        var endDatePicker = angular.element(document.getElementsByName('conditionEndDate'))[0];
-        return endDatePicker.value;
+    self.getEndDate = self.getEndDate || function() {
+           var endDatePicker = angular.element(document.getElementsByName('conditionEndDate'))[0];
+           return endDatePicker.value;
     }    
 
-        self.convertDate1 = self.convertDate1 || function(date_in_ms) {
+    self.convertDate1 = self.convertDate1 || function(date_in_ms) {
             var date = new Date(date_in_ms);
             var y = date.getFullYear();
             var m = date.getMonth() + 1;    
@@ -128,14 +119,13 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
             m = (m < 10) ? '0' + m : m; 
             d = (d < 10) ? '0' + d : d;
             return [y, m, d].join('-');
-           }
+    }
         
-   self.convertDate2 = self.convertDate2 || function(date_in_ms)
-    {
-        var d = new Date(date_in_ms);
-        d = d.toUTCString();
-        d = d.split(" ").slice(1,4).join(" ");
-        return d; 
+    self.convertDate2 = self.convertDate2 || function(date_in_ms) {
+           var d = new Date(date_in_ms);
+           d = d.toUTCString();
+           d = d.split(" ").slice(1,4).join(" ");
+           return d; 
     }
     // init page
     self.initCondition();

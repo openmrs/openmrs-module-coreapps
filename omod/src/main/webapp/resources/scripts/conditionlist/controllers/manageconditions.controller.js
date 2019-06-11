@@ -38,8 +38,7 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
             self.saveCondition(condition);
         }
 
-    self.redirectToEditCondition = self.redirectToEditCondition || function(baselink,condition)
-    {
+    self.redirectToEditCondition = self.redirectToEditCondition || function(baselink,condition) {
         window.location= baselink+'condition='+JSON.stringify(condition)+'&';
     }     
 
