@@ -60,8 +60,9 @@
                         endDate    : new Date(),
                 ])}
             </li>
-            <li class="group">
-               <br/> <label>${ui.message('coreapps.stopDate.label')} </label>
+            <li id="status" class="group">
+             <br/> <br/>
+            <label>${ui.message('coreapps.stopDate.label')} </label>
                 ${ui.includeFragment("uicommons", "field/datetimepicker", [
                         formFieldName: "conditionEndDate",
                         label        : "",
