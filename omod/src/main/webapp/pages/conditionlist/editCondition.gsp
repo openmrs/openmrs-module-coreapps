@@ -43,10 +43,10 @@
 <div id="condition" ng-app="conditionApp" ng-controller="ConditionController">
     <h2 class="inline">${ui.message('coreapps.conditionui.editCondition')}</h2><br/>
 
-    <div class="horizontal">
-    <label>${ui.message('coreapps.conditionui.condition')} </label>
+    <div class="horizontal">    
         <ul id="concept-and-date">
             <li class="group">
+            <label>${ui.message('coreapps.conditionui.condition')} </label>
                 <coded-or-free-text-answer id="conceptId" class="concept"
                                            concept-classes="8d4918b0-c2cc-11de-8d13-0010c6dffd0f,8d492954-c2cc-11de-8d13-0010c6dffd0f,8d492b2a-c2cc-11de-8d13-0010c6dffd0f,8d491a9a-c2cc-11de-8d13-0010c6dffd0f"
                                            ng-model="concept"/>
