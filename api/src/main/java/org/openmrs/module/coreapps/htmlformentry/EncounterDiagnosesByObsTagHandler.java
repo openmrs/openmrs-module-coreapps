@@ -1,3 +1,4 @@
+
 package org.openmrs.module.coreapps.htmlformentry;
 
 import org.openmrs.api.ConceptService;
@@ -77,6 +78,7 @@ public class EncounterDiagnosesByObsTagHandler extends SubstitutionTagHandler {
         element.setAdtService(adtService);
         element.setDiagnosisSets(attributes.get("diagnosisSets") != null ? attributes.get("diagnosisSets") : "");
         element.setDiagnosisConceptSources(attributes.get("diagnosisConceptSources") != null ? attributes.get("diagnosisConceptSources") : "");
+        element.setPreferredCodingSource(attributes.get("preferredCodingSource") != null ? attributes.get("preferredCodingSource"): CoreAppsConstants.DEFAULT_CODING_SOURCE);
 
         /**
          *  Handle the attribute to specify loading any prior diagnoses from the most recent encounter with a specific disposition

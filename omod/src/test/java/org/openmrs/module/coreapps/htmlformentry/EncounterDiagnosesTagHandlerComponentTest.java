@@ -76,6 +76,7 @@ import org.openmrs.module.htmlformentry.RegressionTestHelper;
 import org.openmrs.ui.framework.Model;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -366,10 +367,46 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
 
     @Test
+    public void getSubstitution_shouldAddPreferredCodingSourceWithPreferredValueAttributeOnDiagnosisSearchField() throws Exception {
+        // Setup
+        String preferredCodingSource = "ICPC2";
+
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // Replay
+        attributes.put("preferredCodingSource", preferredCodingSource);
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // Verify
+        assertTrue(StringUtils.contains(generatedHtml, "preferredCodingSource=\"" + preferredCodingSource + "\""));
+
+    }
+
+    @Test
+    public void getSubstitution_shouldAddPreferredCodingSourceWithDefaultValueAttributeOnDiagnosisSearchField() throws Exception {
+        // Setup
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // Replay
+        attributes.put("preferredCodingSource", null);
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // Verify
+        assertTrue(StringUtils.contains(generatedHtml, "preferredCodingSource=\"" + CoreAppsConstants.DEFAULT_CODING_SOURCE + "\""));
+
+    }
+
+    @Test
     public void getSubstitution_shouldAddUuidsToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisUuids() throws Exception {
         // setup
         String diagnosisSetsUuids = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
-        
+
         Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
@@ -388,7 +425,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     public void getSubstitution_shouldAddUuidsToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisMappings() throws Exception {
         // setup
         String diagnosisSetsUuids = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
-        
+
         Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
@@ -431,6 +468,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         // replay
         attributes.put("diagnosisSets", "NON-EXISTING:MAPPING,CIEL:160170");
         encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
     }
 
     @Test
@@ -477,13 +515,13 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         Map<String, Object> model = new LinkedHashMap<String, Object>();
         Model cfgAsModel = new Model();
         for (String prop : fragmentConfig.keySet()) {
-        	cfgAsModel.addAttribute(prop, fragmentConfig.get(prop));
+            cfgAsModel.addAttribute(prop, fragmentConfig.get(prop));
         }
         model.put("config", cfgAsModel);
         model.put("ui", uiUtils);
         model.put("jsForExisting", new ArrayList<String>());
         model.put("jsForPrior", new ArrayList<String>());
-    
+
         return template.make(model).toString();
     }
 }

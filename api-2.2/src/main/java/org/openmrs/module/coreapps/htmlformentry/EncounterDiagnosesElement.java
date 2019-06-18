@@ -1,3 +1,4 @@
+
 /**
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -67,6 +68,8 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private String diagnosisSets;
 
     private String diagnosisConceptSources;
+
+    private String preferredCodingSource;
 
     private EmrApiProperties emrApiProperties;
 
@@ -139,6 +142,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
                 fragmentConfig.put("diagnosisSets", validateAndFormat(diagnosisSets));
+                fragmentConfig.put("preferredCodingSource", preferredCodingSource);
                 fragmentConfig.put("diagnosisConceptSources", StringUtils.deleteWhitespace(diagnosisConceptSources));
 
                 // add the prior diagnoses if requested
@@ -417,6 +421,14 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     public String getDiagnosisConceptSources() {
         return diagnosisConceptSources;
+    }
+
+    public void setPreferredCodingSource(String preferredCodingSource) {
+        this.preferredCodingSource = preferredCodingSource;
+    }
+
+    public String getPreferredCodingSource() {
+        return preferredCodingSource;
     }
 
     public void setUiUtils(UiUtils uiUtils) {
