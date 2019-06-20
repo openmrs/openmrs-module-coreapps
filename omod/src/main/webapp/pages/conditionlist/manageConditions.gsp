@@ -48,12 +48,12 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
         <ul>
             <li>
                 <a href="#ACTIVE" class="tabs-height">
-                    ${ui.message('coreapps.conditionui.activeConditions')}
+                    ${ui.message('coreapps.conditionui.active')}
                 </a>
             </li>
             <li>
                 <a href="#INACTIVE" class="tabs-height">
-                    ${ui.message('coreapps.conditionui.inactiveConditions')}
+                    ${ui.message('coreapps.conditionui.inactive')}
                 </a>
             </li>
         </ul>
