@@ -75,6 +75,7 @@ public class EncounterDiagnosesByObsTagHandler extends SubstitutionTagHandler {
         element.setEmrApiProperties(emrApiProperties);
         element.setConceptService(conceptService);
         element.setAdtService(adtService);
+        element.setDiagnosisSets(attributes.get("diagnosisSets") != null ? attributes.get("diagnosisSets") : "");
 
         /**
          *  Handle the attribute to specify loading any prior diagnoses from the most recent encounter with a specific disposition

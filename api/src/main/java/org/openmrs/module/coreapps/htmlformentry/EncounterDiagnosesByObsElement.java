@@ -66,6 +66,8 @@ public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, For
 
     private ConceptService conceptService;
 
+    private String diagnosisSets;
+
     private AdtService adtService;
 
     private DispositionType dispositionTypeForPriorDiagnoses = null;
@@ -110,6 +112,7 @@ public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, For
                 Map<String, Object> fragmentConfig = new HashMap<String, Object>();
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
+                fragmentConfig.put("diagnosisSets", diagnosisSets);
 
                 // add the prior diagnoses if requested
                 if (FormEntryContext.Mode.ENTER == context.getMode() && dispositionTypeForPriorDiagnoses != null) {
@@ -308,6 +311,14 @@ public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, For
 
     public boolean getRequired() {
         return required;
+    }
+
+    public void setDiagnosisSets(String diagnosisSets) {
+        this.diagnosisSets = diagnosisSets;
+    }
+
+    public String getDiagnosisSets() {
+        return diagnosisSets;
     }
 
     public void setUiUtils(UiUtils uiUtils) {
