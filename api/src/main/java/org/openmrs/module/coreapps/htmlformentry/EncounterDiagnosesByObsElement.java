@@ -66,7 +66,7 @@ public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, For
 
     private ConceptService conceptService;
 
-    private String diagnosisSets;
+    private String diagnosisSetUuids;
 
     private AdtService adtService;
 
@@ -112,7 +112,7 @@ public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, For
                 Map<String, Object> fragmentConfig = new HashMap<String, Object>();
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
-                fragmentConfig.put("diagnosisSets", diagnosisSets);
+                fragmentConfig.put("diagnosisSetUuids", diagnosisSetUuids);
 
                 // add the prior diagnoses if requested
                 if (FormEntryContext.Mode.ENTER == context.getMode() && dispositionTypeForPriorDiagnoses != null) {
@@ -313,12 +313,12 @@ public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, For
         return required;
     }
 
-    public void setDiagnosisSets(String diagnosisSets) {
-        this.diagnosisSets = diagnosisSets;
+    public void setDiagnosisSetUuids(String diagnosisSetUuids) {
+        this.diagnosisSetUuids = diagnosisSetUuids;
     }
 
-    public String getDiagnosisSets() {
-        return diagnosisSets;
+    public String getDiagnosisSetUuids() {
+        return diagnosisSetUuids;
     }
 
     public void setUiUtils(UiUtils uiUtils) {

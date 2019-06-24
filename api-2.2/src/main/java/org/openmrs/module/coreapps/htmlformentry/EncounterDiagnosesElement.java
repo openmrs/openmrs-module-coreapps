@@ -61,7 +61,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private UiUtils uiUtils;
     private String selectedDiagnosesTarget;
 
-    private String diagnosisSets;
+    private String diagnosisSetUuids;
 
     private EmrApiProperties emrApiProperties;
 
@@ -133,7 +133,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 Map<String, Object> fragmentConfig = new HashMap<String, Object>();
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
-                fragmentConfig.put("diagnosisSets", diagnosisSets);
+                fragmentConfig.put("diagnosisSetUuids", diagnosisSetUuids);
 
                 // add the prior diagnoses if requested
                 if (FormEntryContext.Mode.ENTER == context.getMode() && dispositionTypeForPriorDiagnoses != null) {
@@ -364,12 +364,12 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         return required;
     }
 
-    public void setDiagnosisSets(String diagnosisSets) {
-        this.diagnosisSets = diagnosisSets;
+    public void setDiagnosisSetUuids(String diagnosisSetUuids) {
+        this.diagnosisSetUuids = diagnosisSetUuids;
     }
 
-    public String getDiagnosisSets() {
-        return diagnosisSets;
+    public String getDiagnosisSetUuids() {
+        return diagnosisSetUuids;
     }
 
     public void setUiUtils(UiUtils uiUtils) {
