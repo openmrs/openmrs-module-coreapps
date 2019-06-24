@@ -77,9 +77,9 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                     </tr>
                     <tbody ng-repeat="conditionHistory in conditionHistoryList">
                     <tr class="clickable-tr" ng-init="condition = conditionHistory.conditions[0]"
-                        ng-show="condition.status===tab">
-                        <td ng-style="strikeThrough(condition.voided)">{{condition.concept.name}}</td>
-                        <td ng-style="strikeThrough(condition.voided)">{{formatDate(condition.onSetDate)}}</td>
+                        ng-show="condition.status===tab && condition.voided === false">
+                        <td>{{condition.concept.name}}</td>
+                        <td>{{formatDate(condition.onSetDate)}}</td>
                         <td ng-if="condition.status==='INACTIVE' && condition.voided===false" ng-style="strikeThrough(condition.voided)">{{formatDate(condition.endDate)}}</td>
                         <td ng-if="'${hasModifyConditionsPrivilege}'">
                             <i class="icon-plus-sign edit-action" title="${ui.message("coreapps.conditionui.active")}"
@@ -87,9 +87,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                             <i class="icon-minus-sign edit-action" title="${ui.message("coreapps.conditionui.inactive")}"
                                ng-click="deactivateCondition(condition)" ng-if="condition.status==='ACTIVE' && condition.voided===false"></i>
                             <i class="icon-remove delete-action" title="${ui.message("coreapps.coreapps.delete")}"
-                               ng-click="removeCondition(condition)" ng-if="condition.voided===false"></i>
-                            <i class="icon-undo delete-action" title="${ui.message("coreapps.conditionui.undo")}"
-                               ng-click="undoCondition(condition)" ng-if="condition.voided===true"></i>
+                               ng-click="conditionConfirmation(condition)" ng-if="condition.voided===false"></i>
                         </td>
                     </tr>
                     </tbody>
@@ -98,6 +96,22 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
             </div>
         </span>
     </div>
+
+    
+<div id="remove-condition-dialog" class="dialog" style="display: none; position: absolute; left: 35%; top:30%;">
+    <div class="dialog-header">
+        <h3>${ ui.message("coreapps.conditionui.removeCondition") }</h3>
+    </div>
+    <div class="dialog-content">
+        <ul>
+            <li class="info">
+                <span id="removeConditionMessage">${ ui.message("coreapps.conditionui.removeCondition.message","")}</span>
+            </li>
+        </ul>       
+            <button class="confirm right" type="submit" ng-click="removeCondition()">${ ui.message("general.yes") }</button>
+            <button class="cancel" ng-click="cancelDeletion()">${ ui.message("general.no") }</button>
+    </div>
+</div>
 
     <div class="actions">
         <button class="cancel"
