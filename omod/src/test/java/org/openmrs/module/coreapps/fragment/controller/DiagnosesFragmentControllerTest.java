@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
@@ -57,8 +58,9 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
     
     private String LUNG_DISEASE_DIAGNOSIS_SET_UUID = "d1010973-803e-8659-4415-c01707c01dec";
 
-    private String CANCEROUR_DISEASE_DIAGNOSIS_SET_UUID = "d710b7h4-40b7-d333-b449-6e0e15d0739d";
+    private String CANCEROUS_DISEASE_DIAGNOSIS_SET_UUID = "d710b7h4-40b7-d333-b449-6e0e15d0739d";
 
+    @Mock
     private UiSessionContext context;
 
     private DiagnosesFragmentController controller;
@@ -68,16 +70,16 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
     private UiUtils uiUtils;    
 
     @Autowired
-    EmrConceptService emrConceptService;
+    private EmrConceptService emrConceptService;
 
     @Autowired
     private ConceptService conceptService;
 
     @Autowired
-    EmrApiProperties emrApiProperties;
+    private EmrApiProperties emrApiProperties;
 
     @Autowired @Qualifier("adminService")
-    AdministrationService administrationService;
+    private AdministrationService administrationService;
 
     @Before
     public void setUp() throws Exception {
@@ -90,7 +92,9 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
             }
         };
         controller = new DiagnosesFragmentController();
-        context = mock(UiSessionContext.class);
+
+        when(context.getLocale()).thenReturn(locale);
+
         ConceptSource source = conceptService.getConceptSourceByUuid(CONCEPT_SOURCE_UUID);
         source.setName("ICD-10-WHO");
         
@@ -108,13 +112,13 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
             diagnosis1.setFullySpecifiedName(new ConceptName("Asthma", locale));
             diagnosis1.setConceptClass(conceptService.getConceptClassByName("Diagnosis"));
             diagnosis1.setDatatype(conceptService.getConceptDatatypeByName("N/A"));
-            diagnosis1.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"5000","Test"), conceptMapType));
+            diagnosis1.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"J45.9","Test"), conceptMapType));
             diagnosis1 = conceptService.saveConcept(diagnosis1);
             Concept diagnosis2 = new Concept();
             diagnosis2.setFullySpecifiedName(new ConceptName("Tuberculosis infection", locale));
             diagnosis2.setConceptClass(conceptService.getConceptClassByName("Diagnosis"));
             diagnosis2.setDatatype(conceptService.getConceptDatatypeByName("N/A"));
-            diagnosis2.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"5001","Test"), conceptMapType));
+            diagnosis2.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"A15.0","Test"), conceptMapType));
             diagnosis2 = conceptService.saveConcept(diagnosis2);
             
             Concept diagnosisSet = new Concept();
@@ -133,17 +137,17 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
             diagnosis3.setFullySpecifiedName(new ConceptName("Liver cancer", locale));
             diagnosis3.setConceptClass(conceptService.getConceptClassByName("Diagnosis"));
             diagnosis3.setDatatype(conceptService.getConceptDatatypeByName("N/A"));
-            diagnosis3.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"5002","Test"), conceptMapType));
+            diagnosis3.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"C22.9","Test"), conceptMapType));
             diagnosis3 = conceptService.saveConcept(diagnosis3);
             Concept diagnosis4 = new Concept();
             diagnosis4.setFullySpecifiedName(new ConceptName("Lung cancer infection", locale));
             diagnosis4.setConceptClass(conceptService.getConceptClassByName("Diagnosis"));
             diagnosis4.setDatatype(conceptService.getConceptDatatypeByName("N/A"));
-            diagnosis4.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"5003","Test"), conceptMapType));
+            diagnosis4.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"J85.2","Test"), conceptMapType));
             diagnosis4 = conceptService.saveConcept(diagnosis4);
             
             Concept diagnosisSet = new Concept();
-            diagnosisSet.setUuid(CANCEROUR_DISEASE_DIAGNOSIS_SET_UUID);
+            diagnosisSet.setUuid(CANCEROUS_DISEASE_DIAGNOSIS_SET_UUID);
             diagnosisSet.setFullySpecifiedName(new ConceptName("Cancerous diseases diagnoses", locale));
             diagnosisSet.setConceptClass(conceptService.getConceptClassByName("ConvSet"));
             diagnosisSet.setDatatype(conceptService.getConceptDatatypeByName("N/A"));
@@ -160,7 +164,7 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
             diagnosisSuperSet.setConceptClass(conceptService.getConceptClassByName("ConvSet"));
             diagnosisSuperSet.setDatatype(conceptService.getConceptDatatypeByName("N/A"));
             diagnosisSuperSet.addSetMember(conceptService.getConceptByUuid(LUNG_DISEASE_DIAGNOSIS_SET_UUID));
-            diagnosisSuperSet.addSetMember(conceptService.getConceptByUuid(CANCEROUR_DISEASE_DIAGNOSIS_SET_UUID));
+            diagnosisSuperSet.addSetMember(conceptService.getConceptByUuid(CANCEROUS_DISEASE_DIAGNOSIS_SET_UUID));
             conceptService.saveConcept(diagnosisSuperSet);
         }
 
@@ -169,12 +173,11 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
     @Test
     public void search_shouldSearchForDiagnosisConceptsFromSpecifiedSets() throws Exception {
         // setup
-        when(context.getLocale()).thenReturn(locale);
         String queryString = "infection";
-        String diagnosisSetUuids = LUNG_DISEASE_DIAGNOSIS_SET_UUID;
+        String diagnosisSetUuid = LUNG_DISEASE_DIAGNOSIS_SET_UUID;
 
         // replay
-        List<SimpleObject> conceptSearchResults = controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, diagnosisSetUuids, null, null);
+        List<SimpleObject> conceptSearchResults = controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, diagnosisSetUuid, null, null);
         
         // verify
         assertEquals(1, conceptSearchResults.size());
@@ -185,7 +188,6 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
     @Test
     public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenEmptyDiagnosisSetUuids() throws Exception {
         // setup
-        when(context.getLocale()).thenReturn(locale);
         String queryString = "infection";
 
         // replay
@@ -201,7 +203,6 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
     @Test
     public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenNullDiagnosisSetUuids() throws Exception {
         // setup
-        when(context.getLocale()).thenReturn(locale);
         String queryString = "infection";
 
         // replay
@@ -217,7 +218,6 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
     @Test
     public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenUndefinedDiagnosisSetUuids() throws Exception {
         // setup
-        when(context.getLocale()).thenReturn(locale);
         String queryString = "infection";
 
         // replay
