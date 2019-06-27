@@ -56,7 +56,7 @@ public class DiagnosesFragmentController {
                                      @SpringBean("emrConceptService") EmrConceptService emrConceptService,
                                      @SpringBean("conceptService") ConceptService conceptService,
                                      @RequestParam("term") String query,
-                                     @RequestParam(value = "diagnosisSetUuids", defaultValue = "") String diagnosisSetUuids,
+                                     @RequestParam(value = "diagnosisSets", defaultValue = "") String diagnosisSetUuids,
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 

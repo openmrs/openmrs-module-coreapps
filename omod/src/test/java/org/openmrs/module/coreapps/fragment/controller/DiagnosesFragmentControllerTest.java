@@ -186,7 +186,7 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
     }
 
     @Test
-    public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenEmptyDiagnosisSetUuids() throws Exception {
+    public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenEmptyDiagnosisSets() throws Exception {
         // setup
         String queryString = "infection";
 
@@ -201,7 +201,7 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
     }
 
     @Test
-    public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenNullDiagnosisSetUuids() throws Exception {
+    public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenNullDiagnosisSets() throws Exception {
         // setup
         String queryString = "infection";
 
