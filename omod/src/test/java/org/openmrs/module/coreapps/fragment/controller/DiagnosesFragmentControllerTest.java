@@ -215,18 +215,4 @@ public class DiagnosesFragmentControllerTest extends BaseModuleWebContextSensiti
 
     }
 
-    @Test
-    public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenUndefinedDiagnosisSetUuids() throws Exception {
-        // setup
-        String queryString = "infection";
-
-        // replay
-        List<SimpleObject> conceptSearchResults = controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "undefined", null, null);
-     
-        // verify
-        assertEquals(2, conceptSearchResults.size());
-        assertThat((String) ((SimpleObject) conceptSearchResults.get(0).get("conceptName")).get("name"), is("Lung cancer infection"));
-        assertThat((String) ((SimpleObject) conceptSearchResults.get(1).get("conceptName")).get("name"), is("Tuberculosis infection"));
-
-    }
 }

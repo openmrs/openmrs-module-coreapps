@@ -61,7 +61,7 @@ public class DiagnosesFragmentController {
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
         Collection<Concept> diagnosisSets = new ArrayList<Concept>();
-        if (StringUtils.isNotEmpty(diagnosisSetUuids) && !"undefined".equalsIgnoreCase(diagnosisSetUuids)) {
+        if (StringUtils.isNotEmpty(diagnosisSetUuids)) {
             String [] setUuids = diagnosisSetUuids.split(",");
             for (String setUuid : setUuids) {
                 Concept conceptSet = conceptService.getConceptByUuid(setUuid);
