@@ -17,19 +17,33 @@ package org.openmrs.module.coreapps.htmlformentry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.hasEntry;
 
+import groovy.text.SimpleTemplateEngine;
+import groovy.text.Template;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -52,7 +66,12 @@ import org.openmrs.module.emrapi.matcher.ObsGroupMatcher;
 import org.openmrs.module.emrapi.test.ContextSensitiveMetadataTestUtils;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.RegressionTestHelper;
+import org.openmrs.module.htmlformentry.FormEntryContext;
+import org.openmrs.module.htmlformentry.FormEntrySession;
+import org.openmrs.module.htmlformentry.FormSubmissionController;
+import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.page.PageAction;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -61,6 +80,20 @@ import org.springframework.mock.web.MockHttpServletRequest;
  *
  */
 public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebContextSensitiveTest {
+
+    private EncounterDiagnosesTagHandler encounterDiagnosesTagHandler;
+    
+    @Mock
+    private FormEntrySession formEntrySession;
+
+    @Mock
+    private FormEntryContext formEntryContext;
+    
+    @Mock
+    private FormSubmissionController formSubmissionController;
+
+    @Mock
+    private UiUtils uiUtils;
 
     @Autowired
     ConceptService conceptService;
@@ -82,8 +115,12 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
 
     @Before
     public void setUp() throws Exception {
+        when(formEntryContext.getMode()).thenReturn(FormEntryContext.Mode.ENTER);
+        when(formEntrySession.getContext()).thenReturn(formEntryContext);
+        when(uiUtils.message(anyString())).thenReturn("message");
+
         ContextSensitiveMetadataTestUtils.setupDiagnosisMetadata(conceptService, emrApiProperties);
-        EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class), null);
+        encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class), null);
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
     }
 
@@ -280,6 +317,76 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
                 assertThat(diagnoses, containsInAnyOrder(newPrimary, newSecondary, oldSecondary));
             };
         }.run();
+    }
+
+    @Test
+    public void getSubstitution_shouldAddDiagnosisSetUuidsAttributeOnDiagnosisSearchField() throws Exception {
+        // Setup
+        String diagnosisSetUuids = "d7f80231-48ad-4585-aeb6-44dfb70d7566,160168AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        FragmentConfiguration fragmentConfig = new FragmentConfiguration();
+        fragmentConfig.put("formFieldName", "encounterDiagnoses");
+        fragmentConfig.put("existingDiagnoses", new ArrayList<String>());
+        fragmentConfig.put("diagnosisSetUuids", diagnosisSetUuids);
+
+        String result = renderFragment(fragmentConfig);
+        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSetUuids", (Object) diagnosisSetUuids)))).thenReturn(result);
+        encounterDiagnosesTagHandler.setUiUtils(uiUtils);
+
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+        attributes.put("diagnosisSetUuids", diagnosisSetUuids);
+        String diagnosisSetUuidsAttribute = "diagnosisSetUuids=\"d7f80231-48ad-4585-aeb6-44dfb70d7566,160168AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"";
+
+        // Replay
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // Verify
+        assertTrue(StringUtils.contains(generatedHtml, diagnosisSetUuidsAttribute));
+    
+    }
+
+    @Test
+    public void getSubstitution_shouldAddEmptyStringToDiagnosisSetUuidsAttributeOnDiagnosisSearchField() throws Exception {
+        // Setup
+        String diagnosisSetUuids = null;
+        FragmentConfiguration fragmentConfig = new FragmentConfiguration();
+        fragmentConfig.put("formFieldName", "encounterDiagnoses");
+        fragmentConfig.put("existingDiagnoses", new ArrayList<String>());
+        fragmentConfig.put("diagnosisSetUuids", "");
+
+        String result = renderFragment(fragmentConfig);
+        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSetUuids", (Object) "")))).thenReturn(result);
+        encounterDiagnosesTagHandler.setUiUtils(uiUtils);
+
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+        attributes.put("diagnosisSetUuids", diagnosisSetUuids);
+        String diagnosisSetUuidsAttribute = "diagnosisSetUuids=\"\"";
+
+        // Replay
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // Verify
+        assertTrue(StringUtils.contains(generatedHtml, diagnosisSetUuidsAttribute));
+    
+    }
+
+    private String renderFragment(Map<String, Object> configuration) throws Exception {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("web/module/fragments/diagnosis/encounterDiagnoses.gsp");
+        String string = IOUtils.toString(inputStream, "UTF-8");
+
+        Template template = new SimpleTemplateEngine(getClass().getClassLoader()).createTemplate(string);
+        Map<String, Object> model = new LinkedHashMap<String, Object>();
+        model.put("config", configuration);
+        model.put("ui", uiUtils);
+        model.put("jsForExisting", new ArrayList<String>());
+        model.put("jsForPrior", new ArrayList<String>());
+    
+        return template.make(model).toString();
     }
 
 }
