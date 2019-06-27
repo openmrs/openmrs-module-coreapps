@@ -320,58 +320,58 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
 
     @Test
-    public void getSubstitution_shouldAddDiagnosisSetUuidsAttributeOnDiagnosisSearchField() throws Exception {
+    public void getSubstitution_shouldAddDiagnosisSetsAttributeOnDiagnosisSearchField() throws Exception {
         // Setup
-        String diagnosisSetUuids = "d7f80231-48ad-4585-aeb6-44dfb70d7566,160168AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        String diagnosisSets = "d7f80231-48ad-4585-aeb6-44dfb70d7566,160168AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         FragmentConfiguration fragmentConfig = new FragmentConfiguration();
         fragmentConfig.put("formFieldName", "encounterDiagnoses");
         fragmentConfig.put("existingDiagnoses", new ArrayList<String>());
-        fragmentConfig.put("diagnosisSetUuids", diagnosisSetUuids);
+        fragmentConfig.put("diagnosisSets", diagnosisSets);
 
         String result = renderFragment(fragmentConfig);
-        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSetUuids", (Object) diagnosisSetUuids)))).thenReturn(result);
+        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSets", (Object) diagnosisSets)))).thenReturn(result);
         encounterDiagnosesTagHandler.setUiUtils(uiUtils);
 
         Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
         attributes.put("selectedDiagnosesTarget", "example-target");
-        attributes.put("diagnosisSetUuids", diagnosisSetUuids);
-        String diagnosisSetUuidsAttribute = "diagnosisSetUuids=\"d7f80231-48ad-4585-aeb6-44dfb70d7566,160168AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"";
+        attributes.put("diagnosisSets", diagnosisSets);
+        String diagnosisSetsAttribute = "diagnosisSets=\"d7f80231-48ad-4585-aeb6-44dfb70d7566,160168AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"";
 
         // Replay
         String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
 
         // Verify
-        assertTrue(StringUtils.contains(generatedHtml, diagnosisSetUuidsAttribute));
+        assertTrue(StringUtils.contains(generatedHtml, diagnosisSetsAttribute));
     
     }
 
     @Test
-    public void getSubstitution_shouldAddEmptyStringToDiagnosisSetUuidsAttributeOnDiagnosisSearchField() throws Exception {
+    public void getSubstitution_shouldAddEmptyStringToDiagnosisSetsAttributeOnDiagnosisSearchField() throws Exception {
         // Setup
-        String diagnosisSetUuids = null;
+        String diagnosisSets = null;
         FragmentConfiguration fragmentConfig = new FragmentConfiguration();
         fragmentConfig.put("formFieldName", "encounterDiagnoses");
         fragmentConfig.put("existingDiagnoses", new ArrayList<String>());
-        fragmentConfig.put("diagnosisSetUuids", "");
+        fragmentConfig.put("diagnosisSets", "");
 
         String result = renderFragment(fragmentConfig);
-        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSetUuids", (Object) "")))).thenReturn(result);
+        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSets", (Object) "")))).thenReturn(result);
         encounterDiagnosesTagHandler.setUiUtils(uiUtils);
 
         Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
         attributes.put("selectedDiagnosesTarget", "example-target");
-        attributes.put("diagnosisSetUuids", diagnosisSetUuids);
-        String diagnosisSetUuidsAttribute = "diagnosisSetUuids=\"\"";
+        attributes.put("diagnosisSets", diagnosisSets);
+        String diagnosisSetsAttribute = "diagnosisSets=\"\"";
 
         // Replay
         String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
 
         // Verify
-        assertTrue(StringUtils.contains(generatedHtml, diagnosisSetUuidsAttribute));
+        assertTrue(StringUtils.contains(generatedHtml, diagnosisSetsAttribute));
     
     }
 
