@@ -414,6 +414,22 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void getSubstitution_shouldThrowExceptionDiagnosisSetsAttributeHasNonExistingSets() throws Exception {
+        // Setup
+        String diagnosisSetsMappings = "NON-EXISTING:160000,CIEL:160170";
+
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+        attributes.put("diagnosisSets", diagnosisSetsMappings);
+
+        // Replay
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+    
+    }
+
     @Test
     public void getSubstitution_shouldAddEmptyStringToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
         // Setup

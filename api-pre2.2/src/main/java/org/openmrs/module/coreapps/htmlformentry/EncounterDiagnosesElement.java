@@ -144,12 +144,12 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     }
     
     /**
-     * This method recieves a comma seperated list of diagnosis sets which are verified and then
-     * returns as comma seperated list of their uuids. diagnosisSetIds may be concept's 1). uuid
-     * 2). mapping, 3). id
+     * This method receives a comma-separated list of diagnosis sets 'identifiers'
+     * and returns as comma-separated list of their uuids.
      *
-     * @param diagnosisSetIds
-     * @return uuids
+     * @param diagnosisSetIds Either concepts UUIDS, mappings or internal IDs.
+     * @return The list of diagnoses sets as a list of their concept UUIDs.
+     * @throws IllegalArgumentException if one or more sets cannot be fetched from the database.
      */
     private String validateAndFormat(String diagnosisSetIds) {
         if ("".equals(diagnosisSetIds)) {
@@ -160,8 +160,8 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
             String id = st.nextToken().trim();
             Concept concept = HtmlFormEntryUtil.getConcept(id);
             if (concept == null) {
-                throw new IllegalArgumentException("Cannot find diagnosis set for value " + id
-                        + " in diagnosisSets attribute value. Parameters: " + diagnosisSetIds);
+                throw new IllegalArgumentException("Cannot find diagnosis set for value '" + id
+                        + "' in diagnosisSets attribute value. Parameters: " + diagnosisSetIds);
             }
             concepts.add(concept);
         }
@@ -173,7 +173,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         }
         String uuids = sb.toString();
 
-        return uuids.substring(0, uuids.lastIndexOf(","));
+        return StringUtils.removeEnd(uuids, ",");
     }
 
     @Override
