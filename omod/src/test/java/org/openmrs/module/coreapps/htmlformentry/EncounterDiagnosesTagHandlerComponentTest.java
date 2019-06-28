@@ -45,6 +45,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.ConceptMapType;
+import org.openmrs.ConceptName;
+import org.openmrs.ConceptReferenceTerm;
+import org.openmrs.ConceptSource;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Obs;
@@ -82,6 +87,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebContextSensitiveTest {
 
     private EncounterDiagnosesTagHandler encounterDiagnosesTagHandler;
+
+    private String GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID = "d1010973-803e-8659-4415-c01707c01dec";
+
+    private String HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID = "d710b7h4-40b7-d333-b449-6e0e15d0739d";
+
+    private String CONCEPT_SOURCE_UUID = "75f5b378-5065-11de-80cb-001e378eb67e";
     
     @Mock
     private FormEntrySession formEntrySession;
@@ -122,6 +133,30 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         ContextSensitiveMetadataTestUtils.setupDiagnosisMetadata(conceptService, emrApiProperties);
         encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class), null);
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
+
+        // Setting up diagnosis sets
+        {
+            ConceptSource source = conceptService.getConceptSourceByUuid(CONCEPT_SOURCE_UUID);
+            source.setName("CIEL");
+            source = conceptService.saveConceptSource(source);
+            ConceptMapType conceptMapType = conceptService.getConceptMapTypeByUuid("35543629-7d8c-11e1-909d-c80aa9edcf4e");
+
+            Concept diagnosisSet1 = new Concept();
+            diagnosisSet1.setUuid(GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID);
+            diagnosisSet1.setFullySpecifiedName(new ConceptName("General and unspecified diagnoses", Context.getLocale()));
+            diagnosisSet1.setConceptClass(conceptService.getConceptClassByName("ConvSet"));
+            diagnosisSet1.setDatatype(conceptService.getConceptDatatypeByName("N/A"));
+            diagnosisSet1.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"160168","Test"), conceptMapType));
+            conceptService.saveConcept(diagnosisSet1);
+
+            Concept diagnosisSet2 = new Concept();
+            diagnosisSet2.setUuid(HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID);
+            diagnosisSet2.setFullySpecifiedName(new ConceptName("HIV and opportunistic infection diagnoses", Context.getLocale()));
+            diagnosisSet2.setConceptClass(conceptService.getConceptClassByName("ConvSet"));
+            diagnosisSet2.setDatatype(conceptService.getConceptDatatypeByName("N/A"));
+            diagnosisSet2.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"160170","Test"), conceptMapType));
+            conceptService.saveConcept(diagnosisSet2);
+        }
     }
 
     @Test
@@ -320,9 +355,9 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
 
     @Test
-    public void getSubstitution_shouldAddDiagnosisSetsAttributeOnDiagnosisSearchField() throws Exception {
+    public void getSubstitution_shouldAddDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisUuids() throws Exception {
         // Setup
-        String diagnosisSets = "d7f80231-48ad-4585-aeb6-44dfb70d7566,160168AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        String diagnosisSets = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
         FragmentConfiguration fragmentConfig = new FragmentConfiguration();
         fragmentConfig.put("formFieldName", "encounterDiagnoses");
         fragmentConfig.put("existingDiagnoses", new ArrayList<String>());
@@ -337,7 +372,8 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
         attributes.put("selectedDiagnosesTarget", "example-target");
         attributes.put("diagnosisSets", diagnosisSets);
-        String diagnosisSetsAttribute = "diagnosisSets=\"d7f80231-48ad-4585-aeb6-44dfb70d7566,160168AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"";
+
+        String diagnosisSetsAttribute = "diagnosisSets=\"" + diagnosisSets + "\"";
 
         // Replay
         String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
@@ -348,7 +384,38 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
 
     @Test
-    public void getSubstitution_shouldAddEmptyStringToDiagnosisSetsAttributeOnDiagnosisSearchField() throws Exception {
+    public void getSubstitution_shouldAddDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisMappings() throws Exception {
+        // Setup
+        String diagnosisSetsUuids = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
+        String diagnosisSetsMappings = "CIEL:160168,CIEL:160170";
+
+        FragmentConfiguration fragmentConfig = new FragmentConfiguration();
+        fragmentConfig.put("formFieldName", "encounterDiagnoses");
+        fragmentConfig.put("existingDiagnoses", new ArrayList<String>());
+        fragmentConfig.put("diagnosisSets", diagnosisSetsUuids);
+
+        String result = renderFragment(fragmentConfig);
+        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSets", (Object) diagnosisSetsUuids)))).thenReturn(result);
+        encounterDiagnosesTagHandler.setUiUtils(uiUtils);
+
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+        attributes.put("diagnosisSets", diagnosisSetsMappings);
+        
+        String diagnosisSetsAttribute = "diagnosisSets=\"" + diagnosisSetsUuids + "\"";
+
+        // Replay
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // Verify
+        assertTrue(StringUtils.contains(generatedHtml, diagnosisSetsAttribute));
+    
+    }
+
+    @Test
+    public void getSubstitution_shouldAddEmptyStringToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
         // Setup
         String diagnosisSets = null;
         FragmentConfiguration fragmentConfig = new FragmentConfiguration();

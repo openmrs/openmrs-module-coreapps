@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Date;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +30,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.CodedOrFreeText;
+import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
 import org.openmrs.ConditionVerificationStatus;
 import org.openmrs.Encounter;
@@ -47,6 +49,7 @@ import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.FormSubmissionActions;
 import org.openmrs.module.htmlformentry.FormSubmissionError;
+import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
 import org.openmrs.module.htmlformentry.InvalidActionException;
 import org.openmrs.module.htmlformentry.action.FormSubmissionControllerAction;
 import org.openmrs.module.htmlformentry.element.HtmlGeneratorElement;
@@ -133,7 +136,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 Map<String, Object> fragmentConfig = new HashMap<String, Object>();
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
-                fragmentConfig.put("diagnosisSets", diagnosisSets);
+                fragmentConfig.put("diagnosisSets", validateAndFormat(diagnosisSets));
 
                 // add the prior diagnoses if requested
                 if (FormEntryContext.Mode.ENTER == context.getMode() && dispositionTypeForPriorDiagnoses != null) {
@@ -160,6 +163,39 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 throw new IllegalStateException("Included fragment threw a PageAction", pageAction);
             }
         }
+    }
+    
+    /**
+     * This method recieves a comma seperated list of diagnosis sets which are verified and then
+     * returns as comma seperated list of their uuids. diagnosisSetIds may be concept's 1). uuid
+     * 2). mapping, 3). id
+     *
+     * @param diagnosisSetIds
+     * @return uuids
+     */
+    private String validateAndFormat(String diagnosisSetIds) {
+        if ("".equals(diagnosisSetIds)) {
+            return diagnosisSetIds;
+        }
+        List<Concept> concepts = new ArrayList<Concept>();
+        for (StringTokenizer st = new StringTokenizer(diagnosisSetIds, ","); st.hasMoreTokens();) {
+            String id = st.nextToken().trim();
+            Concept concept = HtmlFormEntryUtil.getConcept(id);
+            if (concept == null) {
+                throw new IllegalArgumentException("Cannot find diagnosis set for value " + id
+                        + " in diagnosisSets attribute value. Parameters: " + diagnosisSetIds);
+            }
+            concepts.add(concept);
+        }
+        StringBuilder sb = new StringBuilder("");
+        if (CollectionUtils.isNotEmpty(concepts)) {
+            for (Concept con : concepts) {
+                sb.append(con.getUuid() + ",");
+            }
+        }
+        String uuids = sb.toString();
+
+        return uuids.substring(0, uuids.lastIndexOf(","));
     }
 
     @Override
