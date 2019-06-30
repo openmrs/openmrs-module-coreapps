@@ -72,7 +72,6 @@
             <input type="radio" id="status-2" class="condition-status" value="${ui.message('coreapps.conditionui.inactive.label')}" name="status" ng-model="condition.status"/>
             <label for="status-2">${ui.message('coreapps.conditionui.inactive.label')}</label>
         </p>
-        <i class="icon-remove delete-item" title="${ui.message("general.clear")}" ng-click="unselectStatus()"></i>
     </div>
 
     <div id="actions">
