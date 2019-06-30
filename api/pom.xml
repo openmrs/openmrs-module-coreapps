@@ -170,6 +170,10 @@
         </dependency>
 
         <!-- End OpenMRS modules -->
+        <dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		</dependency>
 		
 	</dependencies>
 	

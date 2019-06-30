@@ -49,5 +49,14 @@
         "icon": "icon-remove",
         "order": 25,
         "requiredPrivilege": "Task: coreapps.deletePatient"
+    },
+     {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.growthChart",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "link",
+        "label": "coreapps.growthCharts",
+        "url": "coreapps/growthCharts.page?patientId={{patient.uuid}}",
+        "icon": "icon-bar-chart",
+        "order": 4
     }
 ]

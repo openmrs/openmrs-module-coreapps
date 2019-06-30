@@ -173,6 +173,12 @@
 
     <!-- Global Properties -->
     <globalProperty>
+		<property>coreapps.headCircumferenceConceptUuid</property>
+		<defaultValue>5314AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</defaultValue>
+		<description>Head Circumference Concept Uuid</description>
+	</globalProperty>
+	
+    <globalProperty>
         <property>coreapps.defaultPatientIdentifierLocation</property>
         <defaultValue></defaultValue>
         <description>

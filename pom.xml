@@ -53,7 +53,7 @@
 		<metadatamappingVersion>1.3.2</metadatamappingVersion>
         <uicommonsVersion>2.3.0</uicommonsVersion>
         <webservicesRestVersion>2.17</webservicesRestVersion>
-
+        <jsonVersion>20160212</jsonVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -278,6 +278,12 @@
 				<version>${webservicesRestVersion}</version>
 				<scope>test</scope>
 				<classifier>tests</classifier>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.json</groupId>
+				<artifactId>json</artifactId>
+				<version>${jsonVersion}</version>
 			</dependency>
 
 		</dependencies>
