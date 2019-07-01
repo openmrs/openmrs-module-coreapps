@@ -48,12 +48,12 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
         <ul>
             <li>
                 <a href="#ACTIVE" class="tabs-height">
-                    ${ui.message('coreapps.conditionui.activeConditions')}
+                    ${ui.message('coreapps.conditionui.active.label')}
                 </a>
             </li>
             <li>
                 <a href="#INACTIVE" class="tabs-height">
-                    ${ui.message('coreapps.conditionui.inactiveConditions')}
+                    ${ui.message('coreapps.conditionui.inactive.label')}
                 </a>
             </li>
         </ul>
@@ -101,7 +101,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
 
     <div class="actions">
         <button class="cancel"
-                onclick="location.href = '${ ui.encodeHtml(returnUrl) }'">${ui.message("coreapps.cancel")}</button>
+                onclick="location.href = '${ ui.encodeHtml(returnUrl) }'">${ui.message("coreapps.return")}</button>
         <button id="conditionui-addNewCondition" class="confirm right"
                 onclick="location.href = '${ ui.pageLink("coreapps/conditionlist", "addCondition", [patientId: patient.uuid, returnUrl: returnUrl]) }'">
             ${ui.message("coreapps.conditionui.addNewCondition")}

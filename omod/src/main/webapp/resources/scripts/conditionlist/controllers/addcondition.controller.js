@@ -51,10 +51,6 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
             self.saveCondition();
         }
 
-    self.unselectStatus = self.unselectStatus || function () {
-            $scope.condition.status = null;
-        }
-
     self.getSelectedDate = self.getSelectedDate || function () {
             var datePicker = angular.element(document.getElementsByName('conditionStartDate'))[0];
             return datePicker.value;
@@ -65,5 +61,4 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
 
     // bind functions to scope
     $scope.validateCondition = self.validateCondition;
-    $scope.unselectStatus = self.unselectStatus;
 }
