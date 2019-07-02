@@ -60,9 +60,22 @@
                         endDate    : new Date(),
                 ])}
             </li>
+            <div id="status" class="horizontal" style="margin-top:10px;">
+                <p>
+                    <input type="radio" id="status-1" class="condition-status" value="${ui.message('coreapps.conditionui.active.label')}" name="status" ng-model="condition.status"/>
+                    <label for="status-1">${ui.message('coreapps.conditionui.active.label')}</label>
+                </p>
+                <p>
+                    <input type="radio" id="status-2" class="condition-status" value="${ui.message('coreapps.conditionui.inactive.label')}" name="status" ng-model="condition.status"/>
+                    <label for="status-2">${ui.message('coreapps.conditionui.inactive.label')}</label>
+                </p>
+                <i class="icon-remove delete-item" title="${ui.message("general.clear")}" ng-click="unselectStatus()"></i>
+            </div>
         </ul>
     </div>
 
+    <br/>
+  
     <div id="status" class="horizontal">
         <p>
             <input type="radio" id="status-1" class="condition-status" value="${ui.message('coreapps.conditionui.active.label')}" name="status" ng-model="condition.status"/>
