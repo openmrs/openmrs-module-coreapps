@@ -44,17 +44,28 @@
     <h2 class="inline">${ui.message('coreapps.conditionui.addNewCondition')}</h2><br/>
 
     <div class="horizontal">
-    <label>${ui.message('coreapps.conditionui.condition')} </label>
         <ul id="concept-and-date">
             <li class="group">
+            <label>${ui.message('coreapps.conditionui.condition')} </label>
                 <coded-or-free-text-answer id="conceptId" class="concept"
                                            concept-classes="8d4918b0-c2cc-11de-8d13-0010c6dffd0f,8d492954-c2cc-11de-8d13-0010c6dffd0f,8d492b2a-c2cc-11de-8d13-0010c6dffd0f,8d491a9a-c2cc-11de-8d13-0010c6dffd0f"
                                            ng-model="concept"/>
             </li>
             <li class="group">
+            <br/> <br/>
             <label> ${ui.message('coreapps.conditionui.onsetdate')} </label>
                 ${ui.includeFragment("uicommons", "field/datetimepicker", [
                         formFieldName: "conditionStartDate",
+                        label        : "",
+                        useTime      : false,
+                        endDate    : new Date(),
+                ])}
+            </li>
+            <li id="status" class="group">
+             <br/> <br/>
+            <label>${ui.message('coreapps.stopDate.label')} </label>
+                ${ui.includeFragment("uicommons", "field/datetimepicker", [
+                        formFieldName: "conditionEndDate",
                         label        : "",
                         useTime      : false,
                         endDate    : new Date(),
@@ -65,11 +76,11 @@
 
     <div id="status" class="horizontal">
         <p>
-            <input type="radio" id="status-1" class="condition-status" value="${ui.message('coreapps.conditionui.active.label')}" name="status" ng-model="condition.status"/>
+            <input type="radio" id="status-1" class="condition-status" value="${ui.message('coreapps.conditionui.active.label')}" name="status" ng-model="condition.status"  ng-change="showEndDate()"/>
             <label for="status-1">${ui.message('coreapps.conditionui.active.label')}</label>
         </p>
         <p>
-            <input type="radio" id="status-2" class="condition-status" value="${ui.message('coreapps.conditionui.inactive.label')}" name="status" ng-model="condition.status"/>
+            <input type="radio" id="status-2" class="condition-status" value="${ui.message('coreapps.conditionui.inactive.label')}" name="status" ng-model="condition.status"  ng-change="showEndDate()"/>
             <label for="status-2">${ui.message('coreapps.conditionui.inactive.label')}</label>
         </p>
     </div>
