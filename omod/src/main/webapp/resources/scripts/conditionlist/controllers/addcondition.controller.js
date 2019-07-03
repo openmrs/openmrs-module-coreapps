@@ -9,7 +9,7 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
 
     $scope.patientUuid = null;
     $scope.condition = null;
-    const INACTIVE_STATUS = 'Inactive';  
+    const INACTIVE_STATUS = 'INACTIVE';  
 
     // this is required inorder to initialize the Restangular service
     RestfulService.setBaseUrl('/' + OPENMRS_CONTEXT_PATH + '/ws/rest/emrapi');
@@ -21,7 +21,7 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
      * @type {Function}
      */
     self.saveCondition = self.saveCondition || function () {
-        if($scope.condition.onSetDate > $scope.condition.endDate){
+        if($scope.condition.status == INACTIVE_STATUS && $scope.condition.onSetDate > $scope.condition.endDate){
             emr.errorAlert("End Date can't be before Onset Date");
         }
         else{
