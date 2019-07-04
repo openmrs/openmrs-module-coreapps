@@ -14,62 +14,41 @@
 
 package org.openmrs.module.coreapps.fragment.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.ConceptService;
-import org.openmrs.Concept;
-import org.openmrs.ConceptSearchResult;
-import org.openmrs.ConceptSource;
-import org.openmrs.module.appui.UiSessionContext;
-import org.openmrs.module.emrapi.concept.EmrConceptService;
-import org.openmrs.module.emrapi.EmrApiConstants;
-import org.openmrs.module.emrapi.EmrApiProperties;
-import org.openmrs.ui.framework.UiUtils;
-
-import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.openmrs.api.ConceptService;
+import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.concept.EmrConceptService;
+import org.openmrs.ui.framework.UiUtils;
+
+@RunWith(MockitoJUnitRunner.class)
 public class DiagnosesFragmentControllerTest { 
 
     private String queryString = "infection";
 
-    private DiagnosesFragmentController controller;
+    private DiagnosesFragmentController controller = new DiagnosesFragmentController();
 
+    @Mock
     private UiSessionContext context;
 
+    @Mock
     private UiUtils uiUtils;    
 
+    @Mock
     private EmrConceptService emrConceptService;
 
+    @Mock
     private ConceptService conceptService;
 
+    @Mock
     private EmrApiProperties emrApiProperties;
-
-    private AdministrationService administrationService;
-
-    @Before
-    public void setUp() throws Exception {
-        controller = new DiagnosesFragmentController();
-        context = mock(UiSessionContext.class);
-        uiUtils = mock(UiUtils.class);
-        emrConceptService = mock(EmrConceptService.class);
-        conceptService = mock(ConceptService.class);
-        emrApiProperties = mock(EmrApiProperties.class);
-        administrationService = mock(AdministrationService.class);
-    }
 
     @Test
     public void search_shouldSearchForDiagnosisConceptsFromSpecifiedSets() throws Exception {
@@ -98,5 +77,4 @@ public class DiagnosesFragmentControllerTest {
         verify(emrApiProperties, times(1)).getDiagnosisSets();
 
     }
-
 }
