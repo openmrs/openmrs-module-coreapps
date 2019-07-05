@@ -53,4 +53,5 @@ public class CoreAppsConstants {
 
    // Condition list
    public static final String MANAGE_CONDITIONS_PRIVILEGE = "Task: Manage Condition Lists";
+   public static final String GLOBAL_PROPERTY_CONDITIONS_CRITERIA = "coreapps.conditionListClasses";
 }

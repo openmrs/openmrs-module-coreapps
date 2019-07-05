@@ -16,10 +16,14 @@ package org.openmrs.module.coreapps.page.controller.conditionlist;
 
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.openmrs.module.coreapps.CoreAppsConstants;
+import org.openmrs.api.context.Context;
 
 public class AddConditionPageController {
 	
 	public void controller(PageModel model, @RequestParam(value = "returnUrl", required = false) String returnUrl) {
 		model.addAttribute("returnUrl", returnUrl);
+		String conditionListClasses = Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GLOBAL_PROPERTY_CONDITIONS_CRITERIA);
+		model.addAttribute("conditionListClasses",conditionListClasses);
 	}
 }
