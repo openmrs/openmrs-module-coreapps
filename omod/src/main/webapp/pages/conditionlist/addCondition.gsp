@@ -48,7 +48,7 @@
             <li class="group">
             <label>${ui.message('coreapps.conditionui.condition')} </label>
                 <coded-or-free-text-answer id="conceptId" class="concept"
-                                           concept-classes="8d4918b0-c2cc-11de-8d13-0010c6dffd0f,8d492954-c2cc-11de-8d13-0010c6dffd0f,8d492b2a-c2cc-11de-8d13-0010c6dffd0f,8d491a9a-c2cc-11de-8d13-0010c6dffd0f"
+                                           concept-classes= ${conditionListClasses}
                                            ng-model="concept"/>
             </li>
             <li class="group">
