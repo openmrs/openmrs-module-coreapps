@@ -10,6 +10,21 @@
 
 package org.openmrs.module.coreapps.htmlformentry;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
@@ -40,20 +55,6 @@ import org.openmrs.module.htmlformentry.widget.ErrorWidget;
 import org.openmrs.module.htmlformentry.widget.HiddenFieldWidget;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * TODO: this is identical to EncounterDiagnosesByObsElement, but I couldn't figure out how to get around it without cyclic dependencies
@@ -144,7 +145,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     }
     
     /**
-     * This method receives a comma-separated list of diagnosis sets 'identifiers'
+     * This method receives a comma-separated list of diagnosis sets identifiers (ID, UUID, ... etc)
      * and returns as comma-separated list of their uuids.
      *
      * @param diagnosisSetIds Either concepts UUIDS, mappings or internal IDs.
@@ -152,8 +153,8 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
      * @throws IllegalArgumentException if one or more sets cannot be fetched from the database.
      */
     private String validateAndFormat(String diagnosisSetIds) {
-        if ("".equals(diagnosisSetIds)) {
-            return diagnosisSetIds;
+        if (StringUtils.isEmpty(diagnosisSetIds)) {
+            return "";
         }
         List<Concept> concepts = new ArrayList<Concept>();
         for (StringTokenizer st = new StringTokenizer(diagnosisSetIds, ","); st.hasMoreTokens();) {

@@ -14,19 +14,17 @@
 
 package org.openmrs.module.coreapps.htmlformentry;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.hamcrest.Matchers.hasEntry;
 
-import groovy.text.SimpleTemplateEngine;
-import groovy.text.Template;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,17 +67,20 @@ import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.matcher.ObsGroupMatcher;
 import org.openmrs.module.emrapi.test.ContextSensitiveMetadataTestUtils;
-import org.openmrs.module.htmlformentry.HtmlFormEntryService;
-import org.openmrs.module.htmlformentry.RegressionTestHelper;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.FormSubmissionController;
+import org.openmrs.module.htmlformentry.HtmlFormEntryService;
+import org.openmrs.module.htmlformentry.RegressionTestHelper;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.page.PageAction;
-import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import groovy.text.SimpleTemplateEngine;
+import groovy.text.Template;
 
 /**
  *
@@ -133,6 +134,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         ContextSensitiveMetadataTestUtils.setupDiagnosisMetadata(conceptService, emrApiProperties);
         encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class), null);
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
+        encounterDiagnosesTagHandler.setUiUtils(uiUtils);
 
         // Setting up diagnosis sets
         {
@@ -356,120 +358,126 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
 
     @Test
     public void getSubstitution_shouldAddDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisUuids() throws Exception {
-        // Setup
-        String diagnosisSets = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
+        /*
+         * Setup
+         */
+        String diagnosisSetsUuids = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
+        
         FragmentConfiguration fragmentConfig = new FragmentConfiguration();
         fragmentConfig.put("formFieldName", "encounterDiagnoses");
         fragmentConfig.put("existingDiagnoses", new ArrayList<String>());
-        fragmentConfig.put("diagnosisSets", diagnosisSets);
+        fragmentConfig.put("diagnosisSets", diagnosisSetsUuids);
 
-        String result = renderFragment(fragmentConfig);
-        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSets", (Object) diagnosisSets)))).thenReturn(result);
-        encounterDiagnosesTagHandler.setUiUtils(uiUtils);
+        String fragmentHtml = renderFragmentHtml(fragmentConfig);
+        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSets", (Object) diagnosisSetsUuids)))).thenReturn(fragmentHtml);
 
+        /*
+         * Replay
+         */
         Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
         attributes.put("selectedDiagnosesTarget", "example-target");
-        attributes.put("diagnosisSets", diagnosisSets);
-
-        String diagnosisSetsAttribute = "diagnosisSets=\"" + diagnosisSets + "\"";
-
-        // Replay
+        
+        attributes.put("diagnosisSets", diagnosisSetsUuids);
         String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
 
-        // Verify
-        assertTrue(StringUtils.contains(generatedHtml, diagnosisSetsAttribute));
+        /*
+         * Verify
+         */
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisSets=\"" + diagnosisSetsUuids + "\""));
     
     }
 
     @Test
     public void getSubstitution_shouldAddDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisMappings() throws Exception {
-        // Setup
+        /*
+         * Setup
+         */
         String diagnosisSetsUuids = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
-        String diagnosisSetsMappings = "CIEL:160168,CIEL:160170";
 
         FragmentConfiguration fragmentConfig = new FragmentConfiguration();
         fragmentConfig.put("formFieldName", "encounterDiagnoses");
         fragmentConfig.put("existingDiagnoses", new ArrayList<String>());
         fragmentConfig.put("diagnosisSets", diagnosisSetsUuids);
 
-        String result = renderFragment(fragmentConfig);
-        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSets", (Object) diagnosisSetsUuids)))).thenReturn(result);
-        encounterDiagnosesTagHandler.setUiUtils(uiUtils);
+        String fragmentHtml = renderFragmentHtml(fragmentConfig);
+        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSets", (Object) diagnosisSetsUuids)))).thenReturn(fragmentHtml);
 
+        /*
+         * Replay
+         */
         Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
         attributes.put("selectedDiagnosesTarget", "example-target");
-        attributes.put("diagnosisSets", diagnosisSetsMappings);
         
-        String diagnosisSetsAttribute = "diagnosisSets=\"" + diagnosisSetsUuids + "\"";
-
-        // Replay
+        attributes.put("diagnosisSets", "CIEL:160168,CIEL:160170");
         String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
 
-        // Verify
-        assertTrue(StringUtils.contains(generatedHtml, diagnosisSetsAttribute));
+        /*
+         * Verify
+         */
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisSets=\"" + diagnosisSetsUuids + "\""));
+    }
     
+    @Test
+    public void getSubstitution_shouldAddEmptyStringToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
+        /*
+         * Setup
+         */
+    	String diagnosisSetsUuids = "";
+    	
+        FragmentConfiguration fragmentConfig = new FragmentConfiguration();
+        fragmentConfig.put("formFieldName", "encounterDiagnoses");
+        fragmentConfig.put("existingDiagnoses", new ArrayList<String>());
+        fragmentConfig.put("diagnosisSets", diagnosisSetsUuids);
+
+        String fragmentHtml = renderFragmentHtml(fragmentConfig);
+        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSets", (Object) "")))).thenReturn(fragmentHtml);
+
+        /*
+         * Replay
+         */
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+        
+        attributes.put("diagnosisSets", null);
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        /*
+         * Verify
+         */
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisSets=\"" + diagnosisSetsUuids + "\""));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getSubstitution_shouldThrowExceptionDiagnosisSetsAttributeHasNonExistingSets() throws Exception {
-        // Setup
-        String diagnosisSetsMappings = "NON-EXISTING:160000,CIEL:160170";
-
+        /*
+         * Replay
+         */
         Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
         attributes.put("selectedDiagnosesTarget", "example-target");
-        attributes.put("diagnosisSets", diagnosisSetsMappings);
-
-        // Replay
-        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
-    
+        
+        attributes.put("diagnosisSets", "NON-EXISTING:MAPPING,CIEL:160170");
+        encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
     }
 
-    @Test
-    public void getSubstitution_shouldAddEmptyStringToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
-        // Setup
-        String diagnosisSets = null;
-        FragmentConfiguration fragmentConfig = new FragmentConfiguration();
-        fragmentConfig.put("formFieldName", "encounterDiagnoses");
-        fragmentConfig.put("existingDiagnoses", new ArrayList<String>());
-        fragmentConfig.put("diagnosisSets", "");
-
-        String result = renderFragment(fragmentConfig);
-        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), (Map<String, Object>) argThat(hasEntry("diagnosisSets", (Object) "")))).thenReturn(result);
-        encounterDiagnosesTagHandler.setUiUtils(uiUtils);
-
-        Map<String,String> attributes = new HashMap<String, String>();
-        attributes.put("required", "true");
-        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
-        attributes.put("selectedDiagnosesTarget", "example-target");
-        attributes.put("diagnosisSets", diagnosisSets);
-        String diagnosisSetsAttribute = "diagnosisSets=\"\"";
-
-        // Replay
-        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
-
-        // Verify
-        assertTrue(StringUtils.contains(generatedHtml, diagnosisSetsAttribute));
-    
-    }
-
-    private String renderFragment(Map<String, Object> configuration) throws Exception {
+    private String renderFragmentHtml(Map<String, Object> fragmentConfig) throws Exception {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("web/module/fragments/diagnosis/encounterDiagnoses.gsp");
-        String string = IOUtils.toString(inputStream, "UTF-8");
+        String string = IOUtils.toString(inputStream, UTF_8.toString());
 
         Template template = new SimpleTemplateEngine(getClass().getClassLoader()).createTemplate(string);
         Map<String, Object> model = new LinkedHashMap<String, Object>();
-        model.put("config", configuration);
+        model.put("config", fragmentConfig);
         model.put("ui", uiUtils);
         model.put("jsForExisting", new ArrayList<String>());
         model.put("jsForPrior", new ArrayList<String>());
     
         return template.make(model).toString();
     }
-
 }

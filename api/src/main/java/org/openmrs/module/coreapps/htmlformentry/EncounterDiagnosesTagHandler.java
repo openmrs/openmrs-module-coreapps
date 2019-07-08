@@ -82,7 +82,7 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
          * (use case: prepopulating the diagonses on an admission note with the diagnoses from the consult recommending admission,
          *  ie., on our admission note: <encounterDiagnoses required="true" selectedDiagnosesTarget="#encounter-diagnoses-target" includePriorDiagnosesFromMostRecentEncounterWithDispositionOfType="ADMIT"/>)
          */
-             if (attributes.containsKey(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME)) {
+        if (attributes.containsKey(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME)) {
             try {
                 element.setDispositionTypeForPriorDiagnoses(DispositionType.valueOf(
                         attributes.get(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME).toUpperCase()));
