@@ -14,23 +14,41 @@
 
 package org.openmrs.module.coreapps.htmlformentry;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.ConceptMapType;
+import org.openmrs.ConceptName;
+import org.openmrs.ConceptReferenceTerm;
+import org.openmrs.ConceptSource;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Obs;
@@ -50,17 +68,45 @@ import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.matcher.ObsGroupMatcher;
 import org.openmrs.module.emrapi.test.ContextSensitiveMetadataTestUtils;
+import org.openmrs.module.htmlformentry.FormEntryContext;
+import org.openmrs.module.htmlformentry.FormEntrySession;
+import org.openmrs.module.htmlformentry.FormSubmissionController;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.RegressionTestHelper;
+import org.openmrs.ui.framework.Model;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import groovy.text.SimpleTemplateEngine;
+import groovy.text.Template;
+
 /**
  *
  */
 public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebContextSensitiveTest {
+
+    private EncounterDiagnosesTagHandler encounterDiagnosesTagHandler;
+
+    private String GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID = "d1010973-803e-8659-4415-c01707c01dec";
+
+    private String HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID = "d710b7h4-40b7-d333-b449-6e0e15d0739d";
+
+    private String CONCEPT_SOURCE_UUID = "75f5b378-5065-11de-80cb-001e378eb67e";
+    
+    @Mock
+    private FormEntrySession formEntrySession;
+
+    @Mock
+    private FormEntryContext formEntryContext;
+    
+    @Mock
+    private FormSubmissionController formSubmissionController;
+
+    @Mock
+    private UiUtils uiUtils;
 
     @Autowired
     ConceptService conceptService;
@@ -82,9 +128,45 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
 
     @Before
     public void setUp() throws Exception {
+        when(formEntryContext.getMode()).thenReturn(FormEntryContext.Mode.ENTER);
+        when(formEntrySession.getContext()).thenReturn(formEntryContext);
+        when(uiUtils.message(anyString())).thenReturn("message");
+        when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), any(Map.class))).thenAnswer(new Answer<String>() {
+			@Override
+			public String answer(InvocationOnMock invocation) throws Throwable {
+				Map<String, Object> fragmentConfig = (Map<String, Object>) invocation.getArguments()[2];
+				return renderFragmentHtml(fragmentConfig);
+			}
+        });
+
         ContextSensitiveMetadataTestUtils.setupDiagnosisMetadata(conceptService, emrApiProperties);
-        EncounterDiagnosesTagHandler encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class), null);
+        encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class), null);
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
+        encounterDiagnosesTagHandler.setUiUtils(uiUtils);
+
+        // Setting up diagnosis sets
+        {
+            ConceptSource source = conceptService.getConceptSourceByUuid(CONCEPT_SOURCE_UUID);
+            source.setName("CIEL");
+            source = conceptService.saveConceptSource(source);
+            ConceptMapType conceptMapType = conceptService.getConceptMapTypeByUuid("35543629-7d8c-11e1-909d-c80aa9edcf4e");
+
+            Concept diagnosisSet1 = new Concept();
+            diagnosisSet1.setUuid(GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID);
+            diagnosisSet1.setFullySpecifiedName(new ConceptName("General and unspecified diagnoses", Context.getLocale()));
+            diagnosisSet1.setConceptClass(conceptService.getConceptClassByName("ConvSet"));
+            diagnosisSet1.setDatatype(conceptService.getConceptDatatypeByName("N/A"));
+            diagnosisSet1.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"160168","Test"), conceptMapType));
+            conceptService.saveConcept(diagnosisSet1);
+
+            Concept diagnosisSet2 = new Concept();
+            diagnosisSet2.setUuid(HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID);
+            diagnosisSet2.setFullySpecifiedName(new ConceptName("HIV and opportunistic infection diagnoses", Context.getLocale()));
+            diagnosisSet2.setConceptClass(conceptService.getConceptClassByName("ConvSet"));
+            diagnosisSet2.setDatatype(conceptService.getConceptDatatypeByName("N/A"));
+            diagnosisSet2.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source,"160170","Test"), conceptMapType));
+            conceptService.saveConcept(diagnosisSet2);
+        }
     }
 
     @Test
@@ -282,4 +364,89 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         }.run();
     }
 
+    @Test
+    public void getSubstitution_shouldAddDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisUuids() throws Exception {
+        // setup
+        String diagnosisSetsUuids = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
+        
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+        
+        // replay
+        attributes.put("diagnosisSets", diagnosisSetsUuids);
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisSets=\"" + diagnosisSetsUuids + "\""));
+    
+    }
+
+    @Test
+    public void getSubstitution_shouldAddDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisMappings() throws Exception {
+        // setup
+        String diagnosisSetsUuids = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
+        
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // replay
+        attributes.put("diagnosisSets", "CIEL:160168,CIEL:160170");
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisSets=\"" + diagnosisSetsUuids + "\""));
+    }
+    
+    @Test
+    public void getSubstitution_shouldAddEmptyStringToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
+        // setup
+    	String diagnosisSetsUuids = "";
+    	
+    	Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+    	
+        // replay
+        attributes.put("diagnosisSets", null);
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisSets=\"" + diagnosisSetsUuids + "\""));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getSubstitution_shouldThrowExceptionDiagnosisSetsAttributeHasNonExistingSets() throws Exception {
+    	// setup
+    	Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+        
+        // replay
+        attributes.put("diagnosisSets", "NON-EXISTING:MAPPING,CIEL:160170");
+        encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+    }
+
+    private String renderFragmentHtml(Map<String, Object> fragmentConfig) throws Exception {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("web/module/fragments/diagnosis/encounterDiagnoses.gsp");
+        String string = IOUtils.toString(inputStream, UTF_8.toString());
+
+        Template template = new SimpleTemplateEngine(getClass().getClassLoader()).createTemplate(string);
+        Map<String, Object> model = new LinkedHashMap<String, Object>();
+        Model cfgAsModel = new Model();
+        for (String prop : fragmentConfig.keySet()) {
+        	cfgAsModel.addAttribute(prop, fragmentConfig.get(prop));
+        }
+        model.put("config", cfgAsModel);
+        model.put("ui", uiUtils);
+        model.put("jsForExisting", new ArrayList<String>());
+        model.put("jsForPrior", new ArrayList<String>());
+    
+        return template.make(model).toString();
+    }
 }
