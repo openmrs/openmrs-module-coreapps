@@ -76,6 +76,7 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
         element.setConceptService(conceptService);
         element.setAdtService(adtService);
         element.setDiagnosisSets(attributes.get("diagnosisSets") != null ? attributes.get("diagnosisSets") : "");
+        element.setDiagnosisConceptSources(attributes.get("diagnosisConceptSources") != null ? attributes.get("diagnosisConceptSources") : "");
 
         /**
          *  Handle the attribute to specify loading any prior diagnoses from the most recent encounter with a specific disposition

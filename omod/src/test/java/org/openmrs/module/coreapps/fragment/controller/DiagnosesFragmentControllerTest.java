@@ -53,7 +53,7 @@ public class DiagnosesFragmentControllerTest {
     @Test
     public void search_shouldSearchForDiagnosisConceptsFromSpecifiedSets() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "1st_diagnosis_set_uuid,2nd_diagnosis_set_uuid", null, null);
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "1st_diagnosis_set_uuid,2nd_diagnosis_set_uuid", null, null, null);
         
         // verify
         verify(emrApiProperties, never()).getDiagnosisSets();
@@ -62,7 +62,7 @@ public class DiagnosesFragmentControllerTest {
     @Test
     public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenEmptyDiagnosisSets() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "", null, null);
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "", null, null, null);
 
         // verify
         verify(emrApiProperties, times(1)).getDiagnosisSets();
@@ -71,10 +71,37 @@ public class DiagnosesFragmentControllerTest {
     @Test
     public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenNullDiagnosisSets() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, null, null);
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, null, null, null);
 
         // verify
         verify(emrApiProperties, times(1)).getDiagnosisSets();
 
+    }
+
+    @Test
+    public void search_shouldSearchForDiagnosesFromSpecifiedDiagnosisConceptSources() throws Exception {
+        // replay
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "ICRC,ICD-10-WHO", null, null);
+        
+        // verify
+        verify(emrApiProperties, never()).getConceptSourcesForDiagnosisSearch();
+    }
+
+    @Test
+    public void search_shouldSearchForDiagnosesUsingGloballyDefinedConceptSourcesGivenEmptyDiagnosisConceptSourcesAttr() throws Exception {
+        // replay
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "", null, null);
+
+        // verify
+        verify(emrApiProperties, times(1)).getConceptSourcesForDiagnosisSearch();
+    }
+
+    @Test
+    public void search_shouldSearchForDiagnosesUsingGloballyDefinedConceptSourcesGivenNullDiagnosisConceptSourcesAttr() throws Exception {
+        // replay
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, null, null, null);
+
+        // verify
+        verify(emrApiProperties, times(1)).getConceptSourcesForDiagnosisSearch();
     }
 }

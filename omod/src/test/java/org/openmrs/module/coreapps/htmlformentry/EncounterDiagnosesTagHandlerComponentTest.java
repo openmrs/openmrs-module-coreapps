@@ -432,6 +432,42 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
     }
 
+    @Test
+    public void getSubstitution_shouldAddDiagnosisConceptSourcesAttributeOnDiagnosisSearchField() throws Exception {
+        // setup
+        String diagnosisConceptSources = "ICPC,CIEL";
+        
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // replay
+        attributes.put("diagnosisConceptSources", "ICPC, CIEL");
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisConceptSources=\"" + diagnosisConceptSources + "\""));
+    }
+
+    @Test
+    public void getSubstitution_shouldAddEmptyStringToDiagnosisConceptSourcesAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
+        // setup
+        String diagnosisConceptSources = "";
+        
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // replay
+        attributes.put("diagnosisConceptSources", null);
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisConceptSources=\"" + diagnosisConceptSources + "\""));
+    }
+
     private String renderFragmentHtml(Map<String, Object> fragmentConfig) throws Exception {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("web/module/fragments/diagnosis/encounterDiagnoses.gsp");
         String string = IOUtils.toString(inputStream, UTF_8.toString());
