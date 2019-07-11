@@ -110,8 +110,7 @@ public class DiagnosesFragmentController {
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
-        List<SimpleObject> ret = search(context, ui, emrApiProperties, emrConceptService, conceptService, query, null, null, start, size);
-        return ret;
+        return search(context, ui, emrApiProperties, emrConceptService, conceptService, query, null, null, start, size);
     }
 
     public FragmentActionResult codeDiagnosis(UiUtils ui,

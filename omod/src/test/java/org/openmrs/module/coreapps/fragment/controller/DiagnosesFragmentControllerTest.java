@@ -81,7 +81,7 @@ public class DiagnosesFragmentControllerTest {
     @Test
     public void search_shouldSearchForDiagnosesFromSpecifiedDiagnosisConceptSources() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "ICRC,ICD-10-WHO", null, null);
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "CIEL,ICD-10-WHO", null, null);
         
         // verify
         verify(emrApiProperties, never()).getConceptSourcesForDiagnosisSearch();
