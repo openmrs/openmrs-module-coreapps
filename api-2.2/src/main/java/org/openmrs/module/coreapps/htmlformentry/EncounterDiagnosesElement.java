@@ -66,6 +66,8 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     private String diagnosisSets;
 
+    private String diagnosisConceptSources;
+
     private EmrApiProperties emrApiProperties;
 
     private ConceptService conceptService;
@@ -137,6 +139,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
                 fragmentConfig.put("diagnosisSets", validateAndFormat(diagnosisSets));
+                fragmentConfig.put("diagnosisConceptSources", StringUtils.deleteWhitespace(diagnosisConceptSources));
 
                 // add the prior diagnoses if requested
                 if (FormEntryContext.Mode.ENTER == context.getMode() && dispositionTypeForPriorDiagnoses != null) {
@@ -406,6 +409,14 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     public String getDiagnosisSets() {
         return diagnosisSets;
+    }
+
+    public void setDiagnosisConceptSources(String diagnosisConceptSources) {
+        this.diagnosisConceptSources = diagnosisConceptSources;
+    }
+
+    public String getDiagnosisConceptSources() {
+        return diagnosisConceptSources;
     }
 
     public void setUiUtils(UiUtils uiUtils) {

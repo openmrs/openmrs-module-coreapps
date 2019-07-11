@@ -57,6 +57,7 @@ public class DiagnosesFragmentController {
                                      @SpringBean("conceptService") ConceptService conceptService,
                                      @RequestParam("term") String query,
                                      @RequestParam(value = "diagnosisSets", defaultValue = "") String diagnosisSetUuids,
+                                     @RequestParam(value = "diagnosisConceptSources", defaultValue = "") String diagnosisConceptSources,
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
@@ -73,9 +74,23 @@ public class DiagnosesFragmentController {
         else{
             diagnosisSets = emrApiProperties.getDiagnosisSets();
         }
-        Locale locale = context.getLocale();
 
-        List<ConceptSource> sources = emrApiProperties.getConceptSourcesForDiagnosisSearch();
+        List<ConceptSource> sources = new ArrayList<ConceptSource>();
+
+        if (StringUtils.isNotEmpty(diagnosisConceptSources)) {
+            String [] sourceNames = diagnosisConceptSources.split(",");
+            for (String sourceName : sourceNames) {
+                ConceptSource source = conceptService.getConceptSourceByName(sourceName);
+                if (source != null) {
+                    sources.add(source);
+                }                
+            }
+        }
+        else{
+            sources = emrApiProperties.getConceptSourcesForDiagnosisSearch();
+        }
+
+        Locale locale = context.getLocale();
 
         List<ConceptSearchResult> hits = emrConceptService.conceptSearch(query, locale, null, diagnosisSets, sources, null);
         List<SimpleObject> ret = new ArrayList<SimpleObject>();
@@ -85,25 +100,17 @@ public class DiagnosesFragmentController {
         return ret;
     }
 
+    @Deprecated
     public List<SimpleObject> searchNonCoded(UiSessionContext context,
                                      UiUtils ui,
                                      @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                                      @SpringBean("emrConceptService") EmrConceptService emrConceptService,
+                                     @SpringBean("conceptService") ConceptService conceptService,
                                      @RequestParam("term") String query,
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
-        Collection<Concept> diagnosisSets = emrApiProperties.getDiagnosisSets();
-        Locale locale = context.getLocale();
-
-        List<ConceptSource> sources = emrApiProperties.getConceptSourcesForDiagnosisSearch();
-
-        List<ConceptSearchResult> hits = emrConceptService.conceptSearch(query, locale, null, diagnosisSets, sources, null);
-        List<SimpleObject> ret = new ArrayList<SimpleObject>();
-        for (ConceptSearchResult hit : hits) {
-            ret.add(simplify(hit, ui, locale));
-        }
-        return ret;
+        return search(context, ui, emrApiProperties, emrConceptService, conceptService, query, null, null, start, size);
     }
 
     public FragmentActionResult codeDiagnosis(UiUtils ui,

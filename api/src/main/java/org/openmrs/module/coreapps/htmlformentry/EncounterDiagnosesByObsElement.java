@@ -71,6 +71,8 @@ public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, For
 
     private String diagnosisSets;
 
+    private String diagnosisConceptSources;
+
     private AdtService adtService;
 
     private DispositionType dispositionTypeForPriorDiagnoses = null;
@@ -116,6 +118,7 @@ public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, For
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
                 fragmentConfig.put("diagnosisSets", validateAndFormat(diagnosisSets));
+                fragmentConfig.put("diagnosisConceptSources", StringUtils.deleteWhitespace(diagnosisConceptSources));
 
                 // add the prior diagnoses if requested
                 if (FormEntryContext.Mode.ENTER == context.getMode() && dispositionTypeForPriorDiagnoses != null) {
@@ -355,6 +358,14 @@ public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, For
 
     public String getDiagnosisSets() {
         return diagnosisSets;
+    }
+
+    public void setDiagnosisConceptSources(String diagnosisConceptSources) {
+        this.diagnosisConceptSources = diagnosisConceptSources;
+    }
+
+    public String getDiagnosisConceptSources() {
+        return diagnosisConceptSources;
     }
 
     public void setUiUtils(UiUtils uiUtils) {
