@@ -1,10 +1,14 @@
 (function(diagnoses, $, _, undefined) {
 
-    var codingSystemToUse = 'ICD-10-WHO';
-
     var mapTypeOrder = [ "SAME-AS", "NARROWER-THAN" ]
+    
+    findPreferredCodingSource = function() {
+        var preferredCodingSource = $("#diagnosis-search").attr("preferredcodingsource");
+        return preferredCodingSource;
+    };
 
-    findConceptMapping = function(concept, sourceName) {
+    findConceptMapping = function(concept) {
+        var sourceName = findPreferredCodingSource();
         var matches = _.filter(concept.conceptMappings, function(item) {
             return item.conceptReferenceTerm.conceptSource.name == sourceName
         });
@@ -60,7 +64,7 @@
                 matchedName: item.conceptName ? item.conceptName.name : item.concept.preferredName,
                 preferredName: item.conceptName && item.conceptName.name != item.concept.preferredName ? item.concept.preferredName : null,
                 nameIsPreferred: item.conceptName ? (item.conceptName === item.concept.preferredName) : true,
-                code: findConceptMapping(item.concept, codingSystemToUse),
+                code: findConceptMapping(item.concept),
                 conceptId: item.concept.id,
                 exactlyMatchesQuery: function(query) {
                     query = emr.stripAccents(query.toLowerCase());

@@ -1,3 +1,4 @@
+
 package org.openmrs.module.coreapps.htmlformentry;
 
 import org.openmrs.api.ConceptService;
@@ -18,9 +19,11 @@ import java.util.Map;
  *
  * In enter/edit mode, includes the diagnosis/encounterDiagnoses fragment.
  * Currently this is hardcoded to use specific ids and names, and can only be included once on a form
+ * 
+ * It supports specifying the concept source to use for obtaining concept code displayed on the UI
  *
  * Example usage:
- * <encounterDiagnoses required="true" selectedDiagnosesTarget="#encounter-diagnoses-target" includePriorDiagnosesFromMostRecentEncounterWithDispositionOfType="ADMIT"/>)
+ * <encounterDiagnoses required="true" selectedDiagnosesTarget="#encounter-diagnoses-target" includePriorDiagnosesFromMostRecentEncounterWithDispositionOfType="ADMIT" preferredCodingSource="CIEL"/>)
  *
  */
 public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
@@ -77,6 +80,7 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
         element.setAdtService(adtService);
         element.setDiagnosisSets(attributes.get("diagnosisSets") != null ? attributes.get("diagnosisSets") : "");
         element.setDiagnosisConceptSources(attributes.get("diagnosisConceptSources") != null ? attributes.get("diagnosisConceptSources") : "");
+        element.setPreferredCodingSource(attributes.get("preferredCodingSource") != null ? attributes.get("preferredCodingSource"): CoreAppsConstants.DEFAULT_CODING_SOURCE);
 
         /**
          *  Handle the attribute to specify loading any prior diagnoses from the most recent encounter with a specific disposition
