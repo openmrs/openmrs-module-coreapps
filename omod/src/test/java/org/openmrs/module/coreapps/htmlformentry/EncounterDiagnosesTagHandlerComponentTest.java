@@ -131,6 +131,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         when(formEntryContext.getMode()).thenReturn(FormEntryContext.Mode.ENTER);
         when(formEntrySession.getContext()).thenReturn(formEntryContext);
         when(uiUtils.message(anyString())).thenReturn("message");
+        // this ensures that our mock of UiUtils renders the fragment it's been given (the third argument)
         when(uiUtils.includeFragment(eq("coreapps"), eq("diagnosis/encounterDiagnoses"), any(Map.class))).thenAnswer(new Answer<String>() {
 			@Override
 			public String answer(InvocationOnMock invocation) throws Throwable {
@@ -365,7 +366,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
 
     @Test
-    public void getSubstitution_shouldAddDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisUuids() throws Exception {
+    public void getSubstitution_shouldAddUuidsToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisUuids() throws Exception {
         // setup
         String diagnosisSetsUuids = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
         
@@ -384,7 +385,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
 
     @Test
-    public void getSubstitution_shouldAddDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisMappings() throws Exception {
+    public void getSubstitution_shouldAddUuidsToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenDiagnosisMappings() throws Exception {
         // setup
         String diagnosisSetsUuids = GENERAL_AND_SPECIFIED_DIAGNOSIS_SET_UUID + "," + HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID;
         
@@ -420,7 +421,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void getSubstitution_shouldThrowExceptionDiagnosisSetsAttributeHasNonExistingSets() throws Exception {
+    public void getSubstitution_shouldThrowWhenDiagnosisSetsAttributeContainsInvalidSetsIds() throws Exception {
     	// setup
     	Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
