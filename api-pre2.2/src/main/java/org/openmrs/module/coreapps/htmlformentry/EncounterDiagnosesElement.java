@@ -75,6 +75,8 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private String diagnosisSets;
 
     private String diagnosisConceptSources;
+    
+    private String diagnosisConceptClasses;
 
     private AdtService adtService;
 
@@ -123,6 +125,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 fragmentConfig.put("diagnosisSets", validateAndFormat(diagnosisSets));
                 fragmentConfig.put("preferredCodingSource", preferredCodingSource);
                 fragmentConfig.put("diagnosisConceptSources", StringUtils.deleteWhitespace(diagnosisConceptSources));
+                fragmentConfig.put("diagnosisConceptClasses", StringUtils.deleteWhitespace(diagnosisConceptClasses));
 
                 // add the prior diagnoses if requested
                 if (FormEntryContext.Mode.ENTER == context.getMode() && dispositionTypeForPriorDiagnoses != null) {
@@ -378,6 +381,14 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     public String getPreferredCodingSource() {
         return preferredCodingSource;
+    }
+    
+    public void setDiagnosisConceptClasses(String diagnosisConceptClasses) {
+        this.diagnosisConceptClasses = diagnosisConceptClasses;
+    }
+
+    public String getDiagnosisConceptClasses() {
+        return diagnosisConceptClasses;
     }
 
     public void setUiUtils(UiUtils uiUtils) {

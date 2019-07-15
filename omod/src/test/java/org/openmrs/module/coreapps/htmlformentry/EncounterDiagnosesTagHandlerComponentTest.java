@@ -506,6 +506,42 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         // verify
         assertTrue(StringUtils.contains(generatedHtml, "diagnosisConceptSources=\"" + diagnosisConceptSources + "\""));
     }
+    
+    @Test
+    public void getSubstitution_shouldAddDiagnosisConceptClassesAttributeOnDiagnosisSearchField() throws Exception {
+        // setup
+        String diagnosisConceptClasses = "Diagnosis,Findig";
+        
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // replay
+        attributes.put("diagnosisConceptClasses", "Diagnosis,Findig");
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+        
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisConceptClasses=\"" + diagnosisConceptClasses + "\""));
+    }
+
+    @Test
+    public void getSubstitution_shouldAddEmptyStringToDiagnosisConceptClassesAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
+        // setup
+        String diagnosisConceptClasses = "";
+        
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // replay
+        attributes.put("diagnosisConceptClasses", null);
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+        
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisConceptClasses=\"" + diagnosisConceptClasses + "\""));
+    }
 
     private String renderFragmentHtml(Map<String, Object> fragmentConfig) throws Exception {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("web/module/fragments/diagnosis/encounterDiagnoses.gsp");

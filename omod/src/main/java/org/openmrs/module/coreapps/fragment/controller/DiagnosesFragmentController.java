@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Concept;
+import org.openmrs.ConceptClass;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptSearchResult;
 import org.openmrs.ConceptSource;
@@ -58,6 +59,7 @@ public class DiagnosesFragmentController {
                                      @RequestParam("term") String query,
                                      @RequestParam(value = "diagnosisSets", defaultValue = "") String diagnosisSetUuids,
                                      @RequestParam(value = "diagnosisConceptSources", defaultValue = "") String diagnosisConceptSources,
+                                     @RequestParam(value = "diagnosisConceptClasses", defaultValue = "") String diagnosisConceptClasses,
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
@@ -71,7 +73,7 @@ public class DiagnosesFragmentController {
                 }                
             }
         }
-        else{
+        else {
             diagnosisSets = emrApiProperties.getDiagnosisSets();
         }
 
@@ -86,13 +88,27 @@ public class DiagnosesFragmentController {
                 }                
             }
         }
-        else{
+        else {
             sources = emrApiProperties.getConceptSourcesForDiagnosisSearch();
+        }
+        
+        List<ConceptClass> conceptClasses = new ArrayList<ConceptClass>();
+        if (StringUtils.isNotEmpty(diagnosisConceptClasses)) {
+            String [] conceptClassNames = diagnosisConceptClasses.split(",");
+            for (String className : conceptClassNames) {
+            	ConceptClass conceptClass = conceptService.getConceptClassByName(className);
+                if (conceptClass != null) {
+                	conceptClasses.add(conceptClass);
+                }                
+            }
+        }
+        else {
+        	conceptClasses = null;            
         }
 
         Locale locale = context.getLocale();
 
-        List<ConceptSearchResult> hits = emrConceptService.conceptSearch(query, locale, null, diagnosisSets, sources, null);
+        List<ConceptSearchResult> hits = emrConceptService.conceptSearch(query, locale, conceptClasses, diagnosisSets, sources, null);
         List<SimpleObject> ret = new ArrayList<SimpleObject>();
         for (ConceptSearchResult hit : hits) {
             ret.add(simplify(hit, ui, locale));
@@ -110,7 +126,7 @@ public class DiagnosesFragmentController {
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
-        return search(context, ui, emrApiProperties, emrConceptService, conceptService, query, null, null, start, size);
+        return search(context, ui, emrApiProperties, emrConceptService, conceptService, query, null, null, null, start, size);
     }
 
     public FragmentActionResult codeDiagnosis(UiUtils ui,
