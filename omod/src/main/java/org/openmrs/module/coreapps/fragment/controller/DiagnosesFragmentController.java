@@ -58,9 +58,9 @@ public class DiagnosesFragmentController {
                                      @SpringBean("emrConceptService") EmrConceptService emrConceptService,
                                      @SpringBean("conceptService") ConceptService conceptService,
                                      @RequestParam("term") String query,
-                                     @RequestParam(value = "diagnosisSets", defaultValue = "") String diagnosisSetUuids,
-                                     @RequestParam(value = "diagnosisConceptSources", defaultValue = "") String diagnosisConceptSources,
-                                     @RequestParam(value = "diagnosisConceptClasses", defaultValue = "") String diagnosisConceptClasses,
+                                     @RequestParam(value = "diagnosisSets", required = false) String diagnosisSetUuids,
+                                     @RequestParam(value = "diagnosisConceptSources", required = false) String diagnosisConceptSources,
+                                     @RequestParam(value = "diagnosisConceptClasses", required = false) String diagnosisConceptClasses,
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
@@ -97,7 +97,6 @@ public class DiagnosesFragmentController {
            diagnosisSets = null; 
         }
             
-
         List<ConceptSource> sources = new ArrayList<ConceptSource>();
 
         if (StringUtils.isNotEmpty(diagnosisConceptSources)) {

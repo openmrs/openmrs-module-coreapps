@@ -68,15 +68,6 @@ public class DiagnosesFragmentControllerTest {
     }
 
     @Test
-    public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenEmptyDiagnosisSets() throws Exception {
-        // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "", null, null, null, null);
-
-        // verify
-        verify(emrApiProperties, times(1)).getDiagnosisSets();
-    }
-
-    @Test
     public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenNullDiagnosisSets() throws Exception {
         // replay
         controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, null, null, null, null);
@@ -93,15 +84,6 @@ public class DiagnosesFragmentControllerTest {
         
         // verify
         verify(emrApiProperties, never()).getConceptSourcesForDiagnosisSearch();
-    }
-
-    @Test
-    public void search_shouldSearchForDiagnosesUsingGloballyDefinedConceptSourcesGivenEmptyDiagnosisConceptSourcesAttr() throws Exception {
-        // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "", null, null, null);
-
-        // verify
-        verify(emrApiProperties, times(1)).getConceptSourcesForDiagnosisSearch();
     }
 
     @Test

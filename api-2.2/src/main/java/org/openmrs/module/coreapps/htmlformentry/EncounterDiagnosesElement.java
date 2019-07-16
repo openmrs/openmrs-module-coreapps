@@ -184,8 +184,8 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
      * @throws IllegalArgumentException if one or more sets cannot be fetched from the database.
      */
     private String validateAndFormat(String diagnosisSetIds) {
-        if ("".equals(diagnosisSetIds)) {
-            return diagnosisSetIds;
+        if (diagnosisSetIds == null) {
+            return null;
         }
         List<Concept> concepts = new ArrayList<Concept>();
         for (StringTokenizer st = new StringTokenizer(diagnosisSetIds, ","); st.hasMoreTokens();) {

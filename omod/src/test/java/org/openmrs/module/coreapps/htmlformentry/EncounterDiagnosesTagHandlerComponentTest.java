@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -440,10 +441,8 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
     
     @Test
-    public void getSubstitution_shouldAddEmptyStringToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
+    public void getSubstitution_shouldNotAddDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
         // setup
-    	String diagnosisSetsUuids = "";
-    	
     	Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
@@ -454,7 +453,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
 
         // verify
-        assertTrue(StringUtils.contains(generatedHtml, "diagnosisSets=\"" + diagnosisSetsUuids + "\""));
+        assertFalse(StringUtils.contains(generatedHtml, "diagnosisSets"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -490,10 +489,8 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
 
     @Test
-    public void getSubstitution_shouldAddEmptyStringToDiagnosisConceptSourcesAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
+    public void getSubstitution_shouldNotAddDiagnosisConceptSourcesAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
         // setup
-        String diagnosisConceptSources = "";
-        
         Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
@@ -504,7 +501,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
 
         // verify
-        assertTrue(StringUtils.contains(generatedHtml, "diagnosisConceptSources=\"" + diagnosisConceptSources + "\""));
+        assertFalse(StringUtils.contains(generatedHtml, "diagnosisConceptSources"));
     }
     
     @Test
@@ -526,10 +523,8 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
 
     @Test
-    public void getSubstitution_shouldAddEmptyStringToDiagnosisConceptClassesAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
-        // setup
-        String diagnosisConceptClasses = "";
-        
+    public void getSubstitution_shouldNotAddDiagnosisConceptClassesAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
+        // setup        
         Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
@@ -540,7 +535,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
         
         // verify
-        assertTrue(StringUtils.contains(generatedHtml, "diagnosisConceptClasses=\"" + diagnosisConceptClasses + "\""));
+        assertFalse(StringUtils.contains(generatedHtml, "diagnosisConceptClasses"));
     }
 
     private String renderFragmentHtml(Map<String, Object> fragmentConfig) throws Exception {
