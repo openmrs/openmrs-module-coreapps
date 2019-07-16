@@ -15,6 +15,7 @@
 package org.openmrs.module.coreapps.fragment.controller;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -63,19 +64,39 @@ public class DiagnosesFragmentController {
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
-        Collection<Concept> diagnosisSets = new ArrayList<Concept>();
-        if (StringUtils.isNotEmpty(diagnosisSetUuids)) {
-            String [] setUuids = diagnosisSetUuids.split(",");
-            for (String setUuid : setUuids) {
-                Concept conceptSet = conceptService.getConceptByUuid(setUuid);
-                if (conceptSet != null) {
-                    diagnosisSets.add(conceptSet);
+        List<ConceptClass> conceptClasses = new ArrayList<ConceptClass>();
+        if (StringUtils.isNotEmpty(diagnosisConceptClasses)) {
+            String [] conceptClassNames = diagnosisConceptClasses.split(",");
+            for (String className : conceptClassNames) {
+                ConceptClass conceptClass = conceptService.getConceptClassByName(className);
+                if (conceptClass != null) {
+                    conceptClasses.add(conceptClass);
                 }                
             }
         }
         else {
-            diagnosisSets = emrApiProperties.getDiagnosisSets();
+            conceptClasses = null;            
         }
+
+        Collection<Concept> diagnosisSets = new ArrayList<Concept>();
+        if (CollectionUtils.isEmpty(conceptClasses)) {
+            if (StringUtils.isNotEmpty(diagnosisSetUuids)) {
+                String [] setUuids = diagnosisSetUuids.split(",");
+                for (String setUuid : setUuids) {
+                    Concept conceptSet = conceptService.getConceptByUuid(setUuid);
+                    if (conceptSet != null) {
+                        diagnosisSets.add(conceptSet);
+                    }                
+                }
+            }
+            else {
+                diagnosisSets = emrApiProperties.getDiagnosisSets();
+            }
+        }
+        else {
+           diagnosisSets = null; 
+        }
+            
 
         List<ConceptSource> sources = new ArrayList<ConceptSource>();
 
@@ -90,20 +111,6 @@ public class DiagnosesFragmentController {
         }
         else {
             sources = emrApiProperties.getConceptSourcesForDiagnosisSearch();
-        }
-        
-        List<ConceptClass> conceptClasses = new ArrayList<ConceptClass>();
-        if (StringUtils.isNotEmpty(diagnosisConceptClasses)) {
-            String [] conceptClassNames = diagnosisConceptClasses.split(",");
-            for (String className : conceptClassNames) {
-            	ConceptClass conceptClass = conceptService.getConceptClassByName(className);
-                if (conceptClass != null) {
-                	conceptClasses.add(conceptClass);
-                }                
-            }
-        }
-        else {
-        	conceptClasses = null;            
         }
 
         Locale locale = context.getLocale();
