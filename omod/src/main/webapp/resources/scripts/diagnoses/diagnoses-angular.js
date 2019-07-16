@@ -4,7 +4,7 @@ var app = angular.module('diagnoses', [])
             // I don't know how to use an angular template programmatically, so use an underscore template instead. :-(
             var itemFormatter = _.template($('#' + attrs.itemformatter).html());
             element.autocomplete({
-                source: emr.fragmentActionLink("coreapps", "diagnoses", "search", {diagnosisSets: attrs.diagnosissets, diagnosisConceptSources: attrs.diagnosisconceptsources}),
+                source: emr.fragmentActionLink("coreapps", "diagnoses", "search", {diagnosisSets: attrs.diagnosissets, diagnosisConceptSources: attrs.diagnosisconceptsources, diagnosisConceptClasses: attrs.diagnosisconceptclasses}),
                 response: function(event, ui) {
                     var query = event.target.value.toLowerCase();
                     var items = ui.content;

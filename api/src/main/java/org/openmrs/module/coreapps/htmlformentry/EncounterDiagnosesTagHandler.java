@@ -79,6 +79,7 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
         element.setConceptService(conceptService);
         element.setAdtService(adtService);
         element.setDiagnosisSets(attributes.get("diagnosisSets") != null ? attributes.get("diagnosisSets") : "");
+        element.setDiagnosisConceptClasses(attributes.get("diagnosisConceptClasses") != null ? attributes.get("diagnosisConceptClasses") : "");
         element.setDiagnosisConceptSources(attributes.get("diagnosisConceptSources") != null ? attributes.get("diagnosisConceptSources") : "");
         element.setPreferredCodingSource(attributes.get("preferredCodingSource") != null ? attributes.get("preferredCodingSource"): CoreAppsConstants.DEFAULT_CODING_SOURCE);
 
