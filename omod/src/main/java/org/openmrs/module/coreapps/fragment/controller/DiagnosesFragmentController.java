@@ -79,23 +79,19 @@ public class DiagnosesFragmentController {
         }
 
         Collection<Concept> diagnosisSets = new ArrayList<Concept>();
-        if (CollectionUtils.isEmpty(conceptClasses)) {
-            if (StringUtils.isNotEmpty(diagnosisSetUuids)) {
-                String [] setUuids = diagnosisSetUuids.split(",");
-                for (String setUuid : setUuids) {
-                    Concept conceptSet = conceptService.getConceptByUuid(setUuid);
-                    if (conceptSet != null) {
-                        diagnosisSets.add(conceptSet);
-                    }                
-                }
-            }
-            else {
-                diagnosisSets = emrApiProperties.getDiagnosisSets();
+        if (StringUtils.isNotEmpty(diagnosisSetUuids)) {
+            String [] setUuids = diagnosisSetUuids.split(",");
+            for (String setUuid : setUuids) {
+                Concept conceptSet = conceptService.getConceptByUuid(setUuid);
+                if (conceptSet != null) {
+                    diagnosisSets.add(conceptSet);
+                }                
             }
         }
         else {
-           diagnosisSets = null; 
+            diagnosisSets = emrApiProperties.getDiagnosisSets();
         }
+           
             
         List<ConceptSource> sources = new ArrayList<ConceptSource>();
 
