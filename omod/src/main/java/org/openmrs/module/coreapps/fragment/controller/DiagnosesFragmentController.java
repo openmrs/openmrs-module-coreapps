@@ -89,7 +89,7 @@ public class DiagnosesFragmentController {
             }
         }
         else {
-            diagnosisSets = StringUtils.isNotEmpty(diagnosisConceptSources) || StringUtils.isNotEmpty(diagnosisConceptClasses) ? null : emrApiProperties.getDiagnosisSets();
+            diagnosisSets = "".equals(diagnosisSetUuids) ? null : emrApiProperties.getDiagnosisSets();
         }
            
             
@@ -105,7 +105,7 @@ public class DiagnosesFragmentController {
             }
         }
         else {
-            sources = StringUtils.isNotEmpty(diagnosisSetUuids) || StringUtils.isNotEmpty(diagnosisConceptClasses) ? null : emrApiProperties.getConceptSourcesForDiagnosisSearch();
+            sources = "".equals(diagnosisConceptSources) ? null : emrApiProperties.getConceptSourcesForDiagnosisSearch();
         }
 
         Locale locale = context.getLocale();
