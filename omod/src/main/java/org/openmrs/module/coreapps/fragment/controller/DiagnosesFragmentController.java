@@ -57,7 +57,7 @@ public class DiagnosesFragmentController {
     /**
      * Searches for diagnoses with names matching query in the specified 1) diagnosisSets, 2) diagnosisConceptSources and/or diagnosisConceptClasses
      * If diagnosisSets or diagnosisConceptSources attributes are missing, default values specided by emrApiProperties are used. 
-     * If'0' is specified for any of diagnosisSets or diagnosisConceptSources attributes, null is used for their corresponding values in the search.
+     * If '0' is specified for any of diagnosisSets or diagnosisConceptSources attributes, null is used for their corresponding values in the search.
      * 
      * @param context
      * @param ui
