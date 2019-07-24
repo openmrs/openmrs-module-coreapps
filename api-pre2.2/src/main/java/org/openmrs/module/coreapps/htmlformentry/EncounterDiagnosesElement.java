@@ -122,7 +122,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 Map<String, Object> fragmentConfig = new HashMap<String, Object>();
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
-                fragmentConfig.put("diagnosisSets", validateAndFormat(diagnosisSets));
+                fragmentConfig.put("diagnosisSets", "0".equals(diagnosisSets) ? "0" : validateAndFormat(diagnosisSets));
                 fragmentConfig.put("preferredCodingSource", preferredCodingSource);
                 fragmentConfig.put("diagnosisConceptSources", StringUtils.deleteWhitespace(diagnosisConceptSources));
                 fragmentConfig.put("diagnosisConceptClasses", StringUtils.deleteWhitespace(diagnosisConceptClasses));

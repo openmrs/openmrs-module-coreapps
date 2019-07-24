@@ -52,6 +52,8 @@ import java.util.Locale;
  */
 public class DiagnosesFragmentController {
 
+    private final static String USE_NULL_VALUE = "0";
+
     public List<SimpleObject> search(UiSessionContext context,
                                      UiUtils ui,
                                      @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
@@ -80,32 +82,38 @@ public class DiagnosesFragmentController {
 
         Collection<Concept> diagnosisSets = new ArrayList<Concept>();
         if (StringUtils.isNotEmpty(diagnosisSetUuids)) {
-            String [] setUuids = diagnosisSetUuids.split(",");
-            for (String setUuid : setUuids) {
-                Concept conceptSet = conceptService.getConceptByUuid(setUuid);
-                if (conceptSet != null) {
-                    diagnosisSets.add(conceptSet);
-                }                
+            if (USE_NULL_VALUE.equals(diagnosisSetUuids) ) {
+                diagnosisSets = null;
+            } else {
+                String [] setUuids = diagnosisSetUuids.split(",");
+                for (String setUuid : setUuids) {
+                    Concept conceptSet = conceptService.getConceptByUuid(setUuid);
+                    if (conceptSet != null) {
+                        diagnosisSets.add(conceptSet);
+                    }                
+                }
             }
         }
         else {
-            diagnosisSets = "".equals(diagnosisSetUuids) ? null : emrApiProperties.getDiagnosisSets();
+            diagnosisSets = emrApiProperties.getDiagnosisSets();
         }
-           
-            
+                       
         List<ConceptSource> sources = new ArrayList<ConceptSource>();
-
         if (StringUtils.isNotEmpty(diagnosisConceptSources)) {
-            String [] sourceNames = diagnosisConceptSources.split(",");
-            for (String sourceName : sourceNames) {
-                ConceptSource source = conceptService.getConceptSourceByName(sourceName);
-                if (source != null) {
-                    sources.add(source);
-                }                
+            if (USE_NULL_VALUE.equals(diagnosisConceptSources) ) {
+                sources = null;
+            } else {
+                String [] sourceNames = diagnosisConceptSources.split(",");
+                for (String sourceName : sourceNames) {
+                    ConceptSource source = conceptService.getConceptSourceByName(sourceName);
+                    if (source != null) {
+                        sources.add(source);
+                    }                
+                }
             }
         }
         else {
-            sources = "".equals(diagnosisConceptSources) ? null : emrApiProperties.getConceptSourcesForDiagnosisSearch();
+            sources = emrApiProperties.getConceptSourcesForDiagnosisSearch();
         }
 
         Locale locale = context.getLocale();

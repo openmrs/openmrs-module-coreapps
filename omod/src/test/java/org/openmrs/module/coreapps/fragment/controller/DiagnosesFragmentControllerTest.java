@@ -78,9 +78,9 @@ public class DiagnosesFragmentControllerTest {
     }
 
     @Test
-    public void search_shouldSearchForDiagnosesWithNullDiagnosisSetsGivenEmptyStringDiagnosisSetsParam() throws Exception {
+    public void search_shouldSearchForDiagnosesWithNullDiagnosisSetsGivenDiagnosisSetsParamWithZeroChar() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "", null, null, null, null);
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "0", null, null, null, null);
         
         // verify
         verify(emrApiProperties, never()).getDiagnosisSets();
@@ -105,9 +105,9 @@ public class DiagnosesFragmentControllerTest {
     }
 
     @Test
-    public void search_shouldSearchForDiagnosesWithNullDiagnosisConceptSourcesGivenEmptyStringDiagnosisConceptSourcesParam() throws Exception {
+    public void search_shouldSearchForDiagnosesWithNullDiagnosisConceptSourcesGivenDiagnosisConceptSourcesParamWithZeroChar() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "", null, null, null);
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "0", null, null, null);
         
         // verify
         verify(emrApiProperties, never()).getConceptSourcesForDiagnosisSearch();

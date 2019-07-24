@@ -98,6 +98,8 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
 
     private String CONCEPT_SOURCE_UUID = "75f5b378-5065-11de-80cb-001e378eb67e";
     
+    private String USE_NULL_VALUE = "0";
+    
     @Mock
     private FormEntrySession formEntrySession;
 
@@ -467,9 +469,26 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         // replay
         attributes.put("diagnosisSets", "NON-EXISTING:MAPPING,CIEL:160170");
         encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
-
     }
 
+    @Test
+    public void getSubstitution_shouldAddNullValueCharToDiagnosisSetsAttributeOnDiagnosisSearchField() throws Exception {
+        // setup
+        String diagnosisSetsUuids = USE_NULL_VALUE;
+
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // replay
+        attributes.put("diagnosisSets", "0");
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisSets=\"" + diagnosisSetsUuids + "\""));
+    }
+    
     @Test
     public void getSubstitution_shouldAddDiagnosisConceptSourcesAttributeOnDiagnosisSearchField() throws Exception {
         // setup
@@ -503,7 +522,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         // verify
         assertFalse(StringUtils.contains(generatedHtml, "diagnosisConceptSources"));
     }
-    
+        
     @Test
     public void getSubstitution_shouldAddDiagnosisConceptClassesAttributeOnDiagnosisSearchField() throws Exception {
         // setup
@@ -521,7 +540,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         // verify
         assertTrue(StringUtils.contains(generatedHtml, "diagnosisConceptClasses=\"" + diagnosisConceptClasses + "\""));
     }
-
+    
     @Test
     public void getSubstitution_shouldNotAddDiagnosisConceptClassesAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
         // setup        
