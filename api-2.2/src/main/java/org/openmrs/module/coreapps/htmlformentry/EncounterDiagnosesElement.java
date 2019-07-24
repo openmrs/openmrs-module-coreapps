@@ -143,7 +143,9 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 Map<String, Object> fragmentConfig = new HashMap<String, Object>();
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
-                fragmentConfig.put("diagnosisSets", validateAndFormat(diagnosisSets));
+                // Parse '0' to config attribute if specified such that null value can be used during the search in 'DiagnosesFragmentController' class  
+                fragmentConfig.put("diagnosisSets", "0".equals(diagnosisSets) ? "0" : validateAndFormat(diagnosisSets));
+                
                 fragmentConfig.put("preferredCodingSource", preferredCodingSource);
                 fragmentConfig.put("diagnosisConceptSources", StringUtils.deleteWhitespace(diagnosisConceptSources));
                 fragmentConfig.put("diagnosisConceptClasses", StringUtils.deleteWhitespace(diagnosisConceptClasses));
@@ -184,8 +186,8 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
      * @throws IllegalArgumentException if one or more sets cannot be fetched from the database.
      */
     private String validateAndFormat(String diagnosisSetIds) {
-        if ("".equals(diagnosisSetIds)) {
-            return diagnosisSetIds;
+        if (diagnosisSetIds == null) {
+            return null;
         }
         List<Concept> concepts = new ArrayList<Concept>();
         for (StringTokenizer st = new StringTokenizer(diagnosisSetIds, ","); st.hasMoreTokens();) {

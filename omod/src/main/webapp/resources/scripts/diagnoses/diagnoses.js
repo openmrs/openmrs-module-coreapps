@@ -192,5 +192,19 @@
         return api;
     };
 
+    diagnoses.DiagnosisSearchSource = function(attrs) {
+        var parameters = { };
+
+        if (attrs.diagnosissets) {
+            parameters.diagnosisSets = attrs.diagnosissets;
+        }
+        if (attrs.diagnosisconceptsources) {    
+            parameters.diagnosisConceptSources = attrs.diagnosisconceptsources;
+        }
+        if (attrs.diagnosisconceptclasses) {
+            parameters.diagnosisConceptClasses = attrs.diagnosisconceptclasses;
+        }
+        return emr.fragmentActionLink("coreapps", "diagnoses", "search", parameters);
+    };
 
 } ( window.diagnoses = window.diagnoses || {}, jQuery, _));
