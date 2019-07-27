@@ -61,9 +61,8 @@
                         endDate    : new Date(),
                 ])}
             </li>
-
+            &nbsp; &nbsp;
             <li id="status" class="group">
-             <br/> <br/>
             <label>${ui.message('coreapps.stopDate.label')} </label>
                 ${ui.includeFragment("uicommons", "field/datetimepicker", [
                         formFieldName: "conditionEndDate",
@@ -72,7 +71,7 @@
                         endDate    : new Date(),
                 ])}
             </li>
-  
+            <br/> <br/>
             <div id="status" class="horizontal">
                 <p>
                     <input type="radio" id="status-1" class="condition-status" value="${ui.message('coreapps.conditionui.active.label')}" name="status" ng-model="condition.status"  ng-change="showEndDate()"/>
