@@ -82,12 +82,12 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                         <td>{{formatDate(condition.onSetDate)}}</td>
                         <td ng-if="condition.status==='INACTIVE' && condition.voided===false" ng-style="strikeThrough(condition.voided)">{{formatDate(condition.endDate)}}</td>
                         <td ng-if="'${hasModifyConditionsPrivilege}'">
-                            <i class="icon-plus-sign edit-action" title="${ui.message("coreapps.conditionui.active")}"
-                               ng-click="activateCondition(condition)" ng-if="condition.status==='INACTIVE' && condition.voided===false"></i>
-                            <i class="icon-minus-sign edit-action" title="${ui.message("coreapps.conditionui.inactive")}"
-                               ng-click="deactivateCondition(condition)" ng-if="condition.status==='ACTIVE' && condition.voided===false"></i>
                             <i class="icon-remove delete-action" title="${ui.message("coreapps.coreapps.delete")}"
                                ng-click="conditionConfirmation(condition)" ng-if="condition.voided===false"></i>
+                            <button style="background-color: #cccccc;border: none; color: black; padding: 5px;font-size: 10px; margin: 2px 2px; border-radius: 4px;"
+                                  ng-click="activateCondition(condition)" ng-if="condition.status==='INACTIVE' && condition.voided===false">Set Active</button> 
+                            <button style="background-color: #cccccc;border: none; color: black; padding: 5px;font-size: 10px; margin: 2px 2px; border-radius: 4px;"
+                                 ng-click="deactivateCondition(condition)" ng-if="condition.status==='ACTIVE' && condition.voided===false">Set Inactive</button>    
                         </td>
                     </tr>
                     </tbody>
