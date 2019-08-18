@@ -66,7 +66,7 @@
 
         <div id="diagnosis-search-container">
             <label for="diagnosis-search">${ ui.message("coreapps.consult.addDiagnosis") }</label>
-            <input id="diagnosis-search" type="text" placeholder="${ ui.message("coreapps.consult.addDiagnosis.placeholder") }" autocomplete itemFormatter="autocomplete-render-item" diagnosisSets="${ config.diagnosisSets }" diagnosisConceptSources="${ config.diagnosisConceptSources }" preferredCodingSource="${ config.preferredCodingSource }"/>
+            <input id="diagnosis-search" type="text" placeholder="${ ui.message("coreapps.consult.addDiagnosis.placeholder") }" autocomplete itemFormatter="autocomplete-render-item" preferredCodingSource="${ config.preferredCodingSource }" ${ config.diagnosisSets != null ? "diagnosisSets=\"" + config.diagnosisSets + "\"" : ""} ${ config.diagnosisConceptSources != null ? "diagnosisConceptSources=\"" + config.diagnosisConceptSources + "\"" : ""} ${ config.diagnosisConceptClasses != null ? "diagnosisConceptClasses=\"" + config.diagnosisConceptClasses + "\"" : ""}/>
 
             <% if(jsForPrior.size > 0) { %>
                 <button type="button" ng-click="addPriorDiagnoses()">${ ui.message("coreapps.consult.priorDiagnoses.add") }</button>

@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -96,6 +97,8 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     private String HIV_OPPORTUNISTIC_INFECTION_DIAGNOSIS_SET_UUID = "d710b7h4-40b7-d333-b449-6e0e15d0739d";
 
     private String CONCEPT_SOURCE_UUID = "75f5b378-5065-11de-80cb-001e378eb67e";
+    
+    private String USE_NULL_VALUE = "0";
     
     @Mock
     private FormEntrySession formEntrySession;
@@ -440,10 +443,8 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
     
     @Test
-    public void getSubstitution_shouldAddEmptyStringToDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
+    public void getSubstitution_shouldNotAddDiagnosisSetsAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
         // setup
-    	String diagnosisSetsUuids = "";
-    	
     	Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
@@ -454,7 +455,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
 
         // verify
-        assertTrue(StringUtils.contains(generatedHtml, "diagnosisSets=\"" + diagnosisSetsUuids + "\""));
+        assertFalse(StringUtils.contains(generatedHtml, "diagnosisSets"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -468,9 +469,26 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         // replay
         attributes.put("diagnosisSets", "NON-EXISTING:MAPPING,CIEL:160170");
         encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
-
     }
 
+    @Test
+    public void getSubstitution_shouldAddNullValueCharToDiagnosisSetsAttributeOnDiagnosisSearchField() throws Exception {
+        // setup
+        String diagnosisSetsUuids = USE_NULL_VALUE;
+
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // replay
+        attributes.put("diagnosisSets", "0");
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisSets=\"" + diagnosisSetsUuids + "\""));
+    }
+    
     @Test
     public void getSubstitution_shouldAddDiagnosisConceptSourcesAttributeOnDiagnosisSearchField() throws Exception {
         // setup
@@ -490,10 +508,8 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
     }
 
     @Test
-    public void getSubstitution_shouldAddEmptyStringToDiagnosisConceptSourcesAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
+    public void getSubstitution_shouldNotAddDiagnosisConceptSourcesAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
         // setup
-        String diagnosisConceptSources = "";
-        
         Map<String,String> attributes = new HashMap<String, String>();
         attributes.put("required", "true");
         attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
@@ -504,7 +520,41 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
 
         // verify
-        assertTrue(StringUtils.contains(generatedHtml, "diagnosisConceptSources=\"" + diagnosisConceptSources + "\""));
+        assertFalse(StringUtils.contains(generatedHtml, "diagnosisConceptSources"));
+    }
+        
+    @Test
+    public void getSubstitution_shouldAddDiagnosisConceptClassesAttributeOnDiagnosisSearchField() throws Exception {
+        // setup
+        String diagnosisConceptClasses = "Diagnosis,Findig";
+        
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // replay
+        attributes.put("diagnosisConceptClasses", "Diagnosis,Findig");
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+        
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "diagnosisConceptClasses=\"" + diagnosisConceptClasses + "\""));
+    }
+    
+    @Test
+    public void getSubstitution_shouldNotAddDiagnosisConceptClassesAttributeOnDiagnosisSearchFieldGivenNullAttribute() throws Exception {
+        // setup        
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("required", "true");
+        attributes.put(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME, "admit");
+        attributes.put("selectedDiagnosesTarget", "example-target");
+
+        // replay
+        attributes.put("diagnosisConceptClasses", null);
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+        
+        // verify
+        assertFalse(StringUtils.contains(generatedHtml, "diagnosisConceptClasses"));
     }
 
     private String renderFragmentHtml(Map<String, Object> fragmentConfig) throws Exception {

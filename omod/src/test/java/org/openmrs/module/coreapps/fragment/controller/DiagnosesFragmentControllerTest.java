@@ -14,19 +14,27 @@
 
 package org.openmrs.module.coreapps.fragment.controller;
 
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openmrs.api.ConceptService;
+import org.openmrs.Concept;
+import org.openmrs.ConceptClass;
+import org.openmrs.ConceptSource;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.concept.EmrConceptService;
 import org.openmrs.ui.framework.UiUtils;
+
+import java.util.List;
+import java.util.ArrayList;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DiagnosesFragmentControllerTest { 
@@ -53,55 +61,76 @@ public class DiagnosesFragmentControllerTest {
     @Test
     public void search_shouldSearchForDiagnosisConceptsFromSpecifiedSets() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "1st_diagnosis_set_uuid,2nd_diagnosis_set_uuid", null, null, null);
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "1st_diagnosis_set_uuid,2nd_diagnosis_set_uuid", null, null, null, null);
         
         // verify
         verify(emrApiProperties, never()).getDiagnosisSets();
     }
 
     @Test
-    public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenEmptyDiagnosisSets() throws Exception {
+    public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenNullDiagnosisSetsParam() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "", null, null, null);
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, null, null, null, null);
 
         // verify
         verify(emrApiProperties, times(1)).getDiagnosisSets();
+
     }
 
     @Test
-    public void search_shouldSearchForDiagnosisConceptsUsingGloballyDefinedSuperSetGivenNullDiagnosisSets() throws Exception {
+    public void search_shouldSearchForDiagnosesWithNullDiagnosisSetsGivenDiagnosisSetsParamWithZeroChar() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, null, null, null);
-
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, "0", null, null, null, null);
+        
         // verify
-        verify(emrApiProperties, times(1)).getDiagnosisSets();
-
+        verify(emrApiProperties, never()).getDiagnosisSets();
     }
 
     @Test
     public void search_shouldSearchForDiagnosesFromSpecifiedDiagnosisConceptSources() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "CIEL,ICD-10-WHO", null, null);
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "CIEL,ICD-10-WHO", null, null, null);
         
         // verify
         verify(emrApiProperties, never()).getConceptSourcesForDiagnosisSearch();
     }
 
     @Test
-    public void search_shouldSearchForDiagnosesUsingGloballyDefinedConceptSourcesGivenEmptyDiagnosisConceptSourcesAttr() throws Exception {
+    public void search_shouldSearchForDiagnosesUsingGloballyDefinedConceptSourcesGivenNullDiagnosisConceptSourcesParam() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "", null, null);
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, null, null, null, null);
 
         // verify
         verify(emrApiProperties, times(1)).getConceptSourcesForDiagnosisSearch();
     }
 
     @Test
-    public void search_shouldSearchForDiagnosesUsingGloballyDefinedConceptSourcesGivenNullDiagnosisConceptSourcesAttr() throws Exception {
+    public void search_shouldSearchForDiagnosesWithNullDiagnosisConceptSourcesGivenDiagnosisConceptSourcesParamWithZeroChar() throws Exception {
         // replay
-        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, null, null, null);
-
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "0", null, null, null);
+        
         // verify
-        verify(emrApiProperties, times(1)).getConceptSourcesForDiagnosisSearch();
+        verify(emrApiProperties, never()).getConceptSourcesForDiagnosisSearch();
+    }
+    
+    @Test
+    public void search_shouldSearchForDiagnosesUsingSpecifiedDiagnosisConceptClasses() throws Exception {
+    	// setup
+    	ConceptClass conceptClass = new ConceptClass();
+    	List<ConceptClass> classList = new ArrayList<ConceptClass> ();
+    	classList.add(conceptClass);
+    	
+    	ConceptSource source = new ConceptSource();
+    	List<ConceptSource> sourceList = new ArrayList<ConceptSource> ();
+    	sourceList.add(source);
+    	when(conceptService.getConceptClassByName(eq("Diagnosis"))).thenReturn(conceptClass);
+    	when(conceptService.getConceptSourceByName(eq("ICD-10-WHO"))).thenReturn(source);
+    	when(emrApiProperties.getDiagnosisSets()).thenReturn(null);
+    	
+    	// replay
+        controller.search(context, uiUtils, emrApiProperties, emrConceptService, conceptService, queryString, null, "ICD-10-WHO", "Diagnosis", null, null);
+        
+        // verify
+        verify(emrConceptService, times(1)).conceptSearch(queryString, null, classList, null, sourceList, null);
     }
 }

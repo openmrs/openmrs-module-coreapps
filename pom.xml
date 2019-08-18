@@ -279,6 +279,26 @@
 				<scope>test</scope>
 				<classifier>tests</classifier>
 			</dependency>
+			<dependency>
+			    <groupId>com.github.Reyano132.openmrs-module-patientsearchcriteria</groupId>
+			    <artifactId>patientsearch-api</artifactId>
+			    <version>v1.0.0</version>
+			    <scope>provided</scope>
+			</dependency>
+			<dependency>
+			    <groupId>com.github.Reyano132.openmrs-module-patientsearchcriteria</groupId>
+			    <artifactId>patientsearch-omod</artifactId>
+			    <version>v1.0.0</version>
+			    <scope>provided</scope>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+			<dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-core</artifactId>
+			    <version>4.0.5.RELEASE</version>
+			</dependency>
+
 
 		</dependencies>
 	</dependencyManagement>
@@ -290,8 +310,8 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<target>1.6</target>
-						<source>1.6</source>
+						<target>1.8</target>
+						<source>1.8</source>
                         <encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
@@ -339,6 +359,10 @@
 			<id>openmrs-repo</id>
 			<name>OpenMRS Nexus Repository</name>
 			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+		</repository>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 

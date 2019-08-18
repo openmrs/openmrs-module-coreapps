@@ -43,7 +43,7 @@ function PatientSearchWidget(configuration){
     var highlightedMouseRowIndex;
     var searchDelayTimer;
     var requestCount = 0;
-    var searchUrl = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/patient';
+    var searchUrl = '/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1/patientsearch/patient';
     var initialData = [];
     var initialPatientData = [];
     var initialPatientUuids = [];
@@ -136,11 +136,57 @@ function PatientSearchWidget(configuration){
         }
 
         query = jq.trim(query);
+
         if (query.indexOf(' ') >= 0) {
             searchOnIdentifierAndName(query, currRequestCount);
         }
         else {
-            searchOnExactIdentifierMatchThenIdentifierAndName(query, currRequestCount, autoSelectIfExactIdentifierMatch);
+            var gender_search=jq('#patient-gender-search').val();
+            var from_search=jq('#patient-age-range-from').val();
+            var to_search=jq('#patient-age-range-to').val();
+            var date_search;
+            if(jq('#patient-birthdate').val()!=''){
+                console.log('birth '+jq('#patient-birthdate').val());
+                date_search =new Date(jq('#patient-birthdate').val());
+                date_search.setHours(0);
+                date_search.setMinutes(0);
+            }
+            
+
+            if(query==''){
+                if(gender_search!='' && from_search=='' && to_search=='' && jq('#patient-birthdate').val()==''){
+                    searchOnGender(gender_search,currRequestCount);
+                } else if(gender_search=='' && from_search!='' && to_search !='' && jq('#patient-birthdate').val()==''){
+                    searchOnRangeOfAge(from_search,to_search,currRequestCount);
+                }else if(gender_search=='' && jq('#patient-birthdate').val()!=''){
+                    searchOnBirthdate(date_search.getTime(),currRequestCount);
+                }else if(gender_search!='' && from_search!='' && to_search!=''){
+                    searchOnGenderAndRangeOfAge(gender_search,from_search,to_search,currRequestCount);
+                }else if(gender_search!='' && jq('#patient-birthdate').val()!=''){
+                    searchOnGenderAndBirthdate(gender_search,date_search.getTime(),currRequestCount);
+                }else{
+                    updateSearchResults();
+                }
+
+            }
+            else{
+                if(gender_search!=''){
+                    if( from_search=='' && to_search=='' && jq('#patient-birthdate').val()==''){
+                        searchOnIdentifierAndNameAndGender(query,gender_search,currRequestCount);
+                    }else if(from_search!='' && to_search !=''){
+                        searchOnIdentifierAndNameAndGenderAndRangeOfAge(query,gender_search,from_search,to_search,currRequestCount);
+                    }else{
+                        searchOnIdentifierAndNameAndGenderAndBirthdate(query,gender_search,date_search.getTime(),currRequestCount);
+                    }
+                }else if(from_search!='' && to_search !=''){
+                    searchOnIdentifierAndNameAndRangeOfAge(query,from_search,to_search,currRequestCount);
+                }else if(jq('#patient-birthdate').val()!=''){
+                    searchOnIdentifierAndNameAndBirthdate(query,date_search.getTime(),currRequestCount);
+                }else{
+                    searchOnExactIdentifierMatchThenIdentifierAndName(query, currRequestCount, autoSelectIfExactIdentifierMatch);
+                }
+            }
+   
         }
     }
 
@@ -154,7 +200,7 @@ function PatientSearchWidget(configuration){
         var deferredList = [];
 
         jq.each(identifiers, function (idx, identifier) {
-            var deferred = emr.getJSON(searchUrl, {identifier: identifier, v: customRep})
+            var deferred = emr.getJSON(searchUrl, {q: identifier, v: customRep})
                 .then(function (data) {
                     if (data && data.results && data.results.length > 0) {
                         updateSearchResults(data.results);
@@ -180,7 +226,7 @@ function PatientSearchWidget(configuration){
     }
 
     var searchOnExactIdentifierMatchThenIdentifierAndName = function(query, currRequestCount, autoSelectIfExactIdentifierMatch) {
-        emr.getJSON(searchUrl, {identifier: query, v: customRep })
+        emr.getJSON(searchUrl, {q: query, v: customRep })
             .done(function (data) {
                 // update only if we've got results, and not late (late ajax responses should be ignored not to overwrite the latest)
                 if (data && data.results && data.results.length > 0 && (!currRequestCount || currRequestCount >= requestCount)) {
@@ -199,6 +245,136 @@ function PatientSearchWidget(configuration){
 
     var searchOnIdentifierAndName = function(query, currRequestCount) {
         emr.getJSON(searchUrl, {q: query, v: customRep })
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnIdentifierAndNameAndGender = function(query,gender_search,currRequestCount) {
+        emr.getJSON(searchUrl, {q: query, gender: gender_search, v: customRep })
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnIdentifierAndNameAndRangeOfAge = function(query,from_search,to_search,currRequestCount) {
+        emr.getJSON(searchUrl, {q: query, from: from_search, to: to_search, v: customRep })
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnIdentifierAndNameAndBirthdate = function(query,birthdate_search,currRequestCount) {
+        emr.getJSON(searchUrl, {q: query, birthdate: birthdate_search, v: customRep })
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnIdentifierAndNameAndGenderAndRangeOfAge = function(query,gender_search,from_search,to_search,currRequestCount) {
+        emr.getJSON(searchUrl, {q: query, gender: gender_search, from: from_search, to: to_search, v: customRep })
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnIdentifierAndNameAndGenderAndBirthdate = function(query,gender_search,birthdate_search,currRequestCount) {
+        emr.getJSON(searchUrl, {q: query, gender: gender_search, birthdate: birthdate_search, v: customRep })
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnGenderAndRangeOfAge = function(gender_search,from_search,to_search,currRequestCount) {
+        emr.getJSON(searchUrl, {gender: gender_search, from: from_search, to: to_search, v: customRep })
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnGenderAndBirthdate = function(gender_search,birthdate_search,currRequestCount) {
+        emr.getJSON(searchUrl, {gender: gender_search,birthdate: birthdate_search, v: customRep })
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnGender = function(gender_search,currRequestCount) {
+        emr.getJSON(searchUrl, {gender: gender_search, v: customRep })
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnRangeOfAge = function(from_search,to_search,currRequestCount) {
+        emr.getJSON(searchUrl, {from: from_search, to: to_search, v: customRep })
+            .done(function(data) {
+                //late ajax responses should be ignored not to overwrite the latest
+                if(data && (!currRequestCount || currRequestCount >= requestCount)){
+                    updateSearchResults(data.results);
+                }
+            })
+            .fail(function (jqXHR) {
+                failSearch();
+            });
+    }
+
+    var searchOnBirthdate = function(birthdate_search,currRequestCount) {
+        emr.getJSON(searchUrl, {birthdate: birthdate_search, v: customRep })
             .done(function(data) {
                 //late ajax responses should be ignored not to overwrite the latest
                 if(data && (!currRequestCount || currRequestCount >= requestCount)){
@@ -244,6 +420,46 @@ function PatientSearchWidget(configuration){
     }
     this.reset = reset;
 
+     //Add age range and birthdate search
+
+    jq('#getAgeAndBirthdateFilter').click(function (event) {
+        if(this.checked){
+            jq('#patient-search-age-birthdate').css('display','block');
+        }else{
+            jq('#patient-search-age-birthdate').css('display','none');
+            jq( '#patient-age' ).prop( 'checked', false );
+            jq( '#patient-birthdate' ).prop( 'checked', false );
+            jq('#patient-age-range-from').val('');
+            jq('#patient-age-range-to').val('');
+            jq('input[type=date]').each( function resetDate(){
+                  this.value = this.defaultValue;
+                } );
+        }
+    })
+
+
+    $("input[name='patient-age-birthdate']").change(function(){
+       var ageOrBirthdate= $("input[name='patient-age-birthdate']:checked").val()
+        if(ageOrBirthdate=="patient-age"){
+            jq('#patient-birthdate-search').css('display','none');
+            jq('#patient-age-range-search').css('display','block');
+            jq('input[type=date]').each( function resetDate(){
+                  this.value = this.defaultValue;
+                } );
+        }
+        if(ageOrBirthdate=="patient-birthdate"){
+            jq('#patient-age-range-search').css('display','none');
+            jq('#patient-birthdate-search').css('display','block');
+            jq('#patient-age-range-from').val('');
+            jq('#patient-age-range-to').val('');
+        }
+    });
+
+    //for date type support to browsers  
+    if ( jq('[type="date"]').prop('type') != 'date' ) {
+        jq('[type="date"]').datepicker();
+    }
+    
     var updateSearchResults = function(results){
         var dataRows = [];
         if(results){
@@ -593,6 +809,38 @@ function PatientSearchWidget(configuration){
     // handle the clear button
     clearButton.click(function(event) {
         clearSearch();
+    });
+
+    var searchByPatientSearchCriteria = function(){
+        cancelAnyExistingSearch();
+        var text=jq.trim(input.val());
+        var currentCount = ++requestCount;
+        var effectiveSearchDelay = config.searchDelayShort;
+        window.setTimeout(function(){
+            if(text=='' || text.length <= config.minSearchCharacters){
+                doSearch('', currentCount);
+            }else{
+                doSearch(text, currentCount);
+            }        
+        }, effectiveSearchDelay);
+        
+    }
+
+    jq('select').change( function(){
+        searchByPatientSearchCriteria();
+    });
+
+    jq('input[type="date"]').change(function(){
+        searchByPatientSearchCriteria();
+    });
+    
+
+    jq('#patient-age-range-from').keyup(function(){
+        searchByPatientSearchCriteria();
+    });
+
+    jq('#patient-age-range-to').keyup(function(){
+        searchByPatientSearchCriteria();
     });
 
     input.keyup(function(event) {

@@ -15,10 +15,12 @@
 package org.openmrs.module.coreapps.fragment.controller;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Concept;
+import org.openmrs.ConceptClass;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptSearchResult;
 import org.openmrs.ConceptSource;
@@ -50,49 +52,92 @@ import java.util.Locale;
  */
 public class DiagnosesFragmentController {
 
+    private final static String USE_NULL_VALUE = "0";
+
+    /**
+     * Searches for diagnoses with names matching query in the specified 1) diagnosisSets, 2) diagnosisConceptSources and/or diagnosisConceptClasses
+     * If diagnosisSets or diagnosisConceptSources attributes are missing, default values specided by emrApiProperties are used. 
+     * If '0' is specified for any of diagnosisSets or diagnosisConceptSources attributes, null is used for their corresponding values in the search.
+     * 
+     * @param context
+     * @param ui
+     * @param emrApiProperties
+     * @param emrConceptService
+     * @param conceptService
+     * @param query
+     * @param diagnosisSetUuids
+     * @param diagnosisConceptSources
+     * @param diagnosisConceptClasses
+     * @param start
+     * @param size
+     * @return diagnoses search results
+     * @throws Exception
+     */
     public List<SimpleObject> search(UiSessionContext context,
                                      UiUtils ui,
                                      @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                                      @SpringBean("emrConceptService") EmrConceptService emrConceptService,
                                      @SpringBean("conceptService") ConceptService conceptService,
                                      @RequestParam("term") String query,
-                                     @RequestParam(value = "diagnosisSets", defaultValue = "") String diagnosisSetUuids,
-                                     @RequestParam(value = "diagnosisConceptSources", defaultValue = "") String diagnosisConceptSources,
+                                     @RequestParam(value = "diagnosisSets", required = false) String diagnosisSetUuids,
+                                     @RequestParam(value = "diagnosisConceptSources", required = false) String diagnosisConceptSources,
+                                     @RequestParam(value = "diagnosisConceptClasses", required = false) String diagnosisConceptClasses,
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
+        List<ConceptClass> conceptClasses = new ArrayList<ConceptClass>();
+        if (StringUtils.isNotEmpty(diagnosisConceptClasses)) {
+            String [] conceptClassNames = diagnosisConceptClasses.split(",");
+            for (String className : conceptClassNames) {
+                ConceptClass conceptClass = conceptService.getConceptClassByName(className);
+                if (conceptClass != null) {
+                    conceptClasses.add(conceptClass);
+                }                
+            }
+        }
+        else {
+            conceptClasses = null;            
+        }
+
         Collection<Concept> diagnosisSets = new ArrayList<Concept>();
         if (StringUtils.isNotEmpty(diagnosisSetUuids)) {
-            String [] setUuids = diagnosisSetUuids.split(",");
-            for (String setUuid : setUuids) {
-                Concept conceptSet = conceptService.getConceptByUuid(setUuid);
-                if (conceptSet != null) {
-                    diagnosisSets.add(conceptSet);
-                }                
+            if (USE_NULL_VALUE.equals(diagnosisSetUuids) ) {
+                diagnosisSets = null;
+            } else {
+                String [] setUuids = diagnosisSetUuids.split(",");
+                for (String setUuid : setUuids) {
+                    Concept conceptSet = conceptService.getConceptByUuid(setUuid);
+                    if (conceptSet != null) {
+                        diagnosisSets.add(conceptSet);
+                    }                
+                }
             }
         }
-        else{
+        else {
             diagnosisSets = emrApiProperties.getDiagnosisSets();
         }
-
+                       
         List<ConceptSource> sources = new ArrayList<ConceptSource>();
-
         if (StringUtils.isNotEmpty(diagnosisConceptSources)) {
-            String [] sourceNames = diagnosisConceptSources.split(",");
-            for (String sourceName : sourceNames) {
-                ConceptSource source = conceptService.getConceptSourceByName(sourceName);
-                if (source != null) {
-                    sources.add(source);
-                }                
+            if (USE_NULL_VALUE.equals(diagnosisConceptSources) ) {
+                sources = null;
+            } else {
+                String [] sourceNames = diagnosisConceptSources.split(",");
+                for (String sourceName : sourceNames) {
+                    ConceptSource source = conceptService.getConceptSourceByName(sourceName);
+                    if (source != null) {
+                        sources.add(source);
+                    }                
+                }
             }
         }
-        else{
+        else {
             sources = emrApiProperties.getConceptSourcesForDiagnosisSearch();
         }
 
         Locale locale = context.getLocale();
 
-        List<ConceptSearchResult> hits = emrConceptService.conceptSearch(query, locale, null, diagnosisSets, sources, null);
+        List<ConceptSearchResult> hits = emrConceptService.conceptSearch(query, locale, conceptClasses, diagnosisSets, sources, null);
         List<SimpleObject> ret = new ArrayList<SimpleObject>();
         for (ConceptSearchResult hit : hits) {
             ret.add(simplify(hit, ui, locale));
@@ -110,7 +155,7 @@ public class DiagnosesFragmentController {
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
-        return search(context, ui, emrApiProperties, emrConceptService, conceptService, query, null, null, start, size);
+        return search(context, ui, emrApiProperties, emrConceptService, conceptService, query, null, null, null, start, size);
     }
 
     public FragmentActionResult codeDiagnosis(UiUtils ui,
