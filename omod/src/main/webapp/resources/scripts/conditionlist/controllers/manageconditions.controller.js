@@ -46,6 +46,10 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
             var dialog = document.getElementById("remove-condition-dialog");
             dialog.style.display = "none";           
         }
+
+    self.redirectToEditCondition = self.redirectToEditCondition || function(baselink,condition) {
+        window.location= baselink+'conditionUuid=' + JSON.stringify(condition.uuid)+'&';
+    }
      
     self.conditionConfirmation = self.conditionConfirmation || function(condition) {
         var dialog = document.getElementById("remove-condition-dialog");
@@ -85,4 +89,5 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
     $scope.formatDate = CommonFunctions.formatDate;
     $scope.getConditions = self.getConditions;
     $scope.conditionConfirmation = self.conditionConfirmation
+    $scope.redirectToEditCondition = self.redirectToEditCondition;
 }
