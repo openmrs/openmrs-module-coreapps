@@ -82,6 +82,8 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                         <td>{{formatDate(condition.onSetDate)}}</td>
                         <td ng-if="condition.status==='INACTIVE' && condition.voided===false" ng-style="strikeThrough(condition.voided)">{{formatDate(condition.endDate)}}</td>
                         <td ng-if="'${hasModifyConditionsPrivilege}'">
+                            <i class="icon-pencil edit-action" title="${ui.message("coreapps.conditionui.editCondition","")}"
+                               ng-click="redirectToEditCondition('${ ui.pageLink("coreapps/conditionlist", "editCondition", [patientId: patient.uuid, returnUrl: returnUrl]) }',condition) "   ng-if="condition.voided===false"></i>
                             <i class="icon-remove delete-action" title="${ui.message("coreapps.delete")}"
                                ng-click="conditionConfirmation(condition)" ng-if="condition.voided===false"></i>
                             <button style="background-color: #cccccc;border: none; color: black; padding: 5px;font-size: 10px; margin: 2px 2px; border-radius: 4px;"
