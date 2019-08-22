@@ -1,0 +1,10 @@
+<htmlform formEncounterType="61ae96f4-6afe-4351-b6f8-cd4fc383cce1">
+	Date: <encounterDate/>
+	Location: <encounterLocation/>
+	Provider: <encounterProvider role="Provider"/>
+	<obsgroup groupingConceptId="25">
+		Dose: <obs conceptId="51"/> 
+	</obsgroup>
+	Diagnosis: <encounterDiagnoses/>
+	<submit/>
+</htmlform>
