@@ -17,12 +17,14 @@ $(function() {
     $(document).on('click', '.editEncounter, .viewEncounter', function(event) {
         var encounterId = $(event.target).attr("data-encounter-id");
         var patientId = $(event.target).attr("data-patient-id");
-        var editUrl = $(event.target).attr("data-edit-url");
+        var actionUrl = $(event.target).attr("data-edit-url") || $(event.target).attr("data-view-url");
         var dataMode = $(event.target).attr("data-mode");
-        if (editUrl) {
-            editUrl = editUrl.replace("{{patientId}}", patientId).replace("{{patient.uuid}}", patientId)
-                .replace("{{encounterId}}", encounterId).replace("{{encounter.id}}", encounterId);
-            emr.navigateTo({ applicationUrl: editUrl });
+        if (actionUrl) {
+            actionUrl = actionUrl.replace(/{{\s?patientId\s?}}/, patientId)
+                .replace(/{{\s?patient.uuid\s?}}/, patientId)
+                .replace(/{{\s?encounterId}\s?}/, encounterId)
+                .replace(/{{\s?encounter.id\s?}}/, encounterId);
+            emr.navigateTo({ applicationUrl: actionUrl });
         } else {
             if ("view" == dataMode) {
             	emr.navigateTo({
