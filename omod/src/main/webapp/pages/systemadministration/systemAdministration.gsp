@@ -1,5 +1,7 @@
 <%
     ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("coreapps.app.systemAdministration.label") ])
+    ui.includeCss("coreapps", "systemadministration/systemadministration.css")
+
 
     def htmlSafeId = { extension ->
         "${ extension.id.replace(".", "-") }-app"
@@ -15,15 +17,17 @@
 
 ${ ui.includeFragment("coreapps", "administrativenotification/notifications") }
 
-<div id="tasks">
-    <% extensions.each { extension -> %>
+<div id="tasks" class="row">
+    <div  class="col-12 col-sm-12 col-md-12 col-lg-12 homeList">
+        <% extensions.each { extension -> %>
 
-    <a id="${ htmlSafeId(extension) }" href="/${ contextPath }/${ extension.url }" class="button app big">
-        <% if (extension.icon) { %>
-        <i class="${ extension.icon }"></i>
+        <a id="${ htmlSafeId(extension) }" href="/${ contextPath }/${ extension.url }"  class="btn btn-default btn-lg button app big align-self-center" type="button">
+            <% if (extension.icon) { %>
+            <i class="${ extension.icon }"></i>
+            <% } %>
+            ${ ui.message(extension.label) }
+        </a>
+
         <% } %>
-        ${ ui.message(extension.label) }
-    </a>
-
-    <% } %>
+    <div>
 </div>
