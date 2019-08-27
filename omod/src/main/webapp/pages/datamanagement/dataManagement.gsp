@@ -13,16 +13,15 @@
     ];
 </script>
 
-<div id="tasks" class="row">
+<div id="tasks">
     <% extensions.each { extension -> %>
-    <div  class="col-6 col-sm-2 col-md-3 col-lg-2 homeList schedulingList ml-3">
-    <a id="${ htmlSafeId(extension) }" href="/${ contextPath }/${ extension.url }" class="btn btn-default btn-lg button app big align-self-center" type="button">
+
+    <a id="${ htmlSafeId(extension) }" href="/${ contextPath }/${ extension.url }" class="button app big">
         <% if (extension.icon) { %>
         <i class="${ extension.icon }"></i>
         <% } %>
         ${ ui.message(extension.label) }
     </a>
-    </div>
 
     <% } %>
 </div>

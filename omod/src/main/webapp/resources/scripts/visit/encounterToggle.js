@@ -2,7 +2,7 @@
  *  Provide functionality to show or hide ALL encounter details.
  */
 function toggle(){
-    jq('.encounterview').removeClass('open');
+    jq('.collapse').removeClass('open');
     jq(".view-details").click();
     if(jq('#i-toggle').hasClass('icon-arrow-up')){
         jq('#i-toggle').removeClass('icon-arrow-up');

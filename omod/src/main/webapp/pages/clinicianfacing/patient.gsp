@@ -45,14 +45,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 
 
 <div class="clear"></div>
-    <div class="dashboard clear row">
+<div class="container">
+    <div class="dashboard clear">
         <!-- only show the title div if a title has been defined in the messages.properties -->
         <% if (ui.message(dashboard + ".custom.title") != dashboard + ".custom.title") { %>
         <div class="title">
             <h3>${ ui.message(dashboard + ".custom.title") }</h3>
         </div>
         <% } %>
-        <div class="col-12 col-sm-12 col-md-12 col-lg-5">
+        <div class="info-container column">
             <% if (firstColumnFragments) {
 			    firstColumnFragments.each {
                     // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
@@ -67,7 +68,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 			} %>
 
         </div>
-        <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+        <div class="info-container column">
             <% if (secondColumnFragments) {
 			    secondColumnFragments.each {
                     // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
@@ -80,9 +81,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 			        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs)}
 			<%   }
 			} %>
+			
         </div>
         <% if ((visitActions && visitActions.size() > 0) || (overallActions && overallActions.size() > 0) || (otherActions && otherActions.size() > 0))  { %>
-            <div class="col-12 col-sm-12 col-md-12 col-lg-3">
+            <div class="action-container column">
                 <div class="action-section">
                     <% if (activeVisit && visitActions && visitActions.size() > 0) { %>
                         <ul class="float-left">
@@ -90,7 +92,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                             <% visitActions.each { ext -> %>
                             <li class="float-left">
                                 <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
-                                    <i class="${ ext.icon }"></i>
+                                    <i class="${ ext.icon } float-left"></i>
                                     ${ ui.message(ext.label) }
                                 </a>
                             </li>
@@ -104,7 +106,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                                 overallActions.each { ext -> %>
                                     <li class="float-left">
                                         <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
-                                            <i class="${ ext.icon }"></i>
+                                            <i class="${ ext.icon } float-left"></i>
                                             ${ ui.message(ext.label) }
                                         </a>
                                     </li>
@@ -122,3 +124,4 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
             </div>
         <% } %>
     </div>
+</div>
