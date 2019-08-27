@@ -1,3 +1,4 @@
+
 /**
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -22,6 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Date;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +31,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.CodedOrFreeText;
+import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
 import org.openmrs.ConditionVerificationStatus;
 import org.openmrs.Encounter;
@@ -47,6 +50,7 @@ import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.FormSubmissionActions;
 import org.openmrs.module.htmlformentry.FormSubmissionError;
+import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
 import org.openmrs.module.htmlformentry.InvalidActionException;
 import org.openmrs.module.htmlformentry.action.FormSubmissionControllerAction;
 import org.openmrs.module.htmlformentry.element.HtmlGeneratorElement;
@@ -60,6 +64,14 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private boolean required = false;
     private UiUtils uiUtils;
     private String selectedDiagnosesTarget;
+
+    private String diagnosisSets;
+
+    private String diagnosisConceptSources;
+
+    private String preferredCodingSource;
+    
+    private String diagnosisConceptClasses;
 
     private EmrApiProperties emrApiProperties;
 
@@ -131,6 +143,12 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 Map<String, Object> fragmentConfig = new HashMap<String, Object>();
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
+                // Parse '0' to config attribute if specified such that null value can be used during the search in 'DiagnosesFragmentController' class  
+                fragmentConfig.put("diagnosisSets", "0".equals(diagnosisSets) ? "0" : validateAndFormat(diagnosisSets));
+                
+                fragmentConfig.put("preferredCodingSource", preferredCodingSource);
+                fragmentConfig.put("diagnosisConceptSources", StringUtils.deleteWhitespace(diagnosisConceptSources));
+                fragmentConfig.put("diagnosisConceptClasses", StringUtils.deleteWhitespace(diagnosisConceptClasses));
 
                 // add the prior diagnoses if requested
                 if (FormEntryContext.Mode.ENTER == context.getMode() && dispositionTypeForPriorDiagnoses != null) {
@@ -157,6 +175,39 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 throw new IllegalStateException("Included fragment threw a PageAction", pageAction);
             }
         }
+    }
+    
+    /**
+     * This method receives a comma-separated list of diagnosis sets 'identifiers'
+     * and returns as comma-separated list of their uuids.
+     *
+     * @param diagnosisSetIds Either concepts UUIDS, mappings or internal IDs.
+     * @return The list of diagnoses sets as a list of their concept UUIDs.
+     * @throws IllegalArgumentException if one or more sets cannot be fetched from the database.
+     */
+    private String validateAndFormat(String diagnosisSetIds) {
+        if (diagnosisSetIds == null) {
+            return null;
+        }
+        List<Concept> concepts = new ArrayList<Concept>();
+        for (StringTokenizer st = new StringTokenizer(diagnosisSetIds, ","); st.hasMoreTokens();) {
+            String id = st.nextToken().trim();
+            Concept concept = HtmlFormEntryUtil.getConcept(id);
+            if (concept == null) {
+                throw new IllegalArgumentException("Cannot find diagnosis set for value '" + id
+                        + "' in diagnosisSets attribute value. Parameters: " + diagnosisSetIds);
+            }
+            concepts.add(concept);
+        }
+        StringBuilder sb = new StringBuilder("");
+        if (CollectionUtils.isNotEmpty(concepts)) {
+            for (Concept con : concepts) {
+                sb.append(con.getUuid() + ",");
+            }
+        }
+        String uuids = sb.toString();
+
+        return StringUtils.removeEnd(uuids, ",");
     }
 
     @Override
@@ -359,6 +410,38 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     public boolean getRequired() {
         return required;
+    }
+
+    public void setDiagnosisSets(String diagnosisSets) {
+        this.diagnosisSets = diagnosisSets;
+    }
+
+    public String getDiagnosisSets() {
+        return diagnosisSets;
+    }
+
+    public void setDiagnosisConceptSources(String diagnosisConceptSources) {
+        this.diagnosisConceptSources = diagnosisConceptSources;
+    }
+
+    public String getDiagnosisConceptSources() {
+        return diagnosisConceptSources;
+    }
+
+    public void setPreferredCodingSource(String preferredCodingSource) {
+        this.preferredCodingSource = preferredCodingSource;
+    }
+
+    public String getPreferredCodingSource() {
+        return preferredCodingSource;
+    }
+    
+    public void setDiagnosisConceptClasses(String diagnosisConceptClasses) {
+        this.diagnosisConceptClasses = diagnosisConceptClasses;
+    }
+
+    public String getDiagnosisConceptClasses() {
+        return diagnosisConceptClasses;
     }
 
     public void setUiUtils(UiUtils uiUtils) {

@@ -1,3 +1,4 @@
+
 package org.openmrs.module.coreapps.htmlformentry;
 
 import org.openmrs.api.ConceptService;
@@ -18,9 +19,11 @@ import java.util.Map;
  *
  * In enter/edit mode, includes the diagnosis/encounterDiagnoses fragment.
  * Currently this is hardcoded to use specific ids and names, and can only be included once on a form
+ * 
+ * It supports specifying the concept source to use for obtaining concept code displayed on the UI
  *
  * Example usage:
- * <encounterDiagnoses required="true" selectedDiagnosesTarget="#encounter-diagnoses-target" includePriorDiagnosesFromMostRecentEncounterWithDispositionOfType="ADMIT"/>)
+ * <encounterDiagnoses required="true" selectedDiagnosesTarget="#encounter-diagnoses-target" includePriorDiagnosesFromMostRecentEncounterWithDispositionOfType="ADMIT" preferredCodingSource="CIEL"/>)
  *
  */
 public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
@@ -75,13 +78,17 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
         element.setEmrApiProperties(emrApiProperties);
         element.setConceptService(conceptService);
         element.setAdtService(adtService);
+        element.setDiagnosisSets(attributes.get("diagnosisSets"));
+        element.setDiagnosisConceptClasses(attributes.get("diagnosisConceptClasses"));
+        element.setDiagnosisConceptSources(attributes.get("diagnosisConceptSources"));
+        element.setPreferredCodingSource(attributes.get("preferredCodingSource") != null ? attributes.get("preferredCodingSource"): CoreAppsConstants.DEFAULT_CODING_SOURCE);
 
         /**
          *  Handle the attribute to specify loading any prior diagnoses from the most recent encounter with a specific disposition
          * (use case: prepopulating the diagonses on an admission note with the diagnoses from the consult recommending admission,
          *  ie., on our admission note: <encounterDiagnoses required="true" selectedDiagnosesTarget="#encounter-diagnoses-target" includePriorDiagnosesFromMostRecentEncounterWithDispositionOfType="ADMIT"/>)
          */
-             if (attributes.containsKey(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME)) {
+        if (attributes.containsKey(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME)) {
             try {
                 element.setDispositionTypeForPriorDiagnoses(DispositionType.valueOf(
                         attributes.get(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_INCLUDE_PRIOR_DIAGNOSES_ATTRIBUTE_NAME).toUpperCase()));

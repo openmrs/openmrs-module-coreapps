@@ -1,10 +1,14 @@
 (function(diagnoses, $, _, undefined) {
 
-    var codingSystemToUse = 'ICD-10-WHO';
-
     var mapTypeOrder = [ "SAME-AS", "NARROWER-THAN" ]
+    
+    findPreferredCodingSource = function() {
+        var preferredCodingSource = $("#diagnosis-search").attr("preferredcodingsource");
+        return preferredCodingSource;
+    };
 
-    findConceptMapping = function(concept, sourceName) {
+    findConceptMapping = function(concept) {
+        var sourceName = findPreferredCodingSource();
         var matches = _.filter(concept.conceptMappings, function(item) {
             return item.conceptReferenceTerm.conceptSource.name == sourceName
         });
@@ -60,7 +64,7 @@
                 matchedName: item.conceptName ? item.conceptName.name : item.concept.preferredName,
                 preferredName: item.conceptName && item.conceptName.name != item.concept.preferredName ? item.concept.preferredName : null,
                 nameIsPreferred: item.conceptName ? (item.conceptName === item.concept.preferredName) : true,
-                code: findConceptMapping(item.concept, codingSystemToUse),
+                code: findConceptMapping(item.concept),
                 conceptId: item.concept.id,
                 exactlyMatchesQuery: function(query) {
                     query = emr.stripAccents(query.toLowerCase());
@@ -188,5 +192,19 @@
         return api;
     };
 
+    diagnoses.DiagnosisSearchSource = function(attrs) {
+        var parameters = { };
+
+        if (attrs.diagnosissets) {
+            parameters.diagnosisSets = attrs.diagnosissets;
+        }
+        if (attrs.diagnosisconceptsources) {    
+            parameters.diagnosisConceptSources = attrs.diagnosisconceptsources;
+        }
+        if (attrs.diagnosisconceptclasses) {
+            parameters.diagnosisConceptClasses = attrs.diagnosisconceptclasses;
+        }
+        return emr.fragmentActionLink("coreapps", "diagnoses", "search", parameters);
+    };
 
 } ( window.diagnoses = window.diagnoses || {}, jQuery, _));
