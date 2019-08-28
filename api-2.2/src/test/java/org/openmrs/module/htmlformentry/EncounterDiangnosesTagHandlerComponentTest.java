@@ -9,7 +9,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.ConceptService;
-import org.openmrs.api.ValidationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.coreapps.CoreAppsActivator;
 import org.openmrs.module.coreapps.CoreAppsConstants;
@@ -20,7 +19,7 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-public class HtmlFormTest extends BaseModuleContextSensitiveTest { 
+public class EncounterDiangnosesTagHandlerComponentTest extends BaseModuleContextSensitiveTest { 
 	
     private EncounterDiagnosesTagHandler encounterDiagnosesTagHandler;
 	
