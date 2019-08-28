@@ -33,7 +33,7 @@ jq(function() {
 <label>${config.label}</label>
 <input type="hidden" id="${config.hiddenFieldName}"  name="${config.hiddenFieldName}" />
 <div class="scan-input">
-    <input class="form-control input-sm input-lg" type="text" id="${config.textFieldName}" AUTOCOMPLETE="OFF" size="40" placeholder=""/>
+    <input type="text" id="${config.textFieldName}" AUTOCOMPLETE="OFF" size="40" placeholder=""/>
 </div>
 <br/>
 <span id="${config.fullNameField}"></span>

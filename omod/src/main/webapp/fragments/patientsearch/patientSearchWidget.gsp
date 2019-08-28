@@ -90,36 +90,26 @@
         patientSearchWidget = new PatientSearchWidget(widgetConfig);
     });
 </script>
-<div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-        <form method="get" id="patient-search-form" onsubmit="return false">
-            <input class="form-control input-sm input-lg" type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off" <% if (doInitialSearch) { %>value="${doInitialSearch}"<% } %>/><i id="patient-search-clear-button" class="small icon-remove-sign"></i>
-            <% if(patientSearchExtensions){
 
-                patientSearchExtensions.each {
-                    // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
-                    def configs = [:];
-                    if(it.extensionParams.fragmentConfig != null){
-                        configs = it.extensionParams.fragmentConfig;
-                    }
-                %>
-                    ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs) }
-                <%}
-            } %>
-        </form>
-    </div>
+<form method="get" id="patient-search-form" onsubmit="return false">
+    <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off" <% if (doInitialSearch) { %>value="${doInitialSearch}"<% } %>/><i id="patient-search-clear-button" class="small icon-remove-sign"></i>
+    <% if(patientSearchExtensions){
+
+        patientSearchExtensions.each {
+            // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
+            def configs = [:];
+            if(it.extensionParams.fragmentConfig != null){
+                configs = it.extensionParams.fragmentConfig;
+            }
+        %>
+            ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs) }
+        <%}
+    } %>
+</form>
+
+<div id="patient-search-results"></div>
+<%  if (registrationAppLink ?: false) { %>
+<div id="register-patient-link">
+    <label>${ ui.message("coreapps.findPatient.registerPatient.label") }&nbsp;&nbsp;</label><a id="patient-search-register-patient" class="button" href="/${contextPath}/${registrationAppLink}">${ui.message("registrationapp.registration.label")}</a>
 </div>
-<div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-        <div id="patient-search-results"></div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-        <%  if (registrationAppLink ?: false) { %>
-        <div id="register-patient-link">
-            <label>${ ui.message("coreapps.findPatient.registerPatient.label") }&nbsp;&nbsp;</label><a id="patient-search-register-patient" class="button" href="/${contextPath}/${registrationAppLink}">${ui.message("registrationapp.registration.label")}</a>
-        </div>
-        <%  } %>
-    </div>
-</div>
+<%  } %>

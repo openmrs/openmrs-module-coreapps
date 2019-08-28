@@ -3,7 +3,7 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount, curre
         var localVisitId = visitElement.data('visit-id');
 
         visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
-        jq.getJSON(
+        $.getJSON(
             emr.fragmentActionLink("coreapps", "visit/visitDetails", "getVisitDetails", {
                 visitId: localVisitId,
                 fromEncounter: fromEncounter,

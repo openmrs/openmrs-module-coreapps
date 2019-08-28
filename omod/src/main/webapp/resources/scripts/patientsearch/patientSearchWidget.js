@@ -17,7 +17,7 @@ function PatientSearchWidget(configuration){
         attributeHeaders = attributeHeaders.concat('<th>'+value+'</th>');
     });
     var tableId = 'patient-search-results-table';
-    var tableHtml = '<table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl}" id="'+tableId+'">'+
+    var tableHtml = '<table id="'+tableId+'">'+
                         '<thead>'+
                             '<tr>'+
                                 '<th>'+config.messages.identifierColHeader+'</th>'+
@@ -33,7 +33,7 @@ function PatientSearchWidget(configuration){
 
     var spinnerImage = '<span><img class="search-spinner" src="'+emr.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>';
 
-    jq('#'+config.searchResultsDivId).addClass("table-responsive").append(tableHtml);
+    jq('#'+config.searchResultsDivId).append(tableHtml);
     var input = jq('#'+config.searchInputId);
     var clearButton = jq('#' + config.clearButtonId);
     var searchResults = jq('#' + config.searchResultsDivId);

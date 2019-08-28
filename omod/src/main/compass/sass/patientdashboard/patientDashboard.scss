@@ -43,7 +43,7 @@ div {
   }
 }
 
-.encounterview {
+.collapse {
   border: none;
   position: relative;
   height: 0;
@@ -165,49 +165,4 @@ div {
 
 .report-value {
   color: lighten($highlight, 15%);
-}
-
-#visits-list {
-  border-left: 1px solid #cccccc !important;
-  
-  &.viewVisitDetails{
-    width: unset !important;
-  }
-}
-
-@media only screen and (min-width : 992px) {
-  .button.activelist{
-    min-width: 218px !important;
-  }
-}
-
-@media only screen and (max-width : 576px) and (min-width : 411px)  {
-  .button.activelist{
-    min-width: 139px !important;
-    height: 45px;
-  }
-}
-
-@media only screen and (max-width : 410px) and (min-width : 375px)  {
-  .button.activelist{
-    min-width: 117px !important;
-    height: 45px;
-  }
-}
-
-@media only screen and (max-width : 374px)  {
-  .button.activelist{
-    min-width: 97px !important;
-    height: 44px;
-  }
-
-  .actioncog {
-    margin-right: -13px;
-    width: 39px;
-    height: 41px;
-  }
-}
-
-.icon-calendar{
-  position: inherit !important;
 }
