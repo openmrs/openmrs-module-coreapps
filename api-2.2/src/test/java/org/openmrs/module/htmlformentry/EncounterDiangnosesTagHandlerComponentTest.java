@@ -58,6 +58,42 @@ public class EncounterDiangnosesTagHandlerComponentTest extends BaseModuleContex
 				request.addParameter(widgets.get("Date:"), dateAsString(date));
 				request.addParameter(widgets.get("Location:"), "2");
 				request.addParameter(widgets.get("Provider:"), "1");
+				request.addParameter(widgets.get("Dose:"), "1x3 daily");
+				request.addParameter("encounterDiagnoses", "[{\"certainty\":\"PRESUMED\",\"order\":\"PRIMARY\",\"diagnosis\":\"Concept:22\",\"existingObs\":null,\"existingDiagnosis\":null}]");
+			}
+
+			@Override
+			public void testResults(SubmissionResults results) {
+				results.assertNoErrors();
+				results.assertEncounterCreated();
+				results.assertProvider(1);
+				results.assertLocation(2);
+				results.assertObsCreated(51, "1x3 daily");
+				assertThat(Context.getDiagnosisService().getDiagnoses(getPatient(), date).get(0).getDiagnosis().getCoded().getId(), is(22));
+			}
+		}.run();
+	}
+	
+	@Test
+	public void testSingleObsGroupAndEncounterDiagnosesTagsShouldPassGivenEmptyObsGroup() throws Exception {
+		final Date date = new Date();
+		new RegressionTestHelper() {
+
+			@Override
+			public String getFormName() {
+				return "obsGroupAndEncounterForm";
+			}
+
+			@Override
+			public String[] widgetLabels() {
+				return new String[] { "Date:", "Location:", "Provider:", "Dose:" };
+			}
+
+			@Override
+			public void setupRequest(MockHttpServletRequest request, Map<String, String> widgets) {
+				request.addParameter(widgets.get("Date:"), dateAsString(date));
+				request.addParameter(widgets.get("Location:"), "2");
+				request.addParameter(widgets.get("Provider:"), "1");
 				request.addParameter(widgets.get("Dose:"), "");
 				request.addParameter("encounterDiagnoses", "[{\"certainty\":\"PRESUMED\",\"order\":\"PRIMARY\",\"diagnosis\":\"Concept:22\",\"existingObs\":null,\"existingDiagnosis\":null}]");
 			}
@@ -70,8 +106,7 @@ public class EncounterDiangnosesTagHandlerComponentTest extends BaseModuleContex
 				results.assertLocation(2);
 				assertThat(Context.getDiagnosisService().getDiagnoses(getPatient(), date).get(0).getDiagnosis().getCoded().getId(), is(22));
 			}
-		}
-		.run();
+		}.run();
 	}
 	
 
