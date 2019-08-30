@@ -94,8 +94,32 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <form method="get" id="patient-search-form" onsubmit="return false">
             <input class="form-control input-sm input-lg" type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off" <% if (doInitialSearch) { %>value="${doInitialSearch}"<% } %>/><i id="patient-search-clear-button" class="small icon-remove-sign"></i>
-            <% if(patientSearchExtensions){
+            <select id="patient-gender-search">
+                <option value="" selected>${ ui.message("coreapps.gender") }</option>
+                <option value="M">${ ui.message("coreapps.gender.M") }</option>
+                <option value="F">${ ui.message("coreapps.gender.F") }</option>
+            </select>
+            <input type="checkbox" id="getAgeAndBirthdateFilter" >Search with age or birthdate<br>
 
+            <div id="patient-search-age-birthdate" style="display:none">
+            <input type="radio" name ="patient-age-birthdate" value="patient-age"> Search by range of age
+            <br>
+            <input type="radio"  name ="patient-age-birthdate" value="patient-birthdate"> Search by birthdate
+                
+                    <p id="patient-age-range-search" style="display:none">
+                        <label>Range of Age</label>
+                        From:<input type="text" id="patient-age-range-from" placeholder="From" maxlength="2" style="min-width: 5px"  onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                        To:<input type="text" id="patient-age-range-to" placeholder="To" maxlength="2"
+                        style="min-width: 5px" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                    </p> 
+                
+                    <p id="patient-birthdate-search" style="display:none">
+                        Birthdate:<input type="date" id="patient-birthdate" style="min-width: 5px"/>
+                    </p>    
+            </div>
+
+            
+            <% if(patientSearchExtensions){
                 patientSearchExtensions.each {
                     // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
                     def configs = [:];
