@@ -1,8 +1,8 @@
 export default class VisitByEncounterTypeController {
-    constructor(openmrsRest, widgetsCommons) {
+    constructor(openmrsRest, widgetsCommons , openmrsTranslate) {
         'ngInject';
 
-        Object.assign(this, {openmrsRest, widgetsCommons});
+        Object.assign(this, {openmrsRest, widgetsCommons , openmrsTranslate});
     }
 
     $onInit() {
