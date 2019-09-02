@@ -19,7 +19,7 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-public class EncounterDiangnosesTagHandlerComponentTest extends BaseModuleContextSensitiveTest { 
+public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleContextSensitiveTest { 
 	
     private EncounterDiagnosesTagHandler encounterDiagnosesTagHandler;
 	

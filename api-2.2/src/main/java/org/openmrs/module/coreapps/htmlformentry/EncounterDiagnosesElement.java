@@ -46,12 +46,10 @@ import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.DispositionType;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
-import org.openmrs.module.htmlformentry.BadFormDesignException;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.FormSubmissionActions;
 import org.openmrs.module.htmlformentry.FormSubmissionError;
-import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
 import org.openmrs.module.htmlformentry.InvalidActionException;
 import org.openmrs.module.htmlformentry.action.FormSubmissionControllerAction;
@@ -331,7 +329,8 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                     if (diagnosis.getEncounter().getEncounterType() == null) {
                         diagnosis.getEncounter().setEncounterType(formEntrySession.getForm().getEncounterType());
                     }
-                    Context.getService(HtmlFormEntryService.class).applyActions(formEntrySession);
+                    HtmlFormEntryUtil.removeEmptyObs(formEntrySession.getSubmissionActions().getObsToCreate());
+                    Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
                     Context.getDiagnosisService().save(diagnosis);
                 }
 
@@ -349,9 +348,6 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
             ex.printStackTrace();
         }
         catch (IOException ex) {
-            ex.printStackTrace();
-        } 
-        catch (BadFormDesignException ex) {
             ex.printStackTrace();
         }
 
