@@ -329,7 +329,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                     if (diagnosis.getEncounter().getEncounterType() == null) {
                         diagnosis.getEncounter().setEncounterType(formEntrySession.getForm().getEncounterType());
                     }
-
+                    HtmlFormEntryUtil.removeEmptyObs(formEntrySession.getSubmissionActions().getObsToCreate());
                     Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
                     Context.getDiagnosisService().save(diagnosis);
                 }
