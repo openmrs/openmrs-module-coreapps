@@ -46,7 +46,6 @@ div {
 .encounterview {
   border: none;
   position: relative;
-  height: 0;
   overflow: hidden;
   background: #f9f9f9;
   @include transition-property(height);
