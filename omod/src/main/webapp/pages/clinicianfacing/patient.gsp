@@ -2,12 +2,13 @@
     ui.decorateWith("appui", "standardEmrPage")
     ui.includeCss("coreapps", "clinicianfacing/patient.css")
     ui.includeJavascript("coreapps", "custom/deletePatient.js")
+    ui.includeJavascript("appui", "jquery-3.4.1.min.js")
 %>
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" ,
-            link: '${ ui.urlBind("/" + contextPath + baseDashboardUrl, [ patientId: patient.patient.id ] ) }'}
+        link: '${ ui.urlBind("/" + contextPath + baseDashboardUrl, [ patientId: patient.patient.id ] ) }'}
     ];
 
     // add on breadcrumb if it has been defined in messages.properties

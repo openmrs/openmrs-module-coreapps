@@ -5,6 +5,7 @@
 
 	ui.includeCss("coreapps", "patientdashboard/patientDashboard.css")
 
+    ui.includeJavascript("appui", "jquery-3.4.1.min.js")
 
 
     def tabs = [
