@@ -18,6 +18,8 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Program;
 import org.openmrs.PatientProgram;
+import org.openmrs.EncounterType;
+import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
@@ -104,6 +106,14 @@ public class PatientPageController {
          programs.add(patientProgram.getProgram());
         }
         contextModel.put("patientPrograms", ConversionUtil.convertToRepresentation(programs, Representation.DEFAULT));
+
+
+        List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
+        List<Encounter> encounters = encounterService.getEncountersByPatient(patient);
+        for (Encounter encounter : encounters) {
+         encounterTypes.add(encounter.getEncounterType());
+        }
+        contextModel.put("encounterTypes", ConversionUtil.convertToRepresentation(encounterTypes, Representation.DEFAULT));
 
         model.addAttribute("appContextModel", contextModel);
 
