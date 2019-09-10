@@ -14,6 +14,7 @@
 package org.openmrs.module.coreapps.page.controller.clinicianfacing;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Program;
@@ -22,6 +23,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
+import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
@@ -40,7 +42,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.Redirect;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.openmrs.module.webservices.rest.web.representation.Representation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
