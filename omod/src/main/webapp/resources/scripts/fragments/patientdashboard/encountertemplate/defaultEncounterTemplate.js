@@ -50,7 +50,7 @@ $(function() {
 
         if (displayWithHtmlForm) {
 	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
-	        $.getJSON(
+	    jq.getJSON(
 	        		emr.fragmentActionLink("htmlformentryui", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
 	        ).success(function(data){
 	            encounterDetailsSection.html(data.html);
@@ -66,7 +66,7 @@ $(function() {
             var displayTemplate = detailsTemplates[displayTemplateId];
 
 	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
-	        $.getJSON(
+	        jq.getJSON(
 	            emr.fragmentActionLink("coreapps", "visit/visitDetails", "getEncounterDetails", { encounterId: id })
 	        ).success(function(data){
 	            encounterDetailsSection.html(displayTemplate(data));
