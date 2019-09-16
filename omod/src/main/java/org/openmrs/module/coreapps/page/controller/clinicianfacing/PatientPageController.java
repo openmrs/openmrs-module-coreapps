@@ -108,7 +108,17 @@ public class PatientPageController {
             Collections.sort(visitActions);
         }
         model.addAttribute("visitActions", visitActions);
+        
+        
 
+        List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
+        List<Encounter> encounters = encounterService.getEncountersByPatient(patient);
+                for (Encounter encounter : encounters) {
+                	encounterTypes.add(encounter.getEncounterType());
+                }
+        contextModel.put("encounterTypes", ConversionUtil.convertToRepresentation(encounterTypes, Representation.DEFAULT));
+        
+        
         List<Extension> includeFragments = appFrameworkService.getExtensionsForCurrentUser(dashboard + ".includeFragments", contextModel);
         Collections.sort(includeFragments);
         model.addAttribute("includeFragments", includeFragments);
