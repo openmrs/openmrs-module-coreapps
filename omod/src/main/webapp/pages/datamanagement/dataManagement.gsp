@@ -1,5 +1,6 @@
 <%
     ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("coreapps.app.dataManagement.label") ])
+    ui.includeCss("coreapps", "datamanagement/dataManagement.css")
 
     def htmlSafeId = { extension ->
         "${ extension.id.replace(".", "-") }-app"
