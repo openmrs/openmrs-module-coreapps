@@ -1,10 +1,12 @@
 package org.openmrs.module.coreapps.fragment.controller.patientdashboard;
 
+import java.sql.Date;
+import java.util.List;
+
 import org.openmrs.Visit;
-import org.openmrs.VisitType;
 import org.openmrs.VisitAttributeType;
+import org.openmrs.VisitType;
 import org.openmrs.api.VisitService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -13,8 +15,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * EditVisit fragment. Allow editing of visit type and attributes
@@ -38,7 +39,14 @@ public class EditVisitFragmentController {
 		} else {
 			throw new IllegalArgumentException("Patient must be of type PatientDomainWrapper");
 		}
-
+		
+		//this will record current date of every editing of visit
+		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+		Date date = new Date(System.currentTimeMillis());
+		System.out.print(formatter.format(date));
+		
+        
+		//edit visit type
 		Visit visit = (Visit) config.get("visit");
 
 		// get visit types
