@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Vector;
 
 @Resource(name = RestConstants.VERSION_1 + "/latestobs", order = 1, supportedClass = Obs.class, supportedOpenmrsVersions = {
-		"1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*" })
+		"1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*", "2.4.*" })
 public class LatestObsResource extends ObsResource1_11 {
 
 	@Override
