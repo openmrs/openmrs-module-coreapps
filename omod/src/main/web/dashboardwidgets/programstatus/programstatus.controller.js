@@ -27,6 +27,7 @@ export default class ProgramStatusController {
         this.patientPrograms = null;
         this.programLocations = null;
         this.programOutcomes = null;
+        this.sessionLocation = null;
 
         // we calculate these two values based on the completion date of the previous program and the enrollment date of any subsequent program
         // we populate these on initial load
@@ -64,6 +65,8 @@ export default class ProgramStatusController {
 
         this.fetchPrivileges();
 
+        this.fetchSessionLocation();
+
         this.fetchLocations().then((response) => {
             this.fetchProgram().then((response) => {
                 this.fetchOutcomes();
@@ -91,7 +94,8 @@ export default class ProgramStatusController {
     }
 
     setInputsToStartingValues() {
-        this.input.dateEnrolled = this.patientProgram ? new Date(this.patientProgram.dateEnrolled) : null;
+        this.input.dateEnrolled = this.patientProgram ? new Date(this.patientProgram.dateEnrolled) : new Date();
+
         this.input.dateCompleted = this.patientProgram && this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
         this.input.outcome = this.patientProgram && this.patientProgram.outcome ? this.patientProgram.outcome.uuid : null;
 
@@ -101,8 +105,18 @@ export default class ProgramStatusController {
         // if there is only possible location, set it as the default (this is why loading locations (in activate) needs to happen before patient programs)
         else if (this.programLocations && this.programLocations.length == 1) {
             this.input.enrollmentLocation = this.programLocations[0].uuid;
+        } 
+        // if we have more than one location, set the current session's location as the default
+        else if (this.programLocations) {
+            if (this.sessionLocation) {
+                let defaultLoc = this.$filter('filter')(this.programLocations, (location) => {
+                    return (location.uuid == this.sessionLocation.uuid);
+                })[0];
+                if (defaultLoc) {
+                    this.input.enrollmentLocation = defaultLoc.uuid;
+                }
+            }
         }
-
         this.input.initialWorkflowStateByWorkflow = {};
         this.input.changeToStateByWorkflow = {};
     }
@@ -191,6 +205,13 @@ export default class ProgramStatusController {
         })
     }
 
+    fetchSessionLocation() {
+        return this.openmrsRest.get('appui/session', {
+            v: 'custom:name,uuid',
+        }).then((response) => {
+            this.sessionLocation = response.sessionLocation;
+        });
+    }
 
     fetchOutcomes() {
         if (this.program.outcomesConcept) {
