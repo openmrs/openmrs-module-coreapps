@@ -3,11 +3,28 @@
     ui.includeCss("coreapps", "clinicianfacing/patient.css")
     ui.includeJavascript("coreapps", "custom/deletePatient.js")
     ui.includeJavascript("appui", "jquery-3.4.1.min.js")
+    
+    def patientNames = "";
+    def names = patient.patient.names;
+    
+    // allows displaying all non voided person names
+    names.each {
+    	if (!it.isPreferred()) {
+    		patientNames += ui.escapeJs(ui.encodeHtmlContent(" " + ui.format(it)));
+    	}
+    }
+    
+    // allows displaying person names from globally known person attribute types
+    if (extraNamePersonAttrs) {
+    	extraNamePersonAttrs.each {
+    		patientNames += ui.escapeJs(ui.encodeHtmlContent(" " + ui.format(it)));
+    	}
+    }
 %>
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" ,
+        { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }${ patientNames }" ,
         link: '${ ui.urlBind("/" + contextPath + baseDashboardUrl, [ patientId: patient.patient.id ] ) }'}
     ];
 

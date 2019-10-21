@@ -19,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
@@ -48,6 +50,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Ideally you pass in a PatientDomainWrapper as the "patient" config parameter. But if you pass in
@@ -71,7 +74,7 @@ public class PatientHeaderFragmentController {
             wrapper = (PatientDomainWrapper) patient;
         }
         config.addAttribute("patient", wrapper);
-        config.addAttribute("patientNames", getNames(wrapper.getPersonName()));
+        config.addAttribute("patientNames", getAllNames(wrapper.getPatient()));
 
         if (appContextModel == null) {
             AppContextModel contextModel = sessionContext.generateAppContextModel();
@@ -140,6 +143,28 @@ public class PatientHeaderFragmentController {
             throw new APIException("Unable to generate name fields for patient header", e);
         }
 
+    }
+    
+    private Map<String,String> getAllNames(Patient patient) {
+    	Map<String,String> patientNames = getNames(patient.getPersonName());
+    	Set<PersonName> names = patient.getNames();
+    	for (PersonName name : names) {
+    		if (!name.isPreferred() && !name.isVoided()) {
+    			patientNames.putAll(getNames(name));
+    		}
+    	}
+    	// Get person names from person attribute types available from global property
+    	String personNameAttrTypeUuids = Context.getAdministrationService().getGlobalProperty("extraPersonNames.personAttributeTypes");
+    	if (StringUtils.isNotBlank(personNameAttrTypeUuids)) {
+    		for (String personNameAttrTypeUuid : personNameAttrTypeUuids.split(",")) {
+    			PersonAttributeType pat = Context.getPersonService().getPersonAttributeTypeByUuid(personNameAttrTypeUuid);
+    			PersonAttribute pa = patient.getAttribute(pat);
+    			if (pa != null) {
+    				patientNames.put(pat.getName(), pa.getValue());
+    			}
+    		}
+    	}
+    	return patientNames;
     }
 	
 	public class ExtraPatientIdentifierType {

@@ -13,10 +13,13 @@
  */
 package org.openmrs.module.coreapps.page.controller.clinicianfacing;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.Program;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
@@ -140,6 +143,8 @@ public class PatientPageController {
 
         model.addAttribute("baseDashboardUrl", coreAppsProperties.getDashboardUrl());  // used for breadcrumbs to link back to the base dashboard in the case when this is used to render a context-specific dashboard
         model.addAttribute("dashboard", dashboard);
+        
+        model.addAttribute("extraNamePersonAttrs", getPersonNamePersonAttrs(patient));
 
         applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 
@@ -151,5 +156,27 @@ public class PatientPageController {
     
     }
     
-
+    /**
+     * @since 2.24.0
+     * 
+     * Gets person attributes containing extra names of patient from global property 'extraPersonNames.personAttributeTypes'
+     * 
+     * @param patient whose extra names are required from person attribute types specified by global property
+     * @return list of person attribute with extra patient names if present and null otherwise
+     */
+    private List<PersonAttribute> getPersonNamePersonAttrs (Patient patient) {
+    	// Get person names from person attribute types available in global properties
+    	String personNameAttrTypeUuids = Context.getAdministrationService().getGlobalProperty("extraPersonNames.personAttributeTypes");
+    	List<PersonAttribute> personNamePersonAttrs = new ArrayList<PersonAttribute>();
+    	if (StringUtils.isNotBlank(personNameAttrTypeUuids)) {
+    		for (String personNameAttrTypeUuid : personNameAttrTypeUuids.split(",")) {
+    			PersonAttributeType pat = Context.getPersonService().getPersonAttributeTypeByUuid(personNameAttrTypeUuid);
+    			PersonAttribute pa = patient.getAttribute(pat);
+    			if (pa != null) {
+    				personNamePersonAttrs.add(pa);
+    			}
+    		}
+    	}
+    	return CollectionUtils.isNotEmpty(personNamePersonAttrs) ? personNamePersonAttrs : null;
+    } 
 }
