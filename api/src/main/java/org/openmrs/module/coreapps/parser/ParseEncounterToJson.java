@@ -45,7 +45,7 @@ public class ParseEncounterToJson {
 
 
         SimpleObject simpleEncounter = SimpleObject.fromObject(new EncounterDomainWrapper(encounter), uiUtils, "encounterId",
-                "location", "encounterDatetime", "encounterProviders.provider", "voided", "form","encounter.encounterType.name");
+                "location", "encounterDatetime", "encounterProviders.provider", "voided", "form");
 
         // UUID is not provided by EncounterDomainWrapper, adding it here.
         simpleEncounter.put("uuid", encounter.getUuid());
