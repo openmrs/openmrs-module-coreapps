@@ -111,9 +111,9 @@
       "dev": true
     },
     "angular": {
-      "version": "1.5.8",
-      "resolved": "https://registry.npmjs.org/angular/-/angular-1.5.8.tgz",
-      "integrity": "sha1-klpTkrjCEtCVctxEbbfgEmTglMs="
+      "version": "1.6.0",
+      "resolved": "https://registry.npmjs.org/angular/-/angular-1.6.0.tgz",
+      "integrity": "sha1-FsXt69CjQgRr1Sgcyi3s8ExA33Y="
     },
     "angular-animate": {
       "version": "1.5.8",
@@ -5768,7 +5768,8 @@
         "ansi-regex": {
           "version": "2.1.1",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -5789,12 +5790,14 @@
         "balanced-match": {
           "version": "1.0.0",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "brace-expansion": {
           "version": "1.1.11",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "balanced-match": "^1.0.0",
             "concat-map": "0.0.1"
@@ -5809,17 +5812,20 @@
         "code-point-at": {
           "version": "1.1.0",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "concat-map": {
           "version": "0.0.1",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "console-control-strings": {
           "version": "1.1.0",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "core-util-is": {
           "version": "1.0.2",
@@ -5936,7 +5942,8 @@
         "inherits": {
           "version": "2.0.3",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "ini": {
           "version": "1.3.5",
@@ -5948,6 +5955,7 @@
           "version": "1.0.0",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "number-is-nan": "^1.0.0"
           }
@@ -5962,6 +5970,7 @@
           "version": "3.0.4",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "brace-expansion": "^1.1.7"
           }
@@ -5969,12 +5978,14 @@
         "minimist": {
           "version": "0.0.8",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "minipass": {
           "version": "2.3.5",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "safe-buffer": "^5.1.2",
             "yallist": "^3.0.0"
@@ -5993,6 +6004,7 @@
           "version": "0.5.1",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "minimist": "0.0.8"
           }
@@ -6080,7 +6092,8 @@
         "number-is-nan": {
           "version": "1.0.1",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "object-assign": {
           "version": "4.1.1",
@@ -6092,6 +6105,7 @@
           "version": "1.4.0",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "wrappy": "1"
           }
@@ -6177,7 +6191,8 @@
         "safe-buffer": {
           "version": "5.1.2",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6213,6 +6228,7 @@
           "version": "1.0.2",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "code-point-at": "^1.0.0",
             "is-fullwidth-code-point": "^1.0.0",
@@ -6232,6 +6248,7 @@
           "version": "3.0.1",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6275,12 +6292,14 @@
         "wrappy": {
           "version": "1.0.2",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.3",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         }
       }
     },
@@ -7634,7 +7653,8 @@
       "version": "1.0.0",
       "resolved": "https://registry.npmjs.org/iota-array/-/iota-array-1.0.0.tgz",
       "integrity": "sha1-ge9X/l0FgUzVjCSDYyqZwwoOgIc=",
-      "dev": true
+      "dev": true,
+      "optional": true
     },
     "ip-regex": {
       "version": "1.0.3",
@@ -9442,6 +9462,7 @@
       "resolved": "https://registry.npmjs.org/ndarray/-/ndarray-1.0.18.tgz",
       "integrity": "sha1-tg06cyJOxVXQ+qeXEeUCRI/T95M=",
       "dev": true,
+      "optional": true,
       "requires": {
         "iota-array": "^1.0.0",
         "is-buffer": "^1.0.2"
@@ -13685,7 +13706,8 @@
       "version": "0.0.2",
       "resolved": "https://registry.npmjs.org/uniq/-/uniq-0.0.2.tgz",
       "integrity": "sha1-YU6Gi6KIZR01EmI2kxesxDuQGCM=",
-      "dev": true
+      "dev": true,
+      "optional": true
     },
     "uniqs": {
       "version": "2.0.0",
