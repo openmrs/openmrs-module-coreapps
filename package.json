@@ -38,7 +38,7 @@
     "compass-mixins": "0.12.7",
     "copy-webpack-plugin": "2.1.3",
     "css-loader": "^0.28.4",
-    "eslint": "2.5.0",
+    "eslint": "4.18.2",
     "eslint-config-airbnb": "6.2.0",
     "eslint-loader": "1.3.0",
     "eslint-plugin-react": "4.2.3",
