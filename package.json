@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@openmrs/angularjs-openmrs-api": "0.8.1",
-    "angular": "1.5.8",
+    "angular": "1.6.0",
     "angular-animate": "1.5.8",
     "angular-chart.js": "^1.1.1",
     "angular-resource": "1.5.8",
