@@ -9,9 +9,10 @@ import ProgramStatistics from './programstatistics';
 import ProgramStatus from './programstatus';
 import Relationships from './relationships';
 import VisitByEncounterType from './visitbyencountertype';
+import Appointments from './appointments';
 
 export default angular.module("openmrs-contrib-dashboardwidgets", [ DataIntegrityViolations, LatestObsForConceptList,
-    ObsAcrossEncounters, ObsGraph, Programs, ProgramStatistics, ProgramStatus, Relationships, VisitByEncounterType]).name;
+    ObsAcrossEncounters, ObsGraph, Programs, ProgramStatistics, ProgramStatus, Relationships, VisitByEncounterType ,Appointments]).name;
 
 
 angular.element(document).ready(function() {
