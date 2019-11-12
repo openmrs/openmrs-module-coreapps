@@ -144,7 +144,9 @@ public class PatientPageController {
         model.addAttribute("baseDashboardUrl", coreAppsProperties.getDashboardUrl());  // used for breadcrumbs to link back to the base dashboard in the case when this is used to render a context-specific dashboard
         model.addAttribute("dashboard", dashboard);
         
-        model.addAttribute("extraNamePersonAttrs", getPersonNamePersonAttrs(patient));
+        model.addAttribute("breadCrumbsDetails", getBreadCrumbsDetails(patient));
+        
+        model.addAttribute("breadCrumbsFormatters", Context.getAdministrationService().getGlobalProperty("breadCrumbs.formatters", "(;, ;)").split(";"));
 
         applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 
@@ -159,18 +161,19 @@ public class PatientPageController {
     /**
      * @since 2.24.0
      * 
-     * Gets person attributes containing extra names of patient from global property 'extraPersonNames.personAttributeTypes'
+     * Gets person attributes containing additional breadcrumbs details defined by 'breadCrumbs.details.uuids' global
+     * property
      * 
-     * @param patient whose extra names are required from person attribute types specified by global property
-     * @return list of person attribute with extra patient names if present and null otherwise
+     * @param patient whose breadcrumbs details are required from person attribute types specified by global property
+     * @return list of person attributes with breadcrumbs details if present or null otherwise
      */
-    private List<PersonAttribute> getPersonNamePersonAttrs (Patient patient) {
+    private List<PersonAttribute> getBreadCrumbsDetails(Patient patient) {
     	// Get person names from person attribute types available in global properties
-    	String personNameAttrTypeUuids = Context.getAdministrationService().getGlobalProperty("extraPersonNames.personAttributeTypes");
+    	String breadCrumbsDetailsAttrTypeUuids = Context.getAdministrationService().getGlobalProperty("breadCrumbs.details.uuids");
     	List<PersonAttribute> personNamePersonAttrs = new ArrayList<PersonAttribute>();
-    	if (StringUtils.isNotBlank(personNameAttrTypeUuids)) {
-    		for (String personNameAttrTypeUuid : personNameAttrTypeUuids.split(",")) {
-    			PersonAttributeType pat = Context.getPersonService().getPersonAttributeTypeByUuid(personNameAttrTypeUuid);
+    	if (StringUtils.isNotBlank(breadCrumbsDetailsAttrTypeUuids)) {
+    		for (String breadCrumbDetailAttrTypeUuid : breadCrumbsDetailsAttrTypeUuids.split(",")) {
+    			PersonAttributeType pat = Context.getPersonService().getPersonAttributeTypeByUuid(breadCrumbDetailAttrTypeUuid);
     			PersonAttribute pa = patient.getAttribute(pat);
     			if (pa != null) {
     				personNamePersonAttrs.add(pa);

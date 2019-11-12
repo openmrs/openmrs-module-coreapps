@@ -153,7 +153,7 @@ public class PatientHeaderFragmentController {
     			patientNames.putAll(getNames(name));
     		}
     	}
-    	// Get person names from person attribute types available from global property
+    	// Get person names from person attribute types defined by 'extraPersonNames.personAttributeTypes' global property
     	String personNameAttrTypeUuids = Context.getAdministrationService().getGlobalProperty("extraPersonNames.personAttributeTypes");
     	if (StringUtils.isNotBlank(personNameAttrTypeUuids)) {
     		for (String personNameAttrTypeUuid : personNameAttrTypeUuids.split(",")) {
