@@ -1,4 +1,4 @@
-export default class AppointmentsController {
+export default class BahmniAppointmentsController {
     constructor(openmrsRest, widgetsCommons, openmrsTranslate) {
         'ngInject';
 
