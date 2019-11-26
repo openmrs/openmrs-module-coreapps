@@ -75,24 +75,30 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
             var onsetDatePicker = angular.element(document.getElementsByName('conditionStartDate'))[0];     
             onsetDatePicker.value =  CommonFunctions.formatDate($scope.condition.onSetDate);
 
+            var endDatePicker = angular.element(document.getElementsByName('conditionEndDate'))[0];      
+            endDatePicker.value = CommonFunctions.formatDate(new Date()); 
+
             if($scope.condition.status == INACTIVE_STATUS){
                 var endDatePicker = angular.element(document.getElementsByName('conditionEndDate'))[0];      
                 endDatePicker.value = CommonFunctions.formatDate($scope.condition.endDate); 
             } 
 
-            var inputs = document.getElementsByTagName('input');
-            inputs[0].disabled = true;
-            inputs[1].value = CommonFunctions.formatDate($scope.condition.onSetDate);  
+            document.getElementById('conceptId-input').disabled = true;
+            var groups = document.getElementsByClassName("group");
+            groups[1].getElementsByTagName("input")[0].value = CommonFunctions.formatDate($scope.condition.onSetDate);  
             self.showEndDate();
         }
 
 
     self.showEndDate = self.showEndDate || function() {
-        var inputs = document.getElementsByTagName('input');
         var groups = document.getElementsByClassName("group");
         if($scope.condition.status == INACTIVE_STATUS){
             groups[2].style.visibility = "visible";
-            inputs[3].value = CommonFunctions.formatDate($scope.condition.endDate); 
+            if ($scope.condition.endDate == null) {
+                groups[2].getElementsByTagName("input")[0].value = CommonFunctions.formatDate(new Date()); 
+            } else {
+                groups[2].getElementsByTagName("input")[0].value = CommonFunctions.formatDate($scope.condition.endDate); 
+            }
         }
         else{
             groups[2].style.visibility = "hidden";    
