@@ -35,6 +35,7 @@ import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.coreapps.parser.ParseEncounterToJson;
+import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.disposition.DispositionService;
@@ -61,6 +62,7 @@ public class VisitDetailsFragmentController {
          @RequestParam(value="fromEncounter", required=false) Integer encounterIndex,
          @RequestParam(value="encounterCount", required=false) Integer encounterCount,
          UiUtils uiUtils,
+         @SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper,
          UiSessionContext sessionContext) throws ParseException
    {
       if (encounterIndex == null)
@@ -95,6 +97,7 @@ public class VisitDetailsFragmentController {
 
       simpleObject.put("admitted", visitWrapper.isAdmitted());
       simpleObject.put("canDeleteVisit", verifyIfUserHasPermissionToDeleteVisit(visit, authenticatedUser, canDeleteVisit));
+      simpleObject.put("canEditVisit", visitTypeHelper.getUnRetiredVisitTypes().size() > 1);
 
       AppContextModel contextModel = sessionContext.generateAppContextModel();
       contextModel.put("patient", new PatientContextModel(visit.getPatient()));
