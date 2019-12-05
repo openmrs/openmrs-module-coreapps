@@ -21,7 +21,7 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
             }
 
             if ($scope.patientUuid !== null && $scope.patientUuid !== undefined) {
-                RestfulService.get('conditionhistory', {"patientUuid": $scope.patientUuid}, function (data) {
+                RestfulService.get('allconditionhistory', {"patientUuid": $scope.patientUuid}, function (data) {
                     $scope.conditionHistoryList = data;
                 }, function (error) {
                 });
