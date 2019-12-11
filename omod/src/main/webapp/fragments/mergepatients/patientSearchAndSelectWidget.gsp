@@ -25,6 +25,7 @@
     var patientSearchWidget;
     jq(function() {
         var widgetConfig = {
+            searchOnExactIdentifier: true, // <-- instead of true, this should be true or false based on OpenMRS Version
             initialPatients : lastViewedPatients,
             minSearchCharacters: ${ minSearchCharacters ?: 3 },
             afterSelectedUrl: '${ ui.escapeJs(config.afterSelectedUrl) }',

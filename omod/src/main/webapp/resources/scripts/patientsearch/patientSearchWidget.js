@@ -7,7 +7,8 @@ function PatientSearchWidget(configuration){
         clearButtonId: 'patient-search-clear-button',
         dateFormat: 'DD MMM YYYY',
         locale: 'en',
-        defaultLocale: 'en'
+        defaultLocale: 'en',
+        searchOnExactIdentifier: true,
     };
 
     var config = jq.extend({}, defaults, configuration);
@@ -136,7 +137,7 @@ function PatientSearchWidget(configuration){
         }
 
         query = jq.trim(query);
-        if (query.indexOf(' ') >= 0) {
+        if (query.indexOf(' ') >= 0 && !config.searchOnExactIdentifier) {
             searchOnIdentifierAndName(query, currRequestCount);
         }
         else {

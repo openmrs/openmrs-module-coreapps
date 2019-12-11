@@ -54,6 +54,7 @@
     var patientSearchWidget;
     jq(function() {
         var widgetConfig = {
+            searchOnExactIdentifier: true, // <-- instead of true, this should be true or false based on OpenMRS Version
             initialPatients: lastViewedPatients,
             doInitialSearch: ${ doInitialSearch ? "\"" + ui.escapeJs(doInitialSearch) + "\"" : "null" },
             minSearchCharacters: ${ minSearchCharacters ?: 3 },
