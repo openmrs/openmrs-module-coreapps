@@ -197,12 +197,20 @@ export default class ProgramStatusController {
     }
 
     fetchLocations() {
-        return this.openmrsRest.get('location', {
-            v: 'custom:display,uuid',
-            tag: this.config.locationTag,
-        }).then((response) => {
-            this.programLocations = response.results;
-        })
+        var locationsPromise = this.$window.sessionContext.locationsPromise
+        if(!locationsPromise) {
+            locationsPromise = this.openmrsRest.get("location", {
+                v: "custom:display,uuid",
+                tag: this.config.locationTag
+            })
+            // make the location promise available for other program widgets
+            // sessionContext is defined in appui - https://github.com/openmrs/openmrs-module-appui/blob/master/omod/src/main/webapp/fragments/decorator/standardEmrPage.gsp
+            this.$window.sessionContext.locationsPromise = locationsPromise
+        }
+        return locationsPromise.then(e => {
+            this.programLocations = e.results
+            return e
+        });
     }
 
     fetchSessionLocation() {
