@@ -26,7 +26,7 @@ export default class LatestObsForConceptListController {
 
         concept_list = concepts.join(",");
 
-        // Fetch last obs for the list of concepts
+        // Fetch last obs or obsGroup for the list of concepts
         this.openmrsRest.list('latestobs', {
             patient: this.config.patientUuid,
             v: 'full',
@@ -38,8 +38,18 @@ export default class LatestObsForConceptListController {
                 // Don't add obs older than maxAge
                 if (angular.isUndefined(this.maxAgeInDays) || this.widgetsCommons.dateToDaysAgo(obs.obsDatetime) <= this.maxAgeInDays) {
                     // Add last obs for concept to list
-
-                    if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
+                	
+                	if (angular.isDefined(obs.groupMembers) && obs.groupMembers != null) {
+                        // If obs is obs group
+                        obs.value = '';
+                        angular.forEach(obs.groupMembers, (member) => {
+                            if (obs.value === '') {
+                                obs.value = member.value.display;
+                            } else {
+                                obs.value += ', ' + member.value.display;
+                            }
+                        }); 
+                    } else if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
                         '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
                         '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].indexOf(obs.concept.datatype.uuid) > -1) {
                         //If value is date, time or datetime
@@ -49,8 +59,8 @@ export default class LatestObsForConceptListController {
                         //If value is a concept
                         obs.value = obs.value.display;
                     }
-
                     this.obs.push(obs);
+                    
                 }
             }
         });
