@@ -1,8 +1,22 @@
-<table ng-if="$ctrl.simpleEncs.length != 0">
+<style>
+    #obsTable {
+        table-layout: fixed;
+    }
+
+    .column-header {
+        text-align: center;
+        word-wrap: break-word;
+    }
+</style>
+
+<table id="obsTable" ng-if="$ctrl.simpleEncs.length != 0">
     <thead>
-        <tr>
-            <th>Encounter</th>
-            <th ng-repeat="(key,value) in $ctrl.conceptsMap">{{value.display}}</th>
+        <tr ng-if="$ctrl.headers.length != 0">
+            <th ng-repeat="column in $ctrl.headers track by $index" class="column-header">{{ column | translate }}</th>
+        </tr>
+        <tr ng-if="$ctrl.headers.length == 0">
+            <th class="column-header">Encounter</th>
+            <th ng-repeat="(key,value) in $ctrl.conceptsMap" class="column-header">{{value.display}}</th>
         </tr>
     </thead>
     <tbody>

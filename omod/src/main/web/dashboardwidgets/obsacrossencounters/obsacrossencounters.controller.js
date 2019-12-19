@@ -1,8 +1,8 @@
 export default class ObsAcrossEncountersController {
-  constructor($filter, openmrsRest, widgetsCommons) {
+  constructor($filter, openmrsRest, openmrsTranslate, widgetsCommons) {
     'ngInject';
 
-    Object.assign(this, {$filter, openmrsRest, widgetsCommons});
+    Object.assign(this, {$filter, openmrsRest, openmrsTranslate, widgetsCommons});
   }
 
   $onInit() {
@@ -11,11 +11,21 @@ export default class ObsAcrossEncountersController {
     // a map of conceptUUID --> concept(REST response)
     this.conceptsMap = {};
     this.simpleEncs = [];
-
+    this.headers = [];
     this.openmrsRest.setBaseAppPath("/coreapps");
 
+    this.fetchHeaders();
     this.fetchConcepts();
     this.fetchEncounters();
+  }
+
+  fetchHeaders() {
+    if (this.config.headers && this.config.headers.length > 0) {
+      let columnNames = this.config.headers.split(",");
+      if (columnNames !== null && columnNames.length > 0) {
+        this.headers = columnNames;
+      }
+    }
   }
 
   fetchConcepts() {
