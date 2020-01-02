@@ -5,8 +5,10 @@
 
     .column-header {
         text-align: center;
+        font-size: smaller;
         word-wrap: break-word;
     }
+    
 </style>
 
 <table id="obsTable" ng-if="$ctrl.simpleEncs.length != 0">
@@ -21,7 +23,7 @@
     </thead>
     <tbody>
         <tr ng-repeat="encounter in $ctrl.simpleEncs| orderBy: '-encounterDatetime'">
-            <th style="white-space: nowrap;">{{encounter.encounterDatetime | date: $ctrl.config.dateFormat}}</th>
+            <th>{{encounter.encounterDatetime | date: $ctrl.config.dateFormat}}</th>
             <th ng-repeat="(key,value) in $ctrl.conceptsMap">
                 {{ encounter.obs[key] ? $ctrl.displayObs(encounter.obs[key]) : '' }}
             </th>
