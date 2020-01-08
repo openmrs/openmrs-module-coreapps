@@ -53,9 +53,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
             <h3>${ ui.message(dashboard + ".custom.title") }</h3>
         </div>
         <% } %>
-        <div class="col-12 col-sm-12 col-md-12 col-lg-9">
+        <div class="col-12 col-lg-9">
             <div class="row">
-                <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+                <div class="col-12 col-lg-6">
                     <% if (firstColumnFragments) {
                         firstColumnFragments.each {
                             // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
@@ -69,7 +69,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                     <%  }
                     } %>
                 </div>
-                <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+                <div class="col-12 col-lg-6">
                     <% if (secondColumnFragments) {
                         secondColumnFragments.each {
                             // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
@@ -85,7 +85,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-12 col-md-12 col-lg-3">
+        <div class="col-12 col-lg-3">
             <% if ((visitActions && visitActions.size() > 0) || (overallActions && overallActions.size() > 0) || (otherActions && otherActions.size() > 0))  { %>
                 <div class="action-section">
                     <% if (activeVisit && visitActions && visitActions.size() > 0) { %>
