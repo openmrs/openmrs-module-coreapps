@@ -85,7 +85,7 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
 
             document.getElementById('conceptId-input').disabled = true;
             var groups = document.getElementsByClassName("group");
-            groups[1].getElementsByTagName("input")[0].value = CommonFunctions.formatDate($scope.condition.onSetDate);  
+            groups[1].getElementsByTagName("input")[0].value = CommonFunctions.formatDate(new Date());  
             self.showEndDate();
         }
 
