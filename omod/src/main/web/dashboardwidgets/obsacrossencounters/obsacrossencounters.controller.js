@@ -87,7 +87,7 @@ export default class ObsAcrossEncountersController {
     let conceptArray = commaDelimitedConcepts.replace(" ", "").split(",");
     if (conceptArray !== null && conceptArray.length > 0) {
       for (let i = 0; i < conceptArray.length; i++) {
-        let conceptKey = conceptArray[i];
+        let conceptKey = conceptArray[i].trim();
         // initialize the conceptsMap object
         if (typeof this.conceptsMap[conceptKey] === 'undefined') {
           this.conceptsMap[conceptKey] = null;
