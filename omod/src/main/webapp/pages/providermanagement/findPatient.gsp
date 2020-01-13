@@ -2,8 +2,7 @@
 
     ui.decorateWith("appui", "standardEmrPage")
     ui.includeCss("registrationapp", "findPatient.css")
-
-    //ui.includeCss("coreapps", "bootstrap.css")
+    
     ui.includeCss("coreapps", "providermanagement/providermanagement.css")
 
     ui.includeJavascript("coreapps", "providermanagement/editProvider.js")
