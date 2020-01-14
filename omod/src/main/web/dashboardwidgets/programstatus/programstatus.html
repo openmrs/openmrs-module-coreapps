@@ -70,7 +70,8 @@
         <fieldset class="programstatus-fieldset">
             <h3>{{'coreapps.dashboardwidgets.programstatus.enrollmentlocation' | translate }}</h3>
             <p class="programstatus-field">
-                <select ng-model="$ctrl.input.enrollmentLocation"
+                <select class="form-control form-control-sm"
+                        ng-model="$ctrl.input.enrollmentLocation"
                         ng-options="location.uuid as location.display for location in $ctrl.programLocations">
                 </select>
             </p>
@@ -79,7 +80,7 @@
             <fieldset class="programstatus-fieldset">
                 <h3>{{ workflow.concept.display }}</h3>
                 <p class="programstatus-field">
-                    <select ng-model="$ctrl.input.initialWorkflowStateByWorkflow[workflow.uuid].state"
+                    <select class="form-control form-control-sm" ng-model="$ctrl.input.initialWorkflowStateByWorkflow[workflow.uuid].state"
                             ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isInitialState() | orderBy: 'concept.display' ">
                         <option value=""></option>
                     </select>
@@ -142,7 +143,7 @@
         <fieldset class="programstatus-fieldset" ng-show="$ctrl.edit.enrollment">
             <h3>{{'coreapps.location' | translate }}</h3>
             <p class="programstatus-field">
-                <select ng-model="$ctrl.input.enrollmentLocation"
+                <select class="form-control form-control-sm" ng-model="$ctrl.input.enrollmentLocation"
                     ng-options="location.uuid as location.display for location in $ctrl.programLocations">
                 </select>
             </p>
@@ -163,7 +164,7 @@
         <fieldset class="programstatus-fieldset" ng-show="$ctrl.programOutcomes && $ctrl.edit.enrollment">
             <h3>{{'coreapps.dashboardwidgets.programstatus.outcome' | translate }}:</h3>
             <p class="programstatus-field">
-                <select ng-model="$ctrl.input.outcome"
+                <select class="form-control form-control-sm" ng-model="$ctrl.input.outcome"
                     ng-options="outcome.uuid as outcome.display for outcome in $ctrl.programOutcomes | orderBy: 'display' ">
                     <option value=""></option>
                 </select>
@@ -193,7 +194,7 @@
             <fieldset class="programstatus-fieldset" ng-show="$ctrl.edit.workflow[workflow.uuid]">
                 <h3>{{'coreapps.dashboardwidgets.programstatus.transitionTo' | translate }}</h3>
                 <p class="programstatus-field">
-                    <select ng-model="$ctrl.input.changeToStateByWorkflow[workflow.uuid].state"
+                    <select class="form-control form-control-sm" ng-model="$ctrl.input.changeToStateByWorkflow[workflow.uuid].state"
                             ng-options="state.uuid as state.concept.display for state in $ctrl.statesByWorkflow[workflow.uuid] | filter: $ctrl.isNotCurrentState(workflow) | orderBy: 'concept.display' ">
                         <option value=""></option>
                     </select>
