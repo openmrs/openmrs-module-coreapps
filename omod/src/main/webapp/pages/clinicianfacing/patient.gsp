@@ -46,13 +46,19 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 
 
 <div class="clear"></div>
-    <div class="dashboard clear row">
+
         <!-- only show the title div if a title has been defined in the messages.properties -->
-        <% if (ui.message(dashboard + ".custom.title") != dashboard + ".custom.title") { %>
-        <div class="title">
-            <h3>${ ui.message(dashboard + ".custom.title") }</h3>
+    <% if (ui.message(dashboard + ".custom.title") != dashboard + ".custom.title") { %>
+        <div class="dashboard clear row">
+            <div class="col-12">
+                <div class="title">
+                    <h3>${ ui.message(dashboard + ".custom.title") }</h3>
+                </div>
+            </div>
         </div>
-        <% } %>
+    <% } %>
+
+    <div class="dashboard clear row">
         <div class="col-12 col-lg-9">
             <div class="row">
                 <div class="col-12 col-lg-6">
