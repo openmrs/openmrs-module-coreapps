@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("coreapps.mergePatientsLong") ])
+    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("coreapps.mergePatientsLong"), includeBootstrap: false ])
     ui.includeCss("coreapps", "datamanagement/mergePatients.css")
     ui.includeJavascript("coreapps", "datamanagement/mergePatients.js")
 
