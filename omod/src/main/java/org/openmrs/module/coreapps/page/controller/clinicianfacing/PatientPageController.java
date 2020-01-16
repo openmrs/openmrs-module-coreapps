@@ -169,7 +169,7 @@ public class PatientPageController {
      */
     private List<PersonAttribute> getBreadCrumbsDetails(Patient patient) {
     	// Get person names from person attribute types available in global properties
-    	String breadCrumbsDetailsAttrTypeUuids = Context.getAdministrationService().getGlobalProperty("breadCrumbs.details.uuids");
+    	String breadCrumbsDetailsAttrTypeUuids = Context.getAdministrationService().getGlobalProperty("breadCrumbs.details.personAttr.uuids");
     	List<PersonAttribute> personNamePersonAttrs = new ArrayList<PersonAttribute>();
     	if (StringUtils.isNotBlank(breadCrumbsDetailsAttrTypeUuids)) {
     		for (String breadCrumbDetailAttrTypeUuid : breadCrumbsDetailsAttrTypeUuids.split(",")) {

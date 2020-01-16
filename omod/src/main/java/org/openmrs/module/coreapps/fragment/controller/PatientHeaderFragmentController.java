@@ -148,11 +148,7 @@ public class PatientHeaderFragmentController {
     private Map<String,String> getAllNames(Patient patient) {
     	Map<String,String> patientNames = getNames(patient.getPersonName());
     	Set<PersonName> names = patient.getNames();
-    	for (PersonName name : names) {
-    		if (!name.isPreferred() && !name.isVoided()) {
-    			patientNames.putAll(getNames(name));
-    		}
-    	}
+    	
     	// Get person names from person attribute types defined by 'extraPersonNames.personAttributeTypes' global property
     	String personNameAttrTypeUuids = Context.getAdministrationService().getGlobalProperty("extraPersonNames.personAttributeTypes");
     	if (StringUtils.isNotBlank(personNameAttrTypeUuids)) {
