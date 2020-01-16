@@ -1,6 +1,10 @@
 @import "variables";
 @import "reference";
 
+.ui-tabs-active {
+  padding-bottom: 24px !important;
+}
+
 .tabs {
   min-height: 300px;
 }
