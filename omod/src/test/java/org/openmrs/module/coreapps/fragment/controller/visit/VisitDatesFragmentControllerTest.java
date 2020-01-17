@@ -35,7 +35,7 @@ public class VisitDatesFragmentControllerTest {
 
         controller = new VisitDatesFragmentController();
         visitService = mock(VisitService.class);
-
+        
         request = mock(HttpServletRequest.class);
         session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
@@ -76,6 +76,25 @@ public class VisitDatesFragmentControllerTest {
         assertThat(actualVisit.getStopDatetime(), is(expectedStopDate));
     }
 
+    @Test
+    public void shouldSetVisitStopDateAsNullIfStopDateIsNotSpecified() throws Exception {
+        Date startDate = (new DateTime(2013, 6, 24, 13, 1, 7)).toDate();
+        Date stopDate = null;
+
+        Date expectedStartDate = (new DateTime(2013, 6, 24, 0, 0, 0)).toDate();
+        Date expectedStopDate = null;
+
+        Visit visit = new Visit(1);
+        visit.setStartDatetime(new Date());
+        visit.setStopDatetime(new Date());
+        visit.setPatient(new Patient(1));
+
+        controller.setDuration(visitService, visit, startDate, stopDate, request, mock(UiUtils.class));
+
+        Visit actualVisit = savedVisit();
+        assertThat(actualVisit.getStartDatetime(), is(expectedStartDate));
+        assertThat(actualVisit.getStopDatetime(), is(expectedStopDate));
+    }
     @Test
     public void shouldNotChangeStartOrStopDatetimeIfSettingToSameDay() throws Exception {
         Visit visit = new Visit(1);

@@ -37,12 +37,16 @@ public class VisitDatesFragmentController {
                                             @RequestParam(value="stopDate", required = false) Date stopDate,
                                             HttpServletRequest request, UiUtils ui) {
 
-
         if (!isSameDay(startDate, visit.getStartDatetime())) {
             visit.setStartDatetime(new DateTime(startDate).toDateMidnight().toDate());
         }
 
-        if ( (stopDate!=null) && !isSameDay(stopDate, visit.getStopDatetime())) {
+        if(stopDate == null){
+         
+            visit.setStopDatetime(null);
+       
+        }   else if (!isSameDay(stopDate, visit.getStopDatetime())) {
+           
             Date now = new DateTime().toDate();
             if (isSameDay(stopDate, now)) {
                 visit.setStopDatetime(now);
@@ -54,15 +58,16 @@ public class VisitDatesFragmentController {
                         .withMillisOfSecond(999)
                         .toDate());
             }
+
         }
 
         visitService.saveVisit(visit);
-
+       
         request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, ui.message("coreapps.editVisitDate.visitSavedMessage"));
         request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         return SimpleObject.create("success", true, "search", "?patientId=" + visit.getPatient().getId() + "&visitId=" + visit.getId());
-
+        
     }
 
 }
