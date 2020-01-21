@@ -41,14 +41,29 @@ export default class LatestObsForConceptListController {
                 	
                 	if (angular.isDefined(obs.groupMembers) && obs.groupMembers != null) {
                         // If obs is obs group
-                        obs.value = '';
+                        obs.members = [];
+                        obs.value = "";
                         angular.forEach(obs.groupMembers, (member) => {
-                            if (obs.value === '') {
-                                obs.value = member.value.display;
+                        	let prefix;
+                        	
+                        	// Formatting the obs with concept prefix
+                        	if (angular.isDefined(this.config.obsGroupLabels) && this.config.obsGroupLabels == "FSN") {
+                        		prefix = "(" + member.concept.display + " #" + obs.value.split(member.concept.display).length + ") ";
+                        	} else if (angular.isDefined(this.config.obsGroupLabels) && this.config.obsGroupLabels == "shortName") {
+                        		prefix = "(" + member.concept.name.display + " #" + obs.value.split(member.concept.name.display).length + ") ";
+                        	} else {
+                                // for default  or obsGroupLabels = none option
+                                prefix = "";
+                        	}
+                        	
+                            // this will help determine the count of obs with same concept
+                            if (obs.value === "") {
+                                obs.value = prefix + member.value.display;
                             } else {
-                                obs.value += ', ' + member.value.display;
+                                obs.value += ', ' + prefix + member.value.display;
                             }
-                        }); 
+                            obs.members.push({"prefix": prefix, "value": member.value.display});
+                        });
                     } else if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
                         '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
                         '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].indexOf(obs.concept.datatype.uuid) > -1) {
