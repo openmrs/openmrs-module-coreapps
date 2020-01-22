@@ -41,43 +41,47 @@ export default class LatestObsForConceptListController {
                 	
                 	if (angular.isDefined(obs.groupMembers) && obs.groupMembers != null) {
                         // If obs is obs group
-                        obs.members = [];
-                        obs.value = "";
+                        let members = [];
                         angular.forEach(obs.groupMembers, (member) => {
                         	let prefix;
+                            let value;                            
                         	
                         	// Formatting the obs with concept prefix
                         	if (angular.isDefined(this.config.obsGroupLabels) && this.config.obsGroupLabels == "FSN") {
-                        		prefix = "(" + member.concept.display + " #" + obs.value.split(member.concept.display).length + ") ";
+                        		prefix = "(" + member.concept.display + ") ";
                         	} else if (angular.isDefined(this.config.obsGroupLabels) && this.config.obsGroupLabels == "shortName") {
-                        		prefix = "(" + member.concept.name.display + " #" + obs.value.split(member.concept.name.display).length + ") ";
+                        		prefix = "(" + member.concept.name.display + ") ";
                         	} else {
                                 // for default  or obsGroupLabels = none option
                                 prefix = "";
                         	}
-                        	
-                            // this will help determine the count of obs with same concept
-                            if (obs.value === "") {
-                                obs.value = prefix + member.value.display;
-                            } else {
-                                obs.value += ', ' + prefix + member.value.display;
-                            }
-                            obs.members.push({"prefix": prefix, "value": member.value.display});
+                            value = this.getObsValue(member);
+                            members.push({"prefix": prefix, "value": value});
                         });
-                    } else if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
-                        '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
-                        '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].indexOf(obs.concept.datatype.uuid) > -1) {
-                        //If value is date, time or datetime
-                        var date = this.$filter('date')(new Date(obs.value), this.config.dateFormat);
-                        obs.value = date;
-                    } else if (angular.isDefined(obs.value.display)) {
-                        //If value is a concept
-                        obs.value = obs.value.display;
+                        obs.groupMembers = members;
+
+                    } else {
+                        obs.value = this.getObsValue(obs);
                     }
                     this.obs.push(obs);
                     
                 }
             }
         });
+    }
+
+    getObsValue(obs) {
+        if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
+            '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
+            '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].indexOf(obs.concept.datatype.uuid) > -1) {
+            //If value is date, time or datetime
+            var date = this.$filter('date')(new Date(obs.value), this.config.dateFormat);
+            return date;
+        } else if (angular.isDefined(obs.value.display)) {
+            //If value is a concept
+             return obs.value.display;
+        } else {
+            return "";
+        }
     }
 }
