@@ -40,8 +40,16 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
         }
 
     self.removeCondition = self.removeCondition || function () {
-            $scope.conditionToBeRemoved.voided = true;
-            $scope.conditionToBeRemoved.endDate = new Date();
+            
+var conditions = [];
+var condition;
+
+      for(condition in conditions){
+       condition.voided = true;
+        condition.endDate = new Date();
+        console.log(condition);
+        $scope.conditionRemoved = condition;
+    }
             self.saveCondition($scope.conditionToBeRemoved); 
             var dialog = document.getElementById("remove-condition-dialog");
             dialog.style.display = "none";           
