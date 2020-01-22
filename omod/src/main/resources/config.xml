@@ -284,6 +284,30 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>coreapps.HealthTrendSummary.EncounterTypeUUID</property>
+        <defaultValue>67a71486-1a54-468f-ac3e-7091a9a79584</defaultValue>
+        <description>
+            Specify the EncounterType UUID to show on HealthTrendSummary Widget
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>coreapps.HealthTrendSummary.conceptsUUID</property>
+        <defaultValue>5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</defaultValue>
+        <description>
+            Specify the concepts' UUID to show on HealthTrendSummary Widget belonging to the specified EncounterType
+        </description>
+    </globalProperty>
+
+     <globalProperty>
+        <property>coreapps.HealthTrendSummary.showEmptyEncounter</property>
+        <defaultValue>false</defaultValue>
+        <description>
+            Toggle to enable or disable showing Empty Encounters on HealthTrendSummary Widget
+        </description>
+    </globalProperty>
+
     <privilege>
         <name>Task: coreapps.editRelationships</name>
         <description>Able to edit relationships</description>

@@ -32,7 +32,6 @@
       "widget": "obsacrossencounters",
       "icon": "icon-user-md",
       "label": "HEALTH TREND SUMMARY",
-      "concepts": "5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
       "maxRecords": "5",
       "maxAge": "1m"
     },

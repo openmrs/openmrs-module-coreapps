@@ -6,6 +6,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.annotation.FragmentParam;
@@ -47,6 +48,14 @@ public class DashboardWidgetFragmentController {
         if (appConfig.get("dateFormat") == null) {
             appConfig.put("dateFormat", adminService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATE_FORMAT, "yyyy-MM-dd"));
         }
+        String ObsAcrossEncounterType = Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GLOBAL_PROPERTY_OBSACROSSENCOUNTER_ENCOUNTER_TYPE_UUID);
+        appConfig.put("encounterTypeUuid",ObsAcrossEncounterType);
+
+        String ObsAcrossEncounterConcepts = Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GLOBAL_PROPERTY_OBSACROSSENCOUNTER_CONCEPT_UUID);
+        appConfig.put("conceptsUuid",ObsAcrossEncounterConcepts);
+            
+        String ObsAcrossEncounterToggleEmptyEncounter = Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GLOBAL_PROPERTY_OBSACROSSENCOUNTER_TOGGLE_BETWEEN_EMPTY_ENCOUNTER);
+        appConfig.put("showEmptyEncounter",ObsAcrossEncounterToggleEmptyEncounter);    
 
         appConfig.put("locale", Context.getLocale().toString());
         appConfig.put("language", Context.getLocale().getLanguage().toString());

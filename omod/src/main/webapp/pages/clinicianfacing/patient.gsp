@@ -68,8 +68,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                             def configs = [:];
                             if(it.extensionParams.fragmentConfig != null){
                                 configs = it.extensionParams.fragmentConfig;
-                            }
-                            configs << [ patient: patient, patientId: patient.patient.id, app: it.appId ]
+                            }                           
+                            configs << [ patient: patient, patientId: patient.patient.id, app: it.appId]
                     %>
                             ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs)}
                     <%  }

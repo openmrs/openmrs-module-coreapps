@@ -57,4 +57,11 @@ public class CoreAppsConstants {
    public static final String GLOBAL_PROPERTY_CONDITIONS_CRITERIA = "coreapps.conditionListClasses";
 
    public static final String DEFAULT_CODING_SOURCE = "ICD-10-WHO";
+
+   public static final String GLOBAL_PROPERTY_OBSACROSSENCOUNTER_ENCOUNTER_TYPE_UUID = "coreapps.HealthTrendSummary.EncounterTypeUUID";
+
+   public static final String GLOBAL_PROPERTY_OBSACROSSENCOUNTER_CONCEPT_UUID = "coreapps.HealthTrendSummary.conceptsUUID";
+   
+   public static final String GLOBAL_PROPERTY_OBSACROSSENCOUNTER_TOGGLE_BETWEEN_EMPTY_ENCOUNTER = "coreapps.HealthTrendSummary.showEmptyEncounter";
+
 }

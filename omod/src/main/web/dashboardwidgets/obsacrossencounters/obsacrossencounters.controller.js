@@ -10,6 +10,7 @@ export default class ObsAcrossEncountersController {
     this.concepts = [];
     // a map of conceptUUID --> concept(REST response)
     this.conceptsMap = {};
+    this.encounterType = [];
     this.simpleEncs = [];
     this.headers = [];
     this.openmrsRest.setBaseAppPath("/coreapps");
@@ -29,7 +30,7 @@ export default class ObsAcrossEncountersController {
   }
 
   fetchConcepts() {
-    this.concepts = this.getConfigConceptsAsArray(this.config.concepts);
+    this.concepts = this.getConfigConceptsAsArray(this.config.conceptsUuid);
     for (let i = 0; i < this.concepts.length; i++) {
       this.openmrsRest.get("concept/" + this.concepts[i], {
         v: 'custom:(uuid,display,names:(display,conceptNameType)'
@@ -43,9 +44,12 @@ export default class ObsAcrossEncountersController {
   }
 
   fetchEncounters() {
+    this.encounterType = this.getConfigEncounterTypeAsArray(this.config.encounterTypeUuid);
+    if(this.encounterType != null){
+    for (let i = 0; i < this.encounterType.length; i++) {
     this.openmrsRest.get("encounter", {
       patient: this.config.patientUuid,
-      encounterType: this.config.encounterType ? this.config.encounterType : null,
+      encounterType:  this.encounterType[i],
       v: 'custom:(uuid,encounterDatetime,obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
       limit: this.getMaxRecords(),
       fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge),
@@ -53,6 +57,19 @@ export default class ObsAcrossEncountersController {
     }).then((response) => {
       this.parseEncounters(response.results);
     });
+  }
+} else {
+  this.openmrsRest.get("encounter", {
+    patient: this.config.patientUuid,
+    encounterType: null,
+    v: 'custom:(uuid,encounterDatetime,obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
+    limit: this.getMaxRecords(),
+    fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge),
+    order: this.order
+  }).then((response) => {
+    this.parseEncounters(response.results);
+  });
+}
   }
 
   getMaxRecords() {
@@ -106,6 +123,9 @@ export default class ObsAcrossEncountersController {
     return concept;
   }
 
+  getConfigEncounterTypeAsArray(commaDelimitedencounterType){
+    return commaDelimitedencounterType.replace(" ", "").split(",");
+  }
 
   parseEncounters(encounters) {
     angular.forEach(encounters, (encounter) => {
@@ -144,6 +164,12 @@ export default class ObsAcrossEncountersController {
           obs: searchObs
         };
         this.simpleEncs.push(tempEnc);
+      } else if(this.config.showEmptyEncounter === 'true'){
+        let emptyEnc = {
+          encounterDatetime: encounter.encounterDatetime,
+          obs: null
+        };
+        this.simpleEncs.push(emptyEnc);
       }
     });
   }
