@@ -26,7 +26,7 @@ export default class LatestObsForConceptListController {
 
         concept_list = concepts.join(",");
 
-        // Fetch last obs for the list of concepts
+        // Fetch last obs or obsGroup for the list of concepts
         this.openmrsRest.list('latestobs', {
             patient: this.config.patientUuid,
             v: 'full',
@@ -38,21 +38,50 @@ export default class LatestObsForConceptListController {
                 // Don't add obs older than maxAge
                 if (angular.isUndefined(this.maxAgeInDays) || this.widgetsCommons.dateToDaysAgo(obs.obsDatetime) <= this.maxAgeInDays) {
                     // Add last obs for concept to list
+                	
+                	if (angular.isDefined(obs.groupMembers) && obs.groupMembers != null) {
+                        // If obs is obs group
+                        let members = [];
+                        angular.forEach(obs.groupMembers, (member) => {
+                        	let prefix;
+                            let value;                            
+                        	
+                        	// Formatting the obs with concept prefix
+                        	if (angular.isDefined(this.config.obsGroupLabels) && this.config.obsGroupLabels == "FSN") {
+                        		prefix = "(" + member.concept.display + ") ";
+                        	} else if (angular.isDefined(this.config.obsGroupLabels) && this.config.obsGroupLabels == "shortName") {
+                        		prefix = "(" + member.concept.name.display + ") ";
+                        	} else {
+                                // for default  or obsGroupLabels = none option
+                                prefix = "";
+                        	}
+                            value = this.getObsValue(member);
+                            members.push({"prefix": prefix, "value": value});
+                        });
+                        obs.groupMembers = members;
 
-                    if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
-                        '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
-                        '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].indexOf(obs.concept.datatype.uuid) > -1) {
-                        //If value is date, time or datetime
-                        var date = this.$filter('date')(new Date(obs.value), this.config.dateFormat);
-                        obs.value = date;
-                    } else if (angular.isDefined(obs.value.display)) {
-                        //If value is a concept
-                        obs.value = obs.value.display;
+                    } else {
+                        obs.value = this.getObsValue(obs);
                     }
-
                     this.obs.push(obs);
+                    
                 }
             }
         });
+    }
+
+    getObsValue(obs) {
+        if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
+            '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
+            '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].indexOf(obs.concept.datatype.uuid) > -1) {
+            //If value is date, time or datetime
+            var date = this.$filter('date')(new Date(obs.value), this.config.dateFormat);
+            return date;
+        } else if (angular.isDefined(obs.value.display)) {
+            //If value is a concept
+             return obs.value.display;
+        } else {
+            return "";
+        }
     }
 }
