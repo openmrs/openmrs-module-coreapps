@@ -7,7 +7,7 @@ ManageConditionsController.$inject = ['$scope', 'RestfulService', 'CommonFunctio
 function ManageConditionsController($scope, RestfulService, CommonFunctions) {
     var self = this;
     $scope.conditions = [];
-    $scope.conditionToBeRemoved =null;
+    $scope.conditionListToBeRemoved =null;
     $scope.tabs = ["ACTIVE", "INACTIVE"];
 
     // this is required inorder to initialize the Restangular service
@@ -40,23 +40,26 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
         }
 
     self.removeCondition = self.removeCondition || function () {
-            $scope.conditionToBeRemoved.voided = true;
-            $scope.conditionToBeRemoved.endDate = new Date();
-            self.saveCondition($scope.conditionToBeRemoved); 
-            var dialog = document.getElementById("remove-condition-dialog");
-            dialog.style.display = "none";           
+            var conditions = $scope.conditionListToBeRemoved;
+            for(i=0;i<conditions.length;i++){
+                conditions[i].voided = true;
+                conditions[i].endDate = new Date();
+                self.saveCondition(conditions[i]);
+                var dialog = document.getElementById("remove-condition-dialog");
+                dialog.style.display = "none";  
+            }         
         }
 
     self.redirectToEditCondition = self.redirectToEditCondition || function(baselink,condition) {
         window.location= baselink+'conditionUuid=' + JSON.stringify(condition.uuid)+'&';
     }
      
-    self.conditionConfirmation = self.conditionConfirmation || function(condition) {
+    self.conditionConfirmation = self.conditionConfirmation || function(conditionList) {
         var dialog = document.getElementById("remove-condition-dialog");
         dialog.style.display = "block";
-        $scope.conditionToBeRemoved = condition;
+        $scope.conditionListToBeRemoved = conditionList;
         var setText = document.getElementById("removeConditionMessage");
-        setText.innerHTML = "Are you sure you want to remove condition: <b>"+$scope.conditionToBeRemoved.concept.name+"</b> for this patient";
+        setText.innerHTML = "Are you sure you want to remove condition: <b>"+$scope.conditionListToBeRemoved.concept.name+"</b> for this patient";
     }    
    
     self.cancelDeletion = self.cancelDeletion || function(){
