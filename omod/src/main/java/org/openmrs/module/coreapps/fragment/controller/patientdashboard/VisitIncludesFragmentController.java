@@ -18,6 +18,7 @@ import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.util.List;
+import java.util.ListIterator;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -36,6 +37,7 @@ public class VisitIncludesFragmentController {
 			@SpringBean("patientService")PatientService patientService){
 
 		Object patient = config.get("patient");
+		Object visitTypeId = config.get("visitTypeId");
 
 		if(patient == null) {
 			// retrieve patient id from parameter map
@@ -61,6 +63,14 @@ public class VisitIncludesFragmentController {
 
 		model.addAttribute("patient", wrapper);
 		List<VisitType> visitTypes = visitTypeHelper.getUnRetiredVisitTypes();
+		if (visitTypeId != null && visitTypes.size() > 0) {
+			ListIterator<VisitType> iterator = visitTypes.listIterator();
+			while (iterator.hasNext() ) {
+				if (!iterator.next().getId().equals(visitTypeId)) {
+					iterator.remove();
+				}
+			}
+		}
 
 		// send active visits to the view, if any.
 		List<Visit> activeVisits = visitService.getActiveVisitsByPatient(wrapper.getPatient());
