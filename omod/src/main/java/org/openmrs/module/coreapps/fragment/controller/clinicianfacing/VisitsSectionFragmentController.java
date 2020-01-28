@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.clinicianfacing;
 
+import org.codehaus.jackson.JsonNode;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.module.appframework.context.AppContextModel;
@@ -27,6 +28,7 @@ import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -47,12 +49,18 @@ public class VisitsSectionFragmentController {
 						   FragmentModel model,
 						   UiUtils ui,
 						   UiSessionContext sessionContext,
+						   @FragmentParam("app") AppDescriptor appDescriptor,
 						   @SpringBean("appframeworkTemplateFactory") TemplateFactory templateFactory,
                            @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
 						   @InjectBeans PatientDomainWrapper patientWrapper, @SpringBean("adtService") AdtService adtService,
 			               @SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper) {
 		config.require("patient");
 		Object patient = config.get("patient");
+		Integer visitTypeId = null;
+		JsonNode visitTypeNode = appDescriptor.getConfig().path("visitTypeId");
+		if (visitTypeNode != null) {
+			visitTypeId = new Integer(visitTypeNode.getTextValue());
+		}
 
 		if (patient instanceof Patient) {
 			patientWrapper.setPatient((Patient) patient);
@@ -101,7 +109,7 @@ public class VisitsSectionFragmentController {
 		visitsPageUrl = "/" + ui.contextPath() + "/" + visitsPageUrl;
 		model.addAttribute("visitsUrl", templateFactory.handlebars(visitsPageUrl, contextModel));
 
-		List<VisitDomainWrapper> recentVisits = patientWrapper.getAllVisitsUsingWrappers();
+		List<VisitDomainWrapper> recentVisits = visitTypeId != null ? patientWrapper.getAllVisitsUsingWrappers(visitTypeId) : patientWrapper.getAllVisitsUsingWrappers();
 		if (recentVisits.size() > 5) {
 			recentVisits = recentVisits.subList(0, 5);
 		}
