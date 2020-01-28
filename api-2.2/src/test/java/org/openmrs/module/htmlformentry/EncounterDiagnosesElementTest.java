@@ -3,7 +3,7 @@ package org.openmrs.module.htmlformentry;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -36,7 +36,7 @@ public class EncounterDiagnosesElementTest extends BaseContextMockTest {
 	public void testGetExistingDiagnoses() {
 		// Setup
 		when(existingEncounter.getDiagnoses()).thenReturn(
-                new HashSet<Diagnosis>(Arrays.asList(new Diagnosis(existingEncounter, new CodedOrFreeText(null, null, "Asthma"), null, null, null), 
+                new LinkedHashSet<Diagnosis>(Arrays.asList(new Diagnosis(existingEncounter, new CodedOrFreeText(null, null, "Asthma"), null, null, null), 
                 		new Diagnosis(existingEncounter, new CodedOrFreeText(null, null, "Malaria"), null, null, null))));
 
 		// Replay
@@ -45,8 +45,8 @@ public class EncounterDiagnosesElementTest extends BaseContextMockTest {
 		
 		// Verify
 		Assert.assertEquals(2, existingDiangnoses.size());
-		Assert.assertEquals("Malaria", ((Diagnosis) existingDiangnoses.toArray()[0]).getDiagnosis().getNonCoded());
-		Assert.assertEquals("Asthma", ((Diagnosis) existingDiangnoses.toArray()[1]).getDiagnosis().getNonCoded());
+		Assert.assertEquals("Asthma", ((Diagnosis) existingDiangnoses.toArray()[0]).getDiagnosis().getNonCoded());
+		Assert.assertEquals("Malaria", ((Diagnosis) existingDiangnoses.toArray()[1]).getDiagnosis().getNonCoded());
 
 	}
 }
