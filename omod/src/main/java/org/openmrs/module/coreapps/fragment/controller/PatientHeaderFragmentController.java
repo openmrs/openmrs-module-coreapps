@@ -74,7 +74,7 @@ public class PatientHeaderFragmentController {
             wrapper = (PatientDomainWrapper) patient;
         }
         config.addAttribute("patient", wrapper);
-        config.addAttribute("patientNames", getAllNames(wrapper.getPatient()));
+        config.addAttribute("patientNames", getAllNames(wrapper.getPatient(), uiUtils));
 
         if (appContextModel == null) {
             AppContextModel contextModel = sessionContext.generateAppContextModel();
@@ -145,7 +145,7 @@ public class PatientHeaderFragmentController {
 
     }
     
-    private Map<String,String> getAllNames(Patient patient) {
+    private Map<String,String> getAllNames(Patient patient, UiUtils uiUtils) {
     	Map<String,String> patientNames = getNames(patient.getPersonName());
     	Set<PersonName> names = patient.getNames();
     	
@@ -156,7 +156,7 @@ public class PatientHeaderFragmentController {
     			PersonAttributeType pat = Context.getPersonService().getPersonAttributeTypeByUuid(personNameAttrTypeUuid);
     			PersonAttribute pa = patient.getAttribute(pat);
     			if (pa != null) {
-    				patientNames.put(pat.getName(), pa.getValue());
+    				patientNames.put(uiUtils.message(pat.getName()), pa.getValue());
     			}
     		}
     	}

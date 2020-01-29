@@ -97,11 +97,12 @@ public class PatientHeaderFragmentControllerTest extends BaseModuleWebContextSen
     	pat = new PersonAttributeType();
     	pa = new PersonAttribute();
     	
-    	wrapper = mock(PatientDomainWrapper.class);
+    	uiUtils = mock(UiUtils.class);
+        wrapper = mock(PatientDomainWrapper.class);
     	emrApiProperties = mock(EmrApiProperties.class);
     	context = mock(UiSessionContext.class);
     	when(emrApiProperties.getExtraPatientIdentifierTypes()).thenReturn(new ArrayList<PatientIdentifierType>());
-    	when(wrapper.getPatient()).thenReturn(patient);
+    	when(wrapper.getPatient()).thenReturn(patient);        
     	
     	Context.getAdministrationService().setGlobalProperty("extraPersonNames.personAttributeTypes", "21cbb6c3-4ffb-4d1b-b658-332d9a58c77d");
     	
@@ -156,6 +157,7 @@ public class PatientHeaderFragmentControllerTest extends BaseModuleWebContextSen
     	patient.addIdentifier(pi);
     	Context.getPersonService().savePersonAttributeType(pat);
     	Context.getPersonService().savePerson(patient);
+        when(uiUtils.message(pat.getName())).thenReturn(pat.getName());
 
     	// Replay
         controller.controller(config, emrApiProperties, coreAppsProperties, identifierSourceService
