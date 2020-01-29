@@ -11,19 +11,20 @@
 
 package org.openmrs.module.coreapps.htmlformentry;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Date;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,15 +44,12 @@ import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
-import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.DispositionType;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
-import org.openmrs.module.htmlformentry.FormSubmissionActions;
 import org.openmrs.module.htmlformentry.FormSubmissionError;
 import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
-import org.openmrs.module.htmlformentry.InvalidActionException;
 import org.openmrs.module.htmlformentry.action.FormSubmissionControllerAction;
 import org.openmrs.module.htmlformentry.element.HtmlGeneratorElement;
 import org.openmrs.module.htmlformentry.widget.ErrorWidget;
@@ -85,7 +83,6 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private HiddenFieldWidget hiddenDiagnoses;
     private ErrorWidget errorWidget;
 
-    private static final String VISIT_NOTE_ENCOUNTER_TYPE_UUID = "d7151f82-c1f3-4152-a605-2f9ea7414a79";
     private static final Integer DIAGNOSIS_RANK_PRIMARY = 1;
     private static final Integer DIAGNOSIS_RANK_SECONDARY = 2;
 
@@ -112,7 +109,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     @Override
     public String generateHtml(FormEntryContext context) {
-        List<Diagnosis> existingDiagnoses = convert(Context.getDiagnosisService().getDiagnoses(context.getExistingPatient(), null));
+        List<Diagnosis> existingDiagnoses = convert(new ArrayList<org.openmrs.Diagnosis>(getExistingDiagnoses(context)));
 
         if (FormEntryContext.Mode.VIEW == context.getMode()) {
             StringBuilder sb = new StringBuilder();
@@ -280,9 +277,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
             JsonNode list = new ObjectMapper().readTree(jsonList);
 
-            FormEntryContext formEntrycontext = formEntrySession.getContext();
-
-            Set<org.openmrs.Diagnosis> existingDiagnoses = new HashSet<org.openmrs.Diagnosis>(Context.getDiagnosisService().getDiagnoses(formEntrycontext.getExistingPatient(), null));
+            Set<org.openmrs.Diagnosis> existingDiagnoses = getExistingDiagnoses(formEntrySession.getContext());
             Set<org.openmrs.Diagnosis> resubmittedDiagnoses = new HashSet<org.openmrs.Diagnosis>();
 
             for (JsonNode node : list) {
@@ -353,31 +348,22 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     }
 
-    private Map<Integer, Obs> getExistingDiagnosisObs(FormEntryContext context, DiagnosisMetadata diagnosisMetadata) {
-        Map<Integer, Obs> existingDiagnosisObs = null;
+    /**
+     * Gets existing Diagnoses within the current Encounter
+     * 
+     * @param context
+     * @return
+     */
+    public Set<org.openmrs.Diagnosis> getExistingDiagnoses(FormEntryContext context) {
         FormEntryContext.Mode mode = context.getMode();
         if (mode == FormEntryContext.Mode.EDIT || mode == FormEntryContext.Mode.VIEW) {
-            existingDiagnosisObs = new HashMap<Integer, Obs>();
-            Encounter encounter = context.getExistingEncounter();
-            if (encounter == null) {
-                // this situation happens during unit tests when viewing the form with a Person. (I don't know if this a
-                // real use case though.
-                return null;
-            }
-            for (Obs candidate : encounter.getObsAtTopLevel(false)) {
-                if (diagnosisMetadata.isDiagnosis(candidate)) {
-                    existingDiagnosisObs.put(candidate.getObsId(), candidate);
-                }
-            }
-
-            // remove any diagnoses found from existingObsInGroups
-            // TODO do we need to remove from existingObs as well?
-            for (Obs existingDiagnosis : existingDiagnosisObs.values()) {
-                context.getExistingObsInGroups().remove(existingDiagnosis);
-            }
-
+        	Encounter existingEncounter = context.getExistingEncounter();
+        	if (existingEncounter != null) {
+        		return existingEncounter.getDiagnoses();
+        	}
         }
-        return existingDiagnosisObs;
+        
+        return new HashSet<org.openmrs.Diagnosis>();
     }
 
     private List<Diagnosis> getPriorDiagnoses(FormEntryContext context, DispositionType dispositionType) {
@@ -397,11 +383,6 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         }
 
         return diagnoses;
-    }
-
-    private void createObsGroup(FormSubmissionActions actions, Obs obsGroup) throws InvalidActionException {
-        actions.beginObsGroup(obsGroup);
-        actions.endObsGroup();
     }
 
     public void setRequired(boolean required) {
