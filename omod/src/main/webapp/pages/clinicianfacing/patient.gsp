@@ -91,7 +91,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-3">
+        <div class="col-12 col-lg-3 p-0">
             <% if ((visitActions && visitActions.size() > 0) || (overallActions && overallActions.size() > 0) || (otherActions && otherActions.size() > 0))  { %>
                 <div class="action-section">
                     <% if (activeVisit && visitActions && visitActions.size() > 0) { %>
