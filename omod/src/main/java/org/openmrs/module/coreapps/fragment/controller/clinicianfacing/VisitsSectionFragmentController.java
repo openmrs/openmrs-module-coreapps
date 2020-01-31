@@ -16,6 +16,8 @@ package org.openmrs.module.coreapps.fragment.controller.clinicianfacing;
 import org.codehaus.jackson.JsonNode;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.VisitType;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.template.TemplateFactory;
@@ -56,10 +58,10 @@ public class VisitsSectionFragmentController {
 			               @SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper) {
 		config.require("patient");
 		Object patient = config.get("patient");
-		Integer visitTypeId = null;
-		JsonNode visitTypeNode = appDescriptor.getConfig().path("visitTypeId");
+		VisitType visitType = null;
+		JsonNode visitTypeNode = appDescriptor.getConfig().path("visitType");
 		if (visitTypeNode != null) {
-			visitTypeId = new Integer(visitTypeNode.getTextValue());
+			visitType = Context.getVisitService().getVisitTypeByUuid(visitTypeNode.getTextValue());
 		}
 
 		if (patient instanceof Patient) {
@@ -109,7 +111,7 @@ public class VisitsSectionFragmentController {
 		visitsPageUrl = "/" + ui.contextPath() + "/" + visitsPageUrl;
 		model.addAttribute("visitsUrl", templateFactory.handlebars(visitsPageUrl, contextModel));
 
-		List<VisitDomainWrapper> recentVisits = visitTypeId != null ? patientWrapper.getAllVisitsUsingWrappers(visitTypeId) : patientWrapper.getAllVisitsUsingWrappers();
+		List<VisitDomainWrapper> recentVisits = visitType != null ? patientWrapper.getVisitsByTypeUsingWrappers(visitType) : patientWrapper.getAllVisitsUsingWrappers();
 		if (recentVisits.size() > 5) {
 			recentVisits = recentVisits.subList(0, 5);
 		}
