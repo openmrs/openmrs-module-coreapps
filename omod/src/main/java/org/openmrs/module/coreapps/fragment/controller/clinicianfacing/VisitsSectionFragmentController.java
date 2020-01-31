@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.clinicianfacing;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -46,6 +48,8 @@ import java.util.Map;
  */
 public class VisitsSectionFragmentController {
 
+	protected final Log log = LogFactory.getLog(VisitsSectionFragmentController.class);
+
 	public void controller(FragmentConfiguration config,
 						   PageModel pageModel,
 						   FragmentModel model,
@@ -62,6 +66,9 @@ public class VisitsSectionFragmentController {
 		JsonNode visitTypeNode = appDescriptor.getConfig().path("visitType");
 		if (visitTypeNode != null) {
 			visitType = Context.getVisitService().getVisitTypeByUuid(visitTypeNode.getTextValue());
+			if (visitType == null) {
+				log.warn("Visit type with uuid: " + visitTypeNode.getTextValue() + " not found.");
+			}
 		}
 
 		if (patient instanceof Patient) {
