@@ -37,7 +37,7 @@ public class VisitIncludesFragmentController {
 			@SpringBean("patientService")PatientService patientService){
 
 		Object patient = config.get("patient");
-		Object visitTypeId = config.get("visitTypeId");
+		Object visitType = config.get("visitType");
 
 		if(patient == null) {
 			// retrieve patient id from parameter map
@@ -63,10 +63,10 @@ public class VisitIncludesFragmentController {
 
 		model.addAttribute("patient", wrapper);
 		List<VisitType> visitTypes = visitTypeHelper.getUnRetiredVisitTypes();
-		if (visitTypeId != null && visitTypes.size() > 0) {
+		if (visitType != null && visitTypes.size() > 0) {
 			ListIterator<VisitType> iterator = visitTypes.listIterator();
 			while (iterator.hasNext() ) {
-				if (!iterator.next().getId().equals(visitTypeId)) {
+				if (!iterator.next().getUuid().equals(visitType)) {
 					iterator.remove();
 				}
 			}
