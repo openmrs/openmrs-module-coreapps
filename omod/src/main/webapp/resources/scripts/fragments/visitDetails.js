@@ -10,7 +10,7 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount, curre
                 encounterCount: encounterCount,
                 userId: currentUserId
             })
-            ).success(function(data) {
+            ).done(function(data) {
                 $('.viewVisitDetails').removeClass('selected');
                 visitElement.addClass('selected');
                 visitDetailsSection.html(visitDetailsTemplate(data));
@@ -63,7 +63,7 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount, curre
                     });
                 }
                 
-            }).error(function(err) {
+            }).fail(function(err) {
                 emr.errorMessage(err);
             });
         }
