@@ -100,8 +100,14 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                             <% visitActions.each { ext -> %>
                             <li class="float-left">
                                 <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
-                                    <i class="${ ext.icon }"></i>
-                                    ${ ui.message(ext.label) }
+                                    <div class="row">
+                                       <div class="col-1 col-lg-2">
+                                          <i class="${ ext.icon }"></i>
+                                        </div>
+                                        <div class="col-11 col-lg-10">
+                                           ${ ui.message(ext.label) }
+                                        </div>
+                                    </div>
                                 </a>
                             </li>
                             <% } %>
@@ -114,8 +120,14 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                                 overallActions.each { ext -> %>
                                     <li class="float-left">
                                         <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
-                                            <i class="${ ext.icon }"></i>
-                                            ${ ui.message(ext.label) }
+                                            <div class="row">
+                                                <div class="col-1 col-lg-2">
+                                                    <i class="${ ext.icon }"></i>
+                                                </div>
+                                                <div class="col-11 col-lg-10">
+                                                    ${ ui.message(ext.label) }
+                                                </div>
+                                            </div>
                                         </a>
                                     </li>
                             <% } %>
