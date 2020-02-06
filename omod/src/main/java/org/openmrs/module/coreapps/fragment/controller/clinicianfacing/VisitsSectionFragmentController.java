@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.clinicianfacing;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
@@ -55,7 +56,7 @@ public class VisitsSectionFragmentController {
 						   FragmentModel model,
 						   UiUtils ui,
 						   UiSessionContext sessionContext,
-						   @FragmentParam("app") AppDescriptor appDescriptor,
+						   @FragmentParam("app") AppDescriptor appDescriptor, // this is the app descriptor of the Visits Sections fragment
 						   @SpringBean("appframeworkTemplateFactory") TemplateFactory templateFactory,
                            @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
 						   @InjectBeans PatientDomainWrapper patientWrapper, @SpringBean("adtService") AdtService adtService,
@@ -82,7 +83,7 @@ public class VisitsSectionFragmentController {
 		contextModel.put("patient", new PatientContextModel(patientWrapper.getPatient()));
 		contextModel.put("patientId", patientWrapper.getPatient().getUuid());  // backwards-compatible for links that still specify patient uuid substitution with "{{patientId}}"
 
-		AppDescriptor app = (AppDescriptor) pageModel.get("app");
+		AppDescriptor app = (AppDescriptor) pageModel.get("app"); // this is the config of the host page e.g. CLINICIAN_DASHBOARD
 
 		String visitsPageWithSpecificVisitUrl = null;
 		String visitsPageUrl = null;
@@ -94,6 +95,20 @@ public class VisitsSectionFragmentController {
 			} catch (Exception ex) { }
 			try {
 				visitsPageUrl = app.getConfig().get("visitsUrl").getTextValue();
+			} catch (Exception ex) { }
+			try {
+				//is the CLINICIAN_DASHBOARD visitsPageUrl config param overwritten via the VisitsSection widget config ?
+				JsonNode visitsUrlNode = appDescriptor.getConfig().path("visitsUrl");
+				if (visitsUrlNode != null && StringUtils.isNotBlank(visitsUrlNode.getTextValue())) {
+					visitsPageUrl = visitsUrlNode.getTextValue();
+				}
+			} catch (Exception ex) { }
+			try {
+				//is the CLINICIAN_DASHBOARD visitsPageWithSpecificVisitUrl config param ovewritten via the VisitsSection widget config ?
+				JsonNode visitUrlNode = appDescriptor.getConfig().path("visitUrl");
+				if (visitUrlNode != null && StringUtils.isNotBlank(visitUrlNode.getTextValue())) {
+					visitsPageWithSpecificVisitUrl = visitUrlNode.getTextValue();
+				}
 			} catch (Exception ex) { }
 		}
 
@@ -134,6 +149,17 @@ public class VisitsSectionFragmentController {
 		model.addAttribute("recentVisitsWithAttr", recentVisitsWithAttr);
 		model.addAttribute("recentVisitsWithLinks", recentVisitsWithLinks);
 
-		config.addAttribute("showVisitTypeOnPatientHeaderSection", visitTypeHelper.showVisitTypeOnPatientHeaderSection());
+		// this allows to overwrite the default showVisitTypeOnPatientHeaderSection GP setting via the  Visits Section widget's config param
+		JsonNode showVisitType = appDescriptor.getConfig().path("showVisitTypeOnPatientHeaderSection");
+		if (showVisitType != null && showVisitType.getBooleanValue()) {
+			config.addAttribute("showVisitTypeOnPatientHeaderSection", showVisitType.getTextValue());
+		} else {
+			config.addAttribute("showVisitTypeOnPatientHeaderSection", visitTypeHelper.showVisitTypeOnPatientHeaderSection());
+		}
+		// this allows to overwrite the default CLINICIAN_DASHBOARD app label via the Visits Section widget's config label
+		JsonNode widgetLabel = appDescriptor.getConfig().path("label");
+		if (widgetLabel != null && StringUtils.isNotBlank(widgetLabel.getTextValue())) {
+			config.addAttribute("label", widgetLabel.getTextValue());
+		}
 	}
 }
