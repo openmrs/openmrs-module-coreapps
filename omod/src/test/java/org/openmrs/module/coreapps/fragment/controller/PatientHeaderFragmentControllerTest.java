@@ -109,7 +109,7 @@ public class PatientHeaderFragmentControllerTest extends BaseModuleWebContextSen
     }
 
     @Test
-    public void controller_shouldIncludePrefferedPersonNameOnly() throws Exception {
+    public void controller_shouldIncludePreferredPersonNameOnly() throws Exception {
     	// Setup
     	
     	PersonName name = new PersonName();
