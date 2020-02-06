@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.clinicianfacing;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
@@ -95,6 +96,20 @@ public class VisitsSectionFragmentController {
 			try {
 				visitsPageUrl = app.getConfig().get("visitsUrl").getTextValue();
 			} catch (Exception ex) { }
+			try {
+				//is the visitsPageUrl ovewritten via VisitsSection widget config ?
+				JsonNode visitsUrlNode = appDescriptor.getConfig().path("visitsUrl");
+				if (visitsUrlNode != null && StringUtils.isNotBlank(visitsUrlNode.getTextValue())) {
+					visitsPageUrl = visitsUrlNode.getTextValue();
+				}
+			} catch (Exception ex) { }
+			try {
+				//is the visitsPageWithSpecificVisitUrl ovewritten via VisitsSection widget config ?
+				JsonNode visitUrlNode = appDescriptor.getConfig().path("visitUrl");
+				if (visitUrlNode != null && StringUtils.isNotBlank(visitUrlNode.getTextValue())) {
+					visitsPageWithSpecificVisitUrl = visitUrlNode.getTextValue();
+				}
+			} catch (Exception ex) { }
 		}
 
 
@@ -134,6 +149,17 @@ public class VisitsSectionFragmentController {
 		model.addAttribute("recentVisitsWithAttr", recentVisitsWithAttr);
 		model.addAttribute("recentVisitsWithLinks", recentVisitsWithLinks);
 
-		config.addAttribute("showVisitTypeOnPatientHeaderSection", visitTypeHelper.showVisitTypeOnPatientHeaderSection());
+		// this allows to overwrite the default GP setting via config
+		JsonNode showVisitType = appDescriptor.getConfig().path("showVisitTypeOnPatientHeaderSection");
+		if (showVisitType != null && showVisitType.getBooleanValue()) {
+			config.addAttribute("showVisitTypeOnPatientHeaderSection", showVisitType.getTextValue());
+		} else {
+			config.addAttribute("showVisitTypeOnPatientHeaderSection", visitTypeHelper.showVisitTypeOnPatientHeaderSection());
+		}
+		// this allows to overwrite the default app label via widget's config label
+		JsonNode widgetLabel = appDescriptor.getConfig().path("label");
+		if (widgetLabel != null && StringUtils.isNotBlank(widgetLabel.getTextValue())) {
+			config.addAttribute("label", widgetLabel.getTextValue());
+		}
 	}
 }
