@@ -81,7 +81,7 @@ export default class LatestObsForConceptListController {
             //If value is a concept
              return obs.value.display;
         } else {
-            return "";
+            return obs.value;
         }
     }
 }
