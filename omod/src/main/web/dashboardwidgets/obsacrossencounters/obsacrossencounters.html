@@ -1,33 +1,40 @@
 <style>
-    #obsTable {
-        table-layout: auto;
+    .container div {
+        border: 1px solid #DDD;
     }
-
+    .container .row:nth-child(odd) {
+        background: #fffdf7
+    }
+    .container .row:nth-child(even) {
+        background: white
+    }
+    .row div {
+        overflow: hidden;
+    }
     .column-header {
         text-align: center;
         font-size: small;
         word-wrap: break-word;
+        background-color: #f3f3f3;
     }
-    
+
 </style>
 
-<table id="obsTable" ng-if="$ctrl.simpleEncs.length != 0">
-    <thead>
-        <tr ng-if="$ctrl.headers.length != 0">
-            <th ng-repeat="column in $ctrl.headers track by $index" class="column-header">{{ column | translate }}</th>
-        </tr>
-        <tr ng-if="$ctrl.headers.length == 0">
-            <th class="column-header">Encounter</th>
-            <th ng-repeat="(key,value) in $ctrl.conceptsMap" class="column-header">{{value.display}}</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr ng-repeat="encounter in $ctrl.simpleEncs| orderBy: '-encounterDatetime'">
-            <th>{{encounter.encounterDatetime | date: $ctrl.config.dateFormat}}</th>
-            <th ng-repeat="(key,value) in $ctrl.conceptsMap">
-                {{ encounter.obs[key] ? $ctrl.displayObs(encounter.obs[key]) : '' }}
-            </th>
-        </tr>
-    </tbody>
-</table>
+<div class="container" ng-if="$ctrl.simpleEncs.length != 0">
+
+    <div class="row" ng-if="$ctrl.headers.length != 0">
+        <div class="col-sm column-header" ng-repeat="column in $ctrl.headers track by $index" >{{ column | translate }}</div>
+    </div>
+    <div class="row" ng-if="$ctrl.headers.length == 0">
+        <div class="col-sm column-header">Encounter</div>
+        <div class="col-sm column-header" ng-repeat="(key,value) in $ctrl.conceptsMap" >{{ value.display }}</div>
+    </div>
+    <div class="row" ng-repeat="encounter in $ctrl.simpleEncs| orderBy: '-encounterDatetime'">
+        <div class="col-sm">{{encounter.encounterDatetime | date: $ctrl.config.dateFormat}}</div>
+        <div class="col-sm" ng-repeat="(key,value) in $ctrl.conceptsMap">
+            {{ encounter.obs[key] ? $ctrl.displayObs(encounter.obs[key]) : '' }}
+        </div>
+    </div>
+</div>
+
 <p ng-if="$ctrl.simpleEncs.length == 0">None</p>
