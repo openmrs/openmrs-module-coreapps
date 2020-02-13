@@ -44,7 +44,7 @@
         </ul>
     </div>
 
-    <div id="remove-condition-dialog" class="dialog" style="display: none; position: absolute; left: 35%; top:30%;">
+    <div id="remove-condition-dialog" class="dialog" style="display: none; position: absolute; left: 35%; top:30%; z-index: 1000 !important;">
     <div class="dialog-header">
         <h3>${ ui.message("coreapps.conditionui.removeCondition") }</h3>
     </div>
