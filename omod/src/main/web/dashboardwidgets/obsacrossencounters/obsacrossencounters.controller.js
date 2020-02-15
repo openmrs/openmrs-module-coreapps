@@ -7,6 +7,9 @@ export default class ObsAcrossEncountersController {
 
   $onInit() {
     this.order = 'desc';
+    this.sessionLocale = null;
+    this.CONCEPT_CUSTOM_REP = 'custom:(uuid,display,names:(display,conceptNameType,locale)';
+
     this.concepts = [];
     // a map of conceptUUID --> concept(REST response)
     this.conceptsMap = {};
@@ -14,11 +17,21 @@ export default class ObsAcrossEncountersController {
     this.headers = [];
     this.openmrsRest.setBaseAppPath("/coreapps");
 
+    this.fetchSessionInfo();
     this.fetchHeaders();
     this.fetchConcepts();
     this.fetchEncounters();
   }
 
+  fetchSessionInfo() {
+    this.openmrsRest.get("session?", {
+      v: "ref"
+    }).then((session) => {
+      this.sessionLocale = session.locale;
+    }, function(error) {
+       console.log(`failed to retrieve session info, error: ${error}`)
+    });
+  }
   fetchHeaders() {
     if (this.config.headers && this.config.headers.length > 0) {
       let columnNames = this.config.headers.split(",");
@@ -32,7 +45,7 @@ export default class ObsAcrossEncountersController {
     this.concepts = this.getConfigConceptsAsArray(this.config.concepts);
     for (let i = 0; i < this.concepts.length; i++) {
       this.openmrsRest.get("concept/" + this.concepts[i], {
-        v: 'custom:(uuid,display,names:(display,conceptNameType)'
+        v: this.CONCEPT_CUSTOM_REP
       }).then((concept) => {
         let index = this.concepts.indexOf(concept.uuid);
         this.concepts[index] = this.getConceptWithShortName(concept);
@@ -98,11 +111,20 @@ export default class ObsAcrossEncountersController {
   }
 
   getConceptWithShortName(concept) {
-    angular.forEach(concept.names, (name) => {
-      if (name.conceptNameType == 'SHORT') {
-        concept.display = name.display;
+    let lastShortName = null;
+    for(let i=0; i < concept.names.length; i++) {
+      let conceptName = concept.names[i];
+      if (conceptName.conceptNameType == 'SHORT') {
+        lastShortName = conceptName.display;
+        if (this.sessionLocale !== null && this.sessionLocale === conceptName.locale) {
+          // we found a SHORT name that matches the locale of the current session
+          break;
+        }
       }
-    });
+    }
+    if (lastShortName !== null && lastShortName.length > 0) {
+      concept.display = lastShortName;
+    }
     return concept;
   }
 
@@ -145,7 +167,39 @@ export default class ObsAcrossEncountersController {
         };
         this.simpleEncs.push(tempEnc);
       }
+      this.updateWithConceptShortNames(this.simpleEncs);
     });
+  }
+
+  updateWithConceptShortNames(encounters) {
+
+    if (encounters && encounters.length > 0) {
+      angular.forEach(encounters, encounter => {
+        let encounterObs = encounter.obs;
+        for (const prop in encounterObs) {
+          let obs = encounterObs[prop];
+          let conceptUuid = null;
+          // if the obs value is coded then we try to look for the short names of the coded answers
+          if (angular.isDefined(obs.value.concept) ) {
+            // some obs.value nodes contain the concept property that points to the concept
+            conceptUuid = obs.value.concept.uuid;
+          } else if (angular.isDefined(obs.value.uuid)) {
+            // and other coded obs(e.g. Drug Frequency) do not contain a child concept property
+            conceptUuid = obs.value.uuid;
+          }
+          if (conceptUuid !== null && conceptUuid.length > 0) {
+            this.openmrsRest.get("concept/" + conceptUuid, {
+              v: this.CONCEPT_CUSTOM_REP
+            }).then((concept) => {
+              let shortDisplay = this.getConceptWithShortName(concept);
+              obs.value.display = shortDisplay.display;
+            }, function (err) {
+              console.log(`failed to retrieve ${conceptUuid}, error: ${err}`);
+            });
+          }
+        }
+      });
+    }
   }
 
   parseGroupMembers(groupMembers, concepts) {
