@@ -101,7 +101,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                             <li class="float-left">
                                 <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
                                     <div class="row">
-                                       <div class="col-1 col-lg-2">
+                                       <div class="col-1 col-lg-2"  style="overflow: initial;">
                                           <i class="${ ext.icon }"></i>
                                         </div>
                                         <div class="col-11 col-lg-10">
@@ -121,7 +121,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                                     <li class="float-left">
                                         <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
                                             <div class="row">
-                                                <div class="col-1 col-lg-2">
+                                                <div class="col-1 col-lg-2"  style="overflow: initial;">
                                                     <i class="${ ext.icon }"></i>
                                                 </div>
                                                 <div class="col-11 col-lg-10">
