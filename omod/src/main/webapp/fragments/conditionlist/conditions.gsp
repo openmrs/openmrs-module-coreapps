@@ -45,6 +45,7 @@
     </div>
 
     <div id="remove-condition-dialog" class="dialog" style="display: none; position: fixed; z-index: 1000 !important;">
+
     <div class="dialog-header">
         <h3>${ ui.message("coreapps.conditionui.removeCondition") }</h3>
     </div>
