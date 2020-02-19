@@ -3,11 +3,25 @@
     ui.includeCss("coreapps", "clinicianfacing/patient.css")
     ui.includeJavascript("coreapps", "custom/deletePatient.js")
     ui.includeJavascript("appui", "jquery-3.4.1.min.js")
+    
+    def formattedBreadCrumbs = "";
+    
+    // allows displaying additional breadcrumbs details defined by 'breadCrumbs.details.uuids' global property
+    if (breadCrumbsDetails) {
+    	formattedBreadCrumbs += " " + breadCrumbsFormatters[0]
+    	breadCrumbsDetails.eachWithIndex {attr, index ->
+    		formattedBreadCrumbs += ui.escapeJs(ui.encodeHtmlContent(ui.format(attr)));
+    		if (breadCrumbsDetails.size()-1 != index) {
+    			formattedBreadCrumbs += breadCrumbsFormatters[1]
+    		}
+    	}
+    	formattedBreadCrumbs += breadCrumbsFormatters[2]
+    }
 %>
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" ,
+        { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }${ formattedBreadCrumbs }" ,
         link: '${ ui.urlBind("/" + contextPath + baseDashboardUrl, [ patientId: patient.patient.id ] ) }'}
     ];
 
