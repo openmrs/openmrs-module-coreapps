@@ -46,6 +46,7 @@ import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.disposition.DispositionType;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.module.htmlformentry.CustomFormSubmissionAction;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.FormSubmissionError;
@@ -57,7 +58,7 @@ import org.openmrs.module.htmlformentry.widget.HiddenFieldWidget;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
 
-public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubmissionControllerAction {
+public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubmissionControllerAction, CustomFormSubmissionAction {
 
     private boolean required = false;
     private UiUtils uiUtils;
@@ -110,7 +111,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     @Override
     public String generateHtml(FormEntryContext context) {
         List<Diagnosis> existingDiagnoses = convert(new ArrayList<org.openmrs.Diagnosis>(getExistingDiagnoses(context)));
-
+        
         if (FormEntryContext.Mode.VIEW == context.getMode()) {
             StringBuilder sb = new StringBuilder();
             if (existingDiagnoses != null) {
@@ -271,8 +272,23 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     @Override
     public void handleSubmission(FormEntrySession formEntrySession, HttpServletRequest request) {
-
-        try {
+    	// Register this as CustomFormSubmissionAction handler, to be used at the post submission 
+    	// because of https://issues.openmrs.org/browse/RA-1705
+    	// refer to EncounterDiagnosesElement#applyAction(FormEntrySession formEntrySession)
+    	formEntrySession.getSubmissionActions().addCustomFormSubmissionAction(this);
+    }
+    
+    
+    /**
+     * Since 1.27.0
+     * 
+     * @param formEntrySession provides the saved encounter and submitted parameters details
+     */
+    @Override
+	public void applyAction(FormEntrySession formEntrySession) {
+    	
+    	HttpServletRequest request = formEntrySession.getSubmissionController().getLastSubmission();
+    	try {
             String jsonList = request.getParameter("encounterDiagnoses");
 
             JsonNode list = new ObjectMapper().readTree(jsonList);
@@ -324,8 +340,6 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                     if (diagnosis.getEncounter().getEncounterType() == null) {
                         diagnosis.getEncounter().setEncounterType(formEntrySession.getForm().getEncounterType());
                     }
-                    HtmlFormEntryUtil.removeEmptyObs(formEntrySession.getSubmissionActions().getObsToCreate());
-                    Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
                     Context.getDiagnosisService().save(diagnosis);
                 }
 
@@ -345,8 +359,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         catch (IOException ex) {
             ex.printStackTrace();
         }
-
-    }
+	}
 
     /**
      * Gets existing Diagnoses within the current Encounter
