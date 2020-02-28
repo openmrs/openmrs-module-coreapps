@@ -52,9 +52,9 @@ $(function() {
 	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
 	    jq.getJSON(
 	        		emr.fragmentActionLink("htmlformentryui", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
-	        ).success(function(data){
+	        ).done(function(data){
 	            encounterDetailsSection.html(data.html);
-	        }).error(function(err){
+	        }).fail(function(err){
 	            emr.errorAlert(err);
 	        });
 	    } else {
@@ -68,9 +68,9 @@ $(function() {
 	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
 	        jq.getJSON(
 	            emr.fragmentActionLink("coreapps", "visit/visitDetails", "getEncounterDetails", { encounterId: id })
-	        ).success(function(data){
+	        ).done(function(data){
 	            encounterDetailsSection.html(displayTemplate(data));
-	        }).error(function(err){
+	        }).fail(function(err){
 	            emr.errorAlert(err);
 	        });
 	    }
