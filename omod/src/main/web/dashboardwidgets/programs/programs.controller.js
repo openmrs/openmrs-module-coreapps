@@ -56,13 +56,15 @@ export default class ProgramsController {
 
     fetchPrivileges() {
         this.openmrsRest.get('session', {
-            v: 'custom:(privileges)'
+            v: 'custom:(privileges:(name))'
         }).then((response) => {
             if (response && response.user && angular.isArray(response.user.privileges)) {
                 if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
                     this.canEnrollInProgram = true;
                 };
             }
+        }, function(error) {
+          console.log(`failed to retrieve user privileges, error: ${error}`);
         });
     }
 
