@@ -13,7 +13,7 @@ export default class ProgramStatusController {
     }
 
     $onInit() {
-        this.vPatientProgram = 'custom:uuid,program:(uuid),dateEnrolled,dateCompleted,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
+        this.vPatientProgram = 'custom:uuid,program:(uuid),dateEnrolled,dateCompleted,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,dateCreated,voided,state:(uuid,concept:(display)))';
 
         this.dateFormat = (this.config.dateFormat == '' || angular.isUndefined(this.config.dateFormat))
             ? 'dd-MMM-yyyy' : this.config.dateFormat;
@@ -53,11 +53,10 @@ export default class ProgramStatusController {
         }
 
         this.resetWindowStates();
-
-        this.activate();
-
+        
         let ctrl = this;
 
+        return this.activate();
     }
 
     activate() {
@@ -67,12 +66,10 @@ export default class ProgramStatusController {
 
         this.fetchSessionLocation();
 
-        this.fetchLocations().then((response) => {
-            this.fetchProgram().then((response) => {
-                this.fetchOutcomes();
-                this.fetchPatientProgram()
-            });
-        });
+        return this.fetchLocations()
+            .then(this.fetchProgram.bind(this))
+            .then(this.fetchOutcomes.bind(this))
+            .then(this.fetchPatientProgram.bind(this));
     }
 
     fetchPrivileges() {
@@ -239,7 +236,6 @@ export default class ProgramStatusController {
         this.patientPrograms = this.$filter('filter') (this.patientPrograms, (patientProgram) => {
             return (patientProgram.program.uuid == this.config.program);
         });
-
 
         if (this.patientPrograms.length > 0) {
 
@@ -415,6 +411,7 @@ export default class ProgramStatusController {
 
     getWorkflowForState(state) {
         let result;
+        
         angular.forEach(this.program.workflows, (workflow) => {
             angular.forEach(workflow.states, (workflowState) => {
                 if (state.uuid == workflowState.uuid) {
@@ -464,8 +461,42 @@ export default class ProgramStatusController {
             this.patientProgram.states = this.$filter('filter')(this.patientProgram.states, (state) => {
                 return !state.voided
             }, true);
-            this.patientProgram.states = this.$filter('orderBy')(this.patientProgram.states, (state) => {
-                return new Date(state.startDate);
+            this.patientProgram.states = this.$filter('orderBy')(this.patientProgram.states, null, false, function(state1, state2)
+             {
+            	var result = 0;
+            	
+            	//console.log(state1, state2);
+            	
+            	//if the start date of 1 is earlier, is occurs before 
+            	if(state1.value.startDate < state2.value.startDate) {
+            		//console.log("based on startDate", state1.value.startDate, "is before", state2.value.startDate);
+            		result = -1;
+            	//later it occurs after
+            	} else if (state1.value.startDate > state2.value.startDate) {
+            		result = 1;
+            	} else {
+            	
+	            	//if the end date is not set, or end date is after, the state occurred before
+	            	if(state1.value.endDate < state2.value.endDate || state2.value.endDate == null ) {
+            		//console.log("based on endDate", state1.value.endDate, "is before", state2.value.endDate);
+	            		result = -1;
+	            	//else if the end date is later, it occurred later
+	            	} else if (state1.value.endDate > state2.value.endDate) {
+	            		result = 1;
+	            	} else {
+	            	
+	            	
+    	            	//if both the end dates are identical, check the created at time 
+		            	if(state1.value.dateCreated < state2.value.dateCreated) {
+		            		//console.log("based on dateCreated", state1.value.dateCreated, "is before", state2.value.dateCreated);
+							result = -1;
+		            	} else if (state1.value.dateCreated > state2.value.dateCreated) { 
+		            		result = 1;
+		            	}
+	            	}
+	            }
+            	
+            	return result;
             });
 
             angular.forEach(this.patientProgram.states, (patientState) => {
