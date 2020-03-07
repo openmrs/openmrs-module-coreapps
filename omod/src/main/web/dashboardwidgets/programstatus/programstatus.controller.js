@@ -472,7 +472,7 @@ export default class ProgramStatusController {
             	} else {
             	
 	            	//if the end date is not set, or end date is after, the state occurred before
-	            	if(state1.value.endDate < state2.value.endDate || state2.value.endDate == null ) {
+		        if(state2.value.endDate == null || state1.value.endDate < state2.value.endDate ) {
 	            		return -1;
 	            	//else if the end date is later, it occurred later
 	            	} else if (state1.value.endDate > state2.value.endDate) {
