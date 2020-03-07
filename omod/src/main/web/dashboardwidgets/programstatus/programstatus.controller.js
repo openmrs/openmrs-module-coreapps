@@ -465,40 +465,33 @@ export default class ProgramStatusController {
             }, true);
             this.patientProgram.states = this.$filter('orderBy')(this.patientProgram.states, null, false, function(state1, state2)
              {
-            	var result = 0;
-            	
-            	//console.log(state1, state2);
-            	
             	//if the start date of 1 is earlier, is occurs before 
             	if(state1.value.startDate < state2.value.startDate) {
-            		//console.log("based on startDate", state1.value.startDate, "is before", state2.value.startDate);
-            		result = -1;
+            		return -1;
             	//later it occurs after
             	} else if (state1.value.startDate > state2.value.startDate) {
-            		result = 1;
+            		return 1;
             	} else {
             	
 	            	//if the end date is not set, or end date is after, the state occurred before
 	            	if(state1.value.endDate < state2.value.endDate || state2.value.endDate == null ) {
-            		//console.log("based on endDate", state1.value.endDate, "is before", state2.value.endDate);
-	            		result = -1;
+	            		return -1;
 	            	//else if the end date is later, it occurred later
 	            	} else if (state1.value.endDate > state2.value.endDate) {
-	            		result = 1;
+	            		return 1;
 	            	} else {
 	            	
 	            	
     	            	//if both the end dates are identical, check the created at time 
 		            	if(state1.value.dateCreated < state2.value.dateCreated) {
-		            		//console.log("based on dateCreated", state1.value.dateCreated, "is before", state2.value.dateCreated);
-							result = -1;
+					return -1;
 		            	} else if (state1.value.dateCreated > state2.value.dateCreated) { 
-		            		result = 1;
+		            		return 1;
 		            	}
 	            	}
 	            }
             	
-            	return result;
+            	return 0;
             });
 
             angular.forEach(this.patientProgram.states, (patientState) => {
