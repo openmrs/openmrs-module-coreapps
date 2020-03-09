@@ -76,9 +76,7 @@ export default class ProgramStatusController {
     }
 
     fetchPrivileges() {
-        this.openmrsRest.get('session', {
-            v: 'custom:(privileges:(name))'
-        }).then((response) => {
+        this.openmrsRest.get('session').then((response) => {
             if (response && response.user && angular.isArray(response.user.privileges)) {
                 if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
                     this.canEnrollInProgram = true;
@@ -107,7 +105,7 @@ export default class ProgramStatusController {
         // if there is only possible location, set it as the default (this is why loading locations (in activate) needs to happen before patient programs)
         else if (this.programLocations && this.programLocations.length == 1) {
             this.input.enrollmentLocation = this.programLocations[0].uuid;
-        } 
+        }
         // if we have more than one location, set the current session's location as the default
         else if (this.programLocations) {
             if (this.sessionLocation) {
