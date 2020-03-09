@@ -13,4 +13,4 @@ install:
   - export DISPLAY=:99.0
   - tar -xjf /tmp/firefox-43.0.tar.bz2 --directory /tmp
   - export PATH="/tmp/firefox:$PATH"
-script: mvn clean install
+script: mvn clean install -q
