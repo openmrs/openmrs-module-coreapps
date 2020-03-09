@@ -464,33 +464,31 @@ export default class ProgramStatusController {
                 return !state.voided
             }, true);
             this.patientProgram.states = this.$filter('orderBy')(this.patientProgram.states, null, false, function(state1, state2)
-             {
-            	//if the start date of 1 is earlier, is occurs before 
-            	if(state1.value.startDate < state2.value.startDate) {
-            		return -1;
-            	//later it occurs after
-            	} else if (state1.value.startDate > state2.value.startDate) {
-            		return 1;
-            	} else {
-            	
-	            	//if the end date is not set, or end date is after, the state occurred before
-		        if(state2.value.endDate == null || state1.value.endDate < state2.value.endDate ) {
-	            		return -1;
-	            	//else if the end date is later, it occurred later
-	            	} else if (state1.value.endDate > state2.value.endDate) {
-	            		return 1;
-	            	} else {
-	            	
-	            	
-    	            	//if both the end dates are identical, check the created at time 
-		            	if(state1.value.dateCreated < state2.value.dateCreated) {
-					return -1;
-		            	} else if (state1.value.dateCreated > state2.value.dateCreated) { 
-		            		return 1;
-		            	}
-	            	}
-	            }
-            	
+            {
+                //orderBy falls back to index comparison when two states are indicated to be equal
+                if(state1.type === "number" && state2.type === "number"){
+                    //if index of state1 is 7 and state2 is 8, 7-8 == -1 indicates state1 is first, 8-7 == 1 indicating state2 is first
+                    return state1.value-state2.value;
+                }
+
+                //if the end date is not set, or end date is after, the state occurred before
+                //if the start date of 1 is earlier, is occurs before 
+                //if both the end dates are identical, check the created at time
+                
+                //this sort is done against ALL workflows within a program 
+                //in which case it is possible to have two states with null end dates,
+                //and that is the exception to when endDate==null indicates sort order clearly
+                if((!(state2.value.endDate == null && state2.value.endDate == null) && state2.value.endDate == null) || state1.value.startDate < state2.value.startDate || state1.value.endDate < state2.value.endDate || state1.value.dateCreated < state2.value.dateCreated) {
+                    return -1;
+                    
+
+                //later if startdate occurs after
+                //later if the end date is later
+                //if both the end dates are identical, check the created at time
+                } else if (state1.value.startDate > state2.value.startDate || state1.value.endDate > state2.value.endDate || state1.value.dateCreated > state2.value.dateCreated) {
+                    return 1;    
+                }
+                
             	return 0;
             });
 
