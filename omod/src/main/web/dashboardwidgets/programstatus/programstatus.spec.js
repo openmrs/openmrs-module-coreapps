@@ -436,7 +436,7 @@
 					"voided":false,
 					"state":{
 						"uuid":"ff9d33d1-c7f6-417e-8d10-a0addc0ee7ed",
-						"concept": {
+						"concept":{
 							"display":"Awaiting MIA"
 						}
 					}
@@ -449,7 +449,7 @@
 					"voided":false,
 					"state":{
 						"uuid":"660eb32c-303b-4749-8029-2ee2f488a5e7",
-						"concept": {
+						"concept":{
 							"display":"Eligible For Services"
 						}
 					}
@@ -460,9 +460,9 @@
 					"endDate":"2020-02-18T00:00:00.000-0800",
 					"dateCreated":"2020-02-18T18:25:43.000-0800",
 					"voided":false,
-					"state": {
+					"state":{
 						"uuid":"8083d683-e6a1-4149-a85d-5f3ab507751f",
-						"concept": {
+						"concept":{
 							"display":"Services Planned"
 						}
 					}
@@ -475,7 +475,7 @@
 					"voided":false,
 					"state":{
 						"uuid":"24fa85e3-af4e-49a1-8a06-fbe70ad82bed",
-						"concept": {
+						"concept":{
 							"display":"Services Approved"
 						}
 					}
@@ -488,21 +488,8 @@
 					"voided":false,
 					"state":{
 						"uuid":"74855097-fe8a-460e-b69b-e8ce06da0a7e",
-						"concept": {
-							"display":"Awaiting Follow Up"
-						}
-					}
-				},
-				{
-					"uuid":"4f4f9e91-b3d1-4f32-a660-18e9a2eb9be6",
-					"startDate":"2020-02-18T00:00:00.000-0800",
-					"endDate":null,
-					"dateCreated":"2020-02-18T18:27:43.000-0800",
-					"voided":false,
-					"state":{
-						"uuid":"ef2d5378-2e4c-44f1-a7e0-f915617d1412",
 						"concept":{
-							"display":"Discharged From Services"
+							"display":"Awaiting Follow Up"
 						}
 					}
 				},
@@ -568,6 +555,19 @@
 						"uuid":"9d06e5a6-e744-42f7-be73-9fb016dde67d",
 						"concept":{
 							"display":"EOS Closed"
+						}
+					}
+				},
+				{
+					"uuid":"4f4f9e91-b3d1-4f32-a660-18e9a2eb9be6",
+					"startDate":"2020-02-18T00:00:00.000-0800",
+					"endDate":null,
+					"dateCreated":"2020-02-18T18:27:43.000-0800",
+					"voided":false,
+					"state":{
+						"uuid":"ef2d5378-2e4c-44f1-a7e0-f915617d1412",
+						"concept":{
+							"display":"Discharged From Services"
 						}
 					}
 				}
