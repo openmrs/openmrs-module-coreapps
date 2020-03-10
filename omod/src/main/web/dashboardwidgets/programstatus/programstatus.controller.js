@@ -468,25 +468,37 @@ export default class ProgramStatusController {
                     //if index of state1 is 7 and state2 is 8, 7-8 == -1 indicates state1 is first, 8-7 == 1 indicating state2 is first
                     return state1.value-state2.value;
                 }
-
-                //if the end date is not set, or end date is after, the state occurred before
-                //if the start date of 1 is earlier, is occurs before 
-                //if both the end dates are identical, check the created at time
                 
                 //this sort is done against ALL workflows within a program 
                 //in which case it is possible to have two states with null end dates,
                 //and that is the exception to when endDate==null indicates sort order clearly
-                if((!(state1.value.endDate == null && state2.value.endDate == null) && state2.value.endDate == null) || state1.value.startDate < state2.value.startDate || state1.value.endDate < state2.value.endDate || state1.value.dateCreated < state2.value.dateCreated) {
-                    return -1;
-                    
-
-                //later if startdate occurs after
-                //later if the end date is later or both end dates are not null, but the first enddate is null
-                //if both the end dates are identical, check the created at time
-                } else if ((!(state1.value.endDate == null && state2.value.endDate == null) && state1.value.endDate == null) || state1.value.startDate > state2.value.startDate || state1.value.endDate > state2.value.endDate || state1.value.dateCreated > state2.value.dateCreated) {
-                    return 1;    
-                }
+                if(!(state1.value.endDate == null && state2.value.endDate == null)) {
                 
+                    //ordered so each criteria is evaluated in order (e.g. not all "prev" crit. before "next" crit. is ever evaluated)
+
+                    //null end date prioritized over any other sort criteria
+                    if(state2.value.endDate == null){
+                        return -1;
+                    } else if( state1.value.endDate == null){
+                        return 1;
+                    //sort by start date
+                    } else if( state1.value.startDate < state2.value.startDate) {
+                        return -1;
+                    } else if ( state1.value.startDate > state2.value.startDate) {
+                        return 1;    
+                    //sort by end date
+                    } else if(state1.value.endDate < state2.value.endDate){
+                        return -1;
+                    } else if (state1.value.endDate > state2.value.endDate) {
+                        return 1;
+                    //sort by date created
+                    } else if(state1.value.dateCreated < state2.value.dateCreated){
+                        return -1;
+                    } else if(state1.value.dateCreated > state2.value.dateCreated){
+                        return 1;
+                    }
+
+                }
             	return 0;
             });
 
