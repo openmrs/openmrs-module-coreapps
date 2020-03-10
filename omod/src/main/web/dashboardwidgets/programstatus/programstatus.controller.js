@@ -478,14 +478,14 @@ export default class ProgramStatusController {
                 //this sort is done against ALL workflows within a program 
                 //in which case it is possible to have two states with null end dates,
                 //and that is the exception to when endDate==null indicates sort order clearly
-                if((!(state2.value.endDate == null && state2.value.endDate == null) && state2.value.endDate == null) || state1.value.startDate < state2.value.startDate || state1.value.endDate < state2.value.endDate || state1.value.dateCreated < state2.value.dateCreated) {
+                if((!(state1.value.endDate == null && state2.value.endDate == null) && state2.value.endDate == null) || state1.value.startDate < state2.value.startDate || state1.value.endDate < state2.value.endDate || state1.value.dateCreated < state2.value.dateCreated) {
                     return -1;
                     
 
                 //later if startdate occurs after
-                //later if the end date is later
+                //later if the end date is later or both end dates are not null, but the first enddate is null
                 //if both the end dates are identical, check the created at time
-                } else if (state1.value.startDate > state2.value.startDate || state1.value.endDate > state2.value.endDate || state1.value.dateCreated > state2.value.dateCreated) {
+                } else if ((!(state1.value.endDate == null && state2.value.endDate == null) && state1.value.endDate == null) || state1.value.startDate > state2.value.startDate || state1.value.endDate > state2.value.endDate || state1.value.dateCreated > state2.value.dateCreated) {
                     return 1;    
                 }
                 
