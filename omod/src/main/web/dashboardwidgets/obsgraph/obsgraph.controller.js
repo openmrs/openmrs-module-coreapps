@@ -197,6 +197,16 @@ export default class ObsGraphController {
             }
           }
           this.$q.all(promises).then(function(data) {
+            let isEncounterTypeNotAllowed = function (encounterType) {
+              return angular.isDefined(self.encounterTypes) && 
+                self.encounterTypes.indexOf(encounterType) < 0;
+            };
+            let getEncounterType = function(observation) {
+              if(angular.isUndefined(observation)){
+                return null;
+              }
+              return observation.encounter.encounterType.uuid;
+            }
 
             for (let j=0; j< data.length; j++) {
               let conceptObject = {};
@@ -210,9 +220,10 @@ export default class ObsGraphController {
                 for (let k = 0; k < obsArray.length; k++) {
                   let obs = obsArray[k];
                   //Skip obs if encounter type does not match (only when encounter type specified in config)
-                  if(angular.isDefined(self.encounterType) && angular.isDefined(obs) && obs.encounter.encounterType.uuid !== self.encounterType){
+                  if (isEncounterTypeNotAllowed(getEncounterType(obs))) {
                     continue;
                   }
+
                   if (obs.concept.datatype.display == 'Numeric') {
                     // Don't add obs older than maxAge
                     let xValue = self.widgetsCommons.daysSinceDate(obs.obsDatetime);
@@ -244,7 +255,9 @@ export default class ObsGraphController {
       }
       // Parse maxAge to day count
       this.maxAgeInDays = this.widgetsCommons.maxAgeToDays(this.config.maxAge);
-      this.encounterType = this.config.encounterType;
+      if(angular.isDefined(this.config.encounterTypes)) {
+        this.encounterTypes = this.config.encounterTypes.replace(/ /gi, "").split(",");
+      }
 
       this.options = {
         legend: {
