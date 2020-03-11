@@ -127,7 +127,7 @@ export default class ObsGraphController {
                 if (concept.legend === true) {
                   if (concept.uuid && concept.type === "obs") {
                     let obj = this.dataset.find(element => element.uuid === concept.uuid);
-                      if (angular.isDefined(obj.values) && obj.values !== null && (Object.keys(obj.values)).length > 0) {
+                      if (angular.isDefined(obj) && obj !== nul && angular.isDefined(obj.values) && obj.values !== null && (Object.keys(obj.values)).length > 0) {
                         // if this concept has any obs values
                         let tempData = [];
                         for (let k = 0; k < xAxisKeys.length; k++) {
