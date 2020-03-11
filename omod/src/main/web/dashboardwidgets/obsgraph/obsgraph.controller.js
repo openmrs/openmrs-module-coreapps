@@ -12,7 +12,7 @@ export default class ObsGraphController {
         // Max age of obs to display
         this.maxAgeInDays = undefined;
         this.conceptRep = "custom:(uuid,display,name:(display),datatype:(uuid,display))";
-        this.customRep="custom:(uuid,display,obsDatetime,value,concept:(uuid,display,name:(display),datatype:(uuid,display)))";
+        this.customRep="custom:(uuid,display,obsDatetime,value,encounter:(encounterType),concept:(uuid,display,name:(display),datatype:(uuid,display)))";
 
         // Chart data
         this.series = [];
@@ -209,6 +209,10 @@ export default class ObsGraphController {
                 conceptObject.values = {};
                 for (let k = 0; k < obsArray.length; k++) {
                   let obs = obsArray[k];
+                  //Skip obs if encounter type does not match (only when encounter type specified in config)
+                  if(angular.isDefined(self.encounterType) && angular.isDefined(obs) && obs.encounter.encounterType.uuid !== self.encounterType){
+                    continue;
+                  }
                   if (obs.concept.datatype.display == 'Numeric') {
                     // Don't add obs older than maxAge
                     let xValue = self.widgetsCommons.daysSinceDate(obs.obsDatetime);
@@ -240,6 +244,7 @@ export default class ObsGraphController {
       }
       // Parse maxAge to day count
       this.maxAgeInDays = this.widgetsCommons.maxAgeToDays(this.config.maxAge);
+      this.encounterType = this.config.encounterType;
 
       this.options = {
         legend: {
