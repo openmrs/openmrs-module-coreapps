@@ -76,6 +76,14 @@ export default class ObsAcrossEncountersController {
     }
   }
 
+  isRetired(obs) {
+    let retired = false;
+    if (obs && angular.isDefined(obs.value) && angular.isDefined(obs.value.retired)) {
+      retired = obs.value.retired;
+    }
+    return retired;
+  }
+
   displayObs(obs) {
     let display = "";
     if (obs.value != null) {
@@ -203,7 +211,7 @@ export default class ObsAcrossEncountersController {
               let shortDisplay = this.getConceptWithShortName(concept);
               obs.value.display = shortDisplay.display;
             }, function (err) {
-              console.log(`failed to retrieve ${conceptUuid}, error: ${err}`);
+              console.log(`failed to retrieve concept ${conceptUuid}, ${err}`);
             });
           }
         }
