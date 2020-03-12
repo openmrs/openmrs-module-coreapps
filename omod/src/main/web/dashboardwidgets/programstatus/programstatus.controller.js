@@ -461,9 +461,18 @@ export default class ProgramStatusController {
             this.patientProgram.states = this.$filter('filter')(this.patientProgram.states, (state) => {
                 return !state.voided
             }, true);
+            
+            //this custom comparator is detailed in the PR at https://github.com/openmrs/openmrs-module-coreapps/pull/299
+            //the orderBy docs are available at https://docs.angularjs.org/api/ng/filter/orderBy
             this.patientProgram.states = this.$filter('orderBy')(this.patientProgram.states, null, false, function(state1, state2)
             {
-                //orderBy falls back to index comparison when two states are indicated to be equal
+                //From the orderBy documentation
+                
+                //In order to ensure that the sorting will be deterministic across platforms, if none of the specified predicates can
+                //distinguish between two items, orderBy will automatically introduce a dummy predicate that returns the item's index
+                //as value. (If you are using a custom comparator, make sure it can handle this predicate as well.)
+                
+                //i.e. orderBy falls back to index comparison when two states are indicated to be equal (return 0) in a previous comparison
                 if(state1.type === "number" && state2.type === "number"){
                     //if index of state1 is 7 and state2 is 8, 7-8 == -1 indicates state1 is first, 8-7 == 1 indicating state2 is first
                     return state1.value-state2.value;
