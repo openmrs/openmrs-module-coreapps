@@ -12,7 +12,7 @@ export default class ObsGraphController {
         // Max age of obs to display
         this.maxAgeInDays = undefined;
         this.conceptRep = "custom:(uuid,display,name:(display),datatype:(uuid,display))";
-        this.customRep="custom:(uuid,display,obsDatetime,value,concept:(uuid,display,name:(display),datatype:(uuid,display)))";
+        this.customRep="custom:(uuid,display,obsDatetime,value,encounter:(encounterType),concept:(uuid,display,name:(display),datatype:(uuid,display)))";
 
         // Chart data
         this.series = [];
@@ -197,6 +197,16 @@ export default class ObsGraphController {
             }
           }
           this.$q.all(promises).then(function(data) {
+            let isEncounterTypeNotAllowed = function (encounterType) {
+              return angular.isDefined(self.encounterTypes) && 
+                self.encounterTypes.indexOf(encounterType) < 0;
+            };
+            let getEncounterType = function(observation) {
+              if(angular.isUndefined(observation)){
+                return null;
+              }
+              return observation.encounter.encounterType.uuid;
+            }
 
             for (let j=0; j< data.length; j++) {
               let conceptObject = {};
@@ -209,6 +219,11 @@ export default class ObsGraphController {
                 conceptObject.values = {};
                 for (let k = 0; k < obsArray.length; k++) {
                   let obs = obsArray[k];
+                  //Skip obs if encounter type does not match (only when encounter type specified in config)
+                  if (isEncounterTypeNotAllowed(getEncounterType(obs))) {
+                    continue;
+                  }
+
                   if (obs.concept.datatype.display == 'Numeric') {
                     // Don't add obs older than maxAge
                     let xValue = self.widgetsCommons.daysSinceDate(obs.obsDatetime);
@@ -240,6 +255,9 @@ export default class ObsGraphController {
       }
       // Parse maxAge to day count
       this.maxAgeInDays = this.widgetsCommons.maxAgeToDays(this.config.maxAge);
+      if(angular.isDefined(this.config.encounterTypes)) {
+        this.encounterTypes = this.config.encounterTypes.replace(/ /gi, "").split(",");
+      }
 
       this.options = {
         legend: {
