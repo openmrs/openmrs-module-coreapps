@@ -11,11 +11,6 @@
         word-wrap: break-word;
     }
 
-    .retiredConcept {
-        color: gray;
-        font-style: italic;
-    }
-
     ::-webkit-scrollbar {
         -webkit-appearance: none;
         height: 5px;
@@ -42,7 +37,7 @@
     <tbody>
         <tr ng-repeat="encounter in $ctrl.simpleEncs| orderBy: '-encounterDatetime'">
             <th>{{encounter.encounterDatetime | date: $ctrl.config.dateFormat}}</th>
-            <th ng-repeat="(key,value) in $ctrl.conceptsMap" ng-class="($ctrl.isRetired(encounter.obs[key])) ? 'retiredConcept' : ''">
+            <th ng-repeat="(key,value) in $ctrl.conceptsMap">
                 {{ encounter.obs[key] ? $ctrl.displayObs(encounter.obs[key]) : '' }}
             </th>
         </tr>
