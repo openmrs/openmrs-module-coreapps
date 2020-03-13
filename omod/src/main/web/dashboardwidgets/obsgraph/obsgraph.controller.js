@@ -140,6 +140,9 @@ export default class ObsGraphController {
                           tempData.push(yValue);
                         }
                         this.data.push(tempData);
+                      } else {
+                        //Adding null data to keep order of data & concept names in sync
+                        this.data.push([null]);
                       }
                   } else if (concept.type === "function" && concept.function) {
                     this.FunctionManager.execute(...concept.function);
