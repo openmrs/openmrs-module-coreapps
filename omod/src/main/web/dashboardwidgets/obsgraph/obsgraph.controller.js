@@ -141,8 +141,11 @@ export default class ObsGraphController {
                         }
                         this.data.push(tempData);
                       } else {
-                        //Adding null data to keep order of data & concept names in sync
-                        this.data.push([null]);
+                        //Removing series without corresponding data points
+                        let index = this.series.indexOf(concept.display);
+                        if (index >= 0) {
+                          this.series.splice(index, 1);
+                        }
                       }
                   } else if (concept.type === "function" && concept.function) {
                     this.FunctionManager.execute(...concept.function);
@@ -175,6 +178,7 @@ export default class ObsGraphController {
                 let serverConcept = concepts.find(element => element.uuid === concept.uuid);
                 if (serverConcept && serverConcept.display) {
                   self.series.push(serverConcept.display);
+                  self.conceptArray[i].display = serverConcept.display;
                 }
               }
             }
@@ -305,7 +309,8 @@ export default class ObsGraphController {
         return {
           uuid: concept,
           type: "obs",
-          legend: true
+          legend: true,
+          display: ''
         };
       });
 
