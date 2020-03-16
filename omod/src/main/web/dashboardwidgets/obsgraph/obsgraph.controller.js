@@ -140,6 +140,12 @@ export default class ObsGraphController {
                           tempData.push(yValue);
                         }
                         this.data.push(tempData);
+                      } else {
+                        //Removing series without corresponding data points
+                        let index = this.series.indexOf(concept.display);
+                        if (index >= 0) {
+                          this.series.splice(index, 1);
+                        }
                       }
                   } else if (concept.type === "function" && concept.function) {
                     this.FunctionManager.execute(...concept.function);
@@ -165,13 +171,14 @@ export default class ObsGraphController {
               }
             }
           }
-          this.$q.all(promises).then(function(concepts) {
+          return this.$q.all(promises).then(function(concepts) {
             for (let i=0; i < self.conceptArray.length; i++) {
               let concept = self.conceptArray[i];
               if (concept.legend === true) {
                 let serverConcept = concepts.find(element => element.uuid === concept.uuid);
                 if (serverConcept && serverConcept.display) {
                   self.series.push(serverConcept.display);
+                  self.conceptArray[i].display = serverConcept.display;
                 }
               }
             }
@@ -196,7 +203,7 @@ export default class ObsGraphController {
               }
             }
           }
-          this.$q.all(promises).then(function(data) {
+          return this.$q.all(promises).then(function(data) {
             let isEncounterTypeNotAllowed = function (encounterType) {
               return angular.isDefined(self.encounterTypes) && 
                 self.encounterTypes.indexOf(encounterType) < 0;
@@ -239,13 +246,17 @@ export default class ObsGraphController {
               self.dataset.push(conceptObject);
             }
             self.orderXAxis();
-            self.updateChartData();
           });
       };
 
       this.getConfig();
-      this.getConceptNames();
-      this.getAllObs();
+      
+      const getConceptNamesPromise = this.getConceptNames();
+      const getAllObsPromise = this.getAllObs();
+
+      this.$q.all([getConceptNamesPromise, getAllObsPromise]).then(function(){
+        self.updateChartData();
+      });
     }
 
     getConfig() {
@@ -302,7 +313,8 @@ export default class ObsGraphController {
         return {
           uuid: concept,
           type: "obs",
-          legend: true
+          legend: true,
+          display: ''
         };
       });
 
