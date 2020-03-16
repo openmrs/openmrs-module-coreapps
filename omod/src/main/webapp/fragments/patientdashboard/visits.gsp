@@ -70,8 +70,15 @@
     <ul id="visits-list" class="left-menu">
         <%
             def visits = patient.allVisitsUsingWrappers;
+
             visits.eachWithIndex { wrapper, idx ->
-                def primaryDiagnoses = wrapper.getUniqueDiagnoses(true, false)
+            def primaryDiagnoses = wrapper.getUniqueDiagnoses(true, false);
+           
+            for (def encounter : wrapper.getSortedEncounters()){
+               def  newdiagnoses = diagnosisService.getPrimaryDiagnoses(encounter);
+               primaryDiagnoses.addAll(newdiagnoses);
+            }
+           primaryDiagnoses.unique();
         %>
         <li class="menu-item viewVisitDetails" data-visit-id="${wrapper.visit.visitId}">
             <span class="menu-date">

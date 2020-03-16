@@ -33,6 +33,7 @@ import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.event.ApplicationEventService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisService;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -48,6 +49,7 @@ public class PatientDashboardPageController {
          @InjectBeans PatientDomainWrapper patientDomainWrapper,
          @SpringBean("orderService") OrderService orderService,
          @SpringBean("adtService") AdtService adtService,
+         @SpringBean("emrDiagnosisService") DiagnosisService diagnosisService,
          @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
          @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
          @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
@@ -110,6 +112,8 @@ public class PatientDashboardPageController {
       applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 
       model.addAttribute("userId", sessionContext.getCurrentUser().getUserId());
+      
+      model.addAttribute("diagnosisService", diagnosisService);
 
       return null;
    }
