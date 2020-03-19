@@ -51,7 +51,9 @@ export default class RelationshipsController  {
         }
 
         //fetchPrivileges
-        this.openmrsRest.get('session').then((response) => {
+        this.openmrsRest.get('session', {
+            v: 'custom:(privileges:(name))'
+        }).then((response) => {
             this.getPrivileges(response.user.privileges);
         }, function(error) {
                 console.log(`failed to retrieve user privileges, error: ${error}`);
@@ -218,7 +220,7 @@ export default class RelationshipsController  {
             return this.config.maxRecords;
         }
     }
-
+    
     navigateTo(personUuid) {
         var destinationPage ="";
 
@@ -289,7 +291,7 @@ export default class RelationshipsController  {
             this.relationships = tempRelationships;
         }
     }
-
+    
     remove() {
         if (angular.isDefined(this.relationships) && (this.relationships.length == 1) ){
             //we only allow to delete one relationship at the time

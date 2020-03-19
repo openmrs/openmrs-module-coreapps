@@ -13,7 +13,7 @@ export default class ProgramStatusController {
     }
 
     $onInit() {
-        this.vPatientProgram = 'custom:uuid,program:(uuid),dateEnrolled,dateCompleted,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,voided,state:(uuid,concept:(display)))';
+        this.vPatientProgram = 'custom:uuid,program:(uuid),dateEnrolled,dateCompleted,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,dateCreated,voided,state:(uuid,concept:(display)))';
 
         this.dateFormat = (this.config.dateFormat == '' || angular.isUndefined(this.config.dateFormat))
             ? 'dd-MMM-yyyy' : this.config.dateFormat;
@@ -53,11 +53,10 @@ export default class ProgramStatusController {
         }
 
         this.resetWindowStates();
-
-        this.activate();
-
+        
         let ctrl = this;
 
+        return this.activate();
     }
 
     activate() {
@@ -67,12 +66,10 @@ export default class ProgramStatusController {
 
         this.fetchSessionLocation();
 
-        this.fetchLocations().then((response) => {
-            this.fetchProgram().then((response) => {
-                this.fetchOutcomes();
-                this.fetchPatientProgram()
-            });
-        });
+        return this.fetchLocations()
+            .then(this.fetchProgram.bind(this))
+            .then(this.fetchOutcomes.bind(this))
+            .then(this.fetchPatientProgram.bind(this));
     }
 
     fetchPrivileges() {
@@ -239,7 +236,6 @@ export default class ProgramStatusController {
         this.patientPrograms = this.$filter('filter') (this.patientPrograms, (patientProgram) => {
             return (patientProgram.program.uuid == this.config.program);
         });
-
 
         if (this.patientPrograms.length > 0) {
 
@@ -415,6 +411,7 @@ export default class ProgramStatusController {
 
     getWorkflowForState(state) {
         let result;
+        
         angular.forEach(this.program.workflows, (workflow) => {
             angular.forEach(workflow.states, (workflowState) => {
                 if (state.uuid == workflowState.uuid) {
@@ -464,8 +461,54 @@ export default class ProgramStatusController {
             this.patientProgram.states = this.$filter('filter')(this.patientProgram.states, (state) => {
                 return !state.voided
             }, true);
-            this.patientProgram.states = this.$filter('orderBy')(this.patientProgram.states, (state) => {
-                return new Date(state.startDate);
+            
+            //this custom comparator is detailed in the PR at https://github.com/openmrs/openmrs-module-coreapps/pull/299
+            //the orderBy docs are available at https://docs.angularjs.org/api/ng/filter/orderBy
+            this.patientProgram.states = this.$filter('orderBy')(this.patientProgram.states, null, false, function(state1, state2)
+            {
+                //From the orderBy documentation
+                
+                //In order to ensure that the sorting will be deterministic across platforms, if none of the specified predicates can
+                //distinguish between two items, orderBy will automatically introduce a dummy predicate that returns the item's index
+                //as value. (If you are using a custom comparator, make sure it can handle this predicate as well.)
+                
+                //i.e. orderBy falls back to index comparison when two states are indicated to be equal (return 0) in a previous comparison
+                if(state1.type === "number" && state2.type === "number"){
+                    //if index of state1 is 7 and state2 is 8, 7-8 == -1 indicates state1 is first, 8-7 == 1 indicating state2 is first
+                    return state1.value-state2.value;
+                }
+                
+                //this sort is done against ALL workflows within a program 
+                //in which case it is possible to have two states with null end dates,
+                //and that is the exception to when endDate==null indicates sort order clearly
+                if(!(state1.value.endDate == null && state2.value.endDate == null)) {
+                
+                    //ordered so each criteria is evaluated in order (e.g. not all "prev" crit. before "next" crit. is ever evaluated)
+
+                    //null end date prioritized over any other sort criteria
+                    if(state2.value.endDate == null){
+                        return -1;
+                    } else if( state1.value.endDate == null){
+                        return 1;
+                    //sort by start date
+                    } else if( state1.value.startDate < state2.value.startDate) {
+                        return -1;
+                    } else if ( state1.value.startDate > state2.value.startDate) {
+                        return 1;    
+                    //sort by end date
+                    } else if(state1.value.endDate < state2.value.endDate){
+                        return -1;
+                    } else if (state1.value.endDate > state2.value.endDate) {
+                        return 1;
+                    //sort by date created
+                    } else if(state1.value.dateCreated < state2.value.dateCreated){
+                        return -1;
+                    } else if(state1.value.dateCreated > state2.value.dateCreated){
+                        return 1;
+                    }
+
+                }
+            	return 0;
             });
 
             angular.forEach(this.patientProgram.states, (patientState) => {
