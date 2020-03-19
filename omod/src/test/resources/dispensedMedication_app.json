@@ -1,7 +1,7 @@
 {
   "id": "coreapps.dispensedMedication",
   "instanceOf": "coreapps.template.dashboardWidget",
-  "description": "Show Dispenced Medication as drug orders",
+  "description": "Show dispensed medications as drug orders",
   "order": 10,
   "config": {
     "displayActivationDate": true,
