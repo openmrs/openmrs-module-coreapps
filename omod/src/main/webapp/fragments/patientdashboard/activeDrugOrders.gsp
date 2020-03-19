@@ -1,6 +1,6 @@
 <%
-    def careSettings = activeDrugOrders.collect{it.careSetting}.unique()
-    detailsUrl = detailsUrl.replace("{{patientUuid}}", patient.uuid)
+    def careSettings = activeDrugOrders.collect{it.careSetting}.unique();
+    detailsUrl = detailsUrl ? detailsUrl.replace("{{patientUuid}}", patient.uuid) : null;
 %>
 
 <style type="text/css">
@@ -34,10 +34,8 @@
                 <ul>
                     <% activeDrugOrders.findAll{ it.careSetting == careSetting }.each { %>
                     <li>
-                        <div style='float:${ displayActivationDate ? "left" : "none" };' >
-                        	<label>${ ui.format(it.drug ?: it.concept) }</label>
-                        	<small>${ it.dosingInstructionsInstance.getDosingInstructionsAsString(sessionContext.locale) }</small>
-                        </div>
+                        <label>${ ui.format(it.drug ?: it.concept) }</label>
+                        <small>${ it.dosingInstructionsInstance.getDosingInstructionsAsString(sessionContext.locale) }</small>
                         <% if (displayActivationDate) { %>
                             <span style='float:right; font-size: small; color:#939393' >${ ui.formatDatetimePretty(it.dateActivated) }</span>
                         <% } %>
