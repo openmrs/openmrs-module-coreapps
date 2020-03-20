@@ -1,0 +1,21 @@
+{
+  "id": "coreapps.dispensedMedication",
+  "instanceOf": "coreapps.template.dashboardWidget",
+  "description": "Show dispensed medications as drug orders",
+  "order": 10,
+  "config": {
+    "displayActivationDate": true,
+	"detailsUrl": "../../owa/orderentry/index.html?patient={{patientUuid}}"
+  },
+  "extensions": [
+    {
+      "id": "org.openmrs.module.coreapps.dispensedMedication.clinicianDashboardFirstColumn",
+      "appId": "coreapps.dispensedMedication",
+      "extensionPointId": "patientDashboard.secondColumnFragments",
+      "extensionParams": {
+        "provider": "coreapps",
+        "fragment": "patientdashboard/activeDrugOrders"
+      }
+    }
+  ]
+}
