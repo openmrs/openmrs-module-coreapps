@@ -1,8 +1,8 @@
 export default class ObsAcrossEncountersController {
-  constructor($filter, openmrsRest, openmrsTranslate, widgetsCommons) {
+  constructor($q, $filter, openmrsRest, openmrsTranslate, widgetsCommons) {
     'ngInject';
 
-    Object.assign(this, {$filter, openmrsRest, openmrsTranslate, widgetsCommons});
+    Object.assign(this, {$q, $filter, openmrsRest, openmrsTranslate, widgetsCommons});
   }
 
   $onInit() {
@@ -56,16 +56,29 @@ export default class ObsAcrossEncountersController {
   }
 
   fetchEncounters() {
-    this.openmrsRest.get("encounter", {
-      patient: this.config.patientUuid,
-      encounterType: this.config.encounterType ? this.config.encounterType : null,
-      v: 'custom:(uuid,encounterDatetime,obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
-      limit: this.getMaxRecords(),
-      fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge),
-      order: this.order
-    }).then((response) => {
-      this.parseEncounters(response.results);
-    });
+    let promises = [];
+    let encounterTypes = this.config.encounterType ? this.config.encounterType.replace(' ', '').split(',') : [null];
+    if (encounterTypes !== null && encounterTypes.length > 0) {
+      for (let i = 0; i < encounterTypes.length; i++) {
+        let promisedEncounter = this.openmrsRest.get("encounter", {
+          patient: this.config.patientUuid,
+          encounterType: encounterTypes[i] ? encounterTypes[i]: null,
+          v: 'custom:(uuid,encounterDatetime,encounterType:(name,description),obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
+          limit: this.getMaxRecords(),
+          fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge),
+          order: this.order
+        }).then((response) => {
+          return response.results;
+        });
+        promises.push(promisedEncounter);
+      }
+
+      this.$q.all(promises).then((dataArray) => {
+        for (var n = 0; n < dataArray.length; n++){
+          this.parseEncounters(dataArray[n]); 
+        }
+      });
+    }
   }
 
   getMaxRecords() {
@@ -154,6 +167,7 @@ export default class ObsAcrossEncountersController {
             if (Object.keys(foundObs).every(item => conceptKeys.includes(item))) {
               //this is a complete pair of matching obs with a given concept uuid within the same obsGroup
               let enc = {
+                encounterType: encounter.encounterType.name,
                 encounterDatetime: encounter.encounterDatetime,
                 obs: foundObs
               };
@@ -170,6 +184,7 @@ export default class ObsAcrossEncountersController {
 
       if (Object.keys(searchObs).length > 0) {
         let tempEnc = {
+          encounterType: encounter.encounterType.name,
           encounterDatetime: encounter.encounterDatetime,
           obs: searchObs
         };
