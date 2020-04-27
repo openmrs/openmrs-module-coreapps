@@ -29,6 +29,8 @@ export default class ProgramStatusController {
         this.programOutcomes = null;
         this.sessionLocation = null;
 
+        this.expandedWorkflows = typeof this.config.expandedWorkflows === 'boolean' ?  this.config.expandedWorkflows : false;
+
         // we calculate these two values based on the completion date of the previous program and the enrollment date of any subsequent program
         // we populate these on initial load
         this.minEnrollmentDate = null;
@@ -148,13 +150,14 @@ export default class ProgramStatusController {
     }
 
     toggleExpandedWorkflow(workflowUuid) {
-        // the first time we hit this, we need to initialize the workflow
-        if (!workflowUuid in this.expanded.workflow) {
-            this.expanded.workflow[workflowUuid] = true;
-        }
-        else {
-            this.expanded.workflow[workflowUuid] = !this.expanded.workflow[workflowUuid];
-        }
+        this.expanded.workflow[workflowUuid] = !this.expanded.workflow[workflowUuid];
+    }
+
+    // Initializes workflows' states to expanded display mode based on boolean configuration value - this.config.expandedWorkflows
+    initExpandedWorkflows() {
+        angular.forEach(this.program.workflows, (workflow) => {
+            this.expanded.workflow[workflow.uuid] = this.expandedWorkflows;
+        });
     }
 
     fetchProgram() {
@@ -189,6 +192,7 @@ export default class ProgramStatusController {
             this.groupAndSortPatientStates();
             this.setInputsToStartingValues();
             this.convertDateEnrolledAndDateCompletedStringsToDates();
+            this.initExpandedWorkflows()
             this.loaded = true;
         });
     }
