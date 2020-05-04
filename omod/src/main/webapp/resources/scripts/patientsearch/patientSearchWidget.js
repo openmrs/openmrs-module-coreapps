@@ -293,8 +293,9 @@ function PatientSearchWidget(configuration){
                 });
                 dataRows.push(dataRow);
             });
-        }else if(config.initialPatients){
+        } else if(config.initialPatients) {
             //show the recently viewed
+            reset();
             searchResultsData = initialPatientData;
             dataRows = initialData;
         }
