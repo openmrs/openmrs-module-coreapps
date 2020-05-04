@@ -57,7 +57,11 @@ export default class ObsAcrossEncountersController {
 
   fetchEncounters() {
     let promises = [];
-    let encounterTypes = this.config.encounterType ? this.config.encounterType.replace(' ', '').split(',') : [null];
+    // merge encounterType with encounterTypes if both exist
+    if (this.config.encounterType) {
+      this.config.encounterTypes += this.config.encounterTypes ? ',' + this.config.encounterType : this.config.encounterType;
+    }
+    let encounterTypes = this.config.encounterTypes ? this.config.encounterTypes.replace(' ', '').split(',') : [null];
     if (encounterTypes !== null && encounterTypes.length > 0) {
       for (let i = 0; i < encounterTypes.length; i++) {
         let promisedEncounter = this.openmrsRest.get("encounter", {
