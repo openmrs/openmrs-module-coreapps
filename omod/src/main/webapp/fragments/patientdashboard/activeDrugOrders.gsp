@@ -1,6 +1,7 @@
 <%
     def careSettings = activeDrugOrders.collect{it.careSetting}.unique();
     detailsUrl = detailsUrl ? detailsUrl.replace("{{patientUuid}}", patient.uuid) : null;
+    returnUrl = returnUrl ? returnUrl.replace("{{patientUuid}}", patient.uuid) : "";
 %>
 
 <style type="text/css">
@@ -18,7 +19,7 @@
         <i class="icon-medicine"></i>
         <h3>${ ui.message("coreapps.patientdashboard.activeDrugOrders").toUpperCase() }</h3>
         <% if (detailsUrl && context.hasPrivilege("App: orderentryui.drugOrders")) { %>
-        	<a href="${ detailsUrl }">
+        	<a href="${ detailsUrl + "&" + "returnUrl=" + ui.urlEncode(ui.escapeJs( ui.encodeHtmlAttribute(returnUrl))) }">
                 <i class="icon-share-alt edit-action right" title="${ ui.message("coreapps.edit") }"></i>
             </a>
         <% } %>
