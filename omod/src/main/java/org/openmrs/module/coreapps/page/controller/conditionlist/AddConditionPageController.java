@@ -25,5 +25,7 @@ public class AddConditionPageController {
 		model.addAttribute("returnUrl", returnUrl);
 		String conditionListClasses = Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GLOBAL_PROPERTY_CONDITIONS_CRITERIA);
 		model.addAttribute("conditionListClasses",conditionListClasses);
+		String conditionNonCodedUuid = Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GLOBAL_PROPERTY_NON_CODED_UUID_KEY);
+		model.addAttribute("conditionNonCodedUuid", conditionNonCodedUuid);
 	}
 }

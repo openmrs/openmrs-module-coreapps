@@ -35,7 +35,8 @@
         <ul ng-repeat="conditionHistory in conditionHistoryList">
             <li class="conditionStatus" ng-init="condition = conditionHistory.conditions[0]"
                 ng-show="condition.status === 'ACTIVE' && condition.voided==false">
-                <span ng-style="strikeThrough(condition.voided)">{{condition.concept.name}}</span>
+                <span ng-style="strikeThrough(condition.voided)" ng-if="condition.conditionNonCoded !== '' ">"{{condition.conditionNonCoded}}"</span>
+                <span ng-style="strikeThrough(condition.voided)" ng-if="condition.conditionNonCoded === '' ">{{condition.concept.name}}</span>
                 <i class="icon-remove delete-action" title="${ui.message("coreapps.delete")}"
                    ng-click="conditionConfirmation(condition)" ng-if="condition.voided===false && '${hasModifyConditionsPrivilege}'"></i>
                 <i class="icon-undo delete-action" title="${ui.message("conditionui.undo")}"

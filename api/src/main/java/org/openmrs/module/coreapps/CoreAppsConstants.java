@@ -56,5 +56,7 @@ public class CoreAppsConstants {
    
    public static final String GLOBAL_PROPERTY_CONDITIONS_CRITERIA = "coreapps.conditionListClasses";
 
+   public static final String GLOBAL_PROPERTY_NON_CODED_UUID_KEY = "conditionList.nonCodedUuid";
+
    public static final String DEFAULT_CODING_SOURCE = "ICD-10-WHO";
 }
