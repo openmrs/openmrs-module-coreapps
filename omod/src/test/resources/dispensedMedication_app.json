@@ -5,7 +5,8 @@
   "order": 10,
   "config": {
     "displayActivationDate": true,
-	"detailsUrl": "../../owa/orderentry/index.html?patient={{patientUuid}}"
+	  "detailsUrl": "../../owa/orderentry/index.html?patient={{patientUuid}}",
+    "returnUrl": "/openmrs/custom/returnUrl.page?patientId={{patientUuid}}"
   },
   "extensions": [
     {
