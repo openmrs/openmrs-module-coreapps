@@ -13,6 +13,7 @@ package org.openmrs.module.coreapps.htmlformentry;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -115,7 +116,14 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         if (FormEntryContext.Mode.VIEW == context.getMode()) {
             StringBuilder sb = new StringBuilder();
             if (existingDiagnoses != null) {
-                List<ConceptSource> conceptSourcesForDiagnosisSearch = emrApiProperties.getConceptSourcesForDiagnosisSearch();
+            	List<ConceptSource> conceptSourcesForDiagnosisSearch;
+            	if (preferredCodingSource != null) {
+            		ConceptSource preferredSource = Context.getConceptService().getConceptSourceByName(preferredCodingSource);
+            		conceptSourcesForDiagnosisSearch = Arrays.asList(preferredSource);
+            	} 
+            	else {
+            		conceptSourcesForDiagnosisSearch = emrApiProperties.getConceptSourcesForDiagnosisSearch();
+            	}
                 for (Diagnosis diagnosis : existingDiagnoses) {
                     sb.append("<p><small>");
                     // question (e.g. "Primary diagnosis")
