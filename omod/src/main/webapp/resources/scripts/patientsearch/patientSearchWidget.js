@@ -231,7 +231,7 @@ function PatientSearchWidget(configuration){
         reset();
         input.val('');
         input.focus();
-        searchResults.hide();
+        dTable.fnAddData(initialData);
     }
 
     var reset = function(){
