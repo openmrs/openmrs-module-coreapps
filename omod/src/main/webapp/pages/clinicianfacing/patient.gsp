@@ -3,9 +3,9 @@
     ui.includeCss("coreapps", "clinicianfacing/patient.css")
     ui.includeJavascript("coreapps", "custom/deletePatient.js")
     ui.includeJavascript("appui", "jquery-3.4.1.min.js")
-    
+
     def formattedBreadCrumbs = "";
-    
+
     // allows displaying additional breadcrumbs details defined by 'breadCrumbs.details.uuids' global property
     if (breadCrumbsDetails) {
     	formattedBreadCrumbs += " " + breadCrumbsFormatters[0]
@@ -105,7 +105,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-3 p-0">
+        <div class="col-12 order-first col-lg-3 order-lg-last p-0">
             <% if ((visitActions && visitActions.size() > 0) || (overallActions && overallActions.size() > 0) || (otherActions && otherActions.size() > 0))  { %>
                 <div class="action-section">
                     <% if (activeVisit && visitActions && visitActions.size() > 0) { %>
