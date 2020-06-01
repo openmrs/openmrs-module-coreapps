@@ -105,6 +105,13 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 </div>
             </div>
         </div>
+
+        <!-- The Visit Actions section is duplicated. This is because it needs to be rendered
+          in a different position in the DOM depending on screen size. To make it a little easier
+          to work with, the two blocks are immediately below each other. -->
+
+        <!-- This is the first Visit Actions section, which is displayed at the top of the screen
+          using `order-first` on mobile, and is hidden on large screens. -->
         <% if (activeVisit && visitActions && visitActions.size() > 0) { %>
             <div class="action-section col-12 order-first d-lg-none">
                 <ul class="float-left">
@@ -126,9 +133,12 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 </ul>
             </div>
         <% } %>
-        <div class="col-12 col-lg-3 order-lg-last p-0">
+        <div class="col-12 col-lg-3 p-0">
             <% if ((visitActions && visitActions.size() > 0) || (overallActions && overallActions.size() > 0) || (otherActions && otherActions.size() > 0))  { %>
                 <div class="action-section">
+                    <!-- This is the second Visit Actions section, which is hidden on mobile
+                      and displayed in the right column on large screens (i.e., its display
+                      position matches its DOM position). -->
                     <% if (activeVisit && visitActions && visitActions.size() > 0) { %>
                         <ul class="float-left d-none d-lg-block">
                             <h3 >${ ui.message("coreapps.clinicianfacing.activeVisitActions") }</h3>
