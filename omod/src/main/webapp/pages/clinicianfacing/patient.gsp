@@ -105,11 +105,32 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                 </div>
             </div>
         </div>
-        <div class="col-12 order-first col-lg-3 order-lg-last p-0">
+        <% if (activeVisit && visitActions && visitActions.size() > 0) { %>
+            <div class="action-section col-12 order-first d-lg-none">
+                <ul class="float-left">
+                    <h3 >${ ui.message("coreapps.clinicianfacing.activeVisitActions") }</h3>
+                    <% visitActions.each { ext -> %>
+                    <li class="float-left">
+                        <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
+                            <div class="row">
+                               <div class="col-1 col-lg-2">
+                                  <i class="${ ext.icon }"></i>
+                                </div>
+                                <div class="col-11 col-lg-10">
+                                   ${ ui.message(ext.label) }
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        <% } %>
+        <div class="col-12 col-lg-3 order-lg-last p-0">
             <% if ((visitActions && visitActions.size() > 0) || (overallActions && overallActions.size() > 0) || (otherActions && otherActions.size() > 0))  { %>
                 <div class="action-section">
                     <% if (activeVisit && visitActions && visitActions.size() > 0) { %>
-                        <ul class="float-left">
+                        <ul class="float-left d-none d-lg-block">
                             <h3 >${ ui.message("coreapps.clinicianfacing.activeVisitActions") }</h3>
                             <% visitActions.each { ext -> %>
                             <li class="float-left">
