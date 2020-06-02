@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.Visit;
 import org.openmrs.module.emrapi.EmrApiConstants;
@@ -14,7 +15,6 @@ import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionObs;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.emrapi.domainwrapper.DomainWrapperFactory;
-import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.htmlformentry.BadFormDesignException;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -67,10 +67,9 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         VisitDomainWrapper visitDomainWrapper = session.getContext().getVisit() != null
                 ? domainWrapperFactory.newVisitDomainWrapper((Visit) session.getContext().getVisit()) : null;
 
-        EncounterDomainWrapper encounterDomainWrapper = session.getEncounter() != null
-                ? domainWrapperFactory.newEncounterDomainWrapper(session.getEncounter()) : null;
+        EncounterType encounterType = session.getEncounter() != null ? session.getEncounter().getEncounterType() : session.getForm().getEncounterType();
 
-        dispositions = dispositionService.getValidDispositions(visitDomainWrapper, encounterDomainWrapper);
+        dispositions = dispositionService.getValidDispositions(visitDomainWrapper, encounterType);
 
         Element dispositionObsGroup = node.getOwnerDocument().createElement("obsgroup");
         dispositionObsGroup.setAttribute("groupingConceptId", emrApiProperties.getEmrApiConceptSource().getName() + ":"
