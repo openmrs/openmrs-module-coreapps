@@ -37,7 +37,7 @@
                 ng-show="condition.status === 'ACTIVE' && condition.voided==false">
                 <span ng-style="strikeThrough(condition.voided)">{{condition.concept.name}}</span>
                 <i class="icon-remove delete-action" title="${ui.message("coreapps.delete")}"
-                   ng-click="conditionConfirmation(condition)" ng-if="condition.voided===false && '${hasModifyConditionsPrivilege}'"></i>
+                   ng-click="conditionConfirmation(conditionHistory.conditions)" ng-if="condition.voided===false && '${hasModifyConditionsPrivilege}'"></i>
                 <i class="icon-undo delete-action" title="${ui.message("conditionui.undo")}"
                    ng-click="undoCondition(condition)" ng-if="condition.voided===true && '${hasModifyConditionsPrivilege}'"></i>
             </li>
