@@ -1,12 +1,16 @@
 package org.openmrs.module.coreapps.contextmodel;
 
+import org.openmrs.Encounter;
 import org.openmrs.VisitType;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
-import org.openmrs.module.webservices.rest.web.ConversionUtil;
-import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.SimpleObject;
+import org.openmrs.module.webservices.rest.web.ConversionUtil;
+import org.openmrs.module.webservices.rest.web.representation.CustomRepresentation;
+import org.openmrs.module.webservices.rest.web.representation.Representation;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * A very simple view of a visit, suitable for use in an app contextModel.
@@ -21,6 +25,7 @@ public class VisitContextModel {
     private Long startDatetimeInMilliseconds;
     private Date stopDatetime;
     private SimpleObject visitType;
+    private List<SimpleObject> encounters;
 
     public VisitContextModel(VisitDomainWrapper visit) {
         this.id = visit.getVisitId();
@@ -42,6 +47,16 @@ public class VisitContextModel {
         if (visitType != null) {
           this.visitType = (SimpleObject) ConversionUtil.convertToRepresentation(visitType, Representation.DEFAULT);
         }
+
+        List<Encounter> encounters = visit.getSortedEncounters();
+        this.encounters = new ArrayList<SimpleObject>();
+
+        if (encounters != null) {
+            for (Encounter encounter : encounters) {
+                this.encounters.add((SimpleObject) ConversionUtil.convertToRepresentation(encounter, new CustomRepresentation("(uuid,encounterType:(name,uuid),encounterDatetime)")));
+            }
+        }
+
     }
 
     public int getId() {
@@ -74,5 +89,9 @@ public class VisitContextModel {
 
     public SimpleObject getVisitType() {
         return visitType;
+    }
+
+    public List<SimpleObject> getEncounters() {
+        return encounters;
     }
 }
