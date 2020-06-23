@@ -31,6 +31,7 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_11.ObsResource1_11;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.PatientResource1_8;
 
+import java.lang.Integer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -65,6 +66,7 @@ public class LatestObsResource extends ObsResource1_11 {
 		ObsService obsService = Context.getObsService();
 		
 		String conceptUuids = context.getRequest().getParameter("concept");
+		int nLatestObs = context.getRequest().getParameter("nLatestObs") != null ? Integer.parseInt(context.getRequest().getParameter("nLatestObs")) : 1;
 		if (conceptUuids != null) {
 			String[] conceptUuidList = conceptUuids.split(",");
 			if (conceptUuids == null) {
@@ -85,9 +87,9 @@ public class LatestObsResource extends ObsResource1_11 {
 				List<Concept> questions = new Vector<Concept>();
 				questions.add(concept);
 				
-				List<Obs> obs = obsService.getObservations(who, null, questions, null, null, null, sort, 1, null, null, null, false);
-				if (obs.size() > 0) {
-					obsList.add(obs.get(0));
+				List<Obs> latestObs = obsService.getObservations(who, null, questions, null, null, null, sort, nLatestObs, null, null, null, false);
+				if (latestObs.size() > 0) {
+					obsList.addAll(latestObs);
 				}
 			}
 

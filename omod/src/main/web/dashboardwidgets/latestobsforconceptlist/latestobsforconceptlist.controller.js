@@ -16,6 +16,8 @@ export default class LatestObsForConceptListController {
 
         // Remove whitespaces
         let concept_list = this.config.concepts.replace(/\s/g,'');
+        // Number of latest observations
+        let n_LatestObs = !angular.isUndefined(this.config.nLatestObs) && this.config.nLatestObs != null ? this.config.nLatestObs : 1;
         // remove all concepts over the maximum number of concepts
         let concepts = this.config.concepts.split(",");
         // from the number of elements specified by maxConceptCount remove the remaining elements
@@ -30,7 +32,8 @@ export default class LatestObsForConceptListController {
         this.openmrsRest.list('latestobs', {
             patient: this.config.patientUuid,
             v: 'full',
-            concept: concept_list
+            concept: concept_list,
+            nLatestObs: n_LatestObs
         }).then((resp) => {
             // Process the results from the list of concepts as not all of them may have data
             for (let i = 0; i < resp.results.length; i++) {
