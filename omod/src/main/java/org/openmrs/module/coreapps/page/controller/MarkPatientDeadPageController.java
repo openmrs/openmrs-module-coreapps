@@ -37,7 +37,7 @@ public class MarkPatientDeadPageController {
         pageModel.put("patientId", patient.getId());
         pageModel.put("breadcrumbOverride", breadcrumbOverride);
         if (conceptId != null && !conceptId.contains("[a-zA-Z]+")) {
-            pageModel.put("conceptAnswers", getConceptAnswers(Integer.parseInt(conceptId)));
+            pageModel.put("conceptAnswers", getConceptAnswers(conceptId));
         }
         List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
 
@@ -75,9 +75,14 @@ public class MarkPatientDeadPageController {
         }
     }
 
-    private Collection<ConceptAnswer> getConceptAnswers(Integer conceptId) {
+    private Collection<ConceptAnswer> getConceptAnswers(String conceptId) {
         Collection<ConceptAnswer> conceptAnswers = null;
-        Concept concept = Context.getConceptService().getConcept(conceptId);
+        Concept concept;
+        try {
+            concept = Context.getConceptService().getConcept(Integer.parseInt(conceptId));
+        } catch (NumberFormatException exception) {
+            concept = Context.getConceptService().getConcept(conceptId);
+        }
         if (concept != null) {
             conceptAnswers = concept.getAnswers();
         }
