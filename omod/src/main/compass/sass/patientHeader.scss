@@ -27,17 +27,17 @@ $green: #51A351;
 
     h1 {
       cursor: pointer;
+    }
 
-      span {
-         display: inline-block;
+    .labeled {
+      display: inline-block;
 
-         em {
-           font-size: 0.4em;
-           color: #888;
-           border-top: 1px solid #DDD;
-           display: block;
-         }
-       }
+      em {
+        font-size: 9pt;
+        color: #888;
+        border-top: 1px solid #DDD;
+        display: block;
+      }
     }
 
     .gender-age {
@@ -50,7 +50,11 @@ $green: #51A351;
   }
 
   .contact-info-label {
-    font-size: 0.8em;
+    font-size: 0.9em;
+    padding: 4px 8px;
+    border-radius: 2px;
+    color: $darkGray;
+    border: 1px solid lightgray;
 
     .icon-caret-up, .icon-caret-down {
       text-decoration: none;

@@ -8,7 +8,6 @@
     appContextModel.put("returnUrl", ui.thisUrl())
 %>
 
-
 <script type="text/javascript">
     var addMessage = "${ ui.message("coreapps.patient.identifier.add") }";
     jq(document).ready(function () {
@@ -93,7 +92,7 @@
             <div class="col-12">
                 <h1 class="my-1">
                     <% patientNames?.each { %>
-                        <span>
+                        <span class="labeled">
                             <span class="${ it.key.replace('.', '-') }">
                                 ${ ui.encodeHtmlContent(it.value) }
                             </span>
@@ -103,7 +102,7 @@
                 </h1>
             </div>
 
-            <div class="gender-age col-12 my-auto col-sm-auto order-sm-last">
+            <div class="gender-age col-12 my-auto col-sm-auto">
                 <span>${ui.message("coreapps.gender." + ui.encodeHtml(patient.gender))}&nbsp;</span>
                 <span>
                     <% if (patient.birthdate) { %>
@@ -119,15 +118,15 @@
                         ${ui.message("coreapps.unknownAge")}
                     <% } %>
                 </span>
-            </div>
-
-            <div class="col-12 col-sm-auto">
-                <span id="edit-patient-demographics" class="edit-info mr-3">
+                <span id="edit-patient-demographics" class="edit-info ml-1">
                     <small>
                         <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientDemographics", contextModel: appContextModel ]) %>
                     </small>
                 </span>
-                <a href="#" id="patient-header-contactInfo" class="contact-info-label">
+            </div>
+
+            <div class="col-12 mt-2 my-sm-auto col-sm-auto">
+                <a href="#" id="patient-header-contactInfo" class="contact-info-label mr-3">
                     <span id="coreapps-showContactInfo" class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
                     <i class="toggle-icon icon-caret-down small"></i>
                     <span class="hide">${ui.message("coreapps.patientHeader.hidecontactinfo")}</span>
@@ -143,7 +142,7 @@
                 </div>
             <% } %>
 
-            <div class="hidden col-12" id="contactInfoContent" class="contact-info-content">
+            <div class="hidden col-12 mt-2 ml-3" id="contactInfoContent">
                 ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient, contextModel: appContextModel ]) }
             </div>
         </div>
