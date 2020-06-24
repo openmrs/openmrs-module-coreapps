@@ -87,10 +87,10 @@
         </div>
     <% } %>
 
-    <div class="demographics col-12 col-sm-6 col-md-8">
+    <div class="demographics col-12 col-sm-7 col-md-8">
         <div class="row">
             <div class="col-12">
-                <h1 class="my-1">
+                <h1 class="mt-0 mb-2">
                     <% patientNames?.each { %>
                         <span class="labeled">
                             <span class="${ it.key.replace('.', '-') }">
@@ -102,7 +102,7 @@
                 </h1>
             </div>
 
-            <div class="gender-age col-12 my-auto col-sm-auto">
+            <div class="gender-age col-12 mt-auto mb-2 col-sm-auto">
                 <span>${ui.message("coreapps.gender." + ui.encodeHtml(patient.gender))}&nbsp;</span>
                 <span>
                     <% if (patient.birthdate) { %>
@@ -125,8 +125,8 @@
                 </span>
             </div>
 
-            <div class="col-12 mt-2 my-sm-auto col-sm-auto">
-                <a href="#" id="patient-header-contactInfo" class="contact-info-label mr-3">
+            <div class="col-12 mt-2 col-sm-auto mt-sm-0">
+                <a href="#" id="patient-header-contactInfo" class="contact-info-label">
                     <span id="coreapps-showContactInfo" class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
                     <i class="toggle-icon icon-caret-down small"></i>
                     <span class="hide">${ui.message("coreapps.patientHeader.hidecontactinfo")}</span>
@@ -148,7 +148,7 @@
         </div>
     </div>
 
-    <div class="identifiers mt-2 col-12 col-sm-6 col-md-4">
+    <div class="identifiers mt-2 col-12 col-sm-5 col-md-4">
         <div class="float-sm-right">
             <em>${ui.message("coreapps.patientHeader.patientId")}</em>
             <% patient.primaryIdentifiers.each { %>
