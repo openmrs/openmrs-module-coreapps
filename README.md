@@ -8,7 +8,14 @@ OpenMRS Core Apps Module
 
 Provides apps for performing the common tasks
 
-# Dashboard widgets development
+# Development
+
+As usual, you can just use `mvn openmrs-sdk:watch` for development.
+
+However, in order to see changes to `scss` files, you'll also need to run
+`mvn process-resources -Pwatch-sass`.
+
+## Dashboard Widgets
 
 The widgets are built as part of the module (`mvn clean install`) without having to install Node or NPM manually. Nevertheless, if you want to develop widgets installing Node is recommended so that you can iterate faster by building widgets and executing tests continuously.
 

@@ -17,7 +17,7 @@ function PatientSearchWidget(configuration){
         attributeHeaders = attributeHeaders.concat('<th>'+value+'</th>');
     });
     var tableId = 'patient-search-results-table';
-    var tableHtml = '<table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl}" id="'+tableId+'">'+
+    var tableHtml = '<table class="table table-sm" id="'+tableId+'">'+
                         '<thead>'+
                             '<tr>'+
                                 '<th>'+config.messages.identifierColHeader+'</th>'+
