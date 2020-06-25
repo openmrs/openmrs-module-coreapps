@@ -36,7 +36,7 @@ public class MarkPatientDeadPageController {
         pageModel.put("patient", patient);
         pageModel.put("patientId", patient.getId());
         pageModel.put("breadcrumbOverride", breadcrumbOverride);
-        if (conceptId != null && !conceptId.contains("[a-zA-Z]+")) {
+        if (conceptId != null) {
             pageModel.put("conceptAnswers", getConceptAnswers(conceptId));
         }
         List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
