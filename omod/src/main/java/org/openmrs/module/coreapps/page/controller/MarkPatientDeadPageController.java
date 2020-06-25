@@ -81,7 +81,7 @@ public class MarkPatientDeadPageController {
         try {
             concept = Context.getConceptService().getConcept(Integer.parseInt(conceptId));
         } catch (NumberFormatException exception) {
-            concept = Context.getConceptService().getConcept(conceptId);
+            concept = Context.getConceptService().getConceptByUuid(conceptId);
         }
         if (concept != null) {
             conceptAnswers = concept.getAnswers();
