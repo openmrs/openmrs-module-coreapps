@@ -88,8 +88,8 @@
     <% } %>
 
     <div class="demographics col-12 col-sm-7 col-md-8">
-        <div class="row">
-            <div class="col-12">
+        <div class="row align-items-center">
+            <div class="col-12 col-sm-auto">
                 <h1 class="mt-0 mb-2">
                     <% patientNames?.each { %>
                         <span class="labeled">
@@ -102,7 +102,7 @@
                 </h1>
             </div>
 
-            <div class="gender-age col-12 mt-auto mb-2 col-sm-auto">
+            <div class="gender-age col-auto">
                 <span>${ui.message("coreapps.gender." + ui.encodeHtml(patient.gender))}&nbsp;</span>
                 <span>
                     <% if (patient.birthdate) { %>
@@ -118,14 +118,12 @@
                         ${ui.message("coreapps.unknownAge")}
                     <% } %>
                 </span>
-                <span id="edit-patient-demographics" class="edit-info ml-1">
-                    <small>
-                        <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientDemographics", contextModel: appContextModel ]) %>
-                    </small>
+                <span id="edit-patient-demographics" class="edit-info ml-2">
+                    <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientDemographics", contextModel: appContextModel ]) %>
                 </span>
             </div>
 
-            <div class="col-12 mt-2 col-sm-8 mt-sm-n1 col-md-6">
+            <div class="col-6 mt-2 col-sm-8 col-md-6">
                 <a href="#" id="patient-header-contactInfo" class="contact-info-label">
                     <span id="coreapps-showContactInfo" class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
                     <i class="toggle-icon icon-caret-down small"></i>
