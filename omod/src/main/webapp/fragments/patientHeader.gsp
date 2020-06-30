@@ -125,7 +125,7 @@
                 </span>
             </div>
 
-            <div class="col-12 mt-2 col-sm-8 mt-sm-0 col-md-6">
+            <div class="col-12 mt-2 col-sm-8 mt-sm-n1 col-md-6">
                 <a href="#" id="patient-header-contactInfo" class="contact-info-label">
                     <span id="coreapps-showContactInfo" class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
                     <i class="toggle-icon icon-caret-down small"></i>
