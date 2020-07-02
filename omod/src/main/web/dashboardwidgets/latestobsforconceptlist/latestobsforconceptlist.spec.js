@@ -30,7 +30,7 @@ describe('LatestObsForConceptList', () => {
 		let bindings = {config: { maxAge: '2w', concepts: 'uuid-1,uuid-2', patientUuid: 'patientUuid' }};
 		let ctrl = $componentController('latestobsforconceptlist', {$scope}, bindings);
 
-		$httpBackend.expectGET('/ws/rest/v1/latestobs?concept=uuid-1,uuid-2&patient=patientUuid&v=full').respond({results: []});
+		$httpBackend.expectGET('/ws/rest/v1/latestobs?concept=uuid-1,uuid-2&nLatestObs=1&patient=patientUuid&v=full').respond({results: []});
 
 		ctrl.$onInit();
 		
@@ -41,7 +41,7 @@ describe('LatestObsForConceptList', () => {
 		let bindings = {config: { maxAge: '2w', concepts: 'uuid-1', patientUuid: 'patientUuid' }};
 		let ctrl = $componentController('latestobsforconceptlist', {$scope}, bindings);
 
-		$httpBackend.expectGET('/ws/rest/v1/latestobs?concept=uuid-1&patient=patientUuid&v=full').respond({results: []});
+		$httpBackend.expectGET('/ws/rest/v1/latestobs?concept=uuid-1&nLatestObs=1&patient=patientUuid&v=full').respond({results: []});
 
 		ctrl.$onInit();
 
