@@ -21,7 +21,7 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
      * @type {Function}
      */
     self.saveCondition = self.saveCondition || function () {
-        if($scope.condition.status == INACTIVE_STATUS && $scope.condition.onSetDate > $scope.condition.endDate){
+        if($scope.condition.status == INACTIVE_STATUS && Date.parse($scope.condition.onSetDate) > Date.parse($scope.condition.endDate)){
             emr.errorAlert("End Date can't be before Onset Date");
         }
         else{
@@ -78,13 +78,19 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
 
     self.getSelectedDate = self.getSelectedDate || function () {
             var datePicker = angular.element(document.getElementsByName('conditionStartDate'))[0];
-            return datePicker.value;
+            return formatDate(datePicker.value);          
         }
 
     self.getEndDate = self.getEndDate || function() {
             var endDatePicker = angular.element(document.getElementsByName('conditionEndDate'))[0];
-            return endDatePicker.value;
+            return formatDate(endDatePicker.value);   
         } 
+
+    function formatDate(receivedDate){
+            var formattedDate = receivedDate.replace(/-/g,'/');
+            var dateWithNoTime = new Date(formattedDate);
+            return dateWithNoTime.toUTCString();
+        }
 
     // init page
     self.initCondition();
