@@ -90,7 +90,7 @@
     <div class="demographics col-12 col-sm-7 col-md-8">
         <div class="row align-items-center">
             <div class="col-12 col-sm-auto">
-                <h1 class="mt-0 mb-2">
+                <h1 class="mt-0 mb-2 name">
                     <% patientNames?.each { %>
                         <span class="labeled">
                             <span class="${ it.key.replace('.', '-') }">
@@ -107,13 +107,13 @@
                 <span>
                     <% if (patient.birthdate) { %>
                     <% if (patient.age > 0) { %>
-                        ${ui.message("coreapps.ageYears", patient.age)} 
+                        ${ui.message("coreapps.ageYears", patient.age)}
                     <% } else if (patient.ageInMonths > 0) { %>
                         ${ui.message("coreapps.ageMonths", patient.ageInMonths)}
                     <% } else { %>
                         ${ui.message("coreapps.ageDays", patient.ageInDays)}
-                    <% } %>   
-                    (<% if (patient.birthdateEstimated) { %>~<% } %>${ ui.formatDatePretty(patient.birthdate) })          
+                    <% } %>
+                    (<% if (patient.birthdateEstimated) { %>~<% } %>${ ui.formatDatePretty(patient.birthdate) })
                     <% } else { %>
                         ${ui.message("coreapps.unknownAge")}
                     <% } %>
@@ -189,7 +189,7 @@
                         <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
                         <span class="add-id">
                             <a class="editPatientIdentifier"
-                                data-patient-identifier-id="" 
+                                data-patient-identifier-id=""
                                 data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
                                 data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}"
                                 data-patient-identifier-value=""
