@@ -18,7 +18,7 @@ export default class LatestObsForConceptListController {
         this.openmrsRest.list('latestobs', {
             patient: this.config.patientUuid,
             v: 'full',
-            concept: this.config.concepts,
+            concept: this.config.concepts.split(',').map(c => c.trim()).join(','),
             nLatestObs: n_LatestObs
         }).then((resp) => {
             // Process the results from the list of concepts as not all of them may have data
