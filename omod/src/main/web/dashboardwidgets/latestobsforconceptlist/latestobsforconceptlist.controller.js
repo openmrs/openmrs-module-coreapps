@@ -6,33 +6,19 @@ export default class LatestObsForConceptListController {
     }
 
     $onInit() {
-        this.maxConceptCount = 10;
         this.maxAgeInDays = undefined;
         this.obs = [];
-
         this.openmrsRest.setBaseAppPath("/coreapps");
-
         this.maxAgeInDays = this.widgetsCommons.maxAgeToDays(this.config.maxAge);
 
-        // Remove whitespaces
-        let concept_list = this.config.concepts.replace(/\s/g,'');
         // Number of latest observations
         let n_LatestObs = !angular.isUndefined(this.config.nLatestObs) && this.config.nLatestObs != null ? this.config.nLatestObs : 1;
-        // remove all concepts over the maximum number of concepts
-        let concepts = this.config.concepts.split(",");
-        // from the number of elements specified by maxConceptCount remove the remaining elements
-        let elements_to_remove = concepts.length - this.maxConceptCount;
-        if (elements_to_remove > 0) {
-            concepts.splice(this.maxConceptCount, elements_to_remove);
-        }
-
-        concept_list = concepts.join(",");
 
         // Fetch last obs or obsGroup for the list of concepts
         this.openmrsRest.list('latestobs', {
             patient: this.config.patientUuid,
             v: 'full',
-            concept: concept_list,
+            concept: this.config.concepts,
             nLatestObs: n_LatestObs
         }).then((resp) => {
             // Process the results from the list of concepts as not all of them may have data
