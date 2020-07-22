@@ -6,56 +6,38 @@ export default class LatestObsForConceptListController {
     }
 
     $onInit() {
-        this.maxAgeInDays = undefined;
-        this.obs = [];
         this.openmrsRest.setBaseAppPath("/coreapps");
         this.maxAgeInDays = this.widgetsCommons.maxAgeToDays(this.config.maxAge);
-
-        // Number of latest observations
-        let n_LatestObs = !angular.isUndefined(this.config.nLatestObs) && this.config.nLatestObs != null ? this.config.nLatestObs : 1;
 
         // Fetch last obs or obsGroup for the list of concepts
         this.openmrsRest.list('latestobs', {
             patient: this.config.patientUuid,
-            v: 'full',
+            v: 'custom:(' +
+                'concept:(uuid,display,datatype:(uuid),names:(name,locale,localePreferred,voided,conceptNameType)),' +
+                'value:(uuid,display,names:(name,locale,localePreferred,voided,conceptNameType)),' +
+                'groupMembers:(concept:(display,names:(name,locale,localePreferred,voided,conceptNameType))))',
             concept: this.config.concepts.split(',').map(c => c.trim()).join(','),
-            nLatestObs: n_LatestObs
+            nLatestObs: this.config.nLatestObs || 1
         }).then((resp) => {
             // Process the results from the list of concepts as not all of them may have data
-            for (let i = 0; i < resp.results.length; i++) {
-                let obs = resp.results[i];
+            this.obs = resp.results.filter(
                 // Don't add obs older than maxAge
-                if (angular.isUndefined(this.maxAgeInDays) || this.widgetsCommons.dateToDaysAgo(obs.obsDatetime) <= this.maxAgeInDays) {
-                    // Add last obs for concept to list
-                	
-                	if (angular.isDefined(obs.groupMembers) && obs.groupMembers != null) {
-                        // If obs is obs group
-                        let members = [];
-                        angular.forEach(obs.groupMembers, (member) => {
-                        	let prefix;
-                            let value;                            
-                        	
-                        	// Formatting the obs with concept prefix
-                        	if (angular.isDefined(this.config.obsGroupLabels) && this.config.obsGroupLabels == "FSN") {
-                        		prefix = "(" + member.concept.display + ") ";
-                        	} else if (angular.isDefined(this.config.obsGroupLabels) && this.config.obsGroupLabels == "shortName") {
-                        		prefix = "(" + member.concept.name.display + ") ";
-                        	} else {
-                                // for default  or obsGroupLabels = none option
-                                prefix = "";
-                        	}
-                            value = this.getObsValue(member);
-                            members.push({"prefix": prefix, "value": value});
-                        });
-                        obs.groupMembers = members;
-
-                    } else {
-                        obs.value = this.getObsValue(obs);
-                    }
-                    this.obs.push(obs);
-                    
+                obs => angular.isUndefined(this.maxAgeInDays) || this.widgetsCommons.dateToDaysAgo(obs.obsDatetime) <= this.maxAgeInDays
+            ).map(inputObs => {
+                const displayObs = {};
+                displayObs.conceptName = this.getConceptName(inputObs.concept, this.config.conceptNameType);
+                if (inputObs.groupMembers) { // If obs is obs group
+                    displayObs.groupMembers = inputObs.groupMembers.map(member => {
+                        const prefix = ["FSN", "shortName", "preferred"].includes(this.config.obsGroupLabels) ?
+                            "(" + this.getConceptName(member.concept, this.config.obsGroupLabels) + ") " : "";
+                        const value = this.getObsValue(member);
+                        return { "prefix": prefix, "value": value };
+                    });
+                } else {
+                    displayObs.value = this.getObsValue(inputObs);
                 }
-            }
+                return displayObs;
+            });
         });
     }
 
@@ -64,13 +46,29 @@ export default class LatestObsForConceptListController {
             '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
             '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].indexOf(obs.concept.datatype.uuid) > -1) {
             //If value is date, time or datetime
-            var date = this.$filter('date')(new Date(obs.value), this.config.dateFormat);
-            return date;
+            return this.$filter('date')(new Date(obs.value), this.config.dateFormat);
         } else if (angular.isDefined(obs.value.display)) {
             //If value is a concept
-             return obs.value.display;
+             return this.getConceptName(obs.value, this.config.conceptNameType);
         } else {
             return obs.value;
         }
+    }
+
+    getConceptName(concept, nameType) {
+        const names = concept.names.filter(n => !n.voided && n.locale === this.config.locale);
+        const fsn = names.filter(n => n.conceptNameType === "FULLY_SPECIFIED")[0];
+        const short = names.filter(n => n.conceptNameType === "SHORT")[0];
+        const shortEn = concept.names.filter(n => !n.voided && n.locale === 'en' && n.conceptNameType === "SHORT")[0];
+        const preferred = names.filter(n => n.localePreferred)[0];
+        let resultName;
+        if (nameType === "FSN") {
+            resultName = fsn || preferred;
+        } else if (nameType === "shortName") {
+            resultName = short || shortEn;
+        } else if (nameType === "preferred") {
+            resultName = preferred;
+        }
+        return resultName ? resultName.name : concept.display;
     }
 }
