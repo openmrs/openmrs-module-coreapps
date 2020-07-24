@@ -2,7 +2,7 @@
     <li ng-repeat="obs in $ctrl.obs">
         <div style="display: block; overflow: hidden; padding-right: 5px; padding-bottom: 2px">
             <span style="float: left">
-                {{obs.concept.name.display}}:&nbsp;
+                {{obs.conceptName}}:&nbsp;
             </span>
             <div ng-if="obs.groupMembers != null && obs.groupMembers != undefined && obs.groupMembers.length > 0">
                 <span ng-repeat="member in obs.groupMembers" style="float: left">
