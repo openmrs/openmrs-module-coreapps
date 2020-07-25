@@ -25,12 +25,12 @@ export default class LatestObsForConceptListController {
                 // Don't add obs older than maxAge
                 obs => angular.isUndefined(this.maxAgeInDays) || this.widgetsCommons.dateToDaysAgo(obs.obsDatetime) <= this.maxAgeInDays
             ).map(inputObs => {
-                const displayObs = { obsDatetime: inputObs.obsDatetime };
-                displayObs.conceptName = this.getConceptName(inputObs.concept, this.config.conceptNameType);
+                const displayObs = {};
+                displayObs.conceptName = this.widgetsCommons.getConceptName(inputObs.concept, this.config.conceptNameType, this.config.locale);
                 if (inputObs.groupMembers) { // If obs is obs group
                     displayObs.groupMembers = inputObs.groupMembers.map(member => {
                         const prefix = ["FSN", "shortName", "preferred"].includes(this.config.obsGroupLabels) ?
-                            "(" + this.getConceptName(member.concept, this.config.obsGroupLabels) + ") " : "";
+                            "(" + this.widgetsCommons.getConceptName(member.concept, this.config.obsGroupLabels, this.config.locale) + ") " : "";
                         const value = this.getObsValue(member);
                         return { "prefix": prefix, "value": value };
                     });
@@ -45,31 +45,14 @@ export default class LatestObsForConceptListController {
     getObsValue(obs) {
         if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
             '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
-            '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].indexOf(obs.concept.datatype.uuid) > -1) {
-            //If value is date, time or datetime
+            '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].includes(obs.concept.datatype.uuid)) {
+            // If value is date, time or datetime
             return this.$filter('date')(new Date(obs.value), this.config.dateFormat);
         } else if (angular.isDefined(obs.value.display)) {
-            //If value is a concept
-             return this.getConceptName(obs.value, this.config.conceptNameType);
+            // If value is a concept
+             return this.widgetsCommons.getConceptName(obs.value, this.config.conceptNameType, this.config.locale);
         } else {
             return obs.value;
         }
-    }
-
-    getConceptName(concept, nameType) {
-        const names = concept.names.filter(n => !n.voided && n.locale === this.config.locale);
-        const fsn = names.filter(n => n.conceptNameType === "FULLY_SPECIFIED")[0];
-        const short = names.filter(n => n.conceptNameType === "SHORT")[0];
-        const shortEn = concept.names.filter(n => !n.voided && n.locale === 'en' && n.conceptNameType === "SHORT")[0];
-        const preferred = names.filter(n => n.localePreferred)[0];
-        let resultName;
-        if (nameType === "FSN") {
-            resultName = fsn || preferred;
-        } else if (nameType === "shortName") {
-            resultName = short || shortEn;
-        } else if (nameType === "preferred") {
-            resultName = preferred;
-        }
-        return resultName ? resultName.name : concept.display;
     }
 }
