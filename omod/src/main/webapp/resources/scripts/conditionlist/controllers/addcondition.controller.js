@@ -9,7 +9,8 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
 
     $scope.patientUuid = null;
     $scope.condition = null;
-    const INACTIVE_STATUS = 'INACTIVE';  
+    const INACTIVE_STATUS = 'INACTIVE';
+    const conditionNonCodedUuid = $("#conditionNonCodedUuid").data('noncodeduuid');
 
     // this is required inorder to initialize the Restangular service
     RestfulService.setBaseUrl('/' + OPENMRS_CONTEXT_PATH + '/ws/rest/emrapi');
@@ -24,18 +25,18 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
         if($scope.condition.status == INACTIVE_STATUS && $scope.condition.onSetDate > $scope.condition.endDate){
             emr.errorAlert("End Date can't be before Onset Date");
         }
-        else{
             var conditions = [];
             conditions.push($scope.condition);
-            RestfulService.post('condition', conditions, function (data) {
-                //emr.successAlert("conditionlist.updateCondition.success"); Messages not being resolved
-                emr.successAlert("Condition added successfully")
-                window.location = '/' + OPENMRS_CONTEXT_PATH + '/coreapps/conditionlist/manageConditions.page?patientId=' + $scope.patientUuid + '&';
-            }, function (error) {
-                //emr.errorAlert("conditionlist.updateCondition.error");
+            if (conditions[0].concept.uuid !== null) {
+                RestfulService.post('condition', conditions, function (data) {
+                    emr.successAlert("Condition added successfully")
+                    window.location = '/' + OPENMRS_CONTEXT_PATH + '/coreapps/conditionlist/manageConditions.page?patientId=' + $scope.patientUuid + '&';
+                }, function (error) {
+                    emr.errorAlert("Error Saving condition");
+                });
+            } else {
                 emr.errorAlert("Error Saving condition");
-            });
-        }
+            }
     }
 
     self.initCondition = self.initCondition || function () {
@@ -45,17 +46,24 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
         }
 
     self.validateCondition = self.validateCondition || function () {
-        var concept ;
-        if($scope.concept.concept.uuid) {
+        var concept;
+        if($scope.concept.concept) {
             concept = $scope.concept.concept;
         } else {
             concept = $scope.condition.concept;
+            if (conditionNonCodedUuid !== null && $scope.concept.word !== undefined) {
+                concept.uuid = conditionNonCodedUuid;
+            } else {
+                concept.uuid = null;
+            }
         }
 
-        if (concept !== null) {
-            $scope.condition.concept = new ConceptModel(concept.uuid, concept.display);
-        } else {
-            $scope.condition.conditionNonCoded = "NON_CODED:" + $scope.concept.word;
+        if (concept.uuid !== null) {
+            if (concept.uuid === conditionNonCodedUuid) {
+                $scope.condition.conditionNonCoded = $scope.concept.word;
+            } else {
+                $scope.condition.concept = new ConceptModel(concept.uuid, concept.display);
+            }
         }
 
         $scope.condition.onSetDate = self.getSelectedDate();

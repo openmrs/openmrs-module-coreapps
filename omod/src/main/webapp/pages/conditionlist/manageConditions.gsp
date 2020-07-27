@@ -78,7 +78,8 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                     <tbody ng-repeat="conditionHistory in conditionHistoryList">
                     <tr class="clickable-tr" ng-init="condition = conditionHistory.conditions[conditionHistory.conditions.length-1]"
                         ng-show="condition.status===tab && condition.voided === false">
-                        <td>{{condition.concept.name}}</td>
+                        <td ng-if="condition.conditionNonCoded !== '' ">{{condition.conditionNonCoded}}</td>
+                        <td ng-if="condition.conditionNonCoded === '' ">{{condition.concept.name}}</td>
                         <td>{{formatDate(condition.onSetDate)}}</td>
                         <td ng-if="condition.status==='INACTIVE' && condition.voided===false" ng-style="strikeThrough(condition.voided)">{{formatDate(condition.endDate)}}</td>
                         <td ng-if="'${hasModifyConditionsPrivilege}'">

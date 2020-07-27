@@ -58,8 +58,8 @@
                         formFieldName: "conditionStartDate",
                         label        : "",
                         useTime      : false,
-                        defaultDate: new Date(),
-                        endDate    : new Date(),
+                        defaultDate  : new Date(),
+                        endDate      : new Date()
                 ])}
             </li>
             &nbsp; &nbsp;
@@ -69,7 +69,7 @@
                         formFieldName: "conditionEndDate",
                         label        : "",
                         useTime      : false,
-                        endDate    : new Date(),
+                        endDate      : new Date()
                 ])}
             </li>
             <br/> <br/>
@@ -86,7 +86,6 @@
 
         </ul>
     </div>
-
     <br/>
 
     <div id="actions">
@@ -97,4 +96,5 @@
             ${ ui.message("coreapps.cancel") }
         </button>
     </div>
+    <div id="conditionNonCodedUuid" data-nonCodedUuid="${conditionNonCodedUuid}" hidden/>
 </div>
