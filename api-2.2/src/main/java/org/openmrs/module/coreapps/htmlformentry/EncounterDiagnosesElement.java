@@ -70,7 +70,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private String diagnosisConceptSources;
 
     private String preferredCodingSource;
-
+    
     private String diagnosisConceptClasses;
 
     private EmrApiProperties emrApiProperties;
@@ -112,7 +112,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     @Override
     public String generateHtml(FormEntryContext context) {
         List<Diagnosis> existingDiagnoses = convert(new ArrayList<org.openmrs.Diagnosis>(getExistingDiagnoses(context)));
-
+        
         if (FormEntryContext.Mode.VIEW == context.getMode()) {
             StringBuilder sb = new StringBuilder();
             if (existingDiagnoses != null) {
@@ -120,7 +120,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
             	if (preferredCodingSource != null) {
             		ConceptSource preferredSource = Context.getConceptService().getConceptSourceByName(preferredCodingSource);
             		conceptSourcesForDiagnosisSearch = Arrays.asList(preferredSource);
-            	}
+            	} 
             	else {
             		conceptSourcesForDiagnosisSearch = emrApiProperties.getConceptSourcesForDiagnosisSearch();
             	}
@@ -151,7 +151,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
                 // Parse '0' to config attribute if specified such that null value can be used during the search in 'DiagnosesFragmentController' class  
                 fragmentConfig.put("diagnosisSets", "0".equals(diagnosisSets) ? "0" : validateAndFormat(diagnosisSets));
-
+                
                 fragmentConfig.put("preferredCodingSource", preferredCodingSource);
                 fragmentConfig.put("diagnosisConceptSources", StringUtils.deleteWhitespace(diagnosisConceptSources));
                 fragmentConfig.put("diagnosisConceptClasses", StringUtils.deleteWhitespace(diagnosisConceptClasses));
@@ -182,7 +182,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
             }
         }
     }
-
+    
     /**
      * This method receives a comma-separated list of diagnosis sets 'identifiers'
      * and returns as comma-separated list of their uuids.
@@ -280,21 +280,21 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     @Override
     public void handleSubmission(FormEntrySession formEntrySession, HttpServletRequest request) {
-    	// Register this as CustomFormSubmissionAction handler, to be used at the post submission
+    	// Register this as CustomFormSubmissionAction handler, to be used at the post submission 
     	// because of https://issues.openmrs.org/browse/RA-1705
     	// refer to EncounterDiagnosesElement#applyAction(FormEntrySession formEntrySession)
     	formEntrySession.getSubmissionActions().addCustomFormSubmissionAction(this);
     }
-
-
+    
+    
     /**
      * Since 1.27.0
-     *
+     * 
      * @param formEntrySession provides the saved encounter and submitted parameters details
      */
     @Override
 	public void applyAction(FormEntrySession formEntrySession) {
-
+    	
     	HttpServletRequest request = formEntrySession.getSubmissionController().getLastSubmission();
     	try {
             String jsonList = request.getParameter("encounterDiagnoses");
@@ -371,7 +371,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     /**
      * Gets existing Diagnoses within the current Encounter
-     *
+     * 
      * @param context
      * @return
      */
@@ -389,7 +389,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 return nonVoidedDiagnoses;
             }
         }
-
+        
         return new HashSet<org.openmrs.Diagnosis>();
     }
 
@@ -443,7 +443,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     public String getPreferredCodingSource() {
         return preferredCodingSource;
     }
-
+    
     public void setDiagnosisConceptClasses(String diagnosisConceptClasses) {
         this.diagnosisConceptClasses = diagnosisConceptClasses;
     }
