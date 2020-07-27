@@ -48,11 +48,11 @@ export default class LatestObsForConceptListController {
             '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].includes(obs.concept.datatype.uuid)) {
             // If value is date, time or datetime
             return this.$filter('date')(new Date(obs.value), this.config.dateFormat);
-        } else if (angular.isDefined(obs.value.display)) {
+        } else if (obs.value.concept) {
             // If value is a concept
              return this.widgetsCommons.getConceptName(obs.value, this.config.conceptNameType, this.config.locale);
         } else {
-            return obs.value;
+            return obs.value.display || obs.value;
         }
     }
 }

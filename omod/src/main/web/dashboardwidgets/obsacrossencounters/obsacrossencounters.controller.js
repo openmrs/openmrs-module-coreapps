@@ -85,11 +85,11 @@ export default class ObsAcrossEncountersController {
         '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].includes(obs.concept.datatype.uuid)) {
         // If value is date, time or datetime
         return this.$filter('date')(new Date(obs.value), this.config.dateFormat);
-    } else if (angular.isDefined(obs.value.display)) {
+    } else if (obs.value.concept) {
         // If value is a concept
         return this.config.useConceptNameForValue ? obs.value.concept.display : obs.value.display
     } else {
-        return obs.value;
+        return obs.value.display || obs.value;
     }
   }
 
