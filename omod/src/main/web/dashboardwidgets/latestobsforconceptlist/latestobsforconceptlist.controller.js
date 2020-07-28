@@ -43,14 +43,10 @@ export default class LatestObsForConceptListController {
     }
 
     getObsValue(obs) {
-        if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
-            '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
-            '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].includes(obs.concept.datatype.uuid)) {
-            // If value is date, time or datetime
+        if (this.widgetsCommons.hasDatatypeDateOrSimilar(obs.concept)) {
             return this.$filter('date')(new Date(obs.value), this.config.dateFormat);
-        } else if (obs.value.concept) {
-            // If value is a concept
-             return this.widgetsCommons.getConceptName(obs.value, this.config.conceptNameType, this.config.locale);
+        } else if (this.widgetsCommons.hasDatatypeCoded(obs.concept)) {
+            return this.widgetsCommons.getConceptName(obs.value, this.config.conceptNameType, this.config.locale);
         } else {
             return obs.value.display || obs.value;
         }

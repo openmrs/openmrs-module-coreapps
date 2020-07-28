@@ -93,6 +93,7 @@ export default class WidgetsCommons {
      * 
      * @param {object} concept Must have rep including `display,names:(voided,locale,conceptNameType,localePreferred,name)`
      * @param {string} nameType One of "FSN", "shortName", "preferred"
+     * @param {string} locale The preferred locale
      */
     getConceptName(concept, nameType, locale) {
         const names = concept.names.filter(n => !n.voided && n.locale === locale);
@@ -110,4 +111,19 @@ export default class WidgetsCommons {
         }
         return resultName ? resultName.name : concept.display;
     }
+
+    hasDatatypeDateOrSimilar(concept) {
+        return ['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
+            '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
+            '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].includes(concept.datatype.uuid)
+    }
+
+    hasDatatypeCoded(concept) {
+        return concept.datatype.uuid === "8d4a48b6-c2cc-11de-8d13-0010c6dffd0f";
+    }
+
+    isDrug(obj) {
+        return !!obj.concept
+    }
+
 }
