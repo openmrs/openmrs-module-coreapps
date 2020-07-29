@@ -123,7 +123,7 @@ export default class WidgetsCommons {
     }
 
     isDrug(obj) {
-        return !!obj.concept
+        return Boolean(obj.concept);
     }
 
 }

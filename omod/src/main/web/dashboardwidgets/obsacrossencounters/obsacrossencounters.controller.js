@@ -128,26 +128,26 @@ export default class ObsAcrossEncountersController {
   }
 
   /**
-   * Iterates through all obs, and for all value coded,
-   * replace the default obs.value.display with
-   * the value display of the appropriate shortName
+   * Sets all obs coded concept values and drug value concepts to use the short name
    * @param encounters
    */
   updateWithConceptShortNames(encounters) {
     for (let encounter of encounters) {
       for (let obs of encounter.obs) {
-        // if the obs value is coded then we try to look for the short names of the coded answers
-        // some obs.value nodes contain the concept property that points to the concept
-        // and other coded obs(e.g. Drug Frequency) do not contain a child concept property
-        const conceptUuid = obs.value.concept ? obs.value.concept.uuid : obs.value.uuid;
-        if (conceptUuid) {
-          this.openmrsRest.get("concept/" + conceptUuid, {
-            v: this.CONCEPT_CUSTOM_REP
-          }).then((concept) => {
-            obs.value.display = this.widgetsCommons.getConceptName(concept, "shortName", this.sessionLocale);
-          }).catch(err => console.error(`failed to retrieve concept ${conceptUuid}, ${err}`));
+        if (this.widgetsCommons.isDrug(obs.value)) {
+          this.updateWithShortName(obs.value.concept);
+        } else if (this.widgetsCommons.hasDatatypeCoded(obs.concept)) {
+          this.updateWithShortName(obs.value);
         }
       }
     }
+  }
+
+  updateWithShortName(concept) {
+    this.openmrsRest.get("concept/" + concept.uuid, {
+      v: this.CONCEPT_CUSTOM_REP
+    }).then((concept) => {
+      concept.display = this.widgetsCommons.getConceptName(concept, "shortName", this.sessionLocale);
+    }).catch(err => console.error(`failed to retrieve concept ${conceptUuid}, ${err}`));
   }
 }
