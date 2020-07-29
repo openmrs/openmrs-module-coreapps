@@ -42,11 +42,11 @@
     </thead>
     <tbody>
         <tr ng-repeat="encounter in $ctrl.simpleEncs| orderBy: '-encounterDatetime'">
-            <th ng-if="$ctrl.config.showEncounterTypeName">{{encounter.encounterType | translate }}</th>
-            <th>{{encounter.encounterDatetime | date: $ctrl.config.dateFormat}}</th>
-            <th ng-repeat="(key,value) in $ctrl.conceptsMap" ng-class="($ctrl.isRetired(encounter.obs[key])) ? 'retiredConcept' : ''">
-                {{ encounter.obs[key] ? $ctrl.displayObs(encounter.obs[key]) : '' }}
-            </th>
+            <td ng-if="$ctrl.config.showEncounterTypeName">{{encounter.encounterType | translate }}</td>
+            <td>{{encounter.encounterDatetime | date: $ctrl.config.dateFormat}}</td>
+            <td ng-repeat="(key,value) in $ctrl.conceptsMap" ng-class="($ctrl.isRetired(encounter.obs[key])) ? 'retiredConcept' : ''">
+                {{ encounter.obs[key] ? $ctrl.getObsValue(encounter.obs[key]) : '' }}
+            </td>
         </tr>
     </tbody>
 </table>
