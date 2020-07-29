@@ -13,6 +13,7 @@ export default class LatestObsForConceptListController {
         this.openmrsRest.list('latestobs', {
             patient: this.config.patientUuid,
             v: 'custom:(' +
+                'obsDatetime,' +
                 'concept:(uuid,display,datatype:(uuid),names:(name,locale,localePreferred,voided,conceptNameType)),' +
                 'value:(uuid,display,names:(name,locale,localePreferred,voided,conceptNameType)),' +
                 'groupMembers:(concept:(display,names:(name,locale,localePreferred,voided,conceptNameType))))',
@@ -24,7 +25,7 @@ export default class LatestObsForConceptListController {
                 // Don't add obs older than maxAge
                 obs => angular.isUndefined(this.maxAgeInDays) || this.widgetsCommons.dateToDaysAgo(obs.obsDatetime) <= this.maxAgeInDays
             ).map(inputObs => {
-                const displayObs = {};
+                const displayObs = { obsDatetime: inputObs.obsDatetime };
                 displayObs.conceptName = this.getConceptName(inputObs.concept, this.config.conceptNameType);
                 if (inputObs.groupMembers) { // If obs is obs group
                     displayObs.groupMembers = inputObs.groupMembers.map(member => {
