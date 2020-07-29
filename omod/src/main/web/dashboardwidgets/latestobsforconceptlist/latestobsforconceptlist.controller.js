@@ -25,7 +25,7 @@ export default class LatestObsForConceptListController {
                 // Don't add obs older than maxAge
                 obs => angular.isUndefined(this.maxAgeInDays) || this.widgetsCommons.dateToDaysAgo(obs.obsDatetime) <= this.maxAgeInDays
             ).map(inputObs => {
-                const displayObs = {};
+                const displayObs = { obsDatetime: inputObs.obsDatetime };
                 displayObs.conceptName = this.widgetsCommons.getConceptName(inputObs.concept, this.config.conceptNameType, this.config.locale);
                 if (inputObs.groupMembers) { // If obs is obs group
                     displayObs.groupMembers = inputObs.groupMembers.map(member => {
