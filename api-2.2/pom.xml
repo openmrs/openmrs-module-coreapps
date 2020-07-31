@@ -15,7 +15,7 @@
 		<metadatasharingVersion>1.2.2</metadatasharingVersion>
 		<emrapiVersion>1.27.0</emrapiVersion>
 		<reportingVersion>0.10.3</reportingVersion>
-		<htmlformentryVersion>3.8.0</htmlformentryVersion>
+		<htmlformentryVersion>3.10.0</htmlformentryVersion>
 		
 	</properties>
 	<dependencies>
@@ -111,6 +111,13 @@
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>htmlformentry-api-2.0</artifactId>
+				<version>${htmlformentryVersion}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>htmlformentry-api-2.2</artifactId>
 				<version>${htmlformentryVersion}</version>
 				<scope>test</scope>
 			</dependency>
@@ -231,6 +238,17 @@
 		<!-- End OpenMRS modules -->
 	</dependencies>
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<target>1.8</target>
+					<source>1.8</source>
+	                <encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
