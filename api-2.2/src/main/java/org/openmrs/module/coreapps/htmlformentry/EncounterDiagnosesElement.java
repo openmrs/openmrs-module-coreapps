@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -380,17 +381,10 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         if (mode == FormEntryContext.Mode.EDIT || mode == FormEntryContext.Mode.VIEW) {
             Encounter existingEncounter = context.getExistingEncounter();
             if (existingEncounter != null) {
-                Set<org.openmrs.Diagnosis> nonVoidedDiagnoses = new HashSet<org.openmrs.Diagnosis>();
-                for (org.openmrs.Diagnosis diagnosis : existingEncounter.getDiagnoses()) {
-                    if (!diagnosis.getVoided()) {
-                        nonVoidedDiagnoses.add(diagnosis);
-                    }
-                }
-                return nonVoidedDiagnoses;
+                return existingEncounter.getDiagnoses().stream().filter(d -> !d.getVoided()).collect(Collectors.toSet());
             }
         }
-        
-        return new HashSet<org.openmrs.Diagnosis>();
+        return new HashSet<>();
     }
 
     private List<Diagnosis> getPriorDiagnoses(FormEntryContext context, DispositionType dispositionType) {

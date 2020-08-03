@@ -71,8 +71,7 @@ public class EncounterDiagnosesElementTest {
 		Diagnosis voidedEpilepsyDiagnosis = new Diagnosis(existingEncounter, new CodedOrFreeText(null, null, "Epilepsy"), null, null, null);
 		voidedEpilepsyDiagnosis.setVoided(true);
 		when(context.getMode()).thenReturn(Mode.EDIT);
-		when(existingEncounter.getDiagnoses()).thenReturn(
-				new LinkedHashSet<Diagnosis>(Arrays.asList(asthmaDiagnosis, malariaDiagnosis, voidedEpilepsyDiagnosis)));
+		when(existingEncounter.getDiagnoses()).thenReturn(new LinkedHashSet<>(Arrays.asList(asthmaDiagnosis, malariaDiagnosis, voidedEpilepsyDiagnosis)));
 
 		// Replay
 		EncounterDiagnosesElement element = new EncounterDiagnosesElement();
@@ -80,24 +79,9 @@ public class EncounterDiagnosesElementTest {
 
 		// Verify
 		Assert.assertEquals(2, existingDiagnoses.size());
-
-		int asthmaDiagnosisCount = 0;
-		int malariaDiagnosisCount = 0;
-		int voidedEpilepsyDiagnosisCount = 0;
-		for (Diagnosis diagnosis : existingDiagnoses) {
-			if ("Asthma".equals(diagnosis.getDiagnosis().getNonCoded())) {
-				asthmaDiagnosisCount++;
-			}
-			if ("Malaria".equals(diagnosis.getDiagnosis().getNonCoded())) {
-				malariaDiagnosisCount++;
-			}
-			if ("Epilepsy".equals(diagnosis.getDiagnosis().getNonCoded())) {
-				voidedEpilepsyDiagnosisCount++;
-			}
-		}
-		Assert.assertEquals(asthmaDiagnosisCount, 1);
-		Assert.assertEquals(malariaDiagnosisCount, 1);
-		Assert.assertEquals(voidedEpilepsyDiagnosisCount, 0);
+		Assert.assertEquals(existingDiagnoses.stream().filter(d -> "Asthma".equals(d.getDiagnosis().getNonCoded())  ).count(), 1);
+		Assert.assertEquals(existingDiagnoses.stream().filter(d -> "Malaria".equals(d.getDiagnosis().getNonCoded())  ).count(), 1);
+		Assert.assertEquals(existingDiagnoses.stream().filter(d -> "Epilepsy".equals(d.getDiagnosis().getNonCoded())  ).count(), 0);
 	}
 	
 	@Test
