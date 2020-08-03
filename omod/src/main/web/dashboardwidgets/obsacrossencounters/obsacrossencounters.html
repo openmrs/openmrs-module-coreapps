@@ -50,4 +50,6 @@
         </tr>
     </tbody>
 </table>
-<p ng-if="$ctrl.simpleEncs.length == 0">None</p>
+<p ng-show="$ctrl.simpleEncs.length == 0">
+ {{ 'coreapps.none.inLastTime' | translate }}  {{$ctrl.maxAgeInDays}}  {{ 'coreapps.days' | translate }}
+</p>
