@@ -54,6 +54,7 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.parser.ParseEncounterToJson;
+import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
@@ -143,7 +144,7 @@ public class VisitDetailsFragmentControllerTest {
       UiUtils uiUtils = new TestUiUtils(administrationService);
       VisitDetailsFragmentController controller = new VisitDetailsFragmentController();
 
-        SimpleObject response = controller.getVisitDetails(mock(EmrApiProperties.class), coreAppsProperties, appFrameworkService, encounterService, visit, authenticatedUser, null, null, uiUtils, sessionContext);
+        SimpleObject response = controller.getVisitDetails(mock(EmrApiProperties.class), coreAppsProperties, appFrameworkService, encounterService, visit, authenticatedUser, null, null, uiUtils, mock(VisitTypeHelper.class), sessionContext);
         List<SimpleObject> actualEncounters = (List<SimpleObject>) response.get("encounters");
         SimpleObject actualEncounter = actualEncounters.get(0);
 

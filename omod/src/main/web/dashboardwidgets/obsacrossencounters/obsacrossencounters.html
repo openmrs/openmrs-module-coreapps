@@ -1,16 +1,52 @@
-<table ng-if="$ctrl.simpleEncs.length != 0">
+<style>
+    #obsTable {
+        table-layout: auto;
+        display: block;
+        overflow-x: auto;
+    }
+
+    .column-header {
+        text-align: center;
+        font-size: small;
+        word-wrap: break-word;
+    }
+
+    .retiredConcept {
+        color: gray;
+        font-style: italic;
+    }
+
+    ::-webkit-scrollbar {
+        -webkit-appearance: none;
+        height: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, .5);
+        -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+    }
+    
+</style>
+
+<table id="obsTable" ng-if="$ctrl.simpleEncs.length != 0">
     <thead>
-        <tr>
-            <th>Encounter</th>
-            <th ng-repeat="(key,value) in $ctrl.conceptsMap">{{value.display}}</th>
+        <tr ng-if="$ctrl.headers.length != 0">
+            <th ng-repeat="column in $ctrl.headers track by $index" class="column-header">{{ column | translate }}</th>
+        </tr>
+        <tr ng-if="$ctrl.headers.length == 0">
+            <th ng-if="$ctrl.config.showEncounterTypeName" class="column-header">{{'coreapps.patientDashBoard.encounter' | translate }}</th>
+            <th class="column-header">{{'coreapps.date' | translate }}</th>
+            <th ng-repeat="(key,value) in $ctrl.conceptsMap" class="column-header">{{value.display}}</th>
         </tr>
     </thead>
     <tbody>
         <tr ng-repeat="encounter in $ctrl.simpleEncs| orderBy: '-encounterDatetime'">
-            <th style="white-space: nowrap;">{{encounter.encounterDatetime | date: $ctrl.config.dateFormat}}</th>
-            <th ng-repeat="(key,value) in $ctrl.conceptsMap">
-                {{ encounter.obs[key] ? $ctrl.displayObs(encounter.obs[key]) : '' }}
-            </th>
+            <td ng-if="$ctrl.config.showEncounterTypeName">{{encounter.encounterType | translate }}</td>
+            <td>{{encounter.encounterDatetime | date: $ctrl.config.dateFormat}}</td>
+            <td ng-repeat="(key,value) in $ctrl.conceptsMap" ng-class="($ctrl.isRetired(encounter.obs[key])) ? 'retiredConcept' : ''">
+                {{ encounter.obs[key] ? $ctrl.getObsValue(encounter.obs[key]) : '' }}
+            </td>
         </tr>
     </tbody>
 </table>

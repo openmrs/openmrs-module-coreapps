@@ -3,14 +3,14 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount, curre
         var localVisitId = visitElement.data('visit-id');
 
         visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
-        $.getJSON(
+        jq.getJSON(
             emr.fragmentActionLink("coreapps", "visit/visitDetails", "getVisitDetails", {
                 visitId: localVisitId,
                 fromEncounter: fromEncounter,
                 encounterCount: encounterCount,
                 userId: currentUserId
             })
-            ).success(function(data) {
+            ).done(function(data) {
                 $('.viewVisitDetails').removeClass('selected');
                 visitElement.addClass('selected');
                 visitDetailsSection.html(visitDetailsTemplate(data));
@@ -63,7 +63,7 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount, curre
                     });
                 }
                 
-            }).error(function(err) {
+            }).fail(function(err) {
                 emr.errorMessage(err);
             });
         }

@@ -43,15 +43,15 @@
 
 	<span>
         {{ if ( (config.editable == null || config.editable) && encounter.canEdit) { }}
-            <i class="viewEncounter view-action icon-file-alt" data-mode="view" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" {{ if (config.viewUrl) { }} data-view-url="{{- config.viewUrl }}" {{ } }} title="${ ui.message("coreapps.view") }"></i>
-            <i class="editEncounter edit-action icon-pencil" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" {{ if (config.editUrl) { }} data-edit-url="{{- config.editUrl }}" {{ } }} title="${ ui.message("coreapps.edit") }"></i>
+            <i class="viewEncounter view-action icon-file-alt" data-mode="view" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" {{ if (config.viewUrl) { }} data-view-url="{{- config.viewUrl }}" {{ } }} {{ if (config.uiStyle) { }} data-ui-style="{{- config.uiStyle }}" {{ } }} title="${ ui.message("coreapps.view") }"></i>
+            <i class="editEncounter edit-action icon-pencil" data-patient-id="{{- patient.id }}" data-encounter-id="{{- encounter.encounterId }}" {{ if (config.editUrl) { }} data-edit-url="{{- config.editUrl }}" {{ } }} {{ if (config.uiStyle) { }} data-ui-style="{{- config.uiStyle }}" {{ } }} title="${ ui.message("coreapps.edit") }"></i>
         {{ } }}
         {{ if ( encounter.canDelete ) { }}
 	       <i class="deleteEncounterId delete-action icon-remove" data-visit-id="{{- encounter.visitId }}" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("coreapps.delete") }"></i>
         {{  } }}
 	</span>
 
-	<div id="encounter-summary{{- encounter.encounterId }}" class="collapse">
+	<div id="encounter-summary{{- encounter.encounterId }}" class="collapse encounterview">
 	    <div class="encounter-summary-container"></div>
 	</div>
 </li>

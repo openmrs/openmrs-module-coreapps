@@ -3,18 +3,18 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>coreapps</artifactId>
-	<version>1.22.0-SNAPSHOT</version>
+	<version>1.30.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Core Apps Module</name>
 	<description>Provides apps for performing the common tasks</description>
 	<url>https://wiki.openmrs.org/display/docs/Core+Apps+Module+Module</url>
-	
+
 	<developers>
 		<developer>
 			<name>OpenMRS</name>
 		</developer>
 	</developers>
-	
+
 	<organization>
 		<name>OpenMRS</name>
 		<url>http://openmrs.org</url>
@@ -35,10 +35,10 @@
 		<module>api-2.2</module>
 		<module>api-pre2.2</module>
 	</modules>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <emrapiVersion>1.26.0</emrapiVersion>
+        <emrapiVersion>1.29.0</emrapiVersion>
         <uiframeworkVersion>3.15.0</uiframeworkVersion>
         <eventVersion>2.5</eventVersion>
         <htmlformentryVersion>3.3.0</htmlformentryVersion>
@@ -51,13 +51,13 @@
         <providermanagementVersion>2.9.0</providermanagementVersion>
         <idgenVersion>4.4.0</idgenVersion>
 		<metadatamappingVersion>1.3.2</metadatamappingVersion>
-        <uicommonsVersion>2.3.0</uicommonsVersion>
+        <uicommonsVersion>2.10.0</uicommonsVersion>
         <webservicesRestVersion>2.17</webservicesRestVersion>
 
 	</properties>
 
 	<dependencyManagement>
-		<dependencies>	
+		<dependencies>
 			<!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was giving us issues,
 	         can probably remove this after next sass release -->
 	        <dependency>
@@ -67,7 +67,7 @@
 	            <type>gem</type>
                 <scope>provided</scope>
 	        </dependency>
-	        
+
 	        <dependency>
 				<groupId>org.openmrs.api</groupId>
 				<artifactId>openmrs-api</artifactId>
@@ -352,7 +352,7 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-	
+
 	<distributionManagement>
 		<repository>
 			<id>openmrs-repo-modules</id>

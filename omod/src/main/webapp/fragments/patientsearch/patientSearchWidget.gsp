@@ -13,28 +13,27 @@
         listableAttributeTypes.push('${ ui.encodeHtml(it) }');
     <% } %>
     var lastViewedPatients = [];
-    <%  if (showLastViewedPatients && !doInitialSearch) {
-            lastViewedPatients.each { it -> %>
-
-    var patientObj = {
-        uuid:"${ ui.escapeJs(ui.encodeHtmlContent(it.uuid)) }",
-        name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",
-        gender:"${ ui.escapeJs(ui.encodeHtmlContent(it.gender)) }",
-        // it.age is of type int (doesn't need sanitization)
-        age:"${ it.age ?: '' }",
-        birthdate:"${ it.birthdate ? ui.escapeJs(ui.encodeHtmlContent(dateFormatter.format(it.birthdate))) : '' }",
-        // it.birthdateEstimated is of type boolean (doesn't need sanitization)
-        birthdateEstimated: ${ it.birthdateEstimated },
-        identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }",
-        widgetBirthdate:"${ it.birthdate ? ui.escapeJs(ui.encodeHtmlContent(searchWidgetDateFormatter.format(it.birthdate))) : '' }"
-    }
-        <% listingAttributeTypeNames.each { attributeName -> %>
-            patientObj["${ ui.encodeHtml(attributeName) }"] = "${ it.getAttribute(attributeName) ? ui.encodeHtml(String.valueOf(it.getAttribute(attributeName))) :'' }";
-        <% } %>
-    lastViewedPatients.push(patientObj);
-    <%      }
-        }%>
-    function handlePatientRowSelection() {
+    <% if (showLastViewedPatients && !doInitialSearch) {
+        lastViewedPatients.each { it -> %>
+            var patientObj = {
+                uuid:"${ ui.escapeJs(ui.encodeHtmlContent(it.uuid)) }",
+                name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",
+                gender:"${ ui.escapeJs(ui.encodeHtmlContent(it.gender)) }",
+                // it.age is of type int (doesn't need sanitization)
+                age:"${ it.age ?: '' }",
+                birthdate:"${ it.birthdate ? ui.escapeJs(ui.encodeHtmlContent(dateFormatter.format(it.birthdate))) : '' }",
+                // it.birthdateEstimated is of type boolean (doesn't need sanitization)
+                birthdateEstimated: ${ it.birthdateEstimated },
+                identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }",
+                widgetBirthdate:"${ it.birthdate ? ui.escapeJs(ui.encodeHtmlContent(searchWidgetDateFormatter.format(it.birthdate))) : '' }"
+            }
+            <% listingAttributeTypeNames.each { attributeName -> %>
+                patientObj["${ ui.encodeHtml(attributeName) }"] = "${ it.getAttribute(attributeName) ? ui.encodeHtml(String.valueOf(it.getAttribute(attributeName))) :'' }";
+            <% } %>
+            lastViewedPatients.push(patientObj);
+        <% }
+    } %>
+    function getPatientRowSelectionHandler() {
     	var afterSelectedUrl = '${ ui.escapeJs(config.afterSelectedUrl) }';
         this.handle = function (row) {
             var uuid = row.uuid;
@@ -49,7 +48,7 @@
         	}
         }
     }
-    var handlePatientRowSelection =  new handlePatientRowSelection();
+    var handlePatientRowSelection =  new getPatientRowSelectionHandler();
 
     var patientSearchWidget;
     jq(function() {
@@ -90,26 +89,45 @@
         patientSearchWidget = new PatientSearchWidget(widgetConfig);
     });
 </script>
-
-<form method="get" id="patient-search-form" onsubmit="return false">
-    <input type="text" id="patient-search" placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }" autocomplete="off" <% if (doInitialSearch) { %>value="${doInitialSearch}"<% } %>/><i id="patient-search-clear-button" class="small icon-remove-sign"></i>
-    <% if(patientSearchExtensions){
-
-        patientSearchExtensions.each {
-            // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
-            def configs = [:];
-            if(it.extensionParams.fragmentConfig != null){
-                configs = it.extensionParams.fragmentConfig;
-            }
-        %>
-            ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs) }
-        <%}
-    } %>
-</form>
-
-<div id="patient-search-results"></div>
-<%  if (registrationAppLink ?: false) { %>
-<div id="register-patient-link">
-    <label>${ ui.message("coreapps.findPatient.registerPatient.label") }&nbsp;&nbsp;</label><a id="patient-search-register-patient" class="button" href="/${contextPath}/${registrationAppLink}">${ui.message("registrationapp.registration.label")}</a>
+<div class="row">
+    <div class="col-12">
+        <form method="get" id="patient-search-form" onsubmit="return false">
+            <input class="form-control" type="text" id="patient-search"
+              placeholder="${ ui.message("coreapps.findPatient.search.placeholder") }"
+              autocomplete="off"
+              <% if (doInitialSearch) { %>
+                value="${doInitialSearch}"
+              <% } %>
+            />
+            <i id="patient-search-clear-button" class="small icon-remove-sign"></i>
+            <% if(patientSearchExtensions){
+                patientSearchExtensions.each {
+                    // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
+                    def configs = [:];
+                    if(it.extensionParams.fragmentConfig != null){
+                        configs = it.extensionParams.fragmentConfig;
+                    }
+                %>
+                    ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs) }
+                <%}
+            } %>
+        </form>
+    </div>
 </div>
-<%  } %>
+<div class="row">
+    <div class="col-12">
+        <div id="patient-search-results"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <%  if (registrationAppLink ?: false) { %>
+        <div id="register-patient-link">
+            <label>${ ui.message("coreapps.findPatient.registerPatient.label") }&nbsp;&nbsp;</label>
+            <a id="patient-search-register-patient" class="button" href="/${contextPath}/${registrationAppLink}">
+                ${ui.message("registrationapp.registration.label")}
+            </a>
+        </div>
+        <%  } %>
+    </div>
+</div>

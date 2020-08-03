@@ -8,9 +8,16 @@ OpenMRS Core Apps Module
 
 Provides apps for performing the common tasks
 
-# Dashboard widgets development
+# Development
 
-The widgets are built as part of the module (`mvn clean install`) without having to install Node or NPM manually. Nevertheless, if you want to develop widgets installing Node is recommended so that you can iterate faster by building widgets and executing tests continously.
+As usual, you can just use `mvn openmrs-sdk:watch` for development.
+
+However, in order to see changes to `scss` files, you'll also need to run
+`mvn process-resources -Pwatch-sass`.
+
+## Dashboard Widgets
+
+The widgets are built as part of the module (`mvn clean install`) without having to install Node or NPM manually. Nevertheless, if you want to develop widgets installing Node is recommended so that you can iterate faster by building widgets and executing tests continuously.
 
 You need to have Node 6.x installed. We recommend using [nvm](https://github.com/creationix/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows) to install Node.
 
@@ -30,7 +37,7 @@ Clean development build: `npm run clean && npm run build:dev`
 
 Production build: `npm run build`
 
-For continous development we recommend setting up a server using OpenMRS SDK and adding the coreapps module to watched projects (**requires UI Framework 3.12.0+**). Next start the server and use the npm run watch command to have js code instantly transpiled and deployed to the server. Do remember to disable caching for your browser or use Ctrl + F5 to refresh page and its cache to see changes.
+For continuous development we recommend setting up a server using OpenMRS SDK and adding the coreapps module to watched projects (**requires UI Framework 3.12.0+**). Next start the server and use the `npm run watch` command to have js code instantly transpiled and deployed to the server. Do remember to disable caching for your browser or use Ctrl + F5 to refresh page and its cache to see changes.
 
 ## Linking
 

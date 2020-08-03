@@ -9,6 +9,8 @@ target
 
 .DS_Store
 
+.vscode
+
 # Package Files #
 *.jar
 *.war
@@ -25,3 +27,4 @@ omod/.rubygems-provided
 node
 node_modules
 npm-debug.log
+/bin/

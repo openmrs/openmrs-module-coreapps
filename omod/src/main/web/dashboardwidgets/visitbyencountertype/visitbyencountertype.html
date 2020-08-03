@@ -3,7 +3,7 @@
         <a href="{{$ctrl.serverUrl}}/coreapps/patientdashboard/patientDashboard.page?patientId={{$ctrl.config.patientUuid}}&visitId={{visit.uuid}}">
             {{visit.startDatetime | date: $ctrl.config.dateFormat}}
         </a>
-        <div class="tag" ng-if="visit.encounterType !== ''">{{visit.encounterType}}</div>
+        <div class="tag" ng-if="visit.encounterType !== ''">{{visit.encounterType | translate }}</div>
     </li>
     <p ng-if="$ctrl.visits.length == 0">
         None

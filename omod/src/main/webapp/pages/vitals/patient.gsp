@@ -31,8 +31,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
                     patientId: "${ patient.id }",
                     visitId: "${ visit?.id }",
                     definitionUiResource: "referenceapplication:htmlforms/vitals.xml",
-                    returnUrl: "${ ui.escapeJs(ui.pageLink("coreapps", "findpatient/findPatient?app=referenceapplication.vitals")) }",
-                    breadcrumbOverride: "${ ui.escapeJs(breadcrumbOverride) }"
+                    returnUrl: "${ ui.encodeJavaScript(ui.pageLink("coreapps", "findpatient/findPatient?app=referenceapplication.vitals")) }",
+                    breadcrumbOverride: "${ ui.encodeJavaScript(breadcrumbOverride) }"
                 }
             });
         });

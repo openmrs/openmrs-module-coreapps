@@ -4,9 +4,18 @@ $rowHighlightBackground: #F26522;
 $green: #51A351;
 
 #patient-search-form {
-  input {
-    display: inline;
-  }
+  position: relative;
+  max-width: 750px;
+}
+
+#patient-search {
+  display: inline;
+}
+
+#patient-search-clear-button {
+  position: absolute;
+  right: 0;
+  padding: 14px;
 }
 
 #patient-search-results {
@@ -96,9 +105,4 @@ img.search-spinner{
 
 .patient-search-error{
   color: $error;
-}
-
-#patient-search-clear-button {
-  position: relative;
-  right: 25px;
 }

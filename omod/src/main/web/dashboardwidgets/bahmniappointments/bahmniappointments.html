@@ -1,0 +1,8 @@
+<ul>
+    <li ng-if="$ctrl.appointments.length != 0" ng-repeat="appointment in $ctrl.appointments track by $index">
+      <div >{{appointment.date| date:'dd.MMM.yyyy'}}   {{appointment.startTime | date:'h:mm a'}} - {{appointment.endTime | date:'h:mm a'}} {{appointment.ServiceType  | translate }}</div>
+    </li>
+    <p ng-if="$ctrl.appointments.length == 0">
+      {{'coreapps.none' | translate }}
+    </p>
+</ul>

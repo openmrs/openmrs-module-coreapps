@@ -6,14 +6,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.Visit;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
-import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionObs;
 import org.openmrs.module.emrapi.disposition.DispositionService;
+import org.openmrs.module.emrapi.domainwrapper.DomainWrapperFactory;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.htmlformentry.BadFormDesignException;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -41,7 +42,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
         @Override
         public Object transform(Object o) {
-            return "#" + (String) o;
+            return "#" + o;
         }
 
     };
@@ -50,7 +51,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
     private DispositionService dispositionService;
 
-    private AdtService adtService;
+    private DomainWrapperFactory domainWrapperFactory;
 
     @Override
     public boolean doStartTag(FormEntrySession session, PrintWriter out, Node parent, Node node) throws BadFormDesignException {
@@ -61,17 +62,14 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
                     HtmlFormEntryUtil.getConcept(EmrApiConstants.EMR_CONCEPT_SOURCE_NAME + ": " + EmrApiConstants.CONCEPT_CODE_DISPOSITION_CONCEPT_SET));
         }
 
-        List<Disposition> dispositions = null;
+        List<Disposition> dispositions;
 
         VisitDomainWrapper visitDomainWrapper = session.getContext().getVisit() != null
-                ? adtService.wrap((Visit) session.getContext().getVisit()) : null;
+                ? domainWrapperFactory.newVisitDomainWrapper((Visit) session.getContext().getVisit()) : null;
 
-        if (visitDomainWrapper == null) {
-            dispositions = dispositionService.getDispositions();
-        }
-        else {
-            dispositions = dispositionService.getValidDispositions(visitDomainWrapper);
-        }
+        EncounterType encounterType = session.getEncounter() != null ? session.getEncounter().getEncounterType() : session.getForm().getEncounterType();
+
+        dispositions = dispositionService.getValidDispositions(visitDomainWrapper, encounterType);
 
         Element dispositionObsGroup = node.getOwnerDocument().createElement("obsgroup");
         dispositionObsGroup.setAttribute("groupingConceptId", emrApiProperties.getEmrApiConceptSource().getName() + ":"
@@ -97,16 +95,17 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         // add the possible dispositions from the configured disposition retrieved from disposition factory
         List<Control> controls = new ArrayList<Control>();
 
-        String answerConceptIds = "";
+        StringBuilder answerConceptIds = new StringBuilder();
         StringBuilder answerCodes = new StringBuilder();
         Iterator<Disposition> i = dispositions.iterator();
 
         while (i.hasNext()) {
             Disposition disposition = i.next();
 
-            answerConceptIds = answerConceptIds + disposition.getConceptCode() + (i.hasNext() ? "," : "");
+            answerConceptIds.append(disposition.getConceptCode());
             answerCodes.append(disposition.getName());
             if (i.hasNext()) {
+                answerConceptIds.append(",");
                 answerCodes.append(",");
             }
 
@@ -116,7 +115,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
             }
         }
 
-        dispositionObs.setAttribute("answerConceptIds", answerConceptIds);
+        dispositionObs.setAttribute("answerConceptIds", answerConceptIds.toString());
         dispositionObs.setAttribute("answerCodes", answerCodes.toString());
 
         if (controls != null && controls.size() > 0) {
@@ -147,8 +146,8 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         this.dispositionService = dispositionService;
     }
 
-    public void setAdtService(AdtService adtService) {
-        this.adtService = adtService;
+    public void setDomainWrapperFactory(DomainWrapperFactory domainWrapperFactory) {
+        this.domainWrapperFactory = domainWrapperFactory;
     }
 
     private Control buildNewControl(Disposition disposition, List<DispositionObs> additionalObs) {

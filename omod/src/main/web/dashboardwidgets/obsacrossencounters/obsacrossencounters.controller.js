@@ -1,153 +1,154 @@
 export default class ObsAcrossEncountersController {
-  constructor($filter, openmrsRest, widgetsCommons) {
+  constructor($q, $filter, openmrsRest, openmrsTranslate, widgetsCommons) {
     'ngInject';
 
-    Object.assign(this, {$filter, openmrsRest, widgetsCommons});
+    Object.assign(this, {$q, $filter, openmrsRest, openmrsTranslate, widgetsCommons});
   }
 
   $onInit() {
     this.order = 'desc';
-    this.concepts = [];
+    this.sessionLocale = null;
+    this.CONCEPT_CUSTOM_REP = 'custom:(uuid,display,names:(voided,locale,conceptNameType,localePreferred,name)';
+
     // a map of conceptUUID --> concept(REST response)
     this.conceptsMap = {};
     this.simpleEncs = [];
-
+    this.headers = [];
     this.openmrsRest.setBaseAppPath("/coreapps");
 
+    this.fetchSessionInfo();
+    this.fetchHeaders();
     this.fetchConcepts();
     this.fetchEncounters();
     this.maxAgeInDays = this.widgetsCommons.maxAgeToDays(this.config.maxAge);
   }
 
+  fetchSessionInfo() {
+    this.openmrsRest.get("session?", {
+      v: "ref"
+    }).then((session) => {
+      this.sessionLocale = session.locale;
+    }, function(error) {
+       console.error(`failed to retrieve session info, error: ${error}`)
+    });
+  }
+  
+  fetchHeaders() {
+    if (this.config.headers) {
+      let columnNames = this.config.headers.split(",");
+      this.headers = columnNames;
+    }
+  }
+
   fetchConcepts() {
-    this.concepts = this.getConfigConceptsAsArray(this.config.concepts);
-    for (let i = 0; i < this.concepts.length; i++) {
-      this.openmrsRest.get("concept/" + this.concepts[i], {
-        v: 'custom:(uuid,display,names:(display,conceptNameType)'
+    let conceptKeys = this.config.concepts.split(",").map(c => c.trim());
+    for (let i = 0; i < conceptKeys.length; i++) {
+      this.openmrsRest.get("concept/" + conceptKeys[i], {
+        v: this.CONCEPT_CUSTOM_REP
       }).then((concept) => {
-        let index = this.concepts.indexOf(concept.uuid);
-        this.concepts[index] = this.getConceptWithShortName(concept);
         // update the concept map with the REST representation of the concept
-        this.conceptsMap[concept.uuid] = this.getConceptWithShortName(concept);
+        concept.display = this.widgetsCommons.getConceptName(concept, "shortName", this.sessionLocale);
+        this.conceptsMap[concept.uuid] = concept;
       });
     }
   }
 
   fetchEncounters() {
-    this.openmrsRest.get("encounter", {
-      patient: this.config.patientUuid,
-      encounterType: this.config.encounterType ? this.config.encounterType : null,
-      v: 'custom:(uuid,encounterDatetime,obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
-      limit: this.getMaxRecords(),
-      fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge),
-      order: this.order
-    }).then((response) => {
-      this.parseEncounters(response.results);
+    const encounterTypes = this.config.encounterTypes ? this.config.encounterType.split(',').map(c => c.trim()) : [];
+    const legacyEncounterTypes = this.config.encounterType ? this.config.encounterType.split(',').map(c => c.trim()) : [];
+    encounterTypes.push(...legacyEncounterTypes);
+    
+    const encounterPromises = encounterTypes.map(e =>
+      this.openmrsRest.get("encounter", {
+        patient: this.config.patientUuid,
+        encounterType: e,
+        v: 'custom:(uuid,encounterDatetime,encounterType:(name,description),obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
+        limit: this.config.maxRecords || 4,
+        fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge),
+        order: this.order
+      }).then(response => response.results)
+    );
+
+    this.$q.all(encounterPromises).then((encounterSets) => {
+      for (let encounterSet of encounterSets){
+        this.addToSimpleEncs(encounterSet); 
+      }
     });
   }
 
-  getMaxRecords() {
-    if (this.config.maxRecords == '' || angular.isUndefined(this.config.maxRecords)) {
-      return 4;
+  isRetired(obs) {
+    return Boolean(obs && obs.value && obs.value.retired);
+  }
+
+  getObsValue(obs) {
+    if (this.widgetsCommons.hasDatatypeDateOrSimilar(obs.concept)) {
+        return this.$filter('date')(new Date(obs.value), this.config.dateFormat);
+    } else if (this.widgetsCommons.isDrug(obs.value)) {
+        return this.config.useConceptNameForDrugValues ? obs.value.concept.display : obs.value.display
     } else {
-      return this.config.maxRecords;
+        return obs.value.display || obs.value;
     }
   }
 
-  displayObs(obs) {
-    let display = "";
-    if (obs.value != null) {
-      if (angular.isDefined(obs.value.display)) {
-        //If value is a concept
-        display = obs.value.display;
-      }
-      else if (['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
-          '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
-          '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].indexOf(obs.concept.datatype.uuid) > -1) {
-        //If value is date, time or datetime
-        var date = this.$filter('date')(new Date(obs.value), this.config.dateFormat);
-        display = date;
-      } else {
-        display = obs.value;
-      }
-    }
-    return display;
-  }
-
-  getConfigConceptsAsArray(commaDelimitedConcepts) {
-    let conceptArray = commaDelimitedConcepts.replace(" ", "").split(",");
-    if (conceptArray !== null && conceptArray.length > 0) {
-      for (let i = 0; i < conceptArray.length; i++) {
-        let conceptKey = conceptArray[i];
-        // initialize the conceptsMap object
-        if (typeof this.conceptsMap[conceptKey] === 'undefined') {
-          this.conceptsMap[conceptKey] = null;
+  addToSimpleEncs(encounters) {
+    for (let encounter of encounters) {
+      const conceptKeys = Object.keys(this.conceptsMap);
+      // all normal concepts will go in one row
+      const foundObsByUuid = {};
+      for (let obs of encounter.obs) {
+        // see if the concept matches
+        if (conceptKeys.includes(obs.concept.uuid)) {
+          foundObsByUuid[obs.concept.uuid] = obs;
         }
-      }
-    }
-    return conceptArray;
-  }
-
-  getConceptWithShortName(concept) {
-    angular.forEach(concept.names, (name) => {
-      if (name.conceptNameType == 'SHORT') {
-        concept.display = name.display;
-      }
-    });
-    return concept;
-  }
-
-
-  parseEncounters(encounters) {
-    angular.forEach(encounters, (encounter) => {
-      let searchObs = {};
-      angular.forEach(encounter.obs, (obs) => {
-        let conceptKeys = Object.keys(this.conceptsMap);
-
-        if (conceptKeys.findIndex(conceptKey => conceptKey === obs.concept.uuid) >= 0) {
-          //we found an obs match
-          searchObs[obs.concept.uuid] = obs;
-        }
-        if (obs.groupMembers != null && obs.groupMembers.length > 0) {
-          // need to search the groupMembers
-          let foundObs = this.parseGroupMembers(obs.groupMembers, conceptKeys);
-          if (typeof foundObs !== 'undefined' && foundObs !== null && Object.keys(foundObs).length > 0) {
-            if (Object.keys(foundObs).every(item => conceptKeys.includes(item))) {
-              //this is a complete pair of matching obs with a given concept uuid within the same obsGroup
-              let enc = {
-                encounterDatetime: encounter.encounterDatetime,
-                obs: foundObs
-              };
-              this.simpleEncs.push(enc);
-            } else {
-              // we have an incomplete match, just add the values to the existing object
-              for (key in Object.keys(foundObs)){
-                searchObs[key] = searchObs[key];
-              }
-            }
+        // add a row for each group with matches
+        if (obs.groupMembers) {
+          const foundMembers = obs.groupMembers.filter(member => conceptKeys.includes(member.concept.uuid));
+          if (foundMembers) {
+            const foundMembersByUuid = Object.fromEntries(foundMembers.map(m => [m.concept.uuid, m]));
+            this.simpleEncs.push({
+              encounterType: encounter.encounterType.name,
+              encounterDatetime: encounter.encounterDatetime,
+              obs: foundMembersByUuid
+            });
           }
         }
-      });
-
-      if (Object.keys(searchObs).length > 0) {
-        let tempEnc = {
+      }
+      if (Object.keys(foundObsByUuid).length > 0) {
+        this.simpleEncs.push({
+          encounterType: encounter.encounterType.name,
           encounterDatetime: encounter.encounterDatetime,
-          obs: searchObs
-        };
-        this.simpleEncs.push(tempEnc);
+          obs: foundObsByUuid
+        });
       }
-    });
+      // if the widget was configured to display the obs concept SHORT name instead of the default obs.value.display value
+      // By default, the widget displays the obs.value.display property
+      if (this.config.useConceptShortName) {
+        this.updateWithConceptShortNames(this.simpleEncs);
+      }
+    }
   }
 
-  parseGroupMembers(groupMembers, concepts) {
-    let matchObs = {};
-    angular.forEach(groupMembers, (obs) => {
-      if (concepts.includes(obs.concept.uuid)) {
-        //we found an obs match
-        matchObs[obs.concept.uuid] = obs;
+  /**
+   * Sets all obs coded concept values and drug value concepts to use the short name
+   * @param encounters
+   */
+  updateWithConceptShortNames(encounters) {
+    for (let encounter of encounters) {
+      for (let obs of encounter.obs) {
+        if (this.widgetsCommons.isDrug(obs.value)) {
+          this.updateWithShortName(obs.value.concept);
+        } else if (this.widgetsCommons.hasDatatypeCoded(obs.concept)) {
+          this.updateWithShortName(obs.value);
+        }
       }
-    });
-    return matchObs;
+    }
   }
 
+  updateWithShortName(concept) {
+    this.openmrsRest.get("concept/" + concept.uuid, {
+      v: this.CONCEPT_CUSTOM_REP
+    }).then((concept) => {
+      concept.display = this.widgetsCommons.getConceptName(concept, "shortName", this.sessionLocale);
+    }).catch(err => console.error(`failed to retrieve concept ${conceptUuid}, ${err}`));
+  }
 }

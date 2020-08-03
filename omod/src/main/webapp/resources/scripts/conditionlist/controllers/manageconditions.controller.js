@@ -7,6 +7,7 @@ ManageConditionsController.$inject = ['$scope', 'RestfulService', 'CommonFunctio
 function ManageConditionsController($scope, RestfulService, CommonFunctions) {
     var self = this;
     $scope.conditions = [];
+    $scope.conditionListToBeRemoved =null;
     $scope.tabs = ["ACTIVE", "INACTIVE"];
 
     // this is required inorder to initialize the Restangular service
@@ -34,45 +35,62 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
 
     self.deactivateCondition = self.deactivateCondition || function (condition) {
             condition.status = "INACTIVE";
-            self.saveCondition(condition);
-        }
-
-    self.moveToHistoryCondition = self.moveToHistoryCondition || function (condition) {
-            condition.status = "HISTORY_OF";
-            self.saveCondition(condition);
-        }
-
-    self.removeCondition = self.removeCondition || function (condition) {
-            condition.voided = true;
             condition.endDate = new Date();
             self.saveCondition(condition);
         }
 
-    self.undoCondition = self.undoCondition || function (condition) {
-            condition.voided = false;
-            condition.endDate = null;
-            self.saveCondition(condition);
+    self.removeCondition = self.removeCondition || function () {
+            var conditions = $scope.conditionListToBeRemoved;
+            for(i=0;i<conditions.length;i++){
+                conditions[i].voided = true;
+                conditions[i].endDate = new Date();
+                self.saveCondition(conditions[i]);
+                var dialog = document.getElementById("remove-condition-dialog");
+                dialog.style.display = "none";  
+            }         
         }
+
+    self.redirectToEditCondition = self.redirectToEditCondition || function(baselink,condition) {
+        window.location= baselink+'conditionUuid=' + JSON.stringify(condition.uuid)+'&';
+    }
+     
+    self.conditionConfirmation = self.conditionConfirmation || function(conditionList) {
+        var dialog = document.getElementById("remove-condition-dialog");
+        dialog.style.display = "block";
+        $scope.conditionListToBeRemoved = conditionList;
+        var setText = document.getElementById("removeConditionMessage");
+        setText.innerHTML = "Are you sure you want to remove condition: <b>"+$scope.conditionListToBeRemoved.concept.name+"</b> for this patient";
+    }    
+   
+    self.cancelDeletion = self.cancelDeletion || function(){
+        var dialog = document.getElementById("remove-condition-dialog");
+        dialog.style.display = "none";
+    }
 
     self.saveCondition = self.saveCondition || function (condition) {
             var conditions = [];
             conditions.push(condition);
             RestfulService.post('condition', conditions, function (data) {
+                if(condition.voided == false){
                 //emr.successAlert("conditionlist.updateCondition.success");
-                emr.successAlert("Condition Saved Successfully");
+                    emr.successAlert("Condition Saved Successfully");
+                }
+                else{
+                    emr.successAlert("Condition Deleted Successfully");
+                }
             }, function (error) {
                 //emr.errorAlert("conditionlist.updateCondition.error");
                 emr.errorAlert("Error Saving condition");
             });
-        }
+    }    
 
     // bind functions to scope
     $scope.removeCondition = self.removeCondition;
+    $scope.cancelDeletion = self.cancelDeletion;
     $scope.activateCondition = self.activateCondition;
     $scope.deactivateCondition = self.deactivateCondition;
-    $scope.moveToHistoryCondition = self.moveToHistoryCondition;
-    $scope.undoCondition = self.undoCondition;
     $scope.formatDate = CommonFunctions.formatDate;
-    $scope.strikeThrough = CommonFunctions.strikeThrough;
     $scope.getConditions = self.getConditions;
+    $scope.conditionConfirmation = self.conditionConfirmation
+    $scope.redirectToEditCondition = self.redirectToEditCondition;
 }

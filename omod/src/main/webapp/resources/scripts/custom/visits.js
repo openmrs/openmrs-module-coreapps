@@ -131,7 +131,7 @@ visit.showEditVisitDateDialog = function(visitId) {
             actions: {
                 confirm: function() {
                     var url = emr.fragmentActionLink("coreapps", "visit/visitDates", "setDuration");
-                    $.getJSON(url, $('#edit-visit-dates-dialog-form-' + visitId).serialize()).success(function(data) {
+                    $.getJSON(url, $('#edit-visit-dates-dialog-form-' + visitId).serialize()).done(function(data) {
                             if (data.success) {
                                 jq('#edit-visit-dates-dialog-form-' + visitId + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
                                 // TODO Do we need to update this to specify return url, or is this link only going  to ever be used from the old visits view? 
@@ -201,7 +201,7 @@ visit.showEditVisitDialog = function(visitId) {
             confirm: function() {
                 if(visitId !== undefined){
                     var url = emr.fragmentActionLink("coreapps", "visit/quickVisit", "update");
-                    jq.getJSON(url, visit.buildVisitTypeAttributeParams(visitId)).success(function(data) {
+                    jq.getJSON(url, visit.buildVisitTypeAttributeParams(visitId)).done(function(data) {
                             if(data.success) {
                                 jq('#edit-visit-dialog-form-' + visitId + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
                                 window.location.reload();

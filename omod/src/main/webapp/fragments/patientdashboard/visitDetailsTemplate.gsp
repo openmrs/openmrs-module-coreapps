@@ -10,9 +10,12 @@
         <a class="right" id="deleteVisitLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.deleteVisit.label")}</a>
         <span class="right"> | </span>
     [[ } ]]
-        <a class="right" id="editVisitDatesLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.editVisitDate.label")}</a>
-        <span class="right"> | </span>
+    <a class="right" id="editVisitDatesLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.editVisitDate.label")}</a>
+    [[ if (canEditVisit) { ]]
+    	<span class="right"> | </span>
         <a class="right" id="editVisitLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.editVisit.label")}</a>
+    [[ } ]]    
+        
 </div>
 
 <div class="visit-actions [[- stopDatetime ? 'past-visit' : 'active-visit' ]]">
@@ -27,10 +30,10 @@
                 def url = task.url(contextPath, appContextModel.with("visit", [id: "{{visit.id}}", uuid: "{{visit.uuid}}", active: "{{visit.active}}"]), returnUrl);   // strip out any hard-coded id, uuid, or active with the appropriate template  so that it can be dynamically populated based on current selected visit
                 if (task.type != "script") {
                 %>
-                <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { 'visit.id': id, 'visit.uuid': uuid, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task">
+                <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { 'visit.id': id, 'visit.uuid': uuid, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task activelist">
             <% } else { // script
                 %>
-                <a href="[[= emr.applyContextModel('${ url }', {'visit.id': id, 'visit.uuid': uuid, 'visit.active': stopDatetime == null })]]" class="button task">
+                <a href="[[= emr.applyContextModel('${ url }', {'visit.id': id, 'visit.uuid': uuid, 'visit.active': stopDatetime == null })]]" class="button task activelist">
             <% } %>
                 <i class="${task.icon}"></i> ${ ui.message(task.label) }</a>
 

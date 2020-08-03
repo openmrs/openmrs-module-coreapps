@@ -48,4 +48,25 @@ public class LatestObsRestControllerTest extends MainResourceControllerTest {
 
         assertEquals(allNonVoidedObsList.size(), 2);
     }
+
+    @Test
+    public void testSearchForMultipleLatestObsBasedOnNLatestObsParameter() throws Exception {
+        MockHttpServletRequest request = newGetRequest(getURI());
+        request.addParameter("nLatestObs", "2");
+        request.addParameter("concept", "c607c80f-1ea9-4da3-bb88-6276ce8868dd");
+        MockHttpServletResponse response = handle(request);
+        List<Object> nLatestNonVoidedObs = deserialize(response).get("results");
+
+        assertEquals(nLatestNonVoidedObs.size(), 2);
+    }
+
+    @Test
+    public void testSearchForSingleLatestObsBasedOnMissingNLatestObsParameter() throws Exception {
+        MockHttpServletRequest request = newGetRequest(getURI());
+        request.addParameter("concept", "c607c80f-1ea9-4da3-bb88-6276ce8868dd");
+        MockHttpServletResponse response = handle(request);
+        List<Object> nLatestNonVoidedObs = deserialize(response).get("results");
+
+        assertEquals(nLatestNonVoidedObs.size(), 1);
+    }
 }

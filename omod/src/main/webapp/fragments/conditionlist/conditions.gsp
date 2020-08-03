@@ -33,11 +33,11 @@
 
     <div class="info-body">
         <ul ng-repeat="conditionHistory in conditionHistoryList">
-            <li class="conditionStatus" ng-init="condition = conditionHistory.conditions[0]"
-                ng-show="condition.status === 'ACTIVE'">
+            <li class="conditionStatus" ng-init="condition = conditionHistory.conditions[conditionHistory.conditions.length-1]"
+                ng-show="condition.status === 'ACTIVE' && condition.voided==false">
                 <span ng-style="strikeThrough(condition.voided)">{{condition.concept.name}}</span>
                 <i class="icon-remove delete-action" title="${ui.message("coreapps.delete")}"
-                   ng-click="removeCondition(condition)" ng-if="condition.voided===false && '${hasModifyConditionsPrivilege}'"></i>
+                   ng-click="conditionConfirmation(conditionHistory.conditions)" ng-if="condition.voided===false && '${hasModifyConditionsPrivilege}'"></i>
                 <i class="icon-undo delete-action" title="${ui.message("conditionui.undo")}"
                    ng-click="undoCondition(condition)" ng-if="condition.voided===true && '${hasModifyConditionsPrivilege}'"></i>
             </li>
@@ -46,4 +46,19 @@
         ${ui.message("coreapps.none")}
        </p>
     </div>
+
+    <div id="remove-condition-dialog" class="dialog" style="display: none; position: absolute; left: 35%; top:30%; z-index: 1000 !important;">
+    <div class="dialog-header">
+        <h3>${ ui.message("coreapps.conditionui.removeCondition") }</h3>
+    </div>
+    <div class="dialog-content">
+        <ul>
+            <li class="info">
+                <span id="removeConditionMessage">${ ui.message("coreapps.conditionui.removeCondition.message","")}</span>
+            </li>
+        </ul>       
+            <button class="confirm right" type="submit" ng-click="removeCondition()">${ ui.message("general.yes") }</button>
+            <button class="cancel" ng-click="cancelDeletion()">${ ui.message("general.no") }</button>
+    </div>
+</div>
 </div>

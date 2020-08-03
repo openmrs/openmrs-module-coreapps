@@ -5,8 +5,7 @@
 
 	ui.includeCss("coreapps", "patientdashboard/patientDashboard.css")
 
-    ui.includeJavascript("uicommons", "bootstrap-collapse.js")
-    ui.includeJavascript("uicommons", "bootstrap-transition.js")
+    ui.includeJavascript("appui", "jquery-3.4.1.min.js")
 
 
     def tabs = [
@@ -54,8 +53,8 @@
 } %>
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, activeVisit: activeVisit, appContextModel: appContextModel ]) }
-<div class="actions dropdown">
-    <span class="dropdown-name"><i class="icon-cog"></i>${ ui.message("coreapps.actions") }<i class="icon-sort-down"></i></span>
+<div class="actions dropdown actioncog">
+    <span class="dropdown-name"><i class="icon-cog"></i><span class="d-none d-sm-none d-md-inline d-lg-inline"> ${ ui.message("coreapps.actions") } </span> <i class="icon-sort-down"></i></span>
     <ul>
         <% overallActions.each {
             def url = it.url
@@ -83,10 +82,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
         </ul>
 
         <% tabs.each { %>
-        <div id="${it.id}">
+        <div id="${it.id}" class="row" style="display: inline-flex;width: -webkit-fill-available;border-top: 1px solid #dddddd;">
             ${ ui.includeFragment(it.provider, it.fragment, [ patient: patient ]) }
         </div>
         <% } %>
-
     </div>
 </div>

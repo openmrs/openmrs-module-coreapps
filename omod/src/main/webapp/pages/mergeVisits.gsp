@@ -96,7 +96,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 ${ ui.message("coreapps.task.mergeVisits.instructions") }
 
 <form method="post" action="${ ui.pageLink("coreapps", "mergeVisits") }">
-    <table id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
+    <table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl" id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
         <thead>
         <tr>
             <th>${ ui.message("coreapps.merge") }</th>

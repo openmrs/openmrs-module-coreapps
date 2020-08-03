@@ -28,6 +28,7 @@ import org.openmrs.module.coreapps.htmlformentry.EncounterDispositionTagHandler;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.disposition.DispositionService;
+import org.openmrs.module.emrapi.domainwrapper.DomainWrapperFactory;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.ui.framework.BasicUiUtils;
 import org.openmrs.ui.framework.UiUtils;
@@ -44,11 +45,11 @@ public class CoreAppsActivator extends BaseModuleActivator {
      * @param emrApiProperties
      * @return
      */
-    public static EncounterDispositionTagHandler setupEncounterDispositionTagHandler(EmrApiProperties emrApiProperties, DispositionService dispositionService, AdtService adtService) {
+    public static EncounterDispositionTagHandler setupEncounterDispositionTagHandler(EmrApiProperties emrApiProperties, DispositionService dispositionService, DomainWrapperFactory domainWrapperFactory) {
         EncounterDispositionTagHandler encounterDispositionTagHandler = new EncounterDispositionTagHandler();
         encounterDispositionTagHandler.setEmrApiProperties(emrApiProperties);
         encounterDispositionTagHandler.setDispositionService(dispositionService);
-        encounterDispositionTagHandler.setAdtService(adtService);
+        encounterDispositionTagHandler.setDomainWrapperFactory(domainWrapperFactory);
         return encounterDispositionTagHandler;
     }
 
@@ -91,6 +92,7 @@ public class CoreAppsActivator extends BaseModuleActivator {
         EmrApiProperties emrApiProperties = Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class);
         DispositionService dispositionService = Context.getRegisteredComponent("dispositionService", DispositionService.class);
         AdtService adtService = Context.getRegisteredComponent("adtService", AdtService.class);
+		DomainWrapperFactory domainWrapperFactory = Context.getRegisteredComponent("domainWrapperFactory", DomainWrapperFactory.class);
         UiUtils uiUtils = Context.getRegisteredComponent("uiUtils", BasicUiUtils.class);
 
         if (ModuleFactory.isModuleStarted("htmlformentry")) {
@@ -102,7 +104,7 @@ public class CoreAppsActivator extends BaseModuleActivator {
             EncounterDiagnosesByObsTagHandler encounterDiagnosesByObsTagHandler = CoreAppsActivator.setupEncounterDiagnosesByObsTagHandler(conceptService, adtService, emrApiProperties, uiUtils);
             htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_BY_OBS_TAG_NAME, encounterDiagnosesByObsTagHandler);
 
-            EncounterDispositionTagHandler encounterDispositionTagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService, adtService);
+            EncounterDispositionTagHandler encounterDispositionTagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService, domainWrapperFactory);
             htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, encounterDispositionTagHandler);
 
             htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_CODED_OR_FREE_TEXT_OBS_TAG_NAME, new CodedOrFreeTextObsTagHandler());

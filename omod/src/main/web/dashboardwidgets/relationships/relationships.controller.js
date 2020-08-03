@@ -52,9 +52,11 @@ export default class RelationshipsController  {
 
         //fetchPrivileges
         this.openmrsRest.get('session', {
-            v: 'custom:(privileges)'
+            v: 'custom:(privileges:(name))'
         }).then((response) => {
             this.getPrivileges(response.user.privileges);
+        }, function(error) {
+                console.log(`failed to retrieve user privileges, error: ${error}`);
         });
 
         //fetchRelationships

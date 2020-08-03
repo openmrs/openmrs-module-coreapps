@@ -6,7 +6,7 @@
     <div class="info-body">
         <ul>
             <% config.links.each { title, link -> %>
-            <li><a href="${link}">${title}</a> </li>
+            <li><a href="${link}">${ui.message(title)}</a> </li>
             <% } %>
         </ul>
     </div>

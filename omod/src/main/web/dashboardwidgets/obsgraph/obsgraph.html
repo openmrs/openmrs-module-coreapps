@@ -3,9 +3,9 @@
             chart-series="$ctrl.series" chart-options="$ctrl.options"></canvas>
 </div>
 <div ng-show="$ctrl.data.length == 0">
-    <div style="padding-bottom: 10px">
+    <div style="padding-bottom: 10px; word-break: break-word;">
         <strong>
-            {{$ctrl.series.toString()}}
+            {{$ctrl.series.join(", ")}}
         </strong>
     </div>
     <span>

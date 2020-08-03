@@ -55,7 +55,7 @@
 	<conditionalResources>
 		<conditionalResource>
 			<path>/lib/coreapps-api-2.2-${project.parent.version}.jar</path>
-			<openmrsVersion>2.2.*,2.3.*</openmrsVersion>
+			<openmrsVersion>2.2.0</openmrsVersion>
 		</conditionalResource>
 
 		<conditionalResource>
@@ -71,6 +71,9 @@
         </aware_of_module>
         <aware_of_module version="${htmlformentryVersion}">
             org.openmrs.module.htmlformentry
+        </aware_of_module>
+        <aware_of_module >
+            org.openmrs.module.appointments
         </aware_of_module>
     </aware_of_modules>
 
@@ -262,6 +265,14 @@
         <defaultValue></defaultValue>
         <description>
             Set encounter uuid if you would like to create a transfer encounter when visit type is changed
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>coreapps.conditionListClasses</property>
+        <defaultValue>8d4918b0-c2cc-11de-8d13-0010c6dffd0f</defaultValue>
+        <description>
+            List of concept uuid's which limits the answers for condition list
         </description>
     </globalProperty>
 

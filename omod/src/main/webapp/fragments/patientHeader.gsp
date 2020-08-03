@@ -8,7 +8,6 @@
     appContextModel.put("returnUrl", ui.thisUrl())
 %>
 
-
 <script type="text/javascript">
     var addMessage = "${ ui.message("coreapps.patient.identifier.add") }";
     jq(document).ready(function () {
@@ -72,10 +71,10 @@
     })
 </script>
 
-<div class="patient-header <% if (patient.patient.dead) { %>dead<% } %>">
+<div class="patient-header row <% if (patient.patient.dead) { %>dead<% } %>">
 
     <% if (patient.patient.dead) { %>
-        <div class="death-header">
+        <div class="death-header col-12">
             <span class="death-message">
                 ${ ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath)) }
             </span>
@@ -88,86 +87,118 @@
         </div>
     <% } %>
 
-    <div class="demographics">
-        <h1 class="name">
-            <% patientNames?.each { %>
-                <span><span class="${ it.key.replace('.', '-') }">${ ui.encodeHtmlContent(it.value) }</span><em>${ui.message(it.key)}</em></span>
-            <% } %>
-            &nbsp;
-            <span class="gender-age">
+    <div class="demographics col-12 col-sm-7 col-md-8">
+        <div class="row align-items-center">
+            <div class="col-12 col-sm-auto">
+                <h1 class="mt-0 mb-2 name">
+                    <% patientNames?.each { %>
+                        <span class="labeled">
+                            <span class="${ it.key.replace('.', '-') }">
+                                ${ ui.encodeHtmlContent(it.value) }
+                            </span>
+                            <em>${ui.message(it.key)}</em>
+                        </span>
+                    <% } %>
+                </h1>
+            </div>
+
+            <div class="gender-age col-auto">
                 <span>${ui.message("coreapps.gender." + ui.encodeHtml(patient.gender))}&nbsp;</span>
                 <span>
-                <% if (patient.birthdate) { %>
-                <% if (patient.age > 0) { %>
-                    ${ui.message("coreapps.ageYears", patient.age)} 
-                <% } else if (patient.ageInMonths > 0) { %>
-                    ${ui.message("coreapps.ageMonths", patient.ageInMonths)}
-                <% } else { %>
-                    ${ui.message("coreapps.ageDays", patient.ageInDays)}
-                <% } %>   
-                (<% if (patient.birthdateEstimated) { %>~<% } %>${ ui.formatDatePretty(patient.birthdate) })          
-                <% } else { %>
-                    ${ui.message("coreapps.unknownAge")}
-                <% } %>
+                    <% if (patient.birthdate) { %>
+                    <% if (patient.age > 0) { %>
+                        ${ui.message("coreapps.ageYears", patient.age)}
+                    <% } else if (patient.ageInMonths > 0) { %>
+                        ${ui.message("coreapps.ageMonths", patient.ageInMonths)}
+                    <% } else { %>
+                        ${ui.message("coreapps.ageDays", patient.ageInDays)}
+                    <% } %>
+                    (<% if (patient.birthdateEstimated) { %>~<% } %>${ ui.formatDatePretty(patient.birthdate) })
+                    <% } else { %>
+                        ${ui.message("coreapps.unknownAge")}
+                    <% } %>
                 </span>
-                <span id="edit-patient-demographics" class="edit-info">
-                    <small>
-                        <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientDemographics", contextModel: appContextModel ]) %>
-                    </small>
+                <span id="edit-patient-demographics" class="edit-info ml-2">
+                    <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.editPatientDemographics", contextModel: appContextModel ]) %>
                 </span>
+            </div>
+
+            <div class="col-6 mt-2 col-sm-8 col-md-6">
                 <a href="#" id="patient-header-contactInfo" class="contact-info-label">
                     <span id="coreapps-showContactInfo" class="show">${ui.message("coreapps.patientHeader.showcontactinfo")}</span>
                     <i class="toggle-icon icon-caret-down small"></i>
                     <span class="hide">${ui.message("coreapps.patientHeader.hidecontactinfo")}</span>
                     <i class="toggle-icon icon-caret-up small"></i>
                 </a>
-            </span>
-
-            <div class="firstLineFragments">
-                <% firstLineFragments.each { %>
-                    ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patient: config.patient])}
-                <% } %>
             </div>
 
-            <div class="hidden" id="contactInfoContent" class="contact-info-content">
+            <% if (firstLineFragments) { %>
+                <div class="firstLineFragments col-12 mt-2">
+                    <% firstLineFragments.each { %>
+                        ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patient: config.patient])}
+                    <% } %>
+                </div>
+            <% } %>
+
+            <div class="hidden col-12 mt-2 ml-3" id="contactInfoContent">
                 ${ ui.includeFragment("coreapps", "patientdashboard/contactInfoInline", [ patient: config.patient, contextModel: appContextModel ]) }
             </div>
-        </h1>
-
+        </div>
     </div>
 
-    <div class="identifiers">
-        <em>${ui.message("coreapps.patientHeader.patientId")}</em>
-
-        <% patient.primaryIdentifiers.each { %>
-        <span>${it.identifier}</span>
-        <% } %>
-        <br/>
+    <div class="identifiers mt-2 col-12 col-sm-5 col-md-4">
+        <div class="float-sm-right">
+            <em>${ui.message("coreapps.patientHeader.patientId")}</em>
+            <% patient.primaryIdentifiers.each { %>
+                <span>${it.identifier}</span>
+            <% } %>
+        </div>
         <% if (config.extraPatientIdentifierTypes) { %>
+            <br/>
 
             <% config.extraPatientIdentifierTypes.each { extraPatientIdentifierType -> %>
 
                 <% def extraPatientIdentifiers = config.extraPatientIdentifiersMappedByType.get(extraPatientIdentifierType.patientIdentifierType) %>
 
                 <% if (extraPatientIdentifiers) { %>
-                    <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
+                    <div class="float-sm-right">
+                        <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
 
-                    <% if (extraPatientIdentifierType.editable) { %>
-                        <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
-                             <span><a class="editPatientIdentifier" data-patient-identifier-id="${extraPatientIdentifier.id}" data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
-                                data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}" data-patient-identifier-value="${extraPatientIdentifier}" href="#${extraPatientIdentifierType.patientIdentifierType.id}">${extraPatientIdentifier}</a></span>
+                        <% if (extraPatientIdentifierType.editable) { %>
+                            <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
+                                <span>
+                                    <a class="editPatientIdentifier"
+                                        data-patient-identifier-id="${extraPatientIdentifier.id}"
+                                        data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
+                                        data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}"
+                                        data-patient-identifier-value="${extraPatientIdentifier}"
+                                        href="#${extraPatientIdentifierType.patientIdentifierType.id}"
+                                    >
+                                        ${extraPatientIdentifier}
+                                    </a>
+                                </span>
+                            <% } %>
+                        <% } else {%>
+                            <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
+                                <span>${extraPatientIdentifier}</span>
+                            <% } %>
                         <% } %>
-                    <% } else {%>
-                        <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
-                            <span>${extraPatientIdentifier}</span>
-                        <% } %>
-                    <% } %>
-
+                    </div>
                 <% } else if (extraPatientIdentifierType.editable) { %>
-                    <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
-                    <span class="add-id"><a class="editPatientIdentifier"  data-patient-identifier-id="" data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
-                    data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}" data-patient-identifier-value=""
-                    href="#${extraPatientIdentifierType.patientIdentifierType.id}">${ui.message("coreapps.patient.identifier.add")}</a></span>
+                    <div class="float-sm-right">
+                        <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
+                        <span class="add-id">
+                            <a class="editPatientIdentifier"
+                                data-patient-identifier-id=""
+                                data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
+                                data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}"
+                                data-patient-identifier-value=""
+                                href="#${extraPatientIdentifierType.patientIdentifierType.id}"
+                            >
+                                ${ui.message("coreapps.patient.identifier.add")}
+                            </a>
+                        </span>
+                    </div>
                 <% } %>
 
             <br/>
@@ -175,7 +206,7 @@
         <% } %>
     </div>
 
-    <div class="unknown-patient" style= <%=(!patient.unknownPatient) ? "display:none" : ""%>>
+    <div class="unknown-patient col-12 mt-2" style= <%=(!patient.unknownPatient) ? "display:none" : ""%>>
         ${ui.message("coreapps.patient.temporaryRecord")} <br/>
 
         <form action="/${contextPath}/coreapps/datamanagement/mergePatients.page" method="get">
@@ -187,7 +218,7 @@
         </form>
     </div>
 
-    <div class="secondLineFragments">
+    <div class="secondLineFragments col-12 mt-2 mb-1">
         <% secondLineFragments.each { %>
             ${ ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, [patient: config.patient])}
         <% } %>

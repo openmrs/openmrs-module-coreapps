@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("appui", "standardEmrPage")
+    ui.decorateWith("appui", "standardEmrPage", [includeBootstrap: false])
 
     ui.includeCss("coreapps", "bootstrap.css")
     ui.includeCss("coreapps", "providermanagement/providermanagement.css")
