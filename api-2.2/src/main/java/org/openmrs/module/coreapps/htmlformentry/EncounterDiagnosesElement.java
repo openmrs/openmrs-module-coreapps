@@ -378,12 +378,18 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     public Set<org.openmrs.Diagnosis> getExistingDiagnoses(FormEntryContext context) {
         FormEntryContext.Mode mode = context.getMode();
         if (mode == FormEntryContext.Mode.EDIT || mode == FormEntryContext.Mode.VIEW) {
-        	Encounter existingEncounter = context.getExistingEncounter();
-        	if (existingEncounter != null) {
-        		return existingEncounter.getDiagnoses();
-        	}
+            Encounter existingEncounter = context.getExistingEncounter();
+            if (existingEncounter != null) {
+                Set<org.openmrs.Diagnosis> nonVoidedDiagnoses = new HashSet<org.openmrs.Diagnosis>();
+                for (org.openmrs.Diagnosis diagnosis : existingEncounter.getDiagnoses()) {
+                    if (!diagnosis.getVoided()) {
+                        nonVoidedDiagnoses.add(diagnosis);
+                    }
+                }
+                return nonVoidedDiagnoses;
+            }
         }
-        
+
         return new HashSet<org.openmrs.Diagnosis>();
     }
 

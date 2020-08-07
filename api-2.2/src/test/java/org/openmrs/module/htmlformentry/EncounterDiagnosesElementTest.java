@@ -62,24 +62,42 @@ public class EncounterDiagnosesElementTest {
     	when(context.getExistingEncounter()).thenReturn(existingEncounter);
     	when(Context.getConceptService()).thenReturn(conceptService);
 	}
-	
+
 	@Test
 	public void testGetExistingDiagnoses() {
 		// Setup
+		Diagnosis asthmaDiagnosis = new Diagnosis(existingEncounter, new CodedOrFreeText(null, null, "Asthma"), null, null, null);
+		Diagnosis malariaDiagnosis = new Diagnosis(existingEncounter, new CodedOrFreeText(null, null, "Malaria"), null, null, null);
+		Diagnosis voidedEpilepsyDiagnosis = new Diagnosis(existingEncounter, new CodedOrFreeText(null, null, "Epilepsy"), null, null, null);
+		voidedEpilepsyDiagnosis.setVoided(true);
 		when(context.getMode()).thenReturn(Mode.EDIT);
 		when(existingEncounter.getDiagnoses()).thenReturn(
-                new LinkedHashSet<Diagnosis>(Arrays.asList(new Diagnosis(existingEncounter, new CodedOrFreeText(null, null, "Asthma"), null, null, null), 
-                		new Diagnosis(existingEncounter, new CodedOrFreeText(null, null, "Malaria"), null, null, null))));
+				new LinkedHashSet<Diagnosis>(Arrays.asList(asthmaDiagnosis, malariaDiagnosis, voidedEpilepsyDiagnosis)));
 
 		// Replay
 		EncounterDiagnosesElement element = new EncounterDiagnosesElement();
-		Set<Diagnosis> existingDiangnoses = element.getExistingDiagnoses(context);
-		
-		// Verify
-		Assert.assertEquals(2, existingDiangnoses.size());
-		Assert.assertEquals("Asthma", ((Diagnosis) existingDiangnoses.toArray()[0]).getDiagnosis().getNonCoded());
-		Assert.assertEquals("Malaria", ((Diagnosis) existingDiangnoses.toArray()[1]).getDiagnosis().getNonCoded());
+		Set<Diagnosis> existingDiagnoses = element.getExistingDiagnoses(context);
 
+		// Verify
+		Assert.assertEquals(2, existingDiagnoses.size());
+
+		int asthmaDiagnosisCount = 0;
+		int malariaDiagnosisCount = 0;
+		int voidedEpilepsyDiagnosisCount = 0;
+		for (Diagnosis diagnosis : existingDiagnoses) {
+			if ("Asthma".equals(diagnosis.getDiagnosis().getNonCoded())) {
+				asthmaDiagnosisCount++;
+			}
+			if ("Malaria".equals(diagnosis.getDiagnosis().getNonCoded())) {
+				malariaDiagnosisCount++;
+			}
+			if ("Epilepsy".equals(diagnosis.getDiagnosis().getNonCoded())) {
+				voidedEpilepsyDiagnosisCount++;
+			}
+		}
+		Assert.assertEquals(asthmaDiagnosisCount, 1);
+		Assert.assertEquals(malariaDiagnosisCount, 1);
+		Assert.assertEquals(voidedEpilepsyDiagnosisCount, 0);
 	}
 	
 	@Test
