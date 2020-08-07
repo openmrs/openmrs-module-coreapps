@@ -5,7 +5,7 @@
     </div>
     <div class="info-body">
 		<% if (!config.recentDiagnoses) { %>
-		${ ui.message("coreapps.none") }
+		${ ui.message("coreapps.none.inLastPeriod", ui.encodeHtmlContent(ui.format(config.recentPeriodIndays))) }
 		<% } else { %>
         <ul>
             <% config.recentDiagnoses.each { %>

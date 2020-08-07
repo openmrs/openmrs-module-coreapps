@@ -46,5 +46,6 @@ public class DiagnosisWidgetFragmentController {
 
 		List<Diagnosis> recentDiagnoses = patientWrapper.getUniqueDiagnosesSince(recent.getTime());
 		config.addAttribute("recentDiagnoses", recentDiagnoses);
+		config.addAttribute("recentPeriodIndays", days);
 	}
 }

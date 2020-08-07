@@ -2,11 +2,13 @@
     <canvas class="chart chart-line" chart-data="$ctrl.data" chart-labels="$ctrl.labels"
             chart-series="$ctrl.series" chart-options="$ctrl.options"></canvas>
 </div>
-<div ng-if="$ctrl.data.length < 1">
-    <div style="padding-bottom: 10px;word-break: break-word;">
+<div ng-show="$ctrl.data.length == 0">
+    <div style="padding-bottom: 10px; word-break: break-word;">
         <strong>
             {{$ctrl.series.join(", ")}}
         </strong>
     </div>
-    No Data
+    <span>
+    {{ 'coreapps.none.inLastTime' | translate }}  {{$ctrl.maxAgeInDays}}  {{ 'coreapps.days' | translate }}
+    </span>
 </div>

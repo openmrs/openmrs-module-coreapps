@@ -20,6 +20,7 @@ export default class ObsAcrossEncountersController {
     this.fetchHeaders();
     this.fetchConcepts();
     this.fetchEncounters();
+    this.maxAgeInDays = this.widgetsCommons.maxAgeToDays(this.config.maxAge);
   }
 
   fetchSessionInfo() {
