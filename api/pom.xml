@@ -135,14 +135,6 @@
             <groupId>org.openmrs</groupId>
             <artifactId>event-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.openmrs</groupId>
-            <artifactId>event-api-1.x</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs</groupId>
-            <artifactId>event-api-2.x</artifactId>
-        </dependency>
         
         <dependency>
             <groupId>org.openmrs.module</groupId>

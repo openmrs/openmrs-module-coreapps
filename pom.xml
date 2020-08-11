@@ -40,7 +40,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <emrapiVersion>1.29.0</emrapiVersion>
         <uiframeworkVersion>3.15.0</uiframeworkVersion>
-        <eventVersion>2.5</eventVersion>
+        <eventVersion>2.8.0</eventVersion>
         <htmlformentryVersion>3.3.0</htmlformentryVersion>
         <appuiVersion>1.7</appuiVersion>
         <appframeworkVersion>2.9</appframeworkVersion>
@@ -213,18 +213,6 @@
 			<dependency>
 				<groupId>org.openmrs</groupId>
 				<artifactId>event-api</artifactId>
-				<version>${eventVersion}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.openmrs</groupId>
-				<artifactId>event-api-1.x</artifactId>
-				<version>${eventVersion}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.openmrs</groupId>
-				<artifactId>event-api-2.x</artifactId>
 				<version>${eventVersion}</version>
 				<scope>provided</scope>
 			</dependency>
