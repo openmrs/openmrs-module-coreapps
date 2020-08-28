@@ -14,10 +14,13 @@
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
 import org.openmrs.Encounter;
+
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.coreapps.DiagnosisServiceCompatibility;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
@@ -25,6 +28,7 @@ import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -45,6 +49,9 @@ public class ParserEncounterIntoSimpleObjects {
     private LocationService locationService;
 
     private DispositionService dispositionService;
+    
+    @Autowired
+    DiagnosisServiceCompatibility diagnosisServiceCompatibility;
 
     public ParserEncounterIntoSimpleObjects(Encounter encounter, UiUtils uiUtils, EmrApiProperties emrApiProperties,
                                             LocationService locationService, DispositionService dispositionService) {
@@ -94,9 +101,9 @@ public class ParserEncounterIntoSimpleObjects {
 		ParsedObs parsedObs = new ParsedObs();
 		
 		for (Obs obs : encounter.getObsAtTopLevel(false)) {
-			if (diagnosisMetadata.isDiagnosis(obs)) {
-				parsedObs.getDiagnoses().add(parseDiagnosis(diagnosisMetadata, obs));
-			} else if (dispositionDescriptor != null && dispositionDescriptor.isDisposition(obs)) {
+			
+			 parsedObs.getDiagnoses().add(parseDiagnosis(encounter));
+			 if (dispositionDescriptor != null && dispositionDescriptor.isDisposition(obs)) {
 				parsedObs.getDispositions().add(parseDisposition(dispositionDescriptor, obs, locale));
 			} else {
                 parsedObs.getObs().add(parseObs(obs, locale));
@@ -171,17 +178,21 @@ public class ParserEncounterIntoSimpleObjects {
 		return simpleObject;
 	}
 	
-	private SimpleObject parseDiagnosis(DiagnosisMetadata diagnosisMetadata, Obs obs) {
-		Diagnosis diagnosis = diagnosisMetadata.toDiagnosis(obs);
+	private SimpleObject parseDiagnosis(Encounter encounter) {
 		
-		String answer = "(" + uiUtils.message("coreapps.Diagnosis.Certainty." + diagnosis.getCertainty()) + ") ";
-		answer += diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(),
-		    emrApiProperties.getConceptSourcesForDiagnosisSearch());
+		SimpleObject simpleObject = SimpleObject.fromObject(encounter, uiUtils, "encounterId");
 		
-		SimpleObject simpleObject = SimpleObject.fromObject(obs, uiUtils, "obsId");
-		simpleObject.put("question", formatDiagnosisQuestion(diagnosis.getOrder()));
-		simpleObject.put("answer", answer);
-		simpleObject.put("order", diagnosis.getOrder().ordinal());
+		for(Diagnosis diagnosis:diagnosisServiceCompatibility.getPrimaryDiagnosis(encounter)) {
+			
+			String answer = "(" + uiUtils.message("coreapps.Diagnosis.Certainty." + diagnosis.getCertainty()) + ") ";
+			answer += diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(),
+			    emrApiProperties.getConceptSourcesForDiagnosisSearch());
+			
+				simpleObject.put("question", formatDiagnosisQuestion(diagnosis.getOrder()));
+			simpleObject.put("answer", answer);
+			simpleObject.put("order", diagnosis.getOrder().ordinal());
+		}
+		
 		return simpleObject;
 	}
 

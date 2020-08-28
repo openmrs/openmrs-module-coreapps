@@ -68,6 +68,7 @@
         {{}}}
     {{ }); }}
 
+
     {{ _.each(orders, function(order) { }}
         <p>
             <small>${ ui.message("coreapps.patientDashBoard.orderNumber")}</small><span>{{- order.orderNumber }}</span>
