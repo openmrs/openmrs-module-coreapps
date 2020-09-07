@@ -203,7 +203,6 @@ public class DiagnosesFragmentController {
         SimpleObject simple = SimpleObject.fromObject(result, ui, "word", "conceptName.id", "conceptName.uuid", "conceptName.conceptNameType", "conceptName.name", "concept.id", "concept.uuid", "concept.conceptMappings.conceptMapType", "concept.conceptMappings.conceptReferenceTerm.code", "concept.conceptMappings.conceptReferenceTerm.name", "concept.conceptMappings.conceptReferenceTerm.conceptSource.name");
 
         Concept concept = result.getConcept();
-        ConceptName conceptName = result.getConceptName();
         ConceptName preferredName = getPreferredName(locale, concept);
         PropertyUtils.setProperty(simple, "concept.preferredName", preferredName.getName());
 
