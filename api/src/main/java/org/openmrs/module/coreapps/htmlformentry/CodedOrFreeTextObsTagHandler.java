@@ -63,7 +63,6 @@ public class CodedOrFreeTextObsTagHandler extends SubstitutionTagHandler {
 
             // TODO: this doesn't work in obs groups yet
 
-            CodedOrFreeTextAnswer initialValue = null;
             List<Obs> existingCoded = context.removeExistingObs(codedConcept);
             if (existingCoded != null) {
                 if (existingCoded.size() > 1) {
@@ -95,7 +94,6 @@ public class CodedOrFreeTextObsTagHandler extends SubstitutionTagHandler {
 
         @Override
         public Collection<FormSubmissionError> validateSubmission(FormEntryContext context, HttpServletRequest request) {
-            Object value = widget.getValue(context, request);
             return null;
         }
 
