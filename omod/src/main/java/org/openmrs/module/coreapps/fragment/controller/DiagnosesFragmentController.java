@@ -52,7 +52,7 @@ import java.util.Locale;
  */
 public class DiagnosesFragmentController {
 
-    private final static String USE_NULL_VALUE = "0";
+    private static final String USE_NULL_VALUE = "0";
 
     /**
      * Searches for diagnoses with names matching query in the specified 1) diagnosisSets, 2) diagnosisConceptSources and/or diagnosisConceptClasses
