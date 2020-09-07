@@ -117,7 +117,7 @@ public class VisitTypeHelper {
 		VisitService visitService = Context.getVisitService();
 		List<VisitType> visitTypes = new ArrayList<VisitType>();
 		for(VisitType visitType : visitService.getAllVisitTypes()){
-			if(visitType.getRetired() == false){
+			if (!visitType.getRetired()) {
 				visitTypes.add(visitType);
 			}
 		}
