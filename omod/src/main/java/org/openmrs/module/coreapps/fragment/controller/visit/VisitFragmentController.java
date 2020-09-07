@@ -16,7 +16,6 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
-import org.openmrs.api.EncounterService;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;

@@ -15,7 +15,6 @@ package org.openmrs.module.coreapps.page.controller;
 
 import org.openmrs.Location;
 import org.openmrs.VisitType;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
