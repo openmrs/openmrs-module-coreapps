@@ -60,8 +60,7 @@ public class VisitTypeHelper {
 	public boolean showVisitTypeOnPatientHeaderSection(){
 		AdministrationService adminService = Context.getAdministrationService();
 		String propertyValue = adminService.getGlobalProperty(CoreAppsConstants.SHOW_VISIT_TYPE_PATIENT_HEADER_SECTION);
-		Boolean result = new Boolean(propertyValue);
-		return result;
+		return new Boolean(propertyValue);
 	}
 
 	/**
