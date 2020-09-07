@@ -106,7 +106,7 @@ public class VisitTypeHelper {
 			}
 		}
 
-		if (!(visitTypes.size()==visitTypesOrdered.size())) {
+		if (visitTypes.size() != visitTypesOrdered.size()) {
 			VisitTypeHelper.LOG.warn("Visit Types order property is not used.");
 			return visitTypes;
 		}
