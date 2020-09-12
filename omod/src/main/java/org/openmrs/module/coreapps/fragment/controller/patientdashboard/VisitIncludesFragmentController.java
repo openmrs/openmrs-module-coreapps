@@ -39,16 +39,14 @@ public class VisitIncludesFragmentController {
 		Object patient = config.get("patient");
 		Object visitType = config.get("visitType");
 
-		if(patient == null) {
+		if ((patient == null) && (request.getParameter("patientId") != null)) {
 			// retrieve patient id from parameter map
-			if(request.getParameter("patientId") != null){
-				String patientId = request.getParameter("patientId");
-				if(patientId != null){
-					if(!NumberUtils.isDigits(patientId)){
-						patient = patientService.getPatientByUuid(patientId);
-					} else {
-						patient = patientService.getPatient(NumberUtils.toInt(patientId));
-					}
+			String patientId = request.getParameter("patientId");
+			if(patientId != null){
+				if(!NumberUtils.isDigits(patientId)){
+					patient = patientService.getPatientByUuid(patientId);
+				} else {
+					patient = patientService.getPatient(NumberUtils.toInt(patientId));
 				}
 			}
 		}
