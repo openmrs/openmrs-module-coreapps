@@ -137,7 +137,7 @@ public class PatientPageController {
         model.addAttribute("secondColumnFragments", secondColumnFragments);
 
         List<Extension> otherActions = appFrameworkService.getExtensionsForCurrentUser(
-                (dashboard == "patientDashboard" ? "clinicianFacingPatientDashboard" : dashboard) + ".otherActions", contextModel);
+                ("patientDashboard".equals(dashboard) ? "clinicianFacingPatientDashboard" : dashboard) + ".otherActions", contextModel);
         Collections.sort(otherActions);
         model.addAttribute("otherActions", otherActions);
 
