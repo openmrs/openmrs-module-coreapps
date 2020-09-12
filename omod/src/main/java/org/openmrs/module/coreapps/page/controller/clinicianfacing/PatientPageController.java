@@ -15,6 +15,8 @@ package org.openmrs.module.coreapps.page.controller.clinicianfacing;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
@@ -101,6 +103,13 @@ public class PatientPageController {
         AppContextModel contextModel = sessionContext.generateAppContextModel();
         contextModel.put("patient", new PatientContextModel(patient));
         contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
+
+        List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
+        List<Encounter> encounters = encounterService.getEncountersByPatient(patient);
+        for (Encounter encounter : encounters) {
+            encounterTypes.add(encounter.getEncounterType());
+        }
+        contextModel.put("encounterTypes", ConversionUtil.convertToRepresentation(encounterTypes, Representation.DEFAULT));
 
         List<Program> programs = new ArrayList<Program>();
         List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(patient, null, null, null, null, null, false);
