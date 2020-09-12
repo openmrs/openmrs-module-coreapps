@@ -69,10 +69,7 @@ public class LatestObsResource extends ObsResource1_11 {
 		int nLatestObs = context.getRequest().getParameter("nLatestObs") != null ? Integer.parseInt(context.getRequest().getParameter("nLatestObs")) : 1;
 		if (conceptUuids != null) {
 			String[] conceptUuidList = conceptUuids.split(",");
-			if (conceptUuids == null) {
-				return new EmptySearchResult();
-			}
-			
+
 			List<String> sort = new ArrayList<String>();
 			sort.add("obsDatetime");
 			
