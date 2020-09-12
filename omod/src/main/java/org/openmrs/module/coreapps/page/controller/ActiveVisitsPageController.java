@@ -42,10 +42,9 @@ public class ActiveVisitsPageController {
         if (sessionLocation == null) {
             return "redirect:login.htm";
         }
-		Location visitLocation = null;
-		if (sessionLocation != null) {
-			visitLocation = service.getLocationThatSupportsVisits(sessionLocation);
-		}
+
+		Location visitLocation = service.getLocationThatSupportsVisits(sessionLocation);
+
 		if (visitLocation == null) {
 			throw new IllegalStateException("Configuration required: no visit location found based on session location");
 		}
