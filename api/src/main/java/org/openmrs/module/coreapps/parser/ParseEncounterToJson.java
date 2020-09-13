@@ -93,11 +93,7 @@ public class ParseEncounterToJson {
             simpleEncounter.put("canDelete", true);
         }
 
-        if (verifyIfUserHasPermissionToEditAnEncounter(encounter, authenticatedUser, canEdit)) {
-            simpleEncounter.put("canEdit", true);
-        } else {
-            simpleEncounter.put("canEdit", false);
-        }
+        simpleEncounter.put("canEdit", verifyIfUserHasPermissionToEditAnEncounter(encounter, authenticatedUser, canEdit));
 
         if (encounter.getVisit() != null) {
             simpleEncounter.put("visitId", encounter.getVisit().getId());
