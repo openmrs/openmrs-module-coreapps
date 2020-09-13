@@ -53,11 +53,7 @@ public class ActiveVisitStatusFragmentController {
 			config.addAttribute("activeVisitStartDatetime", uiUtils.format(activeVisit.getStartDatetime()));
 			config.addAttribute("showVisitTypeOnPatientHeaderSection", visitTypeHelper.showVisitTypeOnPatientHeaderSection());
 
-			String color = "";
-			if(activeVisit != null){
-				color = (String) visitTypeHelper.getVisitTypeColorAndShortName(
-						activeVisit.getVisit().getVisitType()).get("color");
-			}
+			String color = (String) visitTypeHelper.getVisitTypeColorAndShortName(activeVisit.getVisit().getVisitType()).get("color");
 
 			model.addAttribute("visitAttributeColor", color);
 		}
