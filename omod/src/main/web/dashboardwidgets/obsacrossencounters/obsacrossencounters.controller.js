@@ -54,10 +54,10 @@ export default class ObsAcrossEncountersController {
   }
 
   fetchEncounters() {
-    const encounterTypes = this.config.encounterTypes ? this.config.encounterType.split(',').map(c => c.trim()) : [];
+    const encounterTypes = this.config.encounterTypes ? this.config.encounterTypes.split(',').map(c => c.trim()) : [];
     const legacyEncounterTypes = this.config.encounterType ? this.config.encounterType.split(',').map(c => c.trim()) : [];
     encounterTypes.push(...legacyEncounterTypes);
-    
+
     const encounterPromises = encounterTypes.map(e =>
       this.openmrsRest.get("encounter", {
         patient: this.config.patientUuid,
