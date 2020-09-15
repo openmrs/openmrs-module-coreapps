@@ -10,10 +10,13 @@ Provides apps for performing the common tasks
 
 # Development
 
-As usual, you can just use `mvn openmrs-sdk:watch` for development.
+Hot reloading changes is supported. Use the following three commands:
 
-However, in order to see changes to `scss` files, you'll also need to run
-`mvn process-resources -Pwatch-sass`.
+```
+mvn openmrs-sdk:watch
+mvn process-resources -Pwatch-sass
+npm run watch
+```
 
 ## Dashboard Widgets
 
