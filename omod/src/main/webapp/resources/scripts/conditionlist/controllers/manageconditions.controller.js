@@ -72,15 +72,13 @@ function ManageConditionsController($scope, RestfulService, CommonFunctions) {
             conditions.push(condition);
             RestfulService.post('condition', conditions, function (data) {
                 if(condition.voided == false){
-                //emr.successAlert("conditionlist.updateCondition.success");
-                    emr.successAlert("Condition Saved Successfully");
+                    emr.successAlert("coreapps.conditionui.updateCondition.success");
                 }
                 else{
-                    emr.successAlert("Condition Deleted Successfully");
+                    emr.successAlert("coreapps.conditionui.updateCondition.delete");
                 }
             }, function (error) {
-                //emr.errorAlert("conditionlist.updateCondition.error");
-                emr.errorAlert("Error Saving condition");
+                emr.errorAlert("coreapps.conditionui.updateCondition.error");
             });
     }    
 

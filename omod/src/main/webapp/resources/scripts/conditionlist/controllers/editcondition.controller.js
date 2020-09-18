@@ -23,16 +23,16 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
      */
     self.saveCondition = self.saveCondition || function () {
         if($scope.condition.status == INACTIVE_STATUS && $scope.condition.onSetDate > $scope.condition.endDate){
-                emr.errorAlert("End Date can't be before Onset Date");
+                emr.errorAlert("coreapps.conditionui.updateCondition.onSetDate.error");
         }
         else{
             var conditions = [];
             conditions.push($scope.condition);
             RestfulService.post('condition', conditions, function (data) {
-                emr.successAlert("Condition edited successfully")
+                emr.successAlert("coreapps.conditionui.updateCondition.edited");
                 window.location = '/' + OPENMRS_CONTEXT_PATH + '/coreapps/conditionlist/manageConditions.page?patientId=' + $scope.patientUuid + '&';
             }, function (error) {
-                emr.errorAlert("Error Saving condition");
+                emr.errorAlert("coreapps.conditionui.updateCondition.error");
             });
         }
     }
