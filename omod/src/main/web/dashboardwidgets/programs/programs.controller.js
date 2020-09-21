@@ -136,7 +136,7 @@ export default class ProgramsController {
         this.input.program = "";
     }
 
-   gotoProgramDashboard(programUuid, event) {
+   gotoProgramDashboard(event, programUuid) {
 
         programUuid = programUuid || this.input.program;
         if (programUuid && this.config.enableProgramDashboards) {
@@ -147,7 +147,8 @@ export default class ProgramsController {
             });
             this.openmrsRest.getServerUrl().then((url) => {
                 const target = url + destinationPage;
-                if (!event.metaKey && !event.ctrlKey && !event.shiftKey && event.button == 0) {
+                console.log(event);
+                if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
                     window.location.href = target;
                 } else {
                     window.open(target, '_blank');
