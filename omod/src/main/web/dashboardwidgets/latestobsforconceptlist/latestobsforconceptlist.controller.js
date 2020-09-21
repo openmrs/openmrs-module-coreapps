@@ -16,7 +16,7 @@ export default class LatestObsForConceptListController {
                 'obsDatetime,' +
                 'concept:(uuid,display,datatype:(uuid),names:(name,locale,localePreferred,voided,conceptNameType)),' +
                 'value:(uuid,display,names:(name,locale,localePreferred,voided,conceptNameType)),' +
-                'groupMembers:(concept:(display,names:(name,locale,localePreferred,voided,conceptNameType))))',
+                'groupMembers:(value,concept:(display,names:(name,locale,localePreferred,voided,conceptNameType))))',
             concept: this.config.concepts.split(',').map(c => c.trim()).join(','),
             nLatestObs: this.config.nLatestObs || 1
         }).then((resp) => {
