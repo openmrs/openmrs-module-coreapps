@@ -18,7 +18,7 @@
 <ul>
     <li ng-show="$ctrl.patientPrograms.length != 0" ng-repeat="patientProgram in $ctrl.patientPrograms | orderBy: '-dateEnrolled'">
         <!-- href="#" included so bootstrap will style this as a link -->
-        <a href="#" ng-click="$ctrl.gotoProgramDashboard(patientProgram.program.uuid)">
+        <a href="#" ng-click="$ctrl.gotoProgramDashboard(patientProgram.program.uuid, $event)">
             {{ patientProgram.program.display }}
         </a>
 
