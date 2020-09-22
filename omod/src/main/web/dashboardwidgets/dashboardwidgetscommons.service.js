@@ -113,13 +113,13 @@ export default class WidgetsCommons {
     }
 
     hasDatatypeDateOrSimilar(concept) {
-        return ['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
+        return concept.datatype && ['8d4a505e-c2cc-11de-8d13-0010c6dffd0f',
             '8d4a591e-c2cc-11de-8d13-0010c6dffd0f',
             '8d4a5af4-c2cc-11de-8d13-0010c6dffd0f'].includes(concept.datatype.uuid)
     }
 
     hasDatatypeCoded(concept) {
-        return concept.datatype.uuid === "8d4a48b6-c2cc-11de-8d13-0010c6dffd0f";
+        return concept.datatype && concept.datatype.uuid === "8d4a48b6-c2cc-11de-8d13-0010c6dffd0f";
     }
 
     isDrug(obj) {
