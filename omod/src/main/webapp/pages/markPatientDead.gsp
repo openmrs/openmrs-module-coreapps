@@ -72,7 +72,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
     <fieldset style="min-width: 40%">
 
         <span id="deceased-container">
-            <% if (patient?.getDead() == true) {
+            <% if (patient?.getDead() == true || defaultDead == true) {
 
             %>
             <input checked="checked" id="deceased" name="dead" type="checkbox"/>
@@ -93,7 +93,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                         label        : "coreapps.markPatientDead.dateOfDeath",
                         formFieldName: "deathDate",
                         left         : true,
-                        defaultDate  : patient?.getDeathDate() ?: null,
+                        defaultDate  : patient?.getDeathDate() ?: defaultDeathDate ?: null,
                         useTime      : true,
                         showEstimated: false,
                         initialValue : lastVisitDate ?:new Date(),
@@ -135,6 +135,9 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
         </p>
 
         <p>
+            <span>
+                <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }" onclick="javascript:window.history.back()" />
+            </span>
             <span>
                 <input type="submit" class="confirm" value="${ ui.message("coreapps.markPatientDead.submitValue")}">
             </span>
