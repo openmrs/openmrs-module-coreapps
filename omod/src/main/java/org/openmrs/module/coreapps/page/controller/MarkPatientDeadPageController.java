@@ -87,7 +87,6 @@ public class MarkPatientDeadPageController {
             return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "dashboard", returnDashboard, "returnUrl", returnUrl));
         } catch (APIException e) {
             log.error(e.getMessage(), e);
-            // TODO add dashboard here
             return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "dashboard", returnDashboard, "returnUrl", returnUrl));
         }
     }
