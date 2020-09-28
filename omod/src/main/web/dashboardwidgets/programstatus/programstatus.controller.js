@@ -44,6 +44,14 @@ export default class ProgramStatusController {
         this.statesByUuid = {};
         this.sortedStatesByWorkflow = {};
 
+        this.markPatientDeadOutcome = null;
+        this.markPatientDeadPage = "/coreapps/markPatientDead.page?patientId={{patientUuid}}&returnDashboard={{dashboard}}&defaultDeathDate={{date}}&defaultDead=true";
+        this.canMarkPatientDead = false;
+
+        // config parameter that can be passed in so the widget knows what dashboard it is being rendered on,
+        // currently only use is to pass on to Mark Patient Dead page to use as a return url
+        this.dashboard = null;
+
         // backs the various input fields
         this.input = {
             dateEnrolled: null,
@@ -55,7 +63,7 @@ export default class ProgramStatusController {
         }
 
         this.resetWindowStates();
-        
+
         let ctrl = this;
 
         return this.activate();
@@ -64,8 +72,20 @@ export default class ProgramStatusController {
     activate() {
         this.openmrsRest.setBaseAppPath("/coreapps");
 
-        this.fetchPrivileges();
+        if (this.config.dashboard) {
+          this.dashboard = this.config.dashboard;
+        }
 
+        // if this concept is selected as an outcome, redirect to "Mark Patient Dead" page
+        if (this.config.markPatientDeadOutcome) {
+          this.markPatientDeadOutcome = this.config.markPatientDeadOutcome;
+        }
+
+        if (this.config.markPatientDeadPage) {
+          this.markPatientDeadPage = this.config.markPatientDeadPage;
+        }
+
+        this.fetchPrivileges();
         this.fetchSessionLocation();
 
         return this.fetchLocations()
@@ -85,6 +105,9 @@ export default class ProgramStatusController {
                 };
                 if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.deletePatientProgram'; })) {
                     this.canDeleteProgram = true;
+                };
+                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.markPatientDead'; })) {
+                  this.canMarkPatientDead = true;
                 };
             }
         }, function(error) {
@@ -346,7 +369,20 @@ export default class ProgramStatusController {
             outcome: this.input.outcome//,
             //states: states
         }).then((response) => {
-            if (!needToReloadPage) {
+            // redirect to Mark Patient Dead page if specific "death" outcome is configured and selected
+            if (this.markPatientDeadOutcome && this.canMarkPatientDead &&
+                response.outcome && response.outcome.uuid === this.markPatientDeadOutcome) {
+              var destinationPage = Handlebars.compile(this.markPatientDeadPage)({
+                patientUuid: this.config.patientUuid,
+                dashboard: this.config.dashboard,
+                date: response.dateCompleted
+              });
+              this.openmrsRest.getServerUrl().then((url) => {
+                const target = url + destinationPage;
+                window.location.href = target;
+              });
+            }
+            else if (!needToReloadPage) {
                 this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
             }
             else {
@@ -415,7 +451,7 @@ export default class ProgramStatusController {
 
     getWorkflowForState(state) {
         let result;
-        
+
         angular.forEach(this.program.workflows, (workflow) => {
             angular.forEach(workflow.states, (workflowState) => {
                 if (state.uuid == workflowState.uuid) {
@@ -465,28 +501,28 @@ export default class ProgramStatusController {
             this.patientProgram.states = this.$filter('filter')(this.patientProgram.states, (state) => {
                 return !state.voided
             }, true);
-            
+
             //this custom comparator is detailed in the PR at https://github.com/openmrs/openmrs-module-coreapps/pull/299
             //the orderBy docs are available at https://docs.angularjs.org/api/ng/filter/orderBy
             this.patientProgram.states = this.$filter('orderBy')(this.patientProgram.states, null, false, function(state1, state2)
             {
                 //From the orderBy documentation
-                
+
                 //In order to ensure that the sorting will be deterministic across platforms, if none of the specified predicates can
                 //distinguish between two items, orderBy will automatically introduce a dummy predicate that returns the item's index
                 //as value. (If you are using a custom comparator, make sure it can handle this predicate as well.)
-                
+
                 //i.e. orderBy falls back to index comparison when two states are indicated to be equal (return 0) in a previous comparison
                 if(state1.type === "number" && state2.type === "number"){
                     //if index of state1 is 7 and state2 is 8, 7-8 == -1 indicates state1 is first, 8-7 == 1 indicating state2 is first
                     return state1.value-state2.value;
                 }
-                
-                //this sort is done against ALL workflows within a program 
+
+                //this sort is done against ALL workflows within a program
                 //in which case it is possible to have two states with null end dates,
                 //and that is the exception to when endDate==null indicates sort order clearly
                 if(!(state1.value.endDate == null && state2.value.endDate == null)) {
-                
+
                     //ordered so each criteria is evaluated in order (e.g. not all "prev" crit. before "next" crit. is ever evaluated)
 
                     //null end date prioritized over any other sort criteria
@@ -498,7 +534,7 @@ export default class ProgramStatusController {
                     } else if( state1.value.startDate < state2.value.startDate) {
                         return -1;
                     } else if ( state1.value.startDate > state2.value.startDate) {
-                        return 1;    
+                        return 1;
                     //sort by end date
                     } else if(state1.value.endDate < state2.value.endDate){
                         return -1;
