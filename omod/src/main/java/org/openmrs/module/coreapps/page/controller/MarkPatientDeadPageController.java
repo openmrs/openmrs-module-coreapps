@@ -28,14 +28,23 @@ import java.util.List;
 public class MarkPatientDeadPageController {
     protected final Log log = LogFactory.getLog(this.getClass());
 
-    public void get(@SpringBean PageModel pageModel, @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride, @SpringBean("patientService") PatientService patientService, @RequestParam("patientId") Patient patient) {
-        String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
-
+    public void get(@SpringBean PageModel pageModel,
+                    @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
+                    @SpringBean("patientService") PatientService patientService,
+                    @RequestParam("patientId") Patient patient,
+                    @RequestParam(value = "defaultDead", required = false) Boolean defaultDead,
+                    @RequestParam(value = "defaultDeathDate", required = false) Date defaultDeathDate
+    ) {
 
         pageModel.put("birthDate", patient.getBirthdate());
         pageModel.put("patient", patient);
         pageModel.put("patientId", patient.getId());
         pageModel.put("breadcrumbOverride", breadcrumbOverride);
+        pageModel.put("defaultDead", defaultDead);
+        pageModel.put("defaultDeathDate", defaultDeathDate);
+
+        String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
+
         if (conceptId != null) {
             pageModel.put("conceptAnswers", getConceptAnswers(conceptId));
         }
@@ -49,7 +58,14 @@ public class MarkPatientDeadPageController {
         }
     }
 
-    public String post(@SpringBean("patientService") PatientService patientService, @RequestParam(value = "causeOfDeath", required = false) String causeOfDeath, @RequestParam(value = "dead", required = false) Boolean dead, @RequestParam(value = "deathDate", required = false) Date deathDate, @RequestParam("patientId") Patient patient, UiUtils ui, @RequestParam(value = "returnUrl", required = false) String returnUrl) {
+    public String post(@SpringBean("patientService")
+                       PatientService patientService,
+                       @RequestParam(value = "causeOfDeath", required = false) String causeOfDeath,
+                       @RequestParam(value = "dead", required = false) Boolean dead,
+                       @RequestParam(value = "deathDate", required = false) Date deathDate,
+                       @RequestParam("patientId") Patient patient, UiUtils ui,
+                       @RequestParam(value = "returnUrl", required = false) String returnUrl,  // does this even work, and, if so, how?
+                       @RequestParam(value = "returnDashboard", required = false) String returnDashboard) {
         try {
             Date date = new Date();
             if (dead != null && StringUtils.isNotBlank(causeOfDeath) && deathDate != null && !deathDate.before(patient.getBirthdate()) && !deathDate.after(date)) {
@@ -68,10 +84,10 @@ public class MarkPatientDeadPageController {
             if (patient.isDead() && patient.getDeathDate() != null) {
                 closeActiveVisitsAfterDeath(patient);
             }
-            return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "returnUrl", returnUrl));
+            return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "dashboard", returnDashboard, "returnUrl", returnUrl));
         } catch (APIException e) {
             log.error(e.getMessage(), e);
-            return "redirect:" + ui.pageLink("coreapps", "markPatientDead", SimpleObject.create("patientId", patient.getId(), "returnUrl", returnUrl));
+            return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "dashboard", returnDashboard, "returnUrl", returnUrl));
         }
     }
 
