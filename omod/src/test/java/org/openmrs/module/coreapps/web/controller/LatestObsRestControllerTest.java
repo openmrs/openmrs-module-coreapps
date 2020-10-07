@@ -35,7 +35,7 @@ public class LatestObsRestControllerTest extends MainResourceControllerTest {
         MockHttpServletResponse response = handle(request);
         List<Object> allNonVoidedObsList = deserialize(response).get("results");
 
-        assertEquals(allNonVoidedObsList.size(), 1);
+        assertEquals(1, allNonVoidedObsList.size());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class LatestObsRestControllerTest extends MainResourceControllerTest {
         MockHttpServletResponse response = handle(request);
         List<Object> allNonVoidedObsList = deserialize(response).get("results");
 
-        assertEquals(allNonVoidedObsList.size(), 2);
+        assertEquals(2, allNonVoidedObsList.size());
     }
 
     @Test

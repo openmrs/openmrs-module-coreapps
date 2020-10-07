@@ -141,7 +141,7 @@ public class ActiveDrugOrdersFragmentControllerTest {
 		fragmentController.controller(config, app, patientService, orderService, model, (UiUtils) ui);
 		
 		// verify
-		assertEquals(app.getConfig().get("detailsUrl"), null);
+		assertEquals(null, app.getConfig().get("detailsUrl"));
 		
 	}
 
@@ -155,7 +155,7 @@ public class ActiveDrugOrdersFragmentControllerTest {
 		fragmentController.controller(config, app, patientService, orderService, model, (UiUtils) ui);
 		
 		// verify
-		assertEquals(model.getAttribute("returnUrl"), "/openmrs/coreapps/clinicianfacing/patient.page?patientId=patient-uuid&");
+		assertEquals("/openmrs/coreapps/clinicianfacing/patient.page?patientId=patient-uuid&", model.getAttribute("returnUrl"));
 	}
 
 	@Test
@@ -167,7 +167,7 @@ public class ActiveDrugOrdersFragmentControllerTest {
 		fragmentController.controller(config, app, patientService, orderService, model, (UiUtils) ui);
 		
 		// verify
-		assertEquals(model.getAttribute("returnUrl"), "/openmrs/custom/returnUrl.page?patientId={{patientUuid}}");
+		assertEquals("/openmrs/custom/returnUrl.page?patientId={{patientUuid}}", model.getAttribute("returnUrl"));
 	}
 	
 	@Test
