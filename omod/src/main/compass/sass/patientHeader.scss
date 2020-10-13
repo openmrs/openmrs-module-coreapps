@@ -32,6 +32,7 @@ $green: #51A351;
     .labeled {
       display: inline-block;
 
+
       em {
         font-size: 9pt;
         color: #888;
@@ -219,4 +220,8 @@ $green: #51A351;
   padding: 2px 5px;
   border-radius: 1px;
   font-size: 0.8em;
+}
+
+.inlineSpan span {
+  display: inline !important;
 }
