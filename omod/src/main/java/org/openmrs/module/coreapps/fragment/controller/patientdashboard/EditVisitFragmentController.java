@@ -4,7 +4,6 @@ import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.api.VisitService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -13,7 +12,6 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

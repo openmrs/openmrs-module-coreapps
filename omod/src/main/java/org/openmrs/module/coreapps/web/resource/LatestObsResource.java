@@ -31,7 +31,6 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_11.ObsResource1_11;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.PatientResource1_8;
 
-import java.lang.Integer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;

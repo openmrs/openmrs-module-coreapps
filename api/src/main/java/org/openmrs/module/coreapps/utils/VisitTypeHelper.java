@@ -60,8 +60,7 @@ public class VisitTypeHelper {
 	public boolean showVisitTypeOnPatientHeaderSection(){
 		AdministrationService adminService = Context.getAdministrationService();
 		String propertyValue = adminService.getGlobalProperty(CoreAppsConstants.SHOW_VISIT_TYPE_PATIENT_HEADER_SECTION);
-		Boolean result = new Boolean(propertyValue);
-		return result;
+		return new Boolean(propertyValue);
 	}
 
 	/**
@@ -106,7 +105,7 @@ public class VisitTypeHelper {
 			}
 		}
 
-		if (!(visitTypes.size()==visitTypesOrdered.size())) {
+		if (visitTypes.size() != visitTypesOrdered.size()) {
 			VisitTypeHelper.LOG.warn("Visit Types order property is not used.");
 			return visitTypes;
 		}
@@ -117,7 +116,7 @@ public class VisitTypeHelper {
 		VisitService visitService = Context.getVisitService();
 		List<VisitType> visitTypes = new ArrayList<VisitType>();
 		for(VisitType visitType : visitService.getAllVisitTypes()){
-			if(visitType.getRetired() == false){
+			if (!visitType.getRetired()) {
 				visitTypes.add(visitType);
 			}
 		}

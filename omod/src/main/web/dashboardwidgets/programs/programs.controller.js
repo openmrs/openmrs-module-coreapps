@@ -136,12 +136,9 @@ export default class ProgramsController {
         this.input.program = "";
     }
 
-   gotoProgramDashboard(programUuid) {
+   gotoProgramDashboard(event, programUuid) {
 
-        if (!programUuid) {
-            programUuid = this.input.program
-        }
-
+        programUuid = programUuid || this.input.program;
         if (programUuid && this.config.enableProgramDashboards) {
             var destinationPage = "";
             destinationPage = Handlebars.compile(this.dashboardPage)({
@@ -149,7 +146,13 @@ export default class ProgramsController {
                 dashboard: programUuid
             });
             this.openmrsRest.getServerUrl().then((url) => {
-                window.location.href = url + destinationPage;
+                const target = url + destinationPage;
+                console.log(event);
+                if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
+                    window.location.href = target;
+                } else {
+                    window.open(target, '_blank');
+                }
             });
         }
     }
