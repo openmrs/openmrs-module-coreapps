@@ -80,6 +80,7 @@ export default class ObsAcrossEncountersController {
     return Boolean(obs && obs.value && obs.value.retired);
   }
 
+  // `obs` must *not* be an obsGroup
   getObsValue(obs) {
     if (this.widgetsCommons.hasDatatypeDateOrSimilar(obs.concept)) {
         return this.$filter('date')(new Date(obs.value), this.config.dateFormat);
@@ -96,14 +97,10 @@ export default class ObsAcrossEncountersController {
       // all normal concepts will go in one row
       const foundObsByUuid = {};
       for (let obs of encounter.obs) {
-        // see if the concept matches
-        if (conceptKeys.includes(obs.concept.uuid)) {
-          foundObsByUuid[obs.concept.uuid] = obs;
-        }
-        // add a row for each group with matches
+        // if it's a group, add a row for each member matching one of the concepts
         if (obs.groupMembers) {
           const foundMembers = obs.groupMembers.filter(member => conceptKeys.includes(member.concept.uuid));
-          if (foundMembers) {
+          if (foundMembers.length) {
             const foundMembersByUuid = Object.fromEntries(foundMembers.map(m => [m.concept.uuid, m]));
             this.simpleEncs.push({
               encounterType: encounter.encounterType.name,
@@ -111,6 +108,9 @@ export default class ObsAcrossEncountersController {
               obs: foundMembersByUuid
             });
           }
+        } else // otherwise, add the obs value (if it matches one of our concepts)
+          if (conceptKeys.includes(obs.concept.uuid)) {
+          foundObsByUuid[obs.concept.uuid] = obs;
         }
       }
       if (Object.keys(foundObsByUuid).length > 0) {
