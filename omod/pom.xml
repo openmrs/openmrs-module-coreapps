@@ -209,13 +209,6 @@
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>uicommons-api</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>uicommons-omod</artifactId>
-			<version>${uicommonsVersion}</version>
-			<scope>provided</scope>
-		</dependency>
 	
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
