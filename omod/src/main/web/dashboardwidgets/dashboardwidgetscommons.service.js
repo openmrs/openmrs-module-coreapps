@@ -122,6 +122,7 @@ export default class WidgetsCommons {
         return concept.datatype && concept.datatype.uuid === "8d4a48b6-c2cc-11de-8d13-0010c6dffd0f";
     }
 
+    // use as `isDrug(obs.value)`
     isDrug(obj) {
         return Boolean(obj.concept);
     }
