@@ -1,8 +1,8 @@
 export default class LatestObsForConceptListController {
-    constructor($filter, openmrsRest, widgetsCommons) {
+    constructor($filter, openmrsRest, widgetsCommons , openmrsTranslate) {
         'ngInject';
 
-        Object.assign(this, {$filter, openmrsRest, widgetsCommons });
+        Object.assign(this, {$filter, openmrsRest, openmrsTranslate, widgetsCommons });
     }
 
     $onInit() {

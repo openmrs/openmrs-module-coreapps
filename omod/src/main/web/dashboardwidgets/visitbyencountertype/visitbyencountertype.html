@@ -6,6 +6,6 @@
         <div class="tag" ng-if="visit.encounterType !== ''">{{visit.encounterType | translate }}</div>
     </li>
     <p ng-if="$ctrl.visits.length == 0">
-        None
+        {{ 'coreapps.none' | translate }}
     </p>
 </ul>
