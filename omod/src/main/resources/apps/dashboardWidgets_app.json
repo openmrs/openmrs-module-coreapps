@@ -7,7 +7,7 @@
     "config": {
       "widget": "latestobsforconceptlist",
       "icon": "icon-user-md",
-      "label": "LATEST OBSERVATIONS",
+      "label": "coreapps.clinicianfacing.latestObservations",
       "maxAge": "1m",
       "concepts": "5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, 5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     },
@@ -31,7 +31,7 @@
     "config": {
       "widget": "obsacrossencounters",
       "icon": "icon-user-md",
-      "label": "HEALTH TREND SUMMARY",
+      "label": "coreapps.clinicianfacing.healthTrendSummary",
       "concepts": "5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
       "maxRecords": "5",
       "maxAge": "1m"
@@ -56,7 +56,7 @@
     "config": {
       "widget": "visitbyencountertype",
       "icon": "icon-calendar",
-      "label": "RECENT VISITS",
+      "label": "coreapps.clinicianfacing.recentVisits",
       "maxRecords": "3",
       "combineEncounterTypes": "true"
     },
@@ -80,7 +80,7 @@
     "config": {
       "widget": "obsgraph",
       "icon": "icon-bar-chart",
-      "label": "WEIGHT GRAPH",
+      "label": "coreapps.clinicianfacing.weightGraph",
       "conceptId": "5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
       "maxResults": "10",
       "maxAge": "1y"
@@ -105,7 +105,7 @@
     "config": {
       "widget": "relationships",
       "icon": "icon-group",
-      "label": "FAMILY",
+      "label": "coreapps.clinicianfacing.family",
       "editPrivilege": "Task: coreapps.editRelationships",
       "maxRecords": "5"
     },
