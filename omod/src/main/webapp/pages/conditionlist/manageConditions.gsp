@@ -5,18 +5,15 @@
     ui.includeJavascript("uicommons", "angular-ui/ui-bootstrap-tpls-0.11.2.min.js")
     ui.includeJavascript("uicommons", "angular-resource.min.js")
     ui.includeJavascript("uicommons", "angular-common.js")
+    ui.includeJavascript("uicommons", "underscore-min.js")
 
-    ui.includeJavascript("coreapps", "conditionlist/lib/restangular.min.js")
+    ui.includeJavascript("coreapps", "conditionlist/lib/polyfills.js")
     ui.includeJavascript("coreapps", "conditionlist/restful-services/restful-service.js");
-    ui.includeJavascript("coreapps", "conditionlist/models/model.module.js")
-    ui.includeJavascript("coreapps", "conditionlist/models/concept.model.js")
-    ui.includeJavascript("coreapps", "conditionlist/models/condition.model.js")
     ui.includeJavascript("coreapps", "conditionlist/emr.messages.js")
     ui.includeJavascript("coreapps", "conditionlist/common.functions.js")
-    ui.includeJavascript("coreapps", "conditionlist/controllers/manageconditions.controller.js")
+    ui.includeJavascript("coreapps", "conditionlist/controllers/conditions.controller.js")
 
-    ui.includeJavascript("coreapps", "conditionlist/common.functions.js")
-
+    ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
     ui.includeCss("coreapps", "conditionlist/conditions.css")
 %>
 
@@ -40,10 +37,10 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
     });
 </script>
 
-<h2>${ui.message("coreapps.conditionui.manageConditions")}<td></h2>
+<h2>${ui.message("coreapps.conditionui.manageConditions")}</h2>
 
-<div id="condition" ng-app="manageConditionsApp" ng-controller="ManageConditionsController"
-     ng-init="conditionHistoryList = getConditions('${patient.uuid}')">
+<div id="condition" ng-app="conditionsApp" ng-controller="ConditionsController"
+     ng-init="conditions = getConditions('${patient.uuid}')">
     <div id="tabs">
         <ul>
             <li>
@@ -65,7 +62,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                     <tr>
                         <th>${ui.message("coreapps.conditionui.condition")}</th>
                         <th>${ui.message("coreapps.conditionui.onsetdate")}</th>
-                        <th ng-if="tab==='INACTIVE'">${ui.message("coreapps.stopDate.label")}</th>
+                        <th ng-if="tab === 'INACTIVE'">${ui.message("coreapps.stopDate.label")}</th>
                         <th ng-if="'${hasModifyConditionsPrivilege}'">${ui.message("coreapps.actions")}</th>
                     </tr>
                     </thead>
@@ -75,51 +72,48 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                             ${ui.message("coreapps.conditionui.noKnownConditions")}
                         </td>
                     </tr>
-                    <tbody ng-repeat="conditionHistory in conditionHistoryList">
-                    <tr class="clickable-tr" ng-init="condition = conditionHistory.conditions[conditionHistory.conditions.length-1]"
-                        ng-show="condition.status===tab && condition.voided === false">
+                    <tr class="clickable-tr" ng-repeat="condition in conditions track by condition.uuid" ng-if="condition.status === tab">
                         <td>{{condition.concept.name}}</td>
                         <td>{{formatDate(condition.onSetDate)}}</td>
-                        <td ng-if="condition.status==='INACTIVE' && condition.voided===false" ng-style="strikeThrough(condition.voided)">{{formatDate(condition.endDate)}}</td>
+                        <td ng-if="tab === 'INACTIVE'">{{formatDate(condition.endDate)}}</td>
                         <td ng-if="'${hasModifyConditionsPrivilege}'">
-                            <i class="icon-pencil edit-action" title="${ui.message("coreapps.conditionui.editCondition","")}"
-                               ng-click="redirectToEditCondition('${ ui.pageLink("coreapps/conditionlist", "editCondition", [patientId: patient.uuid, returnUrl: returnUrl]) }',condition) "   ng-if="condition.voided===false"></i>
+                            <i class="icon-pencil edit-action" title="${ui.message("coreapps.conditionui.editCondition")}"
+                               ng-click="redirectToEditCondition('${ ui.pageLink("coreapps/conditionlist", "manageCondition", [patientId: patient.uuid, returnUrl: returnUrl]) }', condition)"></i>
                             <i class="icon-remove delete-action" title="${ui.message("coreapps.delete")}"
-                               ng-click="conditionConfirmation(conditionHistory.conditions)" ng-if="condition.voided===false"></i>
+                               ng-click="conditionConfirmation(condition)" ng-if="condition.voided === false"></i>
                             <button style="background-color: #cccccc;border: none; color: black; padding: 5px;font-size: 10px; margin: 2px 2px; border-radius: 4px;"
-                                  ng-click="activateCondition(condition)" ng-if="condition.status==='INACTIVE' && condition.voided===false">Set Active</button> 
+                                  ng-click="activateCondition(condition)" ng-if="condition.status === 'INACTIVE'">Set Active</button>
                             <button style="background-color: #cccccc;border: none; color: black; padding: 5px;font-size: 10px; margin: 2px 2px; border-radius: 4px;"
-                                 ng-click="deactivateCondition(condition)" ng-if="condition.status==='ACTIVE' && condition.voided===false">Set Inactive</button>    
+                                 ng-click="deactivateCondition(condition)" ng-if="condition.status === 'ACTIVE'">Set Inactive</button>
                         </td>
                     </tr>
                     </tbody>
-                </tbody>
                 </table>
             </div>
         </span>
     </div>
 
     
-<div id="remove-condition-dialog" class="dialog" style="display: none; position: absolute; left: 35%; top:30%;">
-    <div class="dialog-header">
-        <h3>${ ui.message("coreapps.conditionui.removeCondition") }</h3>
+    <div id="remove-condition-dialog" class="dialog" style="display: none; position: absolute; left: 35%; top:30%;">
+        <div class="dialog-header">
+            <h3>${ ui.message("coreapps.conditionui.removeCondition") }</h3>
+        </div>
+        <div class="dialog-content">
+            <ul>
+                <li class="info">
+                    <span id="remove-condition-message">${ ui.message("coreapps.conditionui.removeCondition.message")}</span>
+                </li>
+            </ul>
+                <button class="confirm right" type="submit" ng-click="removeCondition()">${ ui.message("general.yes") }</button>
+                <button class="cancel" ng-click="cancelDeletion()">${ ui.message("general.no") }</button>
+        </div>
     </div>
-    <div class="dialog-content">
-        <ul>
-            <li class="info">
-                <span id="removeConditionMessage">${ ui.message("coreapps.conditionui.removeCondition.message","")}</span>
-            </li>
-        </ul>       
-            <button class="confirm right" type="submit" ng-click="removeCondition()">${ ui.message("general.yes") }</button>
-            <button class="cancel" ng-click="cancelDeletion()">${ ui.message("general.no") }</button>
-    </div>
-</div>
 
     <div class="actions">
         <button class="cancel"
                 onclick="location.href = '${ ui.encodeHtml(returnUrl) }'">${ui.message("coreapps.return")}</button>
         <button id="conditionui-addNewCondition" class="confirm right"
-                onclick="location.href = '${ ui.pageLink("coreapps/conditionlist", "addCondition", [patientId: patient.uuid, returnUrl: returnUrl]) }'">
+                onclick="location.href = '${ ui.pageLink("coreapps/conditionlist", "manageCondition", [patientId: patient.uuid, returnUrl: returnUrl]) }'">
             ${ui.message("coreapps.conditionui.addNewCondition")}
         </button>
     </div>
