@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+   <modelVersion>4.0.0</modelVersion>
 
-	<parent>
+    <parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>coreapps</artifactId>
 		<version>1.32.0-SNAPSHOT</version>
@@ -104,6 +104,14 @@
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>${project.parent.artifactId}-web-2.0</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        
+      <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>coreapps-web-2.2</artifactId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>

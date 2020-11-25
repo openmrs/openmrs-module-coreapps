@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openmrs.module</groupId>
@@ -34,7 +35,8 @@
 		<module>omod</module>
 		<module>api-2.2</module>
 		<module>api-pre2.2</module>
-	</modules>
+        <module>coreapps-web-2.2</module>
+  </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -260,6 +262,13 @@
 				<version>${webservicesRestVersion}</version>
 				<scope>provided</scope>
 			</dependency>
+			
+<dependency>
+    <groupId>org.openmrs.module</groupId>
+    <artifactId>webservices.rest-omod</artifactId>
+    <version>${webservicesRestVersion}</version>
+    <scope>provided</scope>
+</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>webservices.rest-omod-common</artifactId>
