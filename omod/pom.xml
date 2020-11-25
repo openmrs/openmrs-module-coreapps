@@ -107,6 +107,14 @@
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
+        
+        
+      <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>coreapps-web-2.2</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
 		
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
