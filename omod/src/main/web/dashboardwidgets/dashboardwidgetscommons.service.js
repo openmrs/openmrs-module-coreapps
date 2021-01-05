@@ -127,4 +127,24 @@ export default class WidgetsCommons {
         return Boolean(obj.concept);
     }
 
+    dateFormatLocale(date, format, locale) {
+        var defaultFormat = 'YYYY-MM-DD';
+        var defaultLocale = 'en';
+
+        try{
+            if (format !== null && format !== undefined && format !== '') {
+                if (format.match(/MMM/g)) {
+                    if (locale !== null && locale !== undefined && locale !== '') {
+                        return format.toUpperCase().replace("DD", moment(date).format('DD')).replace("MMM", new Date(date).toLocaleDateString(locale, {month: 'short'})).replace('YYYY', moment(date).format('YYYY'));
+                    }
+                    return format.toUpperCase().replace("DD", moment(date).format('DD')).replace("MMM", new Date(date).toLocaleDateString(defaultLocale, {month: 'short'})).replace('YYYY', moment(date).format('YYYY'));
+                }
+                return moment(date).format(format.toUpperCase);
+            }
+            return moment(date).format(defaultFormat);
+        } catch(err) {
+            alert(err);
+            return moment(date).format(defaultFormat);
+        }
+    }
 }

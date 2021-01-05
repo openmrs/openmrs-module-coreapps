@@ -6,10 +6,10 @@ export default class ProgramStatusController {
 
     // TODO add support for special logic around "initial" and "terminal?"
 
-    constructor($filter, $window, $q, openmrsRest, openmrsTranslate) {
+    constructor($filter, $window, $q, openmrsRest, openmrsTranslate, widgetsCommons) {
         'ngInject';
 
-        Object.assign(this, {$filter, $window, $q, openmrsRest, openmrsTranslate});
+        Object.assign(this, {$filter, $window, $q, openmrsRest, openmrsTranslate, widgetsCommons});
     }
 
     $onInit() {

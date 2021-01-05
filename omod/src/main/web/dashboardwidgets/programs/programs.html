@@ -22,8 +22,8 @@
             {{ patientProgram.program.display }}
         </a>
 
-        <div ng-show="!patientProgram.dateCompleted" class="tag">{{ patientProgram.dateEnrolled | date:$ctrl.dateFormat }} - {{'coreapps.dashboardwidgets.programs.current' | translate }}</div>
-        <div ng-show="patientProgram.dateCompleted" class="tag">{{ patientProgram.dateEnrolled | date:$ctrl.dateFormat }} - {{ patientProgram.dateCompleted | date:$ctrl.dateFormat }}</div>
+        <div ng-show="!patientProgram.dateCompleted" class="tag">{{ $ctrl.widgetsCommons.dateFormatLocale(patientProgram.dateEnrolled,$ctrl.dateFormat,$ctrl.config.language) }} - {{'coreapps.dashboardwidgets.programs.current' | translate }}</div>
+        <div ng-show="patientProgram.dateCompleted" class="tag">{{ $ctrl.widgetsCommons.dateFormatLocale(patientProgram.dateEnrolled,$ctrl.dateFormat,$ctrl.config.language) }} - {{ $ctrl.widgetsCommons.dateFormatLocale(patientProgram.dateCompleted,$ctrl.dateFormat,$ctrl.config.language) }}</div>
     </li>
 
     <li ng-show="$ctrl.patientPrograms.length == 0">

@@ -236,7 +236,7 @@ export default class ObsGraphController {
                     let xValue = self.widgetsCommons.daysSinceDate(obs.obsDatetime);
                     if (angular.isUndefined(self.maxAgeInDays) || xValue <= self.maxAgeInDays) {
                       // Add obs data for chart display
-                      var obsDate = self.$filter('date')(new Date(obs.obsDatetime), self.config.dateFormat);
+                      var obsDate = self.widgetsCommons.dateFormatLocale(obs.obsDatetime, self.config.dateFormat, self.config.language);
                       conceptObject.values[xValue] = obs.value;
                       self.xAxis[xValue] = obsDate;
                     }
