@@ -331,6 +331,7 @@ export default class ProgramStatusController {
             }).then((response) => {
                 if (this.config.disableReloadPage) {
                     this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
+                    this.requestInProgress = false;
                 }
                 else {
                     this.reloadPage();  // closing a program affects other widgets, so we need to reload the entire page
