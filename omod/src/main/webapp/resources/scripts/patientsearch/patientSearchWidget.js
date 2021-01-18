@@ -81,7 +81,7 @@ function PatientSearchWidget(configuration){
     if(config.initialPatients){
         _.each(config.initialPatients, function(p){
             //only add the uuid since it is only one we need to reference later
-            initialPatientData.push({uuid: p.uuid});
+            initialPatientData.push({uuid: p.uuid, patientDbId: p.patientDbId});
             initialPatientUuids.push(p.uuid);
             var widgetBirthdate = p.widgetBirthdate;
             var bdate = p.birthdate;

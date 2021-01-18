@@ -25,7 +25,8 @@
                 // it.birthdateEstimated is of type boolean (doesn't need sanitization)
                 birthdateEstimated: ${ it.birthdateEstimated },
                 identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }",
-                widgetBirthdate:"${ it.birthdate ? ui.escapeJs(ui.encodeHtmlContent(searchWidgetDateFormatter.format(it.birthdate))) : '' }"
+                widgetBirthdate:"${ it.birthdate ? ui.escapeJs(ui.encodeHtmlContent(searchWidgetDateFormatter.format(it.birthdate))) : '' }",
+                patientDbId:"${ it.id ?: '' }"
             }
             <% listingAttributeTypeNames.each { attributeName -> %>
                 patientObj["${ ui.encodeHtml(attributeName) }"] = "${ it.getAttribute(attributeName) ? ui.encodeHtml(String.valueOf(it.getAttribute(attributeName))) :'' }";
@@ -37,8 +38,9 @@
     	var afterSelectedUrl = '${ ui.escapeJs(config.afterSelectedUrl) }';
         this.handle = function (row) {
             var uuid = row.uuid;
+            var patientDbId = row.patientDbId;
             if(afterSelectedUrl && afterSelectedUrl != 'null') {
-            	location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel(afterSelectedUrl, { patientId: uuid, breadcrumbOverride: '${ ui.encodeForSafeURL(breadcrumbOverride) }'});
+                location.href = '/' + OPENMRS_CONTEXT_PATH + emr.applyContextModel(afterSelectedUrl, { patientId: uuid, patientDbId: patientDbId, breadcrumbOverride: '${ ui.encodeForSafeURL(breadcrumbOverride) }'});
         	} else {
         		jQuery("#patient-search").attr("selected_uuid", uuid);
         		jQuery("#patient-search").attr("selected_name", row.person.personName.display);
