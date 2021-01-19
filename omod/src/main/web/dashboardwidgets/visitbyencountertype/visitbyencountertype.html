@@ -1,7 +1,7 @@
 <ul>
     <li ng-if="$ctrl.visits.length != 0" ng-repeat="visit in $ctrl.visits track by $index">
         <a href="{{$ctrl.serverUrl}}/coreapps/patientdashboard/patientDashboard.page?patientId={{$ctrl.config.patientUuid}}&visitId={{visit.uuid}}">
-            {{$ctrl.widgetsCommons.dateFormatLocale(visit.startDatetime,$ctrl.config.dateFormat,$ctrl.config.language)}}
+            {{$ctrl.widgetsCommons.formatDate(visit.startDatetime,$ctrl.config.dateFormat,$ctrl.config.language)}}
         </a>
         <div class="tag" ng-if="visit.encounterType !== ''">{{visit.encounterType | translate }}</div>
     </li>

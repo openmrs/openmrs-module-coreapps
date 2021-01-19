@@ -43,7 +43,7 @@
     <tbody>
         <tr ng-repeat="encounter in $ctrl.simpleEncs| orderBy: '-encounterDatetime'">
             <td ng-if="$ctrl.config.showEncounterTypeName">{{encounter.encounterType | translate }}</td>
-            <td>{{$ctrl.widgetsCommons.dateFormatLocale(encounter.encounterDatetime,$ctrl.config.dateFormat,$ctrl.config.language) }}</td>
+            <td>{{$ctrl.widgetsCommons.formatDate(encounter.encounterDatetime,$ctrl.config.dateFormat,$ctrl.config.language) }}</td>
             <td ng-repeat="(key,value) in $ctrl.conceptsMap" ng-class="($ctrl.isRetired(encounter.obs[key])) ? 'retiredConcept' : ''">
                 {{ encounter.obs[key] ? $ctrl.getObsValue(encounter.obs[key]) : '' }}
             </td>

@@ -135,7 +135,7 @@ export default class WidgetsCommons {
      * @param {string} format Date Format
      * @param {string} locale The preferred locale
      */
-    dateFormatLocale(date, format, locale) {
+    formatDate(date, format, locale) {
         var defaultFormat = 'YYYY-MM-DD';
         var defaultLocale = 'en';
 
