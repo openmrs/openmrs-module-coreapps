@@ -48,7 +48,7 @@ public class ParserEncounterIntoSimpleObjects {
 
     private DispositionService dispositionService;
     @Autowired
-    DiagnosisServiceCompatibility diagnosisServiceCompatibility;
+    //DiagnosisServiceCompatibility diagnosisServiceCompatibility;
 
     public ParserEncounterIntoSimpleObjects(Encounter encounter, UiUtils uiUtils, EmrApiProperties emrApiProperties,
                                             LocationService locationService, DispositionService dispositionService) {
@@ -178,8 +178,9 @@ public class ParserEncounterIntoSimpleObjects {
 	
 	private SimpleObject parseDiagnosis(Encounter encounter) {
 		
-		List<Diagnosis> diag = diagnosisServiceCompatibility.getPrimaryDiagnosis(encounter);
-		
+		List<Diagnosis> diag = null;
+				
+	
 		SimpleObject simpleObject = new SimpleObject();
 		for(Diagnosis diagnosis:diag ) {
 			
