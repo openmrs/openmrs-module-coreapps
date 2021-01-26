@@ -18,15 +18,10 @@ public class DiagnosisServiceCompatibility2_2 implements DiagnosisServiceCompati
 	@Autowired
 	@Qualifier("encounterService")
 	EncounterService encounterService;
-	
-	
-
 	@Autowired
 	@Qualifier("diagnosisService")
 	DiagnosisService diagnosisService;
 	
-	
-
 	@Override
 	public List<Diagnosis> getDiagnoses(Encounter encounter) throws Exception {
 		List<Diagnosis> list = diagnosisService.getDiagnoses(encounter);
