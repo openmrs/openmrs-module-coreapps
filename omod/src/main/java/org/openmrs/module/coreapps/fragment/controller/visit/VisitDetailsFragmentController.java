@@ -175,7 +175,7 @@ public class VisitDetailsFragmentController {
          @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
          @SpringBean("locationService") LocationService locationService,
          @SpringBean("dispositionService") DispositionService dispositionService,
-         UiUtils uiUtils) {
+         UiUtils uiUtils) throws Exception {
 
       ParserEncounterIntoSimpleObjects parserEncounter = new ParserEncounterIntoSimpleObjects(encounter, uiUtils,
             emrApiProperties, locationService, dispositionService);
