@@ -34,6 +34,7 @@
 		<module>omod</module>
 		<module>api-2.2</module>
 		<module>api-pre2.2</module>
+		<module>coreapps-web-2.2</module>
 	</modules>
 
 	<properties>
