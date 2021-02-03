@@ -81,7 +81,7 @@ export default class WidgetsCommons {
             today.setMonth(today.getMonth()-parseInt(maxAge));
         } else if( maxAge.indexOf('y') !== -1 ){
             maxAge = maxAge.replace('y', '');
-            today.setDate(today.getYear()-(parseInt(maxAge)));
+            today.setFullYear(today.getFullYear()-(parseInt(maxAge)));
         } else {
             return null;
         }
