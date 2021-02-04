@@ -144,7 +144,6 @@ export default class ObsGraphController {
                           tempData.push(yValue);
                         }
                         this.data.push(tempData);
-                        console.log("updateChartData:tempData: " + JSON.stringify(tempData));
                       } else {
                         //Removing series without corresponding data points
                         let index = this.series.indexOf(concept.display);
