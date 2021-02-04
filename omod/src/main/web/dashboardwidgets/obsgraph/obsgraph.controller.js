@@ -124,6 +124,10 @@ export default class ObsGraphController {
             if (xAxisKeys !== null && xAxisKeys.length > 0) {
               for (let j=0; j < this.conceptArray.length; j++) {
                 let concept = this.conceptArray[j];
+                if( this.hideConcepts !== undefined && this.hideConcepts.length && this.hideConcepts.includes(concept.uuid)) {
+                  //if it was indicated that this concept should not be plotted, than skip to the next concept
+                  continue;
+                }
                 if (concept.legend === true) {
                   if (concept.uuid && concept.type === "obs") {
                     let obj = this.dataset.find(element => element.uuid === concept.uuid);
@@ -270,9 +274,18 @@ export default class ObsGraphController {
         this.encounterTypes = this.config.encounterTypes.replace(/ /gi, "").split(",");
       }
 
+      // Set default showLegend to true if not defined
+      if (angular.isUndefined(this.config.showLegend)) {
+        this.config.showLegend = true;
+      }
+
+      if(angular.isDefined(this.config.hideConcepts)) {
+        this.hideConcepts = this.config.hideConcepts.replace(/ /gi, "").split(",");
+      }
+
       this.options = {
         legend: {
-          display: true,
+          display: this.config.showLegend,
           position: 'top'
         },
         scales: {
