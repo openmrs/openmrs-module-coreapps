@@ -16,11 +16,17 @@ function PatientSearchWidget(configuration){
     jq.each(attributeTypes, function(key, value){
         attributeHeaders = attributeHeaders.concat('<th>'+value+'</th>');
     });
+    var identifierTypes = config.identifierTypes || [];
+    var identifierHeaders = '';
+    identifierTypes.forEach(function(idType) {
+        identifierHeaders = identifierHeaders.concat('<th>'+idType.label+'</th>');
+    });
     var tableId = 'patient-search-results-table';
     var tableHtml = '<table class="table table-sm" id="'+tableId+'">'+
                         '<thead>'+
                             '<tr>'+
                                 '<th>'+config.messages.identifierColHeader+'</th>'+
+                                identifierHeaders+
                                 '<th>'+config.messages.nameColHeader+'</th>'+
                                 '<th>'+config.messages.genderColHeader+'</th>'+
                                 '<th>'+config.messages.ageColHeader+'</th>'+
@@ -94,8 +100,17 @@ function PatientSearchWidget(configuration){
             if(age == '' && widgetBirthdate != ''){
                 age = formatAge(widgetBirthdate);
             }
-            var initialPatient = [p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>",
-                p.name, p.gender, age, bdate];
+            var initialPatient = [];
+            initialPatient.push(p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>");
+            identifierTypes.forEach(function(idType) {
+                var patId = p[idType.uuid] || "";
+                initialPatient.push(patId);
+            });
+            initialPatient.push(p.name);
+            initialPatient.push(p.gender);
+            initialPatient.push(age);
+            initialPatient.push(bdate);
+
             jq.each(attributeTypes, function(key, attributeTypeName){
                 initialPatient.push(p[attributeTypeName]);
             });
@@ -119,6 +134,7 @@ function PatientSearchWidget(configuration){
     var customRep = 'custom:(patientId,uuid,' +
                     'patientIdentifier:(uuid,identifier),' +
                     'person:(gender,age,birthdate,birthdateEstimated,personName),' +
+                    'identifiers:(identifier,identifierType:(uuid,name)),' +
                     'attributes:(value,attributeType:(name)))';
 
     var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
@@ -250,6 +266,7 @@ function PatientSearchWidget(configuration){
             var results = removeDuplicates(results);
             searchResultsData = searchResultsData.concat(results);
             _.each(results, function(patient) {
+                var dataRow = [];
                 var birthdate = '';
                 var widgetBirthdate = patient.person.birthdate;
                 if(patient.person.birthdate){
@@ -267,13 +284,34 @@ function PatientSearchWidget(configuration){
                 if (patient.onlyInMpi === true) {
                     identifier += " <span class='recent-lozenge'>" + config.messages.onlyInMpi + "</span>";
                 }
+                dataRow.push(identifier);
+
+                identifierTypes.forEach(function(idType) {
+                    var identifierValue = "";
+                    jq.each(patient.identifiers, function (index, patientIdentifier) {
+                        var identifierType = patientIdentifier.identifierType;
+                        if (identifierType != null && !patientIdentifier.voided &&
+                            (idType.uuid === identifierType.uuid)) {
+                            if (patientIdentifier.identifier) {
+                                identifierValue = patientIdentifier.identifier;
+                            }
+                            return false;
+                        }
+                    });
+                    dataRow.push(identifierValue);
+                });
+
+                dataRow.push(patient.person.personName.display);
+                dataRow.push(patient.person.gender);
 
                 var age = patient.person.age;
                 if(age == '' && widgetBirthdate != ''){
                     age = formatAge(widgetBirthdate);
                 }
-                var dataRow = [identifier, patient.person.personName.display, patient.person.gender,
-                    age, birthdate];
+
+                dataRow.push(age);
+                dataRow.push(birthdate);
+
                 jq.each(attributeTypes, function(index, typeName){
                     var attributeValue = "";
                     jq.each(patient.attributes, function(index, attribute) {
