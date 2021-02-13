@@ -70,7 +70,7 @@
             locale: '${ locale }',
             defaultLocale: '${ defaultLocale }',
             attributeTypes: listableAttributeTypes,
-            identifierTypes: ${identifierTypes},
+            columnConfig: ${columnConfig},
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
                 first: '${ ui.message("coreapps.search.first") }',

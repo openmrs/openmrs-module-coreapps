@@ -1,11 +1,14 @@
 package org.openmrs.module.coreapps.fragment.controller.patientsearch;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -23,6 +26,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.ui.framework.Model;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.util.OpenmrsConstants;
@@ -81,67 +85,65 @@ public class PatientSearchWidgetFragmentControllerTest {
 	}
 
 	@Test
-	public void controller_shouldReturnEmptyJsonArrayIfNoExtraIdentifierTypesConfigured() {
-		ObjectNode appConfig = objectNode();
-		runController(appConfig);
-		assertEquals("[]", model.getAttribute("identifierTypes"));
+	public void controller_shouldReturnNullIfNoColumnsConfigured() {
+		runController(null);
+		assertNull(model.getAttribute("columnConfig"));
 	}
 
 	@Test
-	public void controller_shouldReturnExtraIdentifierTypeConfiguredByName() {
-		ObjectNode appConfig = objectNode("identifierTypes", arrayNode(
-				objectNode("name", "type-1-name")
-		));
-		runController(appConfig);
-		assertEquals("[{\"label\":\"type-1-name\",\"uuid\":\"type-1-uuid\"}]", model.getAttribute("identifierTypes"));
+	public void controller_shouldReturnColumnDefinitionsIfConfigured() throws Exception {
+		ArrayNode columnConfig = arrayNode(
+			objectNode("type", "identifier"),
+			objectNode("type", "name", "width", "200px"),
+			objectNode("type", "gender", "label", "Sex"),
+			objectNode("type", "age"),
+			objectNode("type", "birthdate")
+		);
+		runController(columnConfig);
+		assertColumnConfigContains(model, 0, "type", "identifier");
+		assertColumnConfigContains(model, 1, "type", "name");
+		assertColumnConfigContains(model, 1, "width", "200px");
+		assertColumnConfigContains(model, 2, "type", "gender");
+		assertColumnConfigContains(model, 2, "label", "Sex");
+		assertColumnConfigContains(model, 3, "type", "age");
+		assertColumnConfigContains(model, 4, "type", "birthdate");
 	}
 
 	@Test
-	public void controller_shouldReturnExtraIdentifierTypeConfiguredByUuid() {
-		ObjectNode appConfig = objectNode("identifierTypes", arrayNode(
-				objectNode("uuid", "type-1-uuid")
-		));
-		runController(appConfig);
-		assertEquals("[{\"label\":\"type-1-name\",\"uuid\":\"type-1-uuid\"}]", model.getAttribute("identifierTypes"));
+	public void controller_shouldTranslateLabelsIfValidMessageCoded() throws Exception {
+		ArrayNode columnConfig = arrayNode(
+			objectNode("type", "identifier", "label", "EMR ID"),
+			objectNode("type", "identifier", "value", "xyz", "label", "messagecode.label")
+		);
+		runController(columnConfig);
+		assertColumnConfigContains(model, 0, "type", "identifier");
+		assertColumnConfigContains(model, 0, "label", "EMR ID");
+		assertColumnConfigContains(model, 1, "type", "identifier");
+		assertColumnConfigContains(model, 1, "label", "My Message Code Label");
 	}
 
-	@Test
-	public void controller_shouldReturnIdentifierNameIfNoLabelConfigured() {
-		ObjectNode appConfig = objectNode("identifierTypes", arrayNode(
-				objectNode("uuid", "type-1-uuid")
-		));
-		runController(appConfig);
-		assertEquals("[{\"label\":\"type-1-name\",\"uuid\":\"type-1-uuid\"}]", model.getAttribute("identifierTypes"));
+	protected void assertColumnConfigContains(Model model, int index, String key, String value) throws Exception {
+		String columnConfig = (String) model.getAttribute("columnConfig");
+		List<Map<String, String>> config = new ObjectMapper().readValue(columnConfig, List.class);
+		Map<String, String> column = config.get(index);
+		String val = column.get(key);
+		if (value == null) {
+			assertNull(val);
+		}
+		else {
+			assertEquals(value, val);
+		}
 	}
 
-	@Test
-	public void controller_shouldReturnLabelIfConfigured() {
-		ObjectNode appConfig = objectNode("identifierTypes", arrayNode(
-				objectNode("uuid", "type-1-uuid", "label", "Type 1 Label")
-		));
-		runController(appConfig);
-		assertEquals("[{\"label\":\"Type 1 Label\",\"uuid\":\"type-1-uuid\"}]", model.getAttribute("identifierTypes"));
-	}
-
-	@Test
-	public void controller_shouldReturnLabelFromMessageCodeIfConfigured() {
-		ObjectNode appConfig = objectNode("identifierTypes", arrayNode(
-				objectNode("uuid", "type-1-uuid", "label", "messagecode.label")
-		));
-		runController(appConfig);
-		assertEquals("[{\"label\":\"My Message Code Label\",\"uuid\":\"type-1-uuid\"}]", model.getAttribute("identifierTypes"));
-	}
-
-	protected void runController(ObjectNode appConfig, Boolean showLastViewPatients, String searchByParam, String regLink) {
+	protected void runController(ArrayNode columnConfig, Boolean showLastViewPatients, String searchByParam, String regLink) {
 		fragmentController.controller(
-				model, sessionContext, request,
-				administrationService, appFrameworkService, patientService, messageSourceService,
-				appConfig, showLastViewPatients, searchByParam, regLink
+				model, sessionContext, request, administrationService, appFrameworkService, messageSourceService,
+				columnConfig, showLastViewPatients, searchByParam, regLink
 		);
 	}
 
-	protected void runController(ObjectNode appConfig) {
-		runController(appConfig, false, "", "/");
+	protected void runController(ArrayNode columnConfig) {
+		runController(columnConfig, false, "", "/");
 	}
 
 	protected ArrayNode arrayNode(ObjectNode ... nodes) {

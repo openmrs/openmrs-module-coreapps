@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -15,11 +16,8 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.appframework.domain.Extension;
@@ -45,9 +43,8 @@ public class PatientSearchWidgetFragmentController {
                            HttpServletRequest request,
                            @SpringBean("adminService") AdministrationService administrationService,
                            @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
-                           @SpringBean("patientService") PatientService patientService,
                            @SpringBean("messageSourceService") MessageSourceService messageSourceService,
-                           @FragmentParam(value = "appConfig", required = false) ObjectNode appConfig,
+                           @FragmentParam(value = "columnConfig", required = false) ArrayNode columnConfig,
                            @FragmentParam(value = "showLastViewedPatients", required = false) Boolean showLastViewedPatients,
                            @FragmentParam(value = "initialSearchFromParameter", required = false) String searchByParam,
                            @FragmentParam(value = "registrationAppLink", required=false) String registrationAppLink) {
@@ -100,47 +97,32 @@ public class PatientSearchWidgetFragmentController {
         Collections.sort(patientSearchExtensions);
         model.addAttribute("patientSearchExtensions", patientSearchExtensions);
 
-        // We deconstruct the configured identifierTypes from the appConfig in order to translate the labels and pass uuids
-        String identifierTypeJson = "[]";
+        // Column config is passed from the appConfig, which we parse and translate any labels
+        String columnConfigJson = null;
         try {
-            if (appConfig != null) {
-                JsonNode idTypeNodes = appConfig.get("identifierTypes");
-                if (idTypeNodes instanceof ArrayNode) {
-                    List<Map<String, String>> identifierTypes = new ArrayList<Map<String, String>>();
-                    for (JsonNode idTypeNode : idTypeNodes) {
-                        PatientIdentifierType patientIdentifierType = null;
-                        JsonNode idNode = idTypeNode.get("uuid");
-                        if (idNode != null) {
-                            patientIdentifierType = patientService.getPatientIdentifierTypeByUuid(idNode.getTextValue());
+            if (columnConfig != null) {
+                List<Map<String, String>> columns = new ArrayList<Map<String, String>>();
+                for (JsonNode columnNode : columnConfig) {
+                    Map<String, String> column = new HashMap<String, String>();
+                    for (Iterator<String> fieldNameIter = columnNode.getFieldNames(); fieldNameIter.hasNext();) {
+                        String fieldName = fieldNameIter.next();
+                        JsonNode fieldNode = columnNode.get(fieldName);
+                        String fieldValue = fieldNode.getTextValue();
+                        if (fieldName.equalsIgnoreCase("label") && StringUtils.isNotBlank(fieldValue)) {
+                            fieldValue = messageSourceService.getMessage(fieldValue);
                         }
-                        if (patientIdentifierType == null) {
-                            JsonNode nameNode = idTypeNode.get("name");
-                            if (nameNode != null) {
-                                patientIdentifierType = patientService.getPatientIdentifierTypeByName(nameNode.getTextValue());
-                            }
-                        }
-                        if (patientIdentifierType == null) {
-                            throw new IllegalStateException("Unable to find patient identifier for findPatient: " + idTypeNode);
-                        }
-                        String label = patientIdentifierType.getName();
-                        JsonNode labelNode = idTypeNode.get("label");
-                        if (labelNode != null) {
-                            label = messageSourceService.getMessage(labelNode.getTextValue());
-                        }
-                        Map<String, String> m = new HashMap<String, String>();
-                        m.put("uuid", patientIdentifierType.getUuid());
-                        m.put("label", label);
-                        identifierTypes.add(m);
+                        column.put(fieldName, fieldValue);
                     }
-                    ObjectMapper mapper = new ObjectMapper();
-                    identifierTypeJson = mapper.writeValueAsString(identifierTypes);
+                    columns.add(column);
                 }
+                ObjectMapper mapper = new ObjectMapper();
+                columnConfigJson = mapper.writeValueAsString(columns);
             }
         }
         catch (Exception e) {
-            log.warn("Unable to parse identifierTypes app config", e);
+            log.warn("Unable to parse columnConfig", e);
         }
-        model.addAttribute("identifierTypes", identifierTypeJson);
+        model.addAttribute("columnConfig", columnConfigJson);
     }
 
 }

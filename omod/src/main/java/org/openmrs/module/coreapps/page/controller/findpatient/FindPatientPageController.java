@@ -33,7 +33,7 @@ public class FindPatientPageController {
         } else {
 	        model.addAttribute("registrationAppLink", app.getConfig().get("registrationAppLink").getTextValue());
         }
-        model.addAttribute("appConfig", app.getConfig());
+        model.addAttribute("columnConfig", app.getConfig().get("columnConfig"));
         BreadcrumbHelper.addBreadcrumbsIfDefinedInApp(app, model, ui);
 	}
 

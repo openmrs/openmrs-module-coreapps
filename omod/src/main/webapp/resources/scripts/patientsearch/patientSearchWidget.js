@@ -11,31 +11,44 @@ function PatientSearchWidget(configuration){
     };
 
     var config = jq.extend({}, defaults, configuration);
-    var attributeTypes = config.attributeTypes;
-    var attributeHeaders = '';
-    jq.each(attributeTypes, function(key, value){
-        attributeHeaders = attributeHeaders.concat('<th>'+value+'</th>');
-    });
-    var identifierTypes = config.identifierTypes || [];
-    var identifierHeaders = '';
-    identifierTypes.forEach(function(idType) {
-        identifierHeaders = identifierHeaders.concat('<th>'+idType.label+'</th>');
-    });
+    var columnConfig = config.columnConfig || [];
+    if (columnConfig.length === 0) {
+        columnConfig.push({type: "identifier", label: config.messages.identifierColHeader});
+        columnConfig.push({type: "name", label: config.messages.nameColHeader});
+        columnConfig.push({type: "gender", label: config.messages.genderColHeader});
+        columnConfig.push({type: "age", label: config.messages.ageColHeader});
+        columnConfig.push({type: "birthdate", label: config.messages.birthdateColHeader});
+
+        if (config.attributeTypes) {
+            jq.each(config.attributeTypes, function(index, attributeTypeName) {
+                columnConfig.push({type: "attribute", value: attributeTypeName, label: attributeTypeName});
+            });
+        }
+    }
+
+    var autoWidth = true;
+    var datatableAoColumns = [];
+
     var tableId = 'patient-search-results-table';
-    var tableHtml = '<table class="table table-sm" id="'+tableId+'">'+
-                        '<thead>'+
-                            '<tr>'+
-                                '<th>'+config.messages.identifierColHeader+'</th>'+
-                                identifierHeaders+
-                                '<th>'+config.messages.nameColHeader+'</th>'+
-                                '<th>'+config.messages.genderColHeader+'</th>'+
-                                '<th>'+config.messages.ageColHeader+'</th>'+
-                                '<th>'+config.messages.birthdateColHeader+'</th>'+
-                                attributeHeaders+
-                            '</tr>'+
-                        '</thead>'+
-                        '<tbody></tbody>'+
-                    '</table>';
+    var tableHtml = '<table class="table table-sm" id="'+tableId+'"><thead><tr>';
+    jq.each(columnConfig, function(index, column) {
+        var label = column.label;
+        if (!label && column.type === 'attribute') {
+            label = column.value;
+        }
+        if (!label) {
+            label = column.type;
+        }
+       tableHtml += '<th>' + label + '</th>';
+
+        var columnDef = {};
+        if (column.width) {
+            autoWidth = false;
+            columnDef.sWidth = column.width;
+        }
+        datatableAoColumns.push(columnDef);
+    });
+    tableHtml += '</tr></thead><tbody></tbody></table>';
 
     var spinnerImage = '<span><img class="search-spinner" src="'+emr.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>';
 
@@ -89,30 +102,48 @@ function PatientSearchWidget(configuration){
             //only add the uuid since it is only one we need to reference later
             initialPatientData.push({uuid: p.uuid, patientDbId: p.patientDbId});
             initialPatientUuids.push(p.uuid);
-            var widgetBirthdate = p.widgetBirthdate;
-            var bdate = p.birthdate;
-            if( p.birthdateEstimated == true){
-                bdate = "~ "+bdate;
-            }else{
-                bdate = "&nbsp;&nbsp; "+bdate;
-            }
-            var age = p.age;
-            if(age == '' && widgetBirthdate != ''){
-                age = formatAge(widgetBirthdate);
-            }
             var initialPatient = [];
-            initialPatient.push(p.identifier+" <span class='recent-lozenge'>"+config.messages.recent+"</span>");
-            identifierTypes.forEach(function(idType) {
-                var patId = p[idType.uuid] || "";
-                initialPatient.push(patId);
-            });
-            initialPatient.push(p.name);
-            initialPatient.push(p.gender);
-            initialPatient.push(age);
-            initialPatient.push(bdate);
 
-            jq.each(attributeTypes, function(key, attributeTypeName){
-                initialPatient.push(p[attributeTypeName]);
+            jq.each(columnConfig, function(index, column) {
+                var columnValue = '';
+                if (column.type === 'identifier') {
+                    if (!column.value || column.value === 'primary') {
+                        columnValue = p.identifier || '';
+                    }
+                    else {
+                        columnValue = p[column.value] || '';
+                    }
+                }
+                else if (column.type === 'name') {
+                    columnValue = p.name;
+                }
+                else if (column.type === 'gender') {
+                    columnValue = p.gender;
+                }
+                else if (column.type === 'age') {
+                    var widgetBirthdate = p.widgetBirthdate;
+                    var age = p.age;
+                    if (age === '' && widgetBirthdate !== '') {
+                        age = formatAge(widgetBirthdate);
+                    }
+                    columnValue = age;
+                }
+                else if (column.type === 'birthdate') {
+                    var bdate = p.birthdate;
+                    if ( p.birthdateEstimated === true ) {
+                        bdate = "~ "+ bdate;
+                    } else {
+                        bdate = "&nbsp;&nbsp; " + bdate;
+                    }
+                    columnValue = bdate;
+                }
+                else if (column.type === 'attribute') {
+                    columnValue = p[column.value] || '';
+                }
+                if (index === 0) {
+                    columnValue += "<span class='recent-lozenge'>"+config.messages.recent+"</span>"
+                }
+                initialPatient.push(columnValue);
             });
             initialData.push(initialPatient);
         });
@@ -267,67 +298,72 @@ function PatientSearchWidget(configuration){
             searchResultsData = searchResultsData.concat(results);
             _.each(results, function(patient) {
                 var dataRow = [];
-                var birthdate = '';
-                var widgetBirthdate = patient.person.birthdate;
-                if(patient.person.birthdate){
-                    birthdate = moment(patient.person.birthdate).format(configuration.dateFormat);
-                    if( patient.person.birthdateEstimated ){
-                        birthdate = "~ "+birthdate;
-                    }else{
-                        birthdate = "&nbsp;&nbsp; "+birthdate;
-                    }
-                }
-                var identifier = patient.patientIdentifier != null ? patient.patientIdentifier.identifier : null;
-                if(_.contains(initialPatientUuids, patient.uuid)){
-                    identifier += " <span class='recent-lozenge'>" + config.messages.recent + "</span>";
-                }
-                if (patient.onlyInMpi === true) {
-                    identifier += " <span class='recent-lozenge'>" + config.messages.onlyInMpi + "</span>";
-                }
-                dataRow.push(identifier);
-
-                identifierTypes.forEach(function(idType) {
-                    var identifierValue = "";
-                    jq.each(patient.identifiers, function (index, patientIdentifier) {
-                        var identifierType = patientIdentifier.identifierType;
-                        if (identifierType != null && !patientIdentifier.voided &&
-                            (idType.uuid === identifierType.uuid)) {
-                            if (patientIdentifier.identifier) {
-                                identifierValue = patientIdentifier.identifier;
-                            }
-                            return false;
+                jq.each(columnConfig, function(index, column) {
+                    var columnValue = '';
+                    if (column.type === 'identifier') {
+                        if (!column.value || column.value === 'primary') {
+                            columnValue = patient.patientIdentifier != null ? patient.patientIdentifier.identifier : '';
                         }
-                    });
-                    dataRow.push(identifierValue);
-                });
-
-                dataRow.push(patient.person.personName.display);
-                dataRow.push(patient.person.gender);
-
-                var age = patient.person.age;
-                if(age == '' && widgetBirthdate != ''){
-                    age = formatAge(widgetBirthdate);
-                }
-
-                dataRow.push(age);
-                dataRow.push(birthdate);
-
-                jq.each(attributeTypes, function(index, typeName){
-                    var attributeValue = "";
-                    jq.each(patient.attributes, function(index, attribute) {
-                        var attrType = attribute.attributeType;
-                        if (attrType != null && !attribute.voided && typeName == attrType.name) {
-                            if(attribute.value != null) {
-                                if(!attribute.value.display) {
-                                    attributeValue = attribute.value;
-                                }else{
-                                    attributeValue = attribute.value.display;
+                        else {
+                            jq.each(patient.identifiers, function (index, patientIdentifier) {
+                                var identifierType = patientIdentifier.identifierType;
+                                if (identifierType != null && !patientIdentifier.voided &&
+                                    (column.value === identifierType.uuid)) {
+                                    if (patientIdentifier.identifier) {
+                                        columnValue = patientIdentifier.identifier;
+                                    }
+                                    return false;
                                 }
-                            }
-                            return false;
+                            });
                         }
-                    });
-                    dataRow.push(attributeValue);
+                    }
+                    else if (column.type === 'name') {
+                        columnValue = patient.person.personName.display
+                    }
+                    else if (column.type === 'gender') {
+                        columnValue = patient.person.gender;
+                    }
+                    else if (column.type === 'age') {
+                        var widgetBirthdate = patient.person.birthdate;
+                        columnValue = patient.person.age;
+                        if(columnValue === '' && widgetBirthdate !== ''){
+                            columnValue = formatAge(widgetBirthdate);
+                        }
+                    }
+                    else if (column.type === 'birthdate') {
+                        if(patient.person.birthdate) {
+                            birthdate = moment(patient.person.birthdate).format(configuration.dateFormat);
+                            if ( patient.person.birthdateEstimated ){
+                                columnValue = "~ "+birthdate;
+                            } else {
+                                columnValue = "&nbsp;&nbsp; "+birthdate;
+                            }
+                        }
+                    }
+                    else if (column.type === 'attribute') {
+                        jq.each(patient.attributes, function(index, attribute) {
+                            var attrType = attribute.attributeType;
+                            if (attrType != null && !attribute.voided && attrType.name === attrType.name) {
+                                if(attribute.value != null) {
+                                    if(!attribute.value.display) {
+                                        columnValue = attribute.value;
+                                    }else{
+                                        columnValue = attribute.value.display;
+                                    }
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                    if (index === 0) {
+                        if(_.contains(initialPatientUuids, patient.uuid)){
+                            columnValue += "<span class='recent-lozenge'>" + config.messages.recent + "</span>";
+                        }
+                        if (patient.onlyInMpi === true) {
+                            columnValue += "<span class='recent-lozenge'>" + config.messages.onlyInMpi + "</span>";
+                        }
+                    }
+                    dataRow.push(columnValue);
                 });
                 dataRows.push(dataRow);
             });
@@ -582,6 +618,8 @@ function PatientSearchWidget(configuration){
                 "sLast": config.messages.last
             }
         },
+        bAutoWidth: autoWidth,
+        aoColumns: datatableAoColumns,
 
         fnDrawCallback : function(oSettings){
             if(isTableEmpty()){
