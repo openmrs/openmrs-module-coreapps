@@ -28,11 +28,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterProvider;
 import org.openmrs.EncounterRole;
@@ -58,10 +62,13 @@ import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.ui.framework.Formatter;
+import org.openmrs.ui.framework.FormatterImpl;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.util.OpenmrsUtil;
+import org.springframework.context.MessageSource;
 
 public class VisitDetailsFragmentControllerTest {
 
@@ -69,6 +76,30 @@ public class VisitDetailsFragmentControllerTest {
 
    private static final String primaryEncounterRoleUuid = "ghi-789-jkl-012";
 
+   private MessageSource messageSource;
+   
+   /*
+    * Just a TestUiUtils with explicit control on the Formatter
+    */
+   private class MockUiUtils extends TestUiUtils {
+        MockUiUtils(AdministrationService as, Formatter formatter) {
+            super(as);
+            this.formatter = formatter;
+        };
+    }
+   
+   @Before
+    public void setUp() throws Exception {
+       messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage(any(String.class), (Object[]) any(), any(Locale.class))).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return (String) args[0];
+            }
+        });
+   }
+   
    @Test
    public void shouldReturnEncountersForVisit() throws ParseException {
 
@@ -141,12 +172,12 @@ public class VisitDetailsFragmentControllerTest {
 
       visit.addEncounter(encounter);
 
-      UiUtils uiUtils = new TestUiUtils(administrationService);
+      UiUtils uiUtils = new MockUiUtils(administrationService, new FormatterImpl(messageSource, administrationService));
       VisitDetailsFragmentController controller = new VisitDetailsFragmentController();
 
-        SimpleObject response = controller.getVisitDetails(mock(EmrApiProperties.class), coreAppsProperties, appFrameworkService, encounterService, visit, authenticatedUser, null, null, uiUtils, mock(VisitTypeHelper.class), sessionContext);
-        List<SimpleObject> actualEncounters = (List<SimpleObject>) response.get("encounters");
-        SimpleObject actualEncounter = actualEncounters.get(0);
+      SimpleObject response = controller.getVisitDetails(mock(EmrApiProperties.class), coreAppsProperties, appFrameworkService, encounterService, visit, authenticatedUser, null, null, uiUtils, mock(VisitTypeHelper.class), sessionContext);
+      List<SimpleObject> actualEncounters = (List<SimpleObject>) response.get("encounters");
+      SimpleObject actualEncounter = actualEncounters.get(0);
 
       assertThat(response.get("startDatetime"), notNullValue());
       assertThat(response.get("stopDatetime"), notNullValue());
