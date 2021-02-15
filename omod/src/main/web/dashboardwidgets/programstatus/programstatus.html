@@ -110,7 +110,7 @@
             <i ng-show="$ctrl.canDeleteProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete()" ng-click="$ctrl.deletePatientProgram()" class="icon-remove right"/>
             <i ng-show="$ctrl.canEditProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete()" ng-click="$ctrl.toggleEditEnrollment()" class="icon-pencil right"/>
             <h3>{{'coreapps.dashboardwidgets.programstatus.enrolled' | translate }}</h3>
-            <p class="programstatus-field">{{ $ctrl.widgetsCommons.formatDate($ctrl.patientProgram.dateEnrolled,$ctrl.dateFormat,$ctrl.config.language) }}</p>
+            <p class="programstatus-field">{{ $ctrl.widgetsCommons.formatDate($ctrl.patientProgram.dateEnrolled,$ctrl.config.JSDateFormat,$ctrl.config.language) }}</p>
         </fieldset>
 
         <fieldset class="programstatus-fieldset"  ng-show="!$ctrl.edit.enrollment">
@@ -120,7 +120,7 @@
 
         <fieldset class="programstatus-fieldset" ng-show="!$ctrl.edit.enrollment && $ctrl.programIsCompleted()">
             <h3>{{'coreapps.dashboardwidgets.programstatus.completed' | translate }}</h3>
-            <p class="programstatus-field">{{ $ctrl.widgetsCommons.formatDate($ctrl.patientProgram.dateCompleted,$ctrl.dateFormat,$ctrl.config.language) }}</p>
+            <p class="programstatus-field">{{ $ctrl.widgetsCommons.formatDate($ctrl.patientProgram.dateCompleted,$ctrl.config.JSDateFormat,$ctrl.config.language) }}</p>
         </fieldset>
 
         <fieldset class="programstatus-fieldset" ng-show="$ctrl.programOutcomes && !$ctrl.edit.enrollment && $ctrl.programIsCompleted()">

@@ -26,7 +26,7 @@
         background-color: rgba(0, 0, 0, .5);
         -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
     }
-    
+
 </style>
 
 <table id="obsTable" ng-if="$ctrl.simpleEncs.length != 0">
@@ -43,7 +43,7 @@
     <tbody>
         <tr ng-repeat="encounter in $ctrl.simpleEncs| orderBy: '-encounterDatetime'">
             <td ng-if="$ctrl.config.showEncounterTypeName">{{encounter.encounterType | translate }}</td>
-            <td>{{$ctrl.widgetsCommons.formatDate(encounter.encounterDatetime,$ctrl.config.dateFormat,$ctrl.config.language) }}</td>
+            <td>{{$ctrl.widgetsCommons.formatDate(encounter.encounterDatetime,$ctrl.config.JSDateFormat,$ctrl.config.language) }}</td>
             <td ng-repeat="(key,value) in $ctrl.conceptsMap" ng-class="($ctrl.isRetired(encounter.obs[key])) ? 'retiredConcept' : ''">
                 {{ encounter.obs[key] ? $ctrl.getObsValue(encounter.obs[key]) : '' }}
             </td>

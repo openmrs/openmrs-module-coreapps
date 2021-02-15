@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export default class WidgetsCommons {
 
     // Method used to define days since given date and return it as message
@@ -90,7 +92,7 @@ export default class WidgetsCommons {
 
     /**
      * Returns the most appropriate name given a concept and a name type preference
-     * 
+     *
      * @param {object} concept Must have rep including `display,names:(voided,locale,conceptNameType,localePreferred,name)`
      * @param {string} nameType One of "FSN", "shortName", "preferred"
      * @param {string} locale The preferred locale
@@ -129,30 +131,18 @@ export default class WidgetsCommons {
 
     /**
      * Returns date translated according to preferred locale when Date Format displays the month as an abbreviation (MMM).
-     * Ex: Date: 02-Jan-2021 Format: DD-MMM-YYYY Locale: fr_FR --> Return: 02-janv.-2021
+     * Ex: Date: 02-Jan-2021 Format: DD-MMM-YYYY Locale: fr --> Return: 02-janv.-2021
      *
      * @param {object} date Input Date
      * @param {string} format Date Format
      * @param {string} locale The preferred locale
      */
     formatDate(date, format, locale) {
-        var defaultFormat = 'YYYY-MM-DD';
-        var defaultLocale = 'en';
-
         try{
-            if (format !== null && format !== undefined && format !== '') {
-                if (format.match(/MMM/g)) {
-                    if (locale !== null && locale !== undefined && locale !== '') {
-                        return format.toUpperCase().replace("DD", moment(date).format('DD')).replace("MMM", new Date(date).toLocaleDateString(locale, {month: 'short'})).replace('YYYY', moment(date).format('YYYY'));
-                    }
-                    return format.toUpperCase().replace("DD", moment(date).format('DD')).replace("MMM", new Date(date).toLocaleDateString(defaultLocale, {month: 'short'})).replace('YYYY', moment(date).format('YYYY'));
-                }
-                return moment(date).format(format.toUpperCase);
-            }
-            return moment(date).format(defaultFormat);
+            moment.locale(locale);
+            return moment(date).format(format);
         } catch(err) {
-            alert(err);
-            return moment(date).format(defaultFormat);
+            return moment(date).format("DD.MMM.YYYY");
         }
     }
 }
