@@ -3,10 +3,10 @@ import angular from 'angular';
 
 export default class ProgramsController {
 
-    constructor($filter, openmrsRest, openmrsTranslate) {
+    constructor($filter, openmrsRest, openmrsTranslate, widgetsCommons) {
         'ngInject';
 
-        Object.assign(this, {$filter, openmrsRest, openmrsTranslate});
+        Object.assign(this, {$filter, openmrsRest, openmrsTranslate, widgetsCommons});
     }
 
     $onInit() {
