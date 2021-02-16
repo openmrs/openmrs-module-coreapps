@@ -47,7 +47,9 @@ public class DashboardWidgetFragmentController {
         if (appConfig.get("dateFormat") == null) {
             appConfig.put("dateFormat", adminService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATE_FORMAT, "yyyy-MM-dd"));
         }
-
+        if (appConfig.get("JSDateFormat") == null) {
+            appConfig.put("JSDateFormat", adminService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_JS_DATE_FORMAT, "YYYY-MMM-DD"));
+        }
         appConfig.put("locale", Context.getLocale().toString());
         appConfig.put("language", Context.getLocale().getLanguage().toString());
 
