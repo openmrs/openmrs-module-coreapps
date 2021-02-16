@@ -13,16 +13,34 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.appui.TestUiUtils;
@@ -38,22 +56,11 @@ import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.emrapi.test.MockMetadataTestUtil;
 import org.openmrs.module.emrapi.test.builder.ConceptBuilder;
 import org.openmrs.module.emrapi.test.builder.ObsBuilder;
+import org.openmrs.ui.framework.Formatter;
+import org.openmrs.ui.framework.FormatterImpl;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.springframework.context.MessageSource;
 
 /**
  *
@@ -73,12 +80,24 @@ public class ParserEncounterIntoSimpleObjectsTest {
     private LocationService locationService;
 
     private DispositionService dispositionService;
+    
+    private MessageSource messageSource;
 	
 	private UiUtils uiUtils;
 	
 	private Encounter encounter;
 	
 	private ParserEncounterIntoSimpleObjects parser;
+	
+	/*
+	 * Just a TestUiUtils with explicit control on the Formatter
+	 */
+	private class MockUiUtils extends TestUiUtils {
+		MockUiUtils(Formatter formatter) {
+			super();
+			this.formatter = formatter;
+		};
+	}
 	
 	@Before
 	public void setUp() throws Exception {
@@ -95,7 +114,15 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		dispositionDescriptor = MockMetadataTestUtil.setupDispositionDescriptor(conceptService);
 		when(dispositionService.getDispositionDescriptor()).thenReturn(dispositionDescriptor);
 
-		TestUiUtils testUiUtils = new TestUiUtils();
+		messageSource = mock(MessageSource.class);
+		when(messageSource.getMessage(any(String.class), (Object[]) any(), any(Locale.class))).thenAnswer(new Answer<String>() {
+			@Override
+			public String answer(InvocationOnMock invocation) throws Throwable {
+				Object[] args = invocation.getArguments();
+				return (String) args[0];
+			}
+		});
+		TestUiUtils testUiUtils = new MockUiUtils(new FormatterImpl(messageSource, mock(AdministrationService.class)));
 		testUiUtils.setMockFormattingConcepts(true);
 		uiUtils = testUiUtils;
 		
@@ -283,7 +310,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 
         encounter.addObs(new ObsBuilder().setConcept(someLocation).setValue("2").setComment("org.openmrs.Location").get());
         ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
-;
+        
         assertThat(parsed.getObs().size(), is(1));
         assertThat(path(parsed.getObs(), 0, "question"), is((Object) "Some location"));
         assertThat(path(parsed.getObs(), 0, "answer"), is((Object) "Xanadu"));
