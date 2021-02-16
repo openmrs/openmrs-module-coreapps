@@ -31,6 +31,9 @@
             <% listingAttributeTypeNames.each { attributeName -> %>
                 patientObj["${ ui.encodeHtml(attributeName) }"] = "${ it.getAttribute(attributeName) ? ui.encodeHtml(String.valueOf(it.getAttribute(attributeName))) :'' }";
             <% } %>
+            <% it.identifiers.each { patId -> %>
+                patientObj["${ patId.identifierType.uuid }"] = "${ ui.encodeHtml(patId.identifier) }";
+            <% } %>
             lastViewedPatients.push(patientObj);
         <% }
     } %>
@@ -67,6 +70,7 @@
             locale: '${ locale }',
             defaultLocale: '${ defaultLocale }',
             attributeTypes: listableAttributeTypes,
+            columnConfig: ${columnConfig},
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
                 first: '${ ui.message("coreapps.search.first") }',
