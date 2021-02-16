@@ -33,12 +33,13 @@
       "icon": "icon-user-md",
       "label": "coreapps.clinicianfacing.healthTrendSummary",
       "concepts": "5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "encounterType": "123AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
       "maxRecords": "5",
       "maxAge": "1m"
     },
     "extensions": [
       {
-        "id": "${project.parent.groupId}.${project.parent.artifactId}.mostRecentVitals.clinicianDashboardFirstColumn",
+        "id": "org.openmrs.module.coreapps.mostRecentVitals.clinicianDashboardFirstColumn",
         "appId": "coreapps.obsAcrossEncounters",
         "extensionPointId": "patientDashboard.firstColumnFragments",
         "extensionParams": {
