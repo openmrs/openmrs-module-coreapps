@@ -62,7 +62,16 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount, curre
                         });
                     });
                 }
-                
+
+            //If find rfc3339-date class, convert from UTC to client Timezone
+            jq(".encounter-date.rfc3339-date").each(function() {
+                var datetimeInUTC = (jq(this).find(".encounter-datetime").text()).trim();
+                console.log("AAAA" , datetimeInUTC )
+                jq(this).find(".encounter-time").text(formatTime(new Date(datetimeInUTC), window.patientDashboard.timeFormat));
+                jq(this).find(".encounter-datetime").text(function () {
+                    return jq(this).text().replace(datetimeInUTC, formatDatetime(new Date(datetimeInUTC), window.patientDashboard.datetimeFormat, window.visitinclude.locale));
+                });
+            });
             }).fail(function(err) {
                 emr.errorMessage(err);
             });

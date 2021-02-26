@@ -3,6 +3,8 @@
     ui.includeJavascript("coreapps", "visit/jquery.dataTables.js")
     ui.includeJavascript("coreapps", "visit/filterTable.js")
     ui.includeCss("coreapps", "visit/visits.css")
+    ui.includeJavascript("coreapps", "custom/utilsTimezone.js")
+    ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -30,7 +32,7 @@
     <% } %>
 </p>
 
-<table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl" id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
+<table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl ${ui.handleTimeZones() ? 'rfc3339-date' : ''}" id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
 	<thead>
 		<tr>
 			<th>${ ui.message("coreapps.patient.identifier") }</th>
@@ -68,7 +70,7 @@
 				<td>
                     <% if (checkIn) { %>
                         <small>
-                            ${ ui.encodeHtmlContent(ui.format(checkIn.location)) } @ ${ ui.format(checkIn.encounterDatetime) }
+                            ${ ui.encodeHtmlContent(ui.format(checkIn.location)) } @ <span class="check-in-date">${ ui.format(checkIn.encounterDatetime) }</span>
                         </small>
                     <% } %>
 				</td>
@@ -77,7 +79,7 @@
                         ${ ui.encodeHtmlContent(ui.format(latest.encounterType)) }
                         <br/>
                         <small>
-                            ${ ui.encodeHtmlContent(ui.format(latest.location)) } @ ${ ui.format(latest.encounterDatetime) }
+                            ${ ui.encodeHtmlContent(ui.format(latest.location)) } @  <span class="check-in-date">${ ui.format(latest.encounterDatetime) }</span>
                         </small>
 
                     <% } %>
@@ -109,3 +111,12 @@ ${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#active-visits
                                                                   ]
                                                         ]) }
 <% } %>
+<script type="text/javascript">
+
+    //Convert dates to client timezone
+    if(jq("#active-visits.rfc3339-date").length){
+        jq("#active-visits.rfc3339-date .check-in-date").each(function() {
+            return jq(this).text(jq(this).text().replace(jq(this).text(), formatDatetime(new Date(jq(this).text().trim()), "${ui.getJSDatetimeFormat()}",  "${ui.getLocale()}")));
+        });
+    }
+</script>

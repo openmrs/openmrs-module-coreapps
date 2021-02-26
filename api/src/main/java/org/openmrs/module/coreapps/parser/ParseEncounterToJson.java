@@ -20,6 +20,7 @@ import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.util.TimeZoneUtil;
 
 public class ParseEncounterToJson {
 
@@ -50,9 +51,15 @@ public class ParseEncounterToJson {
         // UUID is not provided by EncounterDomainWrapper, adding it here.
         simpleEncounter.put("uuid", encounter.getUuid());
         // manually set the date and time components so we can control how we format them
-        simpleEncounter.put("encounterDate", uiUtils.format(encounter.getEncounterDatetime()));
-        simpleEncounter.put("encounterTime",
-                DateFormatUtils.format(encounter.getEncounterDatetime(), "hh:mm a", Context.getLocale()));
+
+        if(uiUtils.handleTimeZones()){
+            simpleEncounter.put("encounterDate", TimeZoneUtil.toRFC3339(encounter.getEncounterDatetime()));
+            simpleEncounter.put("encounterTime", "");
+        }else{
+            simpleEncounter.put("encounterDate", uiUtils.format(encounter.getEncounterDatetime()));
+            simpleEncounter.put("encounterTime",
+                    DateFormatUtils.format(encounter.getEncounterDatetime(), "hh:mm a", Context.getLocale()));
+        }
 
         // do the same for other date fields
         simpleEncounter.put("dateCreated", uiUtils.format(encounter.getDateCreated()));

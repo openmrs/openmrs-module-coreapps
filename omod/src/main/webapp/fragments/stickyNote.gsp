@@ -9,8 +9,8 @@
 	
 	ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
 	ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
-	
-	ui.includeJavascript("uicommons", "moment.min.js")
+
+	ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 	
 %>
 

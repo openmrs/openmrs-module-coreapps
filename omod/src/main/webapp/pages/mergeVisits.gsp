@@ -96,7 +96,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
 ${ ui.message("coreapps.task.mergeVisits.instructions") }
 
 <form method="post" action="${ ui.pageLink("coreapps", "mergeVisits") }">
-    <table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl" id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
+    <table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl ${  ui.handleTimeZones() ? 'rfc3339-date' : ''}" id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
         <thead>
         <tr>
             <th>${ ui.message("coreapps.merge") }</th>
@@ -112,10 +112,10 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
         %>
         <tr id="visit-${ visitId }">
             <td width="8%"><input type="checkbox" name="mergeVisits" value="${ visitId }" id="mergeVisit-${ visitId }" class="selectVisit" data-visit-id="${ visitId }"/></td>
-            <td width="14%">
+            <td width="14%" class="start-date">
                 ${ui.format(wrapper.startDate)}
             </td>
-            <td width="14%">
+            <td width="14%" class="stop-date">
                 <% if(wrapper.stopDate != null) { %>
                     ${ui.format(wrapper.stopDate)}
                 <% } %>
@@ -135,3 +135,23 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
         <input type="submit" id="mergeVisitsBtn" class="confirm" value="${ ui.message("coreapps.task.mergeVisits.mergeSelectedVisits") }" />
     </div>
 </form>
+<script type="text/javascript">
+    jq(document).ready(function () {
+        //Convert dates to client timezone
+        jq(".table.table-sm.rfc3339-date .start-date").each(function(){
+            if(jq(this).text().trim() != ''){
+                jq(this).text(function () {
+                    return jq(this).text().replace(jq(this).text().trim(), formatDatetime(new Date(jq(this).text().trim()), "${ui.getJSDateFormat()}",  "${ui.getLocale()}"));
+                });
+            }
+        });
+        //Convert dates to client timezone
+        jq(".table.table-sm.rfc3339-date .stop-date").each(function(){
+            if(jq(this).text().trim() != ''){
+                jq(this).text(function () {
+                    return jq(this).text().replace(jq(this).text().trim(), formatDatetime(new Date(jq(this).text().trim()), "${ui.getJSDateFormat()}",  "${ui.getLocale()}"));
+                });
+            }
+        });
+    });
+</script>

@@ -4,6 +4,8 @@
 
     ui.includeCss("coreapps", "patientHeader.css")
     ui.includeJavascript("coreapps", "patientdashboard/patient.js")
+    ui.includeJavascript("uicommons", "moment-with-locales.min.js")
+    ui.includeJavascript("coreapps", "custom/utilsTimezone.js")
 
     appContextModel.put("returnUrl", ui.thisUrl())
 %>
@@ -75,8 +77,12 @@
 
     <% if (patient.patient.dead) { %>
         <div class="death-header col-12">
-            <span class="death-message">
-                ${ ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath)) }
+            <span class="death-message ${ui.handleTimeZones() ? 'rfc3339-date' : ''}">
+                <% if (ui.handleTimeZones()) { %>
+                    ${ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath))}
+                <% } else { %>
+                    ${ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath))}
+                <% } %>
             </span>
             <span class="death-info-extension">
                 <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.deathInfo", contextModel: appContextModel ]) %>
@@ -102,7 +108,7 @@
                 </h1>
             </div>
 
-            <div class="gender-age col-auto">
+            <div class="gender-age col-auto ${ui.handleTimeZones() ? 'rfc3339-date' : ''}">
                 <span>${ui.message("coreapps.gender." + ui.encodeHtml(patient.gender))}&nbsp;</span>
                 <span>
                     <% if (patient.birthdate) { %>
@@ -113,9 +119,16 @@
                     <% } else { %>
                         ${ui.message("coreapps.ageDays", patient.ageInDays)}
                     <% } %>
-                    (<% if (patient.birthdateEstimated) { %>~<% } %>${ ui.formatDatePretty(patient.birthdate) })
-                    <% } else { %>
-                        ${ui.message("coreapps.unknownAge")}
+                    (<% if (patient.birthdateEstimated) { %>~<% } %>
+                    <span class="patient-birhtdate">
+                        <% if (ui.handleTimeZones()) { %>
+                        ${patient.birthdate}
+                        <% } else { %>
+                        ${ui.formatDatePretty(patient.birthdate)}
+                        <% } %>
+                    </span>)
+                <% } else { %>
+                ${ui.message("coreapps.unknownAge")}
                     <% } %>
                 </span>
                 <span id="edit-patient-demographics" class="edit-info ml-2">
@@ -253,3 +266,18 @@
         <button class="cancel">${ui.message("coreapps.cancel")}</button>
     </div>
 </div>
+
+<script type="text/javascript">
+
+    //Convert dates to client timezone
+    if (jq(".death-message.rfc3339-date").text() != '') {
+        jq(".death-message.rfc3339-date").text(function () {
+            return jq(this).text().replace("${ui.format(patient.patient.deathDate)}", formatDatetime(new Date("${ui.format(patient.patient.deathDate)}"),  "${ui.getJSDatetimeFormat()}",  "${ui.getLocale()}"));
+        });
+    }
+
+  /*  if (jq(".gender-age.rfc3339-date").find(".patient-birhtdate").text() != '') {
+        var birthdate = moment(new Date("${patient.birthdate}")).format("DD/MM/YY HH:mm");
+        jq(this).text().replace(birthdate, formatDatetime("${patient.birthdate}", window.patientHeader.dateFormat, window.patientHeader.locale));
+    } */
+</script>

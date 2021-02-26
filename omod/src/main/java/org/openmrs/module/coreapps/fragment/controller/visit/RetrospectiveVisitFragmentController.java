@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
+import static org.openmrs.util.TimeZoneUtil.toRFC3339;
+
 public class RetrospectiveVisitFragmentController {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -36,16 +38,9 @@ public class RetrospectiveVisitFragmentController {
             stopDate = startDate;
         }
 
-        // set the startDate time component to the start of day
-        startDate = new DateTime(startDate).withTime(0,0,0,0).toDate();
+        //If stopDate is today, it cannot be today at 23:59:59, because that would be in the future.
+        stopDate = stopDate.after(new Date()) ? new Date() : stopDate;
 
-        // if stopDate is today, set stopDate to current datetime, otherwise set time component to end of date
-        if (new DateTime().withTime(0,0,0,0).equals(new DateTime(stopDate).withTime(0,0,0,0))) {
-            stopDate = new Date();
-        }
-        else {
-            stopDate = new DateTime(stopDate).withTime(23, 59, 59, 999).toDate();
-        }
 
         try {
             VisitDomainWrapper createdVisit = adtService.createRetrospectiveVisit(patient, location, startDate, stopDate);
@@ -64,9 +59,15 @@ public class RetrospectiveVisitFragmentController {
 
             if (visits != null) {
                 for (VisitDomainWrapper visit : visits) {
-                    simpleVisits.add(SimpleObject.create("startDate", ui.format(new DateTime(visit.getVisit().getStartDatetime()).toDateMidnight().toDate()),
-                            "stopDate", ui.format(new DateTime(visit.getVisit().getStopDatetime()).toDateMidnight().toDate()),
-                            "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));
+                    if(ui.handleTimeZones()){
+                        simpleVisits.add(SimpleObject.create("startDate", toRFC3339(new DateTime(visit.getVisit().getStartDatetime()).toDate()),
+                                "stopDate", toRFC3339(new DateTime(visit.getVisit().getStopDatetime()).toDate()),
+                                "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));
+                    }else{
+                        simpleVisits.add(SimpleObject.create("startDate", ui.format(new DateTime(visit.getVisit().getStartDatetime()).toDateMidnight().toDate()),
+                                "stopDate", ui.format(new DateTime(visit.getVisit().getStopDatetime()).toDateMidnight().toDate()),
+                                "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));
+                    }
                 }
             }
 

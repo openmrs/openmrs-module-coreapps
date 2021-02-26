@@ -37,6 +37,7 @@ import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.Redirect;
+import org.openmrs.ui.framework.UiUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class PatientDashboardPageController {
@@ -51,6 +52,7 @@ public class PatientDashboardPageController {
          @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
          @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
          @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
+         UiUtils uiUtils,
          UiSessionContext sessionContext)
    {
       if (!Context.hasPrivilege(CoreAppsConstants.PRIVILEGE_PATIENT_VISITS)) {
@@ -65,6 +67,9 @@ public class PatientDashboardPageController {
       model.addAttribute("patient", patientDomainWrapper);
       model.addAttribute("selectedTab", selectedTab);
       model.addAttribute("selectedVisit", visit);
+      model.addAttribute("dateFormat" , uiUtils.getJSDateFormat()); //dateFormat);
+      model.addAttribute("datetimeFormat" , uiUtils.getJSDatetimeFormat());
+      model.addAttribute("timeFormat" , uiUtils.getTimeFormat());
 
       Location visitLocation = null;
       try {

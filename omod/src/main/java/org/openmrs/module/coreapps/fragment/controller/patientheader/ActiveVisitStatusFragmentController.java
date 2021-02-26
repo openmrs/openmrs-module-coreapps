@@ -26,6 +26,7 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
+import org.openmrs.util.TimeZoneUtil;
 
 public class ActiveVisitStatusFragmentController {
 
@@ -50,7 +51,12 @@ public class ActiveVisitStatusFragmentController {
 		}
 		if (activeVisit != null) {
 			config.addAttribute("activeVisit", activeVisit);
-			config.addAttribute("activeVisitStartDatetime", uiUtils.format(activeVisit.getStartDatetime()));
+			if(uiUtils.handleTimeZones()){
+				config.addAttribute("activeVisitStartDatetime", TimeZoneUtil.toRFC3339(activeVisit.getStartDatetime()));
+			}else{
+				config.addAttribute("activeVisitStartDatetime", uiUtils.format(activeVisit.getStartDatetime()));
+			}
+
 			config.addAttribute("showVisitTypeOnPatientHeaderSection", visitTypeHelper.showVisitTypeOnPatientHeaderSection());
 
 			String color = (String) visitTypeHelper.getVisitTypeColorAndShortName(activeVisit.getVisit().getVisitType()).get("color");

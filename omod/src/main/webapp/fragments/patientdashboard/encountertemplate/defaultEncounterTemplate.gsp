@@ -4,12 +4,14 @@
 
 <script type="text/template" id="defaultEncounterTemplate">
 <li>
-	<div class="encounter-date">
+	<div class="encounter-date ${ui.handleTimeZones() ? 'rfc3339-date' : ''}">
 	    <i class="icon-time"></i>
-	    <strong>
+	    <strong class="encounter-time">
 	        {{- encounter.encounterTime }}
 	    </strong>
-	    {{- encounter.encounterDate }}
+		<spann class="encounter-datetime">
+	    	{{- encounter.encounterDate }}
+		</spann>
 	</div>
 	<ul class="encounter-details">
 	    <li> 

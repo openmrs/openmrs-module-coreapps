@@ -7,6 +7,9 @@
 
     ui.includeJavascript("appui", "jquery-3.4.1.min.js")
 
+    ui.includeJavascript("coreapps", "custom/utilsTimezone.js")
+
+    ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 
     def tabs = [
         [ id: "visits", label: ui.message("coreapps.patientDashBoard.visits"), provider: "coreapps", fragment: "patientdashboard/visits" ],
@@ -19,6 +22,12 @@
 
 %>
 <script type="text/javascript">
+    window.patientDashboard = {
+        dateFormat: "${dateFormat}",
+        datetimeFormat: "${datetimeFormat}",
+        timeFormat: "${timeFormat}"
+
+    };
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" ,
@@ -88,3 +97,24 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
         <% } %>
     </div>
 </div>
+<script type="text/javascript">
+
+//If find rfc3339-date class, convert from UTC to client Timezone
+jq(".menu-date.rfc3339-date").each(function() {
+    var visitStartDateInUTC = (jq(this).find(".visit-start-date").text()).trim();
+    jq(this).find(".visit-start-date").text(function () {
+        return jq(this).text().replace(visitStartDateInUTC, formatDate(new Date(visitStartDateInUTC), "${ui.getJSDateFormat()}",  "${ui.getLocale()}"));
+    });
+    if(jq(this).find(".visit-stop-date").text() != ''){
+        var visitStopDateInUTC = (jq(this).find(".visit-stop-date").text()).trim();
+        jq(this).find(".visit-stop-date").text(function () {
+            return jq(this).text().replace(visitStopDateInUTC, formatDate(new Date(visitStopDateInUTC), "${ui.getJSDateFormat()}",  "${ui.getLocale()}"));
+        })};
+
+    if(jq(this).find(".visit-start-datetime").text() != ''){
+        var visitStartDatetimeInUTC = (jq(this).find(".visit-start-datetime").text()).trim();
+        jq(this).find(".visit-start-datetime").text(function () {
+            return jq(this).text().replace(visitStartDatetimeInUTC, formatTime(new Date(visitStartDatetimeInUTC), "${ui.getTimeFormat()}",  "${ui.getLocale()}"));
+        } )};
+});
+</script>

@@ -1,10 +1,22 @@
 <% if (config.activeVisit) { %>
     <% def visit = config.activeVisit.visit %>
-
+<%
+        ui.includeJavascript("coreapps", "custom/utilsTimezone.js")
+%>
     <div class="active-visit-started-at-message">
         ${ui.message("coreapps.patientHeader.activeVisit.at", config.activeVisitStartDatetime)}
     </div>
+<script type="text/javascript">
+    jq(document).ready(function () {
 
+        //Convert dates to client timezone
+        if(${ui.handleTimeZones()}){
+             jq(".active-visit-started-at-message").text(function () {
+             return jq(this).text().replace("${config.activeVisitStartDatetime}", formatDatetime(new Date("${config.activeVisitStartDatetime}") , "${ui.getJSDatetimeFormat()}",  "${ui.getLocale()}"));
+             });
+        }
+    })
+</script>
     <% if (config.showVisitTypeOnPatientHeaderSection == false) { %>
         <% if (config.activeVisit.admitted) { %>
         <div class="active-visit-message">

@@ -48,6 +48,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
+import org.openmrs.util.TimeZoneUtil;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class VisitDetailsFragmentController {
@@ -82,12 +83,20 @@ public class VisitDetailsFragmentController {
       Date startDatetime = visit.getStartDatetime();
       Date stopDatetime = visit.getStopDatetime();
 
-      simpleObject.put("startDatetime", uiUtils.format(startDatetime));
-
-      if (stopDatetime != null) {
-         simpleObject.put("stopDatetime", uiUtils.format(stopDatetime));
-      } else {
-         simpleObject.put("stopDatetime", null);
+          if(uiUtils.handleTimeZones()){
+         simpleObject.put("startDatetime", TimeZoneUtil.toRFC3339(startDatetime));
+         if (stopDatetime != null) {
+            simpleObject.put("stopDatetime", TimeZoneUtil.toRFC3339(stopDatetime));
+         } else {
+            simpleObject.put("stopDatetime", null);
+         }
+      }else{
+         simpleObject.put("startDatetime", uiUtils.format(startDatetime));
+         if (stopDatetime != null) {
+            simpleObject.put("stopDatetime", uiUtils.format(stopDatetime));
+         } else {
+            simpleObject.put("stopDatetime", null);
+         }
       }
 
       VisitDomainWrapper visitWrapper = new VisitDomainWrapper(visit, emrApiProperties);

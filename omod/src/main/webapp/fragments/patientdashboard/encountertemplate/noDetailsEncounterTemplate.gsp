@@ -1,11 +1,13 @@
 <script type="text/template" id="noDetailsEncounterTemplate">
 <li>
-	<div class="encounter-date">
-	    <i class="icon-time"></i>
-	    <strong>
-	        {{- encounter.encounterTime }}
-	    </strong>
-	    {{- encounter.encounterDate }}
+	<div class="encounter-date ${ui.handleTimeZones() ? 'rfc3339-date' : ''}">
+		<i class="icon-time"></i>
+		<strong class="encounter-time">
+			{{- encounter.encounterTime }}
+		</strong>
+		<spann class="encounter-datetime">
+			{{- encounter.encounterDate }}
+		</spann>
 	</div>
 	<ul class="encounter-details">
 	    <li> 

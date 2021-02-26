@@ -6,12 +6,14 @@ import org.openmrs.VisitType;
 import org.openmrs.VisitAttributeType;
 import org.openmrs.Patient;
 import org.openmrs.api.VisitService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.utils.VisitTypeHelper;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -34,6 +36,7 @@ public class VisitIncludesFragmentController {
 			@SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper,
 			UiSessionContext sessionContext,
 			HttpServletRequest request,
+		    UiUtils uiUtils,
 			@SpringBean("patientService")PatientService patientService){
 
 		Object patient = config.get("patient");
@@ -88,6 +91,8 @@ public class VisitIncludesFragmentController {
 		model.addAttribute("activeVisits", activeVisits);
 		model.addAttribute("visitTypes", visitTypes);
 		model.addAttribute("visitAttributeTypes", visitAttributeTypes);
+		model.addAttribute("dateFormat" , uiUtils.getJSDateFormat());
+		model.addAttribute("locale",  Context.getLocale().getLanguage());
 	}
 }
 

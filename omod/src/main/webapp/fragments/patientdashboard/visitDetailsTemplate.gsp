@@ -1,10 +1,15 @@
+<%
+    ui.includeJavascript("coreapps", "custom/utilsTimezone.js")
+    ui.includeJavascript("uicommons", "moment-with-locales.min.js")
+%>
+
 <div class="status-container">
     [[ if (stopDatetime) { ]]
-        <i class="icon-time small"></i> ${ ui.message("coreapps.visitDetails", '[[- startDatetime ]]', '[[- stopDatetime ]]') }
-    [[ } else { ]]
-        <span class="status active"></span> ${ ui.message("coreapps.activeVisit") }
-        <i class="icon-time small"></i>
-        ${ ui.message("coreapps.activeVisit.time", '[[- startDatetime ]]') }
+    <i class="icon-time small"></i> <span class="visit-date"> ${ ui.message("coreapps.visitDetails", '[[- startDatetime ]]', '[[- stopDatetime ]]') } </span>
+[[ } else { ]]
+    <span class="status active"></span> ${ ui.message("coreapps.activeVisit") }
+    <i class="icon-time small"></i>
+    <span class="visit-date" > ${ ui.message("coreapps.activeVisit.time", '[[- startDatetime ]]') } </span>
     [[ } ]]
     [[ if (canDeleteVisit) { ]]
         <a class="right" id="deleteVisitLink" href="#" data-visit-id="[[= id]]">${ ui.message("coreapps.task.deleteVisit.label")}</a>
@@ -48,3 +53,24 @@
         [[= encounterTemplates.displayEncounter(encounter, patient) ]]
     [[ }); ]]
 </ul>
+
+<script type="text/javascript">
+    jq(document).ready(function () {
+
+        //Convert dates to client timezone
+        if (${ui.handleTimeZones()}) {
+            if ('[[- startDatetime ]]' && '[[- stopDatetime ]]'){
+                jq(".visit-date").text(function () {
+                    return jq(this).text().replace('[[- startDatetime ]]', formatDate(new Date('[[- startDatetime ]]'), "${ui.getJSDateFormat()}", "${ui.getLocale()}"));
+                });
+                    jq(".visit-date").text(function () {
+                        return jq(this).text().replace('[[- stopDatetime ]]', formatDatetime(new Date('[[- stopDatetime ]]'), "${ui.getJSDatetimeFormat()}",  "${ui.getLocale()}"));
+                    });
+            }else if ('[[- startDatetime ]]') {
+                jq(".visit-date").text(function () {
+                   return jq(this).text().replace('[[- startDatetime ]]', formatDatetime(new Date('[[- startDatetime ]]'), "${ui.getJSDatetimeFormat()}", "${ui.getLocale()}"));
+                });
+            }
+        }
+    })
+</script>

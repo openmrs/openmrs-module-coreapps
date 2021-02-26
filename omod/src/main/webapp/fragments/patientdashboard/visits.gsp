@@ -74,13 +74,27 @@
                 def primaryDiagnoses = wrapper.getUniqueDiagnoses(true, false)
         %>
         <li class="menu-item viewVisitDetails" data-visit-id="${wrapper.visit.visitId}">
-            <span class="menu-date">
+            <span class="menu-date ${  ui.handleTimeZones() ? 'rfc3339-date' : ''}">
                 <i class="icon-time"></i>
-                ${ui.format(wrapper.startDate)}
-                <% if(wrapper.stopDate != null) { %>
-                    - ${ui.format(wrapper.stopDate)}
+                <span class="visit-start-date">
+                    <% if(ui.handleTimeZones()) { %>
+                ${ui.format(wrapper.visit.startDatetime)}
                 <% } else { %>
-                    (${ ui.message("coreapps.patientDashBoard.activeSince")} ${timeFormat.format(wrapper.visit.startDatetime)})
+                    ${ui.format(wrapper.startDate)}
+                <% } %>
+                </span>
+                <% if(wrapper.stopDate != null) { %>
+                    <% if(ui.handleTimeZones()) { %>
+                        - <span class="visit-stop-date">${ui.format(wrapper.visit.stopDatetime)}</span>
+                    <% } else { %>
+                        - <span class="visit-stop-date">${ui.format(wrapper.stopDate)}</span>
+                    <% } %>
+                <% } else { %>
+                    <% if(ui.handleTimeZones()) { %>
+                        (${ ui.message("coreapps.patientDashBoard.activeSince")}<span class="visit-start-datetime"> ${ui.format(wrapper.visit.startDatetime)}</span>)
+                    <% } else { %>
+                        (${ ui.message("coreapps.patientDashBoard.activeSince")}<span class="visit-start-datetime"> ${timeFormat.format(wrapper.visit.startDatetime)}</span>)
+                    <% } %>
                 <% } %>
             </span>
             <% if (primaryDiagnoses != null) { %>  <!-- if primary diagnosis is null, don't display box at all, if empty, display "no diagnosis" message -->

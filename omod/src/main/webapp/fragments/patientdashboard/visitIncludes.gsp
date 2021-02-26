@@ -2,11 +2,15 @@
     ui.includeJavascript("coreapps", "custom/visits.js")
     def editDateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
     ui.includeCss("coreapps", "visit/visits.css")
+    ui.includeJavascript("coreapps", "custom/utilsTimezone.js")
 %>
 
 <script type="text/javascript">
     jq(function() {
-
+        window.visitinclude = {
+            dateFormat: "${dateFormat}",
+            locale: "${ui.getLocale()}",
+        };
         // initialize the dialogs used when creating a retrospective visit
         visit.createRetrospectiveVisitDialog(${patient.id});
         visit.createRetrospectiveVisitExistingVisitsDialog();
@@ -47,7 +51,7 @@
     </div>
 </div>
 
-<div id="retrospective-visit-creation-dialog" class="dialog" style="display: none">
+<div id="retrospective-visit-creation-dialog" class="dialog ${ui.handleTimeZones() ? 'rfc3339-date' : ''}" style="display: none">
     <div class="dialog-header">
         <i class="icon-plus"></i>
         <h3>${ ui.message("coreapps.task.createRetrospectiveVisit.label") }</h3>
@@ -61,6 +65,10 @@
                 if (patient.patient.deathDate) {
                   visitEndTime = patient.patient.deathDate
                 }
+            def endDate =editDateFormat.format(visitEndTime);
+            if(ui.handleTimeZones()){
+                    endDate =visitEndTime;
+                }
             %>
 
             ${ ui.includeFragment("uicommons", "field/datetimepicker", [
@@ -68,7 +76,7 @@
                     formFieldName: "retrospectiveVisitStartDate",
                     label:"",
                     defaultDate: visitEndTime,
-                    endDate: editDateFormat.format(visitEndTime),
+                    endDate: endDate,
                     useTime: false,
             ])}
         </p>
@@ -83,7 +91,7 @@
                     formFieldName: "retrospectiveVisitStopDate",
                     label:"",
                     defaultDate: visitEndTime,
-                    endDate: editDateFormat.format(visitEndTime),
+                    endDate: endDate,
                     useTime: false,
             ])}
         </p>
@@ -110,7 +118,7 @@
             </li>
         </ul>
 
-        <ul class="select" id="past-visit-dates">
+        <ul class="select  ${  ui.handleTimeZones() ? 'rfc3339-date' : ''}" id="past-visit-dates">
 
         </ul>
 
