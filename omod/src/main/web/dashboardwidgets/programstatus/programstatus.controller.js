@@ -147,7 +147,11 @@ export default class ProgramStatusController {
     convertDateEnrolledAndDateCompletedStringsToDates() {
         if (this.patientProgram) {
             this.patientProgram.dateEnrolled = this.patientProgram ? new Date(this.patientProgram.dateEnrolled) : null;
-            this.patientProgram.dateCompleted = this.patientProgram && this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
+            // The `dateCompleted` is set based on the `startDate` from patient program state because we
+            // had stored this date as the date without the time that's why now we don't want
+            // to add timezone offset to that value (and use toUTCDate)
+            this.patientProgram.dateCompleted = this.patientProgram && this.patientProgram.dateCompleted ?
+                this.toUTCDate(this.patientProgram.dateCompleted) : null;
         }
     }
 
@@ -318,7 +322,10 @@ export default class ProgramStatusController {
 
             var states = [];
             angular.forEach(this.input.initialWorkflowStateByWorkflow, (state) => {
-                state.startDate = this.input.dateEnrolled;
+                // program entity lost information about `startDate` time value (date database type) and it
+                // causes an issue when the timezone is different than UTC, that's why we remove information
+                // about a time before sending a request
+                state.startDate = this.dateWithoutTime(this.input.dateEnrolled);
                 states.push(state);
             });
 
@@ -434,11 +441,14 @@ export default class ProgramStatusController {
     }
 
     createPatientState(state) {
+        // patient program entity lost information about `startDate` time value (date database type) and it
+        // causes an issue when the timezone is different than UTC, that's why we remove information
+        // about a time before sending a request
         this.openmrsRest.update('programenrollment/' + this.patientProgram.uuid, {
             states: [
                 {
                     state: state.state,
-                    startDate: state.date    // TODO is it okay that we set this date on the client-side? need to sync with
+                    startDate: this.dateWithoutTime(state.date)  // TODO is it okay that we set this date on the client-side? need to sync with
                 }
             ]
         }).then((response) => {
@@ -561,10 +571,14 @@ export default class ProgramStatusController {
                     this.sortedStatesByWorkflow[workflow.uuid] = [];
                 }
 
+                // patient program entity lost information about `startDate` time value (date database type) and it
+                // causes an issue when the timezone is different than UTC
+                // that's why we had store start date as the date without
+                // the time and now we don't want to add timezone offset to that value (and use toUTCDate)
                 var newEntry = {
-                    startDate:  new Date(patientState.startDate),
+                    startDate:  this.toUTCDate(patientState.startDate),
                     dayAfterStartDate: this.getNextDay(patientState.startDate),
-                    endDate: patientState.endDate ? new Date(patientState.endDate) : null,
+                    endDate: this.toUTCDate(patientState.endDate),
                     state: patientState.state,
                     uuid: patientState.uuid
                 }
@@ -707,5 +721,18 @@ export default class ProgramStatusController {
 
     reloadPage() {
         this.$window.location.reload();
+    }
+
+    dateWithoutTime(date) {
+        return moment(date).format('YYYY-MM-DD');
+    }
+
+    toUTCDate(dateString) {
+        let utcDate = null;
+        if (dateString) {
+            utcDate = new Date(dateString);
+            utcDate.setTime(utcDate.getTime() + utcDate.getTimezoneOffset() * 60 * 1000);
+        }
+        return utcDate;
     }
 }
