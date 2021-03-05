@@ -2,6 +2,7 @@
     def careSettings = activeDrugOrders.collect{it.careSetting}.unique();
     detailsUrl = detailsUrl ? detailsUrl.replace("{{patientUuid}}", patient.uuid) : null;
     returnUrl = returnUrl ? returnUrl.replace("{{patientUuid}}", patient.uuid) : "";
+    ui.includeJavascript("coreapps", "custom/utilsTimezone.js")
 %>
 
 <style type="text/css">
@@ -38,7 +39,7 @@
                         <label>${ ui.format(it.drug ?: it.concept) }</label>
                         <small>${ it.dosingInstructionsInstance.getDosingInstructionsAsString(sessionContext.locale) }</small>
                         <% if (displayActivationDate) { %>
-                            <span style='float:right; font-size: small; color:#939393' >${ ui.formatDatetimePretty(it.dateActivated) }</span>
+                            <span style='float:right; font-size: small; color:#939393' class="${ui.handleTimeZones() ? 'rfc3339-date' : ''}" >${ui.handleTimeZones() ? ui.format(it.dateActivated) : ui.formatDatetimePretty(it.dateActivated)}</span>
                         <% } %>
                     </li>
                     <% } %>
@@ -48,3 +49,14 @@
     </div>
 
 </div>
+
+<script type="text/javascript">
+    jq(document).ready(function () {
+        jq(".active-drug-orders .rfc3339-date").each(function() {
+            var drugDatetimeInUTC = jq(this).text().trim();
+            jq(this).text(function () {
+                return jq(this).text().replace(drugDatetimeInUTC, formatDate(new Date(drugDatetimeInUTC), "${ui.getJSDateFormat()}", "${ui.getLocale()}") + " " + formatTime(new Date(drugDatetimeInUTC), "${ui.getTimeFormat()}", "${ui.getLocale()}") );
+            });
+        });
+    });
+</script>

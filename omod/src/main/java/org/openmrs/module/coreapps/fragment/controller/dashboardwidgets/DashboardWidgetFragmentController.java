@@ -8,6 +8,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.UiFrameworkConstants;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 public class DashboardWidgetFragmentController {
 
-    public void controller(FragmentConfiguration config, @FragmentParam("app") AppDescriptor app, @InjectBeans PatientDomainWrapper patientWrapper,
+    public void controller(FragmentConfiguration config, @FragmentParam("app") AppDescriptor app, @InjectBeans PatientDomainWrapper patientWrapper, UiUtils uiUtils,
                            @SpringBean("adminService") AdministrationService adminService) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -43,7 +44,7 @@ public class DashboardWidgetFragmentController {
             }
             appConfig.put("patientUuid", patientWrapper.getPatient().getUuid());
         }
-
+        appConfig.put("handleTimeZones",uiUtils.handleTimeZones());
         if (appConfig.get("dateFormat") == null) {
             appConfig.put("dateFormat", adminService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATE_FORMAT, "yyyy-MM-dd"));
         }
