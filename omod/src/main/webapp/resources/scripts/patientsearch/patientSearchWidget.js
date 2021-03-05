@@ -278,7 +278,7 @@ function PatientSearchWidget(configuration){
         reset();
         input.val('');
         input.focus();
-        searchResults.hide();
+        dTable.fnAddData(initialData);
     }
 
     var reset = function(){
@@ -367,8 +367,9 @@ function PatientSearchWidget(configuration){
                 });
                 dataRows.push(dataRow);
             });
-        }else if(config.initialPatients){
+        } else if(config.initialPatients) {
             //show the recently viewed
+            reset();
             searchResultsData = initialPatientData;
             dataRows = initialData;
         }
