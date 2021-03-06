@@ -4,21 +4,27 @@
             <span style="float: left">
                 {{obs.conceptName}}:&nbsp;
             </span>
-            <div ng-if="obs.groupMembers != null && obs.groupMembers != undefined && obs.groupMembers.length > 0">
+            <div ng-if="obs.groupMembers != null && obs.groupMembers.length > 0">
                 <span ng-repeat="member in obs.groupMembers" style="float: left">
                     {{member.prefix}}&nbsp;<strong>{{member.value}}</strong>
                     <span ng-if="$index != (obs.groupMembers.length - 1)">&comma;</span>
                 </span> 
             </div>
-            <span ng-else-if="obs.groupMembers == null || obs.groupMembers == undefined || obs.groupMembers.length == 0" style="float: left">
+            <span ng-else style="float: left">
                 <strong>{{obs.value}}</strong>
             </span>
             <span style="float: right; font-size: small; color: #939393">
-                {{$ctrl.widgetsCommons.dateToDaysAgoMessage(obs.obsDatetime)}}
+                {{obs.obsDaysAgo}}
             </span>
         </div>
     </li>
+
      <p ng-show="$ctrl.obs.length == 0">
-        {{ 'coreapps.none.inLastTime' | translate }}  {{$ctrl.maxAgeInDays}}  {{ 'coreapps.days' | translate }}
+         <span ng-if="$ctrl.maxAgeInDays != null">
+             {{ 'coreapps.none.inLastTime' | translate }}  {{$ctrl.maxAgeInDays}}  {{ 'coreapps.days' | translate }}
+         </span>
+         <span ng-else>
+             {{ 'coreapps.none' | translate }}
+         </span>
     </p>
 </ul>
