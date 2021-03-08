@@ -36,7 +36,7 @@ export default class WidgetsCommons {
         const seconds = Math.floor((new Date().getTime() - time) / 1000);
         const interval = Math.floor(seconds / 86400);
         let days = 0;
-        if (interval > 1) {
+        if (interval > 0) {
             days = interval;
         }
         return days;
@@ -83,7 +83,7 @@ export default class WidgetsCommons {
             today.setMonth(today.getMonth()-parseInt(maxAge));
         } else if( maxAge.indexOf('y') !== -1 ){
             maxAge = maxAge.replace('y', '');
-            today.setDate(today.getYear()-(parseInt(maxAge)));
+            today.setFullYear(today.getFullYear()-(parseInt(maxAge)));
         } else {
             return null;
         }
