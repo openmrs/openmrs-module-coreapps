@@ -121,11 +121,7 @@
                     <% } %>
                     (<% if (patient.birthdateEstimated) { %>~<% } %>
                     <span class="patient-birhtdate">
-                        <% if (ui.handleTimeZones()) { %>
-                        ${patient.birthdate}
-                        <% } else { %>
                         ${ui.formatDatePretty(patient.birthdate)}
-                        <% } %>
                     </span>)
                 <% } else { %>
                 ${ui.message("coreapps.unknownAge")}
@@ -275,9 +271,11 @@
             return jq(this).text().replace("${ui.format(patient.patient.deathDate)}", formatDatetime(new Date("${ui.format(patient.patient.deathDate)}"),  "${ui.getJSDatetimeFormat()}",  "${ui.getLocale()}"));
         });
     }
+    //Convert Age to client timezone
+    if (jq(".gender-age.rfc3339-date").find(".patient-birhtdate").text() != '') {
+            jq(".gender-age.rfc3339-date").find(".patient-birhtdate").text(function () {
+                return jq(this).text().replace("${ui.formatDatePretty(patient.birthdate)}", formatDate(new Date("${ui.formatDatePretty(patient.birthdate)}"), "${ui.getJSDateFormat()}", "${ui.getLocale()}"));
+            });
+        }
 
-  /*  if (jq(".gender-age.rfc3339-date").find(".patient-birhtdate").text() != '') {
-        var birthdate = moment(new Date("${patient.birthdate}")).format("DD/MM/YY HH:mm");
-        jq(this).text().replace(birthdate, formatDatetime("${patient.birthdate}", window.patientHeader.dateFormat, window.patientHeader.locale));
-    } */
 </script>
