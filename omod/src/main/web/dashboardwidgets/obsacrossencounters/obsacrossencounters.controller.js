@@ -19,8 +19,8 @@ export default class ObsAcrossEncountersController {
       maxAgeInDays: this.widgetsCommons.maxAgeToDays(this.config.maxAge)
     }
 
-    this.fetchSessionInfo();
     return Promise.all([
+        this.fetchSessionInfo(),
         this.fetchConcepts(),
         this.fetchEncounters()
     ]).then(() => this.formatOutput());
@@ -50,7 +50,6 @@ export default class ObsAcrossEncountersController {
   }
 
   fetchEncounters() {
-    console.log(this.config);
     const encounterTypes = this.config.encounterTypes ? this.config.encounterTypes.split(',').map(c => c.trim()) : [];
     const legacyEncounterTypes = this.config.encounterType ? this.config.encounterType.split(',').map(c => c.trim()) : ["123AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"];
     encounterTypes.push(...legacyEncounterTypes);
@@ -63,15 +62,15 @@ export default class ObsAcrossEncountersController {
     };
     const encounterPromises = encounterTypes.length ? encounterTypes.map(e =>
       this.openmrsRest.get("encounter",
-          Object.assign(encounterQueryParams, { encounterType: e })
+          Object.assign({ encounterType: e }, encounterQueryParams)
       ).then(response => response.results))
-    : [this.openmrsRest.get("encounter", encounterQueryParams).then(response => response.results)];
+    : [this.openmrsRest.get("encounter",
+          Object.assign({ encounterType: '' }, encounterQueryParams)  // `encounterType: ''` is required to prevent a 400 error
+      ).then(response => response.results)];
 
-    return this.$q.all(encounterPromises).then((encounterSets) => {
-      for (let encounterSet of encounterSets) {
-        this.addToSimpleEncs(encounterSet); 
-      }
-    });
+    return Promise.all(encounterPromises).then((encounterSets) => (
+      Promise.all(encounterSets.map(encounterSet => this.addToSimpleEncs(encounterSet)))
+    ));
   }
 
   formatOutput() {
@@ -103,7 +102,7 @@ export default class ObsAcrossEncountersController {
       });
       for (var uuid of Object.keys(this.conceptsMap)) {
         row.push({
-          value: this.getObsValue(encounter.obs[uuid]) || '',
+          value: (encounter.obs[uuid] ? this.getObsValue(encounter.obs[uuid]) : '') || '',
           className: this.isRetired(encounter.obs[uuid]) ? 'retiredConcept' : ''
         });
       }
@@ -126,6 +125,7 @@ export default class ObsAcrossEncountersController {
   }
 
   addToSimpleEncs(encounters) {
+    const resultPromises = []
     for (let encounter of encounters) {
       const conceptKeys = Object.keys(this.conceptsMap);
       // all normal concepts will go in one row
@@ -135,7 +135,10 @@ export default class ObsAcrossEncountersController {
         if (obs.groupMembers) {
           const foundMembers = obs.groupMembers.filter(member => conceptKeys.includes(member.concept.uuid));
           if (foundMembers.length) {
-            const foundMembersByUuid = Object.fromEntries(foundMembers.map(m => [m.concept.uuid, m]));
+            const foundMembersByUuid = {};
+            for (let m of foundMembers) {
+              foundMembersByUuid[m.concept.uuid] = m;
+            }
             this.simpleEncs.push({
               encounterType: encounter.encounterType.name,
               encounterDatetime: encounter.encounterDatetime,
@@ -157,9 +160,10 @@ export default class ObsAcrossEncountersController {
       // if the widget was configured to display the obs concept SHORT name instead of the default obs.value.display value
       // By default, the widget displays the obs.value.display property
       if (this.config.useConceptShortName) {
-        this.updateWithConceptShortNames(this.simpleEncs);
+        resultPromises.push(this.updateWithConceptShortNames(this.simpleEncs));
       }
     }
+    return Promise.all(resultPromises);
   }
 
   /**
@@ -167,22 +171,24 @@ export default class ObsAcrossEncountersController {
    * @param encounters
    */
   updateWithConceptShortNames(encounters) {
+    const resultPromises = [];
     for (let encounter of encounters) {
-      for (let obs of encounter.obs) {
+      for (let obs of Object.values(encounter.obs)) {
         if (this.widgetsCommons.isDrug(obs.value)) {
-          this.updateWithShortName(obs.value.concept);
+          resultPromises.push(this.updateWithShortName(obs.value.concept));
         } else if (this.widgetsCommons.hasDatatypeCoded(obs.concept)) {
-          this.updateWithShortName(obs.value);
+          resultPromises.push(this.updateWithShortName(obs.value));
         }
       }
     }
+    return resultPromises;
   }
 
   updateWithShortName(concept) {
-    this.openmrsRest.get("concept/" + concept.uuid, {
+    return this.openmrsRest.get("concept/" + concept.uuid, {
       v: this.CONCEPT_CUSTOM_REP
-    }).then((concept) => {
-      concept.display = this.widgetsCommons.getConceptName(concept, "shortName", this.sessionLocale);
+    }).then((conceptRes) => {
+      concept.display = this.widgetsCommons.getConceptName(conceptRes, "shortName", this.sessionLocale);
     }).catch(err => console.error(`failed to retrieve concept ${conceptUuid}, ${err}`));
   }
 }
