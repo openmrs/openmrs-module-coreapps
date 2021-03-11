@@ -19,11 +19,11 @@
         </div>
     </li>
 
-    <p ng-show="$ctrl.obs.length == 0">
+     <p ng-show="$ctrl.obs.length == 0">
          <span ng-if="$ctrl.maxAgeInDays != null">
              {{ 'coreapps.none.inLastTime' | translate }}  {{$ctrl.maxAgeInDays}}  {{ 'coreapps.days' | translate }}
          </span>
-        <span ng-else>
+         <span ng-else>
              {{ 'coreapps.none' | translate }}
          </span>
     </p>
