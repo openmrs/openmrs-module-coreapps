@@ -13,7 +13,7 @@
 <div class="contact-info">
     <div>
         <strong>${ ui.message("coreapps.person.address")}: </strong><br />
-        <div class="ml-2">${ ui.format(config.patient.personAddress).replace("\n", "<br />") }</div>
+        <div class="ml-2">${ ui.format(config.patient.personAddress).replace("\n", "\n","\n","\n","<br />") }</div>
     </div>
     <br />
     <div>
