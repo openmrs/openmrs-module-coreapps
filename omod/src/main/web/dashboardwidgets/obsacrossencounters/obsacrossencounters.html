@@ -31,25 +31,24 @@
 
 <table id="obsTable" ng-if="$ctrl.simpleEncs.length != 0">
     <thead>
-        <tr ng-if="$ctrl.headers.length != 0">
-            <th ng-repeat="column in $ctrl.headers track by $index" class="column-header">{{ column | translate }}</th>
-        </tr>
-        <tr ng-if="$ctrl.headers.length == 0">
-            <th ng-if="$ctrl.config.showEncounterTypeName" class="column-header">{{'coreapps.patientDashBoard.encounter' | translate }}</th>
-            <th class="column-header">{{'coreapps.date' | translate }}</th>
-            <th ng-repeat="(key,value) in $ctrl.conceptsMap" class="column-header">{{value.display}}</th>
+        <tr ng-if="$ctrl.output.headers.length != 0">
+            <th ng-repeat="column in $ctrl.output.headers track by $index" class="column-header">{{ column | translate }}</th>
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="encounter in $ctrl.simpleEncs| orderBy: '-encounterDatetime'">
-            <td ng-if="$ctrl.config.showEncounterTypeName">{{encounter.encounterType | translate }}</td>
-            <td>{{$ctrl.widgetsCommons.formatDate(encounter.encounterDatetime,$ctrl.config.JSDateFormat,$ctrl.config.language) }}</td>
-            <td ng-repeat="(key,value) in $ctrl.conceptsMap" ng-class="($ctrl.isRetired(encounter.obs[key])) ? 'retiredConcept' : ''">
-                {{ encounter.obs[key] ? $ctrl.getObsValue(encounter.obs[key]) : '' }}
+        <tr ng-repeat="row in $ctrl.output.rows">
+            <td ng-repeat="cell in row" ng-class="cell.className">
+                {{ cell.translate ? (cell.value | translate) : cell.value }}
             </td>
         </tr>
     </tbody>
 </table>
-<p ng-show="$ctrl.simpleEncs.length == 0">
- {{ 'coreapps.none.inLastTime' | translate }}  {{$ctrl.maxAgeInDays}}  {{ 'coreapps.days' | translate }}
+
+<p ng-show="$ctrl.output.encs.length == 0">
+         <span ng-if="$ctrl.output.maxAgeInDays != null">
+             {{ 'coreapps.none.inLastTime' | translate }}  {{$ctrl.output.maxAgeInDays}}  {{ 'coreapps.days' | translate }}
+         </span>
+    <span ng-else>
+             {{ 'coreapps.none' | translate }}
+         </span>
 </p>
