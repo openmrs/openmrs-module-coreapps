@@ -61,7 +61,7 @@ public class VisitIncludesFragmentController {
 
 		model.addAttribute("patient", wrapper);
 		List<VisitType> visitTypes = visitTypeHelper.getUnRetiredVisitTypes();
-		if (visitType != null && visitTypes.size() > 0) {
+		if (visitType != null && !visitTypes.isEmpty()) {
 			ListIterator<VisitType> iterator = visitTypes.listIterator();
 			while (iterator.hasNext() ) {
 				if (!iterator.next().getUuid().equals(visitType)) {
