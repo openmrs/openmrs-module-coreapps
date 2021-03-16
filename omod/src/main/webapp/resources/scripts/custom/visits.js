@@ -56,8 +56,8 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
             confirm: function() {
                 var startVal= jq("#retrospectiveVisitStartDate-field").val();
                 var stopVal=jq("#retrospectiveVisitStopDate-field").val();
-                startDate=new Date(new Date(startVal).setHours(0, 0, 0, 0));
-                stopDate=new Date(new Date(startVal).setHours(23, 59, 59, 999));
+                startDate=new Date(new Date(moment(startVal)).setHours(0, 0, 0, 0));
+                stopDate=new Date(new Date(moment(stopVal)).setHours(23, 59, 59, 999));
 
                 //If using timezones class .rfc3339-date then convert the date to ISO8601, if not, convert to a date without timezones associated with moment.
                 if(jq("#retrospective-visit-creation-dialog.rfc3339-date").length){
