@@ -166,7 +166,7 @@
 	                                        jq("#visit-visittype-drop-down").val(${type.id});
 	                                    </script>
 	                                <% } %>
-	                                <option class="dialog-drop-down small" value ="${type.id}">${ ui.format(type) }</option>
+	                                <option class="dialog-drop-down small" value ="${type.id}">${ui.encodeHtmlContent(ui.format(type))}</option>
 	                                <% } %>
 	                            </select>
 	                        </td>
