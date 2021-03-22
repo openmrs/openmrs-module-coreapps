@@ -98,6 +98,12 @@ export default class ProgramStatusController {
     fetchPrivileges() {
         this.openmrsRest.get('session').then((response) => {
             if (response && response.user && angular.isArray(response.user.privileges)) {
+                if (response.user.roles.name === 'System Developer') {
+                    this.canEnrollInProgram = true;
+                    this.canEditProgram = true;
+                    this.canDeleteProgram = true;
+                    this.canMarkPatientDead = true;
+                }
                 if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
                     this.canEnrollInProgram = true;
                 };
