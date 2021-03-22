@@ -61,11 +61,7 @@ export default class ProgramsController {
             if (response && response.user && angular.isArray(response.user.privileges)) {
                 if (response.user.roles.name === 'System Developer') {
                     this.canEnrollInProgram = true;
-                    this.canEditProgram = true;
-                    this.canDeleteProgram = true;
-                    this.canMarkPatientDead = true;
-                }
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                }else if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
                     this.canEnrollInProgram = true;
                 };
             }

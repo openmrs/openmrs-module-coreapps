@@ -103,19 +103,20 @@ export default class ProgramStatusController {
                     this.canEditProgram = true;
                     this.canDeleteProgram = true;
                     this.canMarkPatientDead = true;
+                } else {
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                        this.canEnrollInProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.editPatientProgram'; })) {
+                        this.canEditProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.deletePatientProgram'; })) {
+                        this.canDeleteProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.markPatientDead'; })) {
+                      this.canMarkPatientDead = true;
+                    };
                 }
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
-                    this.canEnrollInProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.editPatientProgram'; })) {
-                    this.canEditProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.deletePatientProgram'; })) {
-                    this.canDeleteProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.markPatientDead'; })) {
-                  this.canMarkPatientDead = true;
-                };
             }
         }, function(error) {
           console.log(`failed to retrieve user privileges, error: ${error}`);
