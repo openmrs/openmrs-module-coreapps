@@ -59,7 +59,7 @@ export default class ProgramsController {
             v: 'custom:(privileges:(name))'
         }).then((response) => {
             if (response && response.user && angular.isArray(response.user.privileges)) {
-                if (response.user.roles.name === 'System Developer') {
+                if (response.user.roles.some( (p) => { return p.name === 'System Developer'; })) {
                     this.canEnrollInProgram = true;
                 }else if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
                     this.canEnrollInProgram = true;
