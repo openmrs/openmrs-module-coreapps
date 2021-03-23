@@ -98,7 +98,7 @@ export default class ProgramStatusController {
     fetchPrivileges() {
         this.openmrsRest.get('session').then((response) => {
             if (response && response.user && angular.isArray(response.user.privileges)) {
-                if (response.user.roles.some( (p) => { return p.name === 'System Developer'; })) {
+                if (this.widgetsCommons.isSystemDeveloper(response.user)) {
                     this.canEnrollInProgram = true;
                     this.canEditProgram = true;
                     this.canDeleteProgram = true;
