@@ -54,6 +54,19 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
         selector: '#retrospective-visit-creation-dialog',
         actions: {
             confirm: function() {
+                var startVal= jq("#retrospectiveVisitStartDate-field").val();
+                var stopVal=jq("#retrospectiveVisitStopDate-field").val();
+                startDate=new Date(new Date(moment(startVal)).setHours(0, 0, 0, 0));
+                stopDate=new Date(new Date(moment(stopVal)).setHours(23, 59, 59, 999));
+
+                //If using timezones class .rfc3339-date then convert the date to ISO8601, if not, convert to a date without timezones associated with moment.
+                if(jq("#retrospective-visit-creation-dialog.rfc3339-date").length){
+                    jq("#retrospectiveVisitStartDate-field").val(startDate.toISOString());
+                    jq("#retrospectiveVisitStopDate-field").val(stopDate.toISOString());
+                }else if(jq("#retrospective-visit-creation-dialog").length){
+                    jq("#retrospectiveVisitStartDate-field").val(moment(startDate).format("YYYY-MM-DD HH:mm:ss"));
+                    jq("#retrospectiveVisitStopDate-field").val(moment(stopDate).format("YYYY-MM-DD HH:mm:ss"));
+                }
                 emr.getFragmentActionWithCallback('coreapps', 'visit/retrospectiveVisit', 'create',
                     { patientId: patientId, locationId: sessionLocationModel.id(),
                         startDate: jq('[name=retrospectiveVisitStartDate]').val(),
@@ -71,6 +84,11 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
                             // TODO: I trigger a certain visit by triggering a click on property visit details item
                             // TODO: might be something we want to do with angularJS going forward?
                             data.forEach(function (v) {
+                                //Convert dates to client timezone
+                                if(jq("#retrospective-visit-existing-visits-dialog .select.rfc3339-date").length){
+                                    v.startDate=formatDatetime(new Date(v.startDate),  window.visitinclude.dateFormat, window.visitinclude.locale)
+                                    v.stopDate=formatDatetime(new Date(v.stopDate),  window.visitinclude.dateFormat, window.visitinclude.locale)
+                                }
                                 var listItem = jq("<li class=\"menu-item past-visit-date-item\" visitId=\"visit.id\">" + v.startDate + " - " + v.stopDate + "</li>");
 
                                 listItem.click(function() {
