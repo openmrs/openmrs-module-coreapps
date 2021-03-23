@@ -50,7 +50,7 @@ public class MarkPatientDeadPageController {
         }
         List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
 
-        if (visits.size() > 0) {
+        if (!visits.isEmpty()) {
             //Current order of visits returned by getVisitsByPatient() of VisitService has first in list as last visit
             pageModel.put("lastVisitDate", visits.get(0).getStartDatetime());
         } else {
@@ -111,7 +111,7 @@ public class MarkPatientDeadPageController {
      */
     private void closeActiveVisitsAfterDeath(Patient patient) {
         List<Visit> visitList = Context.getVisitService().getActiveVisitsByPatient(patient);
-        if (visitList.size() <= 0) {
+        if (!visitList.isEmpty()) {
             for (Visit visit : visitList) {
                 Context.getVisitService().endVisit(visit, patient.getDeathDate());
             }

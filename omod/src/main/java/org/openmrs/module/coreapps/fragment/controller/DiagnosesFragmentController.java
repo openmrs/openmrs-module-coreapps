@@ -181,7 +181,7 @@ public class DiagnosesFragmentController {
                     }
                 }
                 List<Obs> newDiagnoses= diagnosisService.codeNonCodedDiagnosis(nonCodedObs, diagnosisList);
-                if ((newDiagnoses != null) && (newDiagnoses.size()>0) ){
+                if ((newDiagnoses != null) && (!newDiagnoses.isEmpty()) ){
                     return new SuccessResult(ui.message("coreapps.dataManagement.codeDiagnosis.success"));
                 }
             }
