@@ -145,4 +145,14 @@ export default class WidgetsCommons {
             return moment(date).format("DD.MMM.YYYY");
         }
     }
+
+    /**
+     * Return true if the user has the System Developer role
+     *
+     * @param user
+     * @returns {*}
+     */
+    isSystemDeveloper(user){
+        return user.roles.some( (p) => { return p.name === 'System Developer'; });
+    }
 }
