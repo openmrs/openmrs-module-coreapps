@@ -98,18 +98,25 @@ export default class ProgramStatusController {
     fetchPrivileges() {
         this.openmrsRest.get('session').then((response) => {
             if (response && response.user && angular.isArray(response.user.privileges)) {
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                if (this.widgetsCommons.isSystemDeveloper(response.user)) {
                     this.canEnrollInProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.editPatientProgram'; })) {
                     this.canEditProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.deletePatientProgram'; })) {
                     this.canDeleteProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.markPatientDead'; })) {
-                  this.canMarkPatientDead = true;
-                };
+                    this.canMarkPatientDead = true;
+                } else {
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                        this.canEnrollInProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.editPatientProgram'; })) {
+                        this.canEditProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.deletePatientProgram'; })) {
+                        this.canDeleteProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.markPatientDead'; })) {
+                      this.canMarkPatientDead = true;
+                    };
+                }
             }
         }, function(error) {
           console.log(`failed to retrieve user privileges, error: ${error}`);
