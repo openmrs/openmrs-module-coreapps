@@ -57,7 +57,7 @@ public class RetrospectiveVisitFragmentController {
 
             if (visits != null) {
                 for (VisitDomainWrapper visit : visits) {
-                    if(ui.handleTimeZones()){
+                    if(ui.convertTimezones()){
                         simpleVisits.add(SimpleObject.create("startDate", ui.formatDateWithClientTimezone(new DateTime(visit.getVisit().getStartDatetime()).toDate()),
                                 "stopDate", ui.formatDateWithClientTimezone(new DateTime(visit.getVisit().getStopDatetime()).toDate()),
                                 "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));

@@ -113,7 +113,7 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
         <tr id="visit-${ visitId }">
             <td width="8%"><input type="checkbox" name="mergeVisits" value="${ visitId }" id="mergeVisit-${ visitId }" class="selectVisit" data-visit-id="${ visitId }"/></td>
             <td width="14%">
-                <% if(ui.handleTimeZones()) { %>
+                <% if(ui.convertTimezones()) { %>
                     ${ui.format(wrapper.startDatetime)}
                 <% } else { %>
                     ${ui.format(wrapper.startDate)}
@@ -122,7 +122,7 @@ ${ ui.message("coreapps.task.mergeVisits.instructions") }
             </td>
             <td width="14%">
                 <% if(wrapper.stopDate != null) { %>
-                    <% if(ui.handleTimeZones()) { %>
+                    <% if(ui.convertTimezones()) { %>
                         ${ui.format(wrapper.stopDatetime)}
                     <% } else { %>
                         ${ui.format(wrapper.stopDate)}

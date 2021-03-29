@@ -58,7 +58,7 @@
                     jq("#cause-of-death-container > .field-error").append("${ui.message("coreapps.markPatientDead.causeOfDeath.errorMessage")}").show();
                     hasError = true;
                 }
-                if(!hasError && ${ui.handleTimeZones()}){
+                if(!hasError && ${ui.convertTimezones()}){
                     var inputDate = new Date(jq("#death-date-field").val());
                     jq("#death-date-field").val(inputDate.toISOString())
                 }

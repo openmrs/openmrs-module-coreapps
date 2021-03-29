@@ -52,7 +52,7 @@
     </div>
 </div>
 
-<div id="retrospective-visit-creation-dialog" class="dialog ${ui.handleTimeZones() ? 'rfc3339-date' : ''}" style="display: none">
+<div id="retrospective-visit-creation-dialog" class="dialog ${ui.convertTimezones() ? 'rfc3339-date' : ''}" style="display: none">
     <div class="dialog-header">
         <i class="icon-plus"></i>
         <h3>${ ui.message("coreapps.task.createRetrospectiveVisit.label") }</h3>
@@ -67,7 +67,7 @@
                   visitEndTime = patient.patient.deathDate
                 }
             def endDate =editDateFormat.format(visitEndTime);
-            if(ui.handleTimeZones()){
+            if(ui.convertTimezones()){
                     endDate =visitEndTime;
                 }
             %>
@@ -119,7 +119,7 @@
             </li>
         </ul>
 
-        <ul class="select  ${  ui.handleTimeZones() ? 'rfc3339-date' : ''}" id="past-visit-dates">
+        <ul class="select  ${  ui.convertTimezones() ? 'rfc3339-date' : ''}" id="past-visit-dates">
 
         </ul>
 
