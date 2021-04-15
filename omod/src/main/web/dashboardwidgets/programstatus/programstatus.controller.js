@@ -567,23 +567,25 @@ export default class ProgramStatusController {
             angular.forEach(this.patientProgram.states, (patientState) => {
                 let workflow = this.getWorkflowForState(patientState.state);
 
-                if (!(workflow.uuid in this.sortedStatesByWorkflow)) {
+                if (workflow !== null) {  // TODO: better handle if state can't be matched to workflow, see UHM-5266; right now we just "drop" the state
+                  if (!(workflow.uuid in this.sortedStatesByWorkflow)) {
                     this.sortedStatesByWorkflow[workflow.uuid] = [];
-                }
+                  }
 
-                // patient program entity lost information about `startDate` time value (date database type) and it
-                // causes an issue when the timezone is different than UTC
-                // that's why we had store start date as the date without
-                // the time and now we don't want to add timezone offset to that value (and use toUTCDate)
-                var newEntry = {
-                    startDate:  this.toUTCDate(patientState.startDate),
+                  // patient program entity lost information about `startDate` time value (date database type) and it
+                  // causes an issue when the timezone is different than UTC
+                  // that's why we had store start date as the date without
+                  // the time and now we don't want to add timezone offset to that value (and use toUTCDate)
+                  var newEntry = {
+                    startDate: this.toUTCDate(patientState.startDate),
                     dayAfterStartDate: this.getNextDay(patientState.startDate),
                     endDate: this.toUTCDate(patientState.endDate),
                     state: patientState.state,
                     uuid: patientState.uuid
-                }
+                  }
 
-                this.sortedStatesByWorkflow[workflow.uuid].unshift(newEntry);  // add to front
+                  this.sortedStatesByWorkflow[workflow.uuid].unshift(newEntry);  // add to front
+                }
             })
         }
     }
