@@ -65,14 +65,9 @@ public class RetrospectiveVisitFragmentControllerTest {
         Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
         Date stopDate = new DateTime(2012, 1, 2, 13,13, 13).toDate();
 
-        // should round to the time components to the start and end of the days, respectively
-        Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
-        Date expectedStopDate = new DateTime(2012, 1, 2, 23, 59, 59, 999).toDate();
-
         Visit visit = createVisit();
 
-        when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate)).thenReturn(new VisitDomainWrapper(visit));
-
+        when(adtService.createRetrospectiveVisit(patient, location, startDate, stopDate)).thenReturn(new VisitDomainWrapper(visit));
         SimpleObject result = (SimpleObject) controller.create(adtService, patient, location, startDate, stopDate, request, ui);
 
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
@@ -92,14 +87,11 @@ public class RetrospectiveVisitFragmentControllerTest {
         Patient patient = createPatient();
         Location location = new Location();
         Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
-
-        // should round to the time components to the start and end of the days, respectively
-        Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
-        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59, 999).toDate();
+        Date auxStopDate= startDate;
 
         Visit visit = createVisit();
 
-        when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate)).thenReturn(new VisitDomainWrapper(visit));
+        when(adtService.createRetrospectiveVisit(patient, location, startDate, auxStopDate)).thenReturn(new VisitDomainWrapper(visit));
 
         SimpleObject result = (SimpleObject) controller.create(adtService, patient, location, startDate, null, request, ui);
 
@@ -118,19 +110,17 @@ public class RetrospectiveVisitFragmentControllerTest {
         Patient patient = new Patient();
         Location location = new Location();
         Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
+        Date auxStopDate = startDate;
 
-        // should round to the time components to the start and end of the days, respectively
-        Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
-        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59, 999).toDate();
 
         Visit conflictingVisit = new Visit();
         conflictingVisit.setStartDatetime(new DateTime(2012, 1, 1, 0, 0, 0,0).toDate());
         conflictingVisit.setStopDatetime(new DateTime(2012, 1, 3, 0, 0, 0, 999).toDate());
 
-        when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate))
+        when(adtService.createRetrospectiveVisit(patient, location, startDate, auxStopDate))
                 .thenThrow(ExistingVisitDuringTimePeriodException.class);
 
-        when(adtService.getVisits(patient, location, expectedStartDate, expectedStopDate))
+        when(adtService.getVisits(patient, location, startDate, auxStopDate))
                 .thenReturn(Collections.singletonList(new VisitDomainWrapper(conflictingVisit)));
 
         when(ui.format(any())).thenReturn("someDate");
@@ -152,7 +142,7 @@ public class RetrospectiveVisitFragmentControllerTest {
         Visit mockVisit = new Visit();
 
         Date startDate = new DateTime().withTime(0,0,0,0).toDate();
-        Date endDate = startDate;
+        Date endDate = new DateTime().withTime(23,59,59,59).toDate();
 
         when(adtService.createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), any(Date.class))).thenReturn(new VisitDomainWrapper(mockVisit));  // to prevent against NPE when generating success message
 
