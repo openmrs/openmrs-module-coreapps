@@ -8,7 +8,7 @@
     <% if (config.showVisitTypeOnPatientHeaderSection == false) { %>
         <% if (config.activeVisit.admitted) { %>
         <div class="active-visit-message">
-            ${ui.message("coreapps.patientHeader.activeVisit.inpatient", ui.format(config.activeVisit.latestAdtEncounter.location))}
+            ${ui.message("coreapps.patientHeader.activeVisit.inpatient", ui.encodeHtmlContent(ui.format(config.activeVisit.latestAdtEncounter.location)))}
         </div>
         <% } else { %>
         <div class="active-visit-message">

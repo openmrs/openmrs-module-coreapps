@@ -19,7 +19,7 @@ export default class VisitByEncounterTypeController {
             patient: this.config.patientUuid,
             limit: this.getMaxRecords(),
             fromStartDate: this.widgetsCommons.maxAgeToDate(this.config.maxAge),
-            v: 'custom:(uuid,startDatetime,stopDatetime,encounters:(uuid,encounterType:(uuid,display)))'
+            v: 'custom:(uuid,startDatetime,stopDatetime,encounters:(uuid,encounterDatetime,encounterType:(uuid,display)))'
         }).then((response) => {
             this.getVisits(response.results);
         })
@@ -44,7 +44,7 @@ export default class VisitByEncounterTypeController {
             } else {
                 angular.forEach(visit.encounters, (encounter) => {
                     if (encounterTypes.indexOf(encounter.encounterType.display) == -1) {
-                        let vis = {startDatetime: visit.startDatetime};
+                        let vis = {startDatetime: this.config.showEncounterDate === 'true' ? encounter.encounterDatetime : visit.startDatetime };
                         vis.encounterType = encounter.encounterType.display;
                         encounterTypes.push(encounter.encounterType.display);
                         this.visits.push(vis);
