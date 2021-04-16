@@ -109,8 +109,12 @@ public class ProgramHistoryFragmentController {
                 else if (patientProgram1.getDateCreated().before(patientProgram2.getDateCreated())) {
                     return 1;
                 }
+                // just something to make this deterministic
+                else if (patientProgram1.getId() > patientProgram2.getId()){
+                    return -1;
+                }
                 else {
-                    return 0;
+                    return 1;
                 }
             }
         });
