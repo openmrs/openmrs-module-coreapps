@@ -110,12 +110,10 @@ public class ProgramHistoryFragmentController {
                     return 1;
                 }
                 // just something to make this deterministic
-                else if (patientProgram1.getId() > patientProgram2.getId()){
-                    return -1;
-                }
                 else {
-                    return 1;
+                    return patientProgram1.getUuid().compareTo(patientProgram2.getUuid());
                 }
+
             }
         });
         List<String> programJson = new ArrayList<String>();
