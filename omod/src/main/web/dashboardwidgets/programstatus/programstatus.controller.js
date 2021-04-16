@@ -285,7 +285,7 @@ export default class ProgramStatusController {
             // before/after the program we are viewing)
             this.patientPrograms = this.$filter('orderBy')(this.patientPrograms, null, false, this.patientProgramComparator);
 
-            // widget has been configured to display a specific patient program:
+            // if widget has been configured to display a specific patient program (by the config.patientProgram parameter):
             // find the matching program by uuid, and set the min/max for enroll/complete based on the surrounding programs
             if (!this.displayActiveProgram()) {
 
@@ -303,7 +303,7 @@ export default class ProgramStatusController {
 
                 // TODO error case: no match found
             }
-            // otherwise, this widget is meant to show the active program, or if no active program, will render a widget for enrolling in the program
+            // otherwise, this widget defaults to show the active program, or if no active program, will render a widget for enrolling in the program
             else {
                 // there's an active program (ie the most recent program does not have a completion date)
                 if (!this.patientPrograms[0].dateCompleted) {
