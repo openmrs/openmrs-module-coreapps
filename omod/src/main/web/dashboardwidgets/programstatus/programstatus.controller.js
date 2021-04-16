@@ -574,7 +574,7 @@ export default class ProgramStatusController {
             angular.forEach(this.patientProgram.states, (patientState) => {
                 let workflow = this.getWorkflowForState(patientState.state);
 
-                if (workflow !== null) {  // TODO: better handle if state can't be matched to workflow, see UHM-5266; right now we just "drop" the state
+                if (workflow != null) {  // TODO: better handle if state can't be matched to workflow, right now we just "drop" the state
                   if (!(workflow.uuid in this.sortedStatesByWorkflow)) {
                     this.sortedStatesByWorkflow[workflow.uuid] = [];
                   }
