@@ -43,19 +43,13 @@ function ConditionController($scope, RestfulService, ConditionModel, ConceptMode
         }
 
     self.validateCondition = self.validateCondition || function () {
-        var concept ;
-        if($scope.concept.concept.uuid) {
-            concept = $scope.concept.concept;
-        } else {
-            concept = $scope.condition.concept;
-        }
-
-        if (concept !== null) {
-            $scope.condition.concept = new ConceptModel(concept.uuid, concept.display);
-        } else {
+        if ($scope.condition.concept===null||$scope.concept.concept==null){
             $scope.condition.conditionNonCoded = "NON_CODED:" + $scope.concept.word;
         }
-
+        else{
+            var concept = ($scope.concept.concept.uuid) ? $scope.concept.concept: $scope.condition.concept;
+            $scope.condition.concept = new ConceptModel(concept.uuid, concept.display);
+        }
         $scope.condition.onSetDate = self.getSelectedDate();
 
         if($scope.condition.status == INACTIVE_STATUS) {
