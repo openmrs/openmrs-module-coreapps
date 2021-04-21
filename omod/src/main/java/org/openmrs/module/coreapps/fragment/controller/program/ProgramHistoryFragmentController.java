@@ -7,10 +7,12 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
 import org.openmrs.Program;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
+import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -25,7 +27,9 @@ import java.util.Map;
 public class ProgramHistoryFragmentController {
 
     public void controller(FragmentConfiguration config, @FragmentParam("app") AppDescriptor app, @InjectBeans PatientDomainWrapper patientWrapper,
-                           @SpringBean("programWorkflowService") ProgramWorkflowService programWorkflowService) throws IOException {
+                           @SpringBean("programWorkflowService") ProgramWorkflowService programWorkflowService,
+                           @SpringBean("adminService")AdministrationService adminService
+    ) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -50,6 +54,13 @@ public class ProgramHistoryFragmentController {
 
         ObjectNode appConfig = app.getConfig();
         appConfig.put("patientUuid", patientWrapper.getPatient().getUuid());
+
+        if (appConfig.get("dateFormat") == null) {
+            appConfig.put("dateFormat", adminService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATE_FORMAT, "yyyy-MM-dd"));
+        }
+        if (appConfig.get("JSDateFormat") == null) {
+            appConfig.put("JSDateFormat", adminService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_JS_DATE_FORMAT, "YYYY-MMM-DD"));
+        }
 
         if (appConfig.get("program") == null || StringUtils.isEmpty(appConfig.get("program").getTextValue())) {
             throw new MissingPropertyException("Program must be specified");
@@ -82,6 +93,7 @@ public class ProgramHistoryFragmentController {
         Map<String, Object> appConfigMap = mapper.convertValue(appConfig, Map.class);
         config.merge(appConfigMap);
         config.addAttribute("programJson", programJson);
+
     }
 
 }
