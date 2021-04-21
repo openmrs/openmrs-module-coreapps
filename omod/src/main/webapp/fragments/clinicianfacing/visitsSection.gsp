@@ -19,10 +19,22 @@
             <% if (config.showVisitTypeOnPatientHeaderSection == false) { %>
                 <% recentVisitsWithLinks.each { it, url -> %>
                 <li class="clear">
-                    <a href="${url}" class="visit-link">
+                    <a href="${url}" class="visit-link identifier">
                         ${ ui.formatDatePretty(it.startDatetime) }
                         <% if(it.stopDatetime && !it.startDatetime.format("yyyy/MM/dd").equals(it.stopDatetime.format("yyyy/MM/dd"))){ %> - ${ ui.formatDatePretty(it.stopDatetime) }<% } %>
                     </a>
+                         <ul id="" class="appui-toggle">
+                            <li>
+                               visit details to be displayed here
+                            </li> 
+                         </ul>
+                         
+                           <script type="text/javascript">
+                              jq('.identifier').on(event,function(){
+                              jq('.appui-toggle').toggle();
+                                 });
+                            </script>
+                    
                     <div class="tag">
                         <% if (it.stopDatetime == null || new Date().before(it.stopDatetime)) { %> ${ ui.message("coreapps.clinicianfacing.active") } - <% } %>
                         ${ (it.admissionEncounter) ? ui.message("coreapps.clinicianfacing.inpatient") : ui.message("coreapps.clinicianfacing.outpatient") }
