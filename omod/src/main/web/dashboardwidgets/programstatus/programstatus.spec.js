@@ -7,7 +7,7 @@
 		let $scope;
 		let $httpBackend;
 		let $window;
-	  
+
 		beforeEach(() => {
 			angular.mock.module(ProgramStatus);
 			inject((_$componentController_, $rootScope, _$httpBackend_, _$window_) => {
@@ -32,8 +32,9 @@
 				"user":{
 					"name":null,
 					"uuid":"1c3db49d-440a-11e6-a65c-00e04c680037",
+          "roles": [],
 					"privileges":[
-						{	
+						{
 							"uuid":"c4d9f61c-065c-46c4-9114-951ae139847c",
 							"display":"App: icrc.clinicalDashboard",
 							"name":"App: icrc.clinicalDashboard",
@@ -49,7 +50,7 @@
 				"locale":"en_GB",
 				"allowedLocales":["en","es","fr","it","pt"]
 			};
-			
+
 			var locationResponse = {
 									"results":[
 											{"display":"Test Location","uuid":"8fe901fb-4f09-466e-a7ea-dd95e0f3048d"}
@@ -59,7 +60,7 @@
 									]
 			};
 
-			
+
 
 			var programResponse = {
 									"display":"Test Program",
@@ -203,9 +204,9 @@
 												}
 											]
 										}
-									]	
+									]
 			};
-			
+
 			var programEnrollmentResponse = {
 												"results":[
 													{"program":{
@@ -401,7 +402,7 @@
 		$httpBackend.whenGET('/ws/rest/v1/program/222e229b-f011-45c5-940e-e5599383c967?v=custom:display,uuid,outcomesConcept:(uuid),workflows:(uuid,concept:(display),states:(uuid,initial,terminal,concept:(display))').respond(programResponse);
 
 		$httpBackend.whenGET('/ws/rest/v1/programenrollment?patient=919caaf7-122d-4001-8b53-ecdce347c8a5&v=custom:uuid,program:(uuid),dateEnrolled,dateCompleted,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,dateCreated,voided,state:(uuid,concept:(display)))').respond(programStatesResponse);
-		
+
 	});
 
     it('should sort first by start date, second by end date, and third on date created', () => {
@@ -421,7 +422,7 @@
 						}
 					};
 		let ctrl = $componentController('programstatus', {$scope}, bindings);
-		
+
 		ctrl.$onInit().then(function(){
 
 			expect(ctrl.patientProgram).not.toBeNull();
@@ -578,5 +579,5 @@
 
 		$httpBackend.flush();
     });
-	
+
 });
