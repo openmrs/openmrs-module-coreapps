@@ -11,6 +11,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.module.coreapps.utils.PatientProgramComparator;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.annotation.FragmentParam;
@@ -21,7 +22,6 @@ import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -76,46 +76,7 @@ public class ProgramHistoryFragmentController {
         List<PatientProgram> patientPrograms = programWorkflowService.getPatientPrograms(patientWrapper.getPatient(),
                 program, null, null, null, null, false);
 
-        Collections.sort(patientPrograms, new Comparator<PatientProgram>() {
-            @Override
-            public int compare(PatientProgram patientProgram1, PatientProgram patientProgram2) {
-
-                if (patientProgram1.getDateEnrolled().after(patientProgram2.getDateEnrolled())) {
-                    return -1;
-                }
-                else if (patientProgram1.getDateEnrolled().before(patientProgram2.getDateEnrolled())) {
-                    return 1;
-                }
-
-                // "active" (no completion date) ranks higher
-                // assumption: never should be two active programs (ie both date completed should not be null)
-                else if (patientProgram1.getDateCompleted() == null) {
-                    return -1;
-                }
-                else if (patientProgram2.getDateCompleted() == null) {
-                    return 1;
-                }
-                // having two programs with the same start date but different end dates should be illegal, but just in case
-                else if (patientProgram1.getDateCompleted().after(patientProgram2.getDateCompleted())) {
-                    return -1;
-                }
-                else if (patientProgram1.getDateCompleted().before(patientProgram2.getDateCompleted())) {
-                    return 1;
-                }
-
-                else if (patientProgram1.getDateCreated().after(patientProgram2.getDateCreated())) {
-                    return -1;
-                }
-                else if (patientProgram1.getDateCreated().before(patientProgram2.getDateCreated())) {
-                    return 1;
-                }
-                // just something to make this deterministic
-                else {
-                    return patientProgram1.getUuid().compareTo(patientProgram2.getUuid());
-                }
-
-            }
-        });
+        Collections.sort(patientPrograms, new PatientProgramComparator());
         List<String> programJson = new ArrayList<String>();
 
         Boolean includeActive = appConfig.get("includeActive") != null ? appConfig.get("includeActive").getBooleanValue() : true;
