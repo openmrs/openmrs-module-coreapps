@@ -11,6 +11,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.module.coreapps.utils.PatientProgramComparator;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.annotation.FragmentParam;
@@ -75,8 +76,7 @@ public class ProgramHistoryFragmentController {
         List<PatientProgram> patientPrograms = programWorkflowService.getPatientPrograms(patientWrapper.getPatient(),
                 program, null, null, null, null, false);
 
-        // TODO: assumption here is that "getPatientPrograms" returns results in chronological order--need to confirm?
-        Collections.reverse(patientPrograms);
+        Collections.sort(patientPrograms, new PatientProgramComparator());
         List<String> programJson = new ArrayList<String>();
 
         Boolean includeActive = appConfig.get("includeActive") != null ? appConfig.get("includeActive").getBooleanValue() : true;
