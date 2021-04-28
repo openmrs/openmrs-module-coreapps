@@ -72,7 +72,7 @@ const mockObsResults = [
         "groupMembers": null
     },
     {
-        "obsDatetime": new Date().setDate(new Date().getDate() - 1),
+        "obsDatetime": new Date().setHours(new Date().getHours() - 1),
         "concept": {
             "uuid": "uuid-2",
             "display": "History of tobacco use",

@@ -33,6 +33,7 @@
       "icon": "icon-user-md",
       "label": "coreapps.clinicianfacing.healthTrendSummary",
       "concepts": "5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "encounterType": "123AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
       "maxRecords": "5",
       "maxAge": "1m"
     },
