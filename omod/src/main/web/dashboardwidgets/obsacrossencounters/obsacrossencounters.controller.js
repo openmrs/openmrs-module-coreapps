@@ -51,7 +51,7 @@ export default class ObsAcrossEncountersController {
 
   fetchEncounters() {
     const encounterTypes = this.config.encounterTypes ? this.config.encounterTypes.split(',').map(c => c.trim()) : [];
-    const legacyEncounterTypes = this.config.encounterType ? this.config.encounterType.split(',').map(c => c.trim()) : ["123AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"];
+    const legacyEncounterTypes = this.config.encounterType ? this.config.encounterType.split(',').map(c => c.trim()) : [];
     encounterTypes.push(...legacyEncounterTypes);
 
     const encounterQueryParams = {
