@@ -17,9 +17,8 @@ public class SystemAdministrationPageController {
     public void controller(PageModel model, UiSessionContext emrContext,
                            @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService) {
 
-        emrContext.requireAuthentication();
-		
-		if (!emrContext.getCurrentUser().getPrivileges().toString().contains("coreapps.systemAdministration")
+        emrContext.requireAuthentication();	
+		if (!emrContext.getCurrentUser().hasPrivilege("App: coreapps.systemAdministration")
 		        && (!emrContext.getCurrentUser().isSuperUser())) {
 			throw new APIAuthenticationException();
 		}
