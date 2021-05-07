@@ -554,19 +554,19 @@ export default class ProgramStatusController {
                     } else if( state1.value.endDate == null){
                         return 1;
                     //sort by start date
-                    } else if( state1.value.startDate < state2.value.startDate) {
+                    } else if( new Date(state1.value.startDate) < new Date(state2.value.startDate)) {
                         return -1;
-                    } else if ( state1.value.startDate > state2.value.startDate) {
+                    } else if ( new Date(state1.value.startDate) > new Date(state2.value.startDate)) {
                         return 1;
                     //sort by end date
-                    } else if(state1.value.endDate < state2.value.endDate){
+                    } else if(new Date(state1.value.endDate) < new Date(state2.value.endDate)){
                         return -1;
-                    } else if (state1.value.endDate > state2.value.endDate) {
+                    } else if (new Date(state1.value.endDate) > new Date(state2.value.endDate)) {
                         return 1;
                     //sort by date created
-                    } else if(state1.value.dateCreated < state2.value.dateCreated){
+                    } else if(new Date(state1.value.dateCreated) < new Date(state2.value.dateCreated)){
                         return -1;
-                    } else if(state1.value.dateCreated > state2.value.dateCreated){
+                    } else if(new Date(state1.value.dateCreated) > new Date(state2.value.dateCreated)){
                         return 1;
                     }
 
