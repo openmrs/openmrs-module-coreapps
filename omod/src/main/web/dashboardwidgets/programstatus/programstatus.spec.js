@@ -695,7 +695,7 @@
       let ctrl = $componentController('programstatus', {$scope}, bindings);
 
       ctrl.$onInit().then(function(){
-debugger
+
         expect(ctrl.patientPrograms).not.toBeNull();
         expect(ctrl.patientPrograms[0].uuid).toBe("d8eeeecd-5297-4607-9d15-b9ca020e6669");
         expect(ctrl.patientPrograms[1].uuid).toBe("2a526f58-e333-4a63-ada9-8ea0e2ef648b");
