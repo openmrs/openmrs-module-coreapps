@@ -153,6 +153,9 @@ export default class WidgetsCommons {
      * @returns {*}
      */
     isSystemDeveloper(user){
-        return user.roles.some( (p) => { return p.name === 'System Developer'; });
+        if(user.roles != null && user.roles != undefined){
+            return user.roles.some( (p) => { return p.name === 'System Developer'; });
+        }
+        return false;
     }
 }
