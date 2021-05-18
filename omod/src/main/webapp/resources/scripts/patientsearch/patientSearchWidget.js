@@ -318,7 +318,7 @@ function PatientSearchWidget(configuration){
                         }
                     }
                     else if (column.type === 'name') {
-                        columnValue = patient.person.personName.display
+                        columnValue = jq('<div/>').text(patient.person.personName.display).html();
                     }
                     else if (column.type === 'gender') {
                         columnValue = patient.person.gender;

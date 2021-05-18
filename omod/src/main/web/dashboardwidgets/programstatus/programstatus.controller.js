@@ -13,7 +13,7 @@ export default class ProgramStatusController {
     }
 
     $onInit() {
-        this.vPatientProgram = 'custom:uuid,program:(uuid),dateEnrolled,dateCompleted,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,dateCreated,voided,state:(uuid,concept:(display)))';
+        this.vPatientProgram = 'custom:uuid,program:(uuid),dateEnrolled,dateCompleted,dateCreated,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,dateCreated,voided,state:(uuid,concept:(display)))';
 
         this.dateFormat = (this.config.dateFormat == '' || angular.isUndefined(this.config.dateFormat))
             ? 'dd-MMM-yyyy' : this.config.dateFormat;
@@ -98,18 +98,25 @@ export default class ProgramStatusController {
     fetchPrivileges() {
         this.openmrsRest.get('session').then((response) => {
             if (response && response.user && angular.isArray(response.user.privileges)) {
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                if (this.widgetsCommons.isSystemDeveloper(response.user)) {
                     this.canEnrollInProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.editPatientProgram'; })) {
                     this.canEditProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.deletePatientProgram'; })) {
                     this.canDeleteProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.markPatientDead'; })) {
-                  this.canMarkPatientDead = true;
-                };
+                    this.canMarkPatientDead = true;
+                } else {
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                        this.canEnrollInProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.editPatientProgram'; })) {
+                        this.canEditProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.deletePatientProgram'; })) {
+                        this.canDeleteProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.markPatientDead'; })) {
+                      this.canMarkPatientDead = true;
+                    };
+                }
             }
         }, function(error) {
           console.log(`failed to retrieve user privileges, error: ${error}`);
@@ -269,46 +276,48 @@ export default class ProgramStatusController {
             return (patientProgram.program.uuid == this.config.program);
         });
 
+        // if there's more than one enrollment for this patient, we need to figure out which one this widget is meant
+        // to display
         if (this.patientPrograms.length > 0) {
 
-            // sort programs in order
-            this.patientPrograms = this.$filter('orderBy')(this.patientPrograms, (patientProgram) => {
-                return -(new Date(patientProgram.dateEnrolled));
-            });
+            // sort programs by date... this widget will only be displaying one of them, but we need them in order
+            // to properly calculate the max completion date and min enrollment date (which is based any programs chronologically
+            // before/after the program we are viewing)
+            this.patientPrograms = this.$filter('orderBy')(this.patientPrograms, null, false, this.patientProgramComparator);
 
-            // find the matching program, and set the min/max for enroll/complete based on the surrounding programs
+            // if widget has been configured to display a specific patient program (by the config.patientProgram parameter):
+            // find the matching program by uuid, and set the min/max for enroll/complete based on the surrounding programs
             if (!this.displayActiveProgram()) {
 
                 angular.forEach(this.patientPrograms, (patientProgram, i) => {
                     if (patientProgram.uuid == this.config.patientProgram) {
                         this.patientProgram = patientProgram;
                         if (i > 0) {
-                            this.maxCompletionDate = this.getPreviousDay(new Date(this.patientPrograms[i-1].dateEnrolled));
+                            this.maxCompletionDate = new Date(this.patientPrograms[i-1].dateEnrolled);
                         }
                         if (i + 1 < this.patientPrograms.length) {
-                            this.minEnrollmentDate = this.getNextDay(new Date(this.patientPrograms[i+1].dateCompleted));
+                            this.minEnrollmentDate = new Date(this.patientPrograms[i+1].dateCompleted);
                         }
                     }
                 })
 
                 // TODO error case: no match found
             }
-            // this widget is meant to show the active program, or if no active program, will render a widget for enrolling in the program
+            // otherwise, this widget defaults to show the active program, or if no active program, will render a widget for enrolling in the program
             else {
-                // there's an active program
+                // there's an active program (ie the most recent program does not have a completion date)
                 if (!this.patientPrograms[0].dateCompleted) {
                     this.patientProgram = this.patientPrograms[0];
                     if (this.patientPrograms.length > 1) {
                         // enrollment date cannot be shifted to before completion date of previous program
-                        this.minEnrollmentDate = this.getNextDay(new Date(this.patientPrograms[1].dateCompleted))
+                        this.minEnrollmentDate = new Date(this.patientPrograms[1].dateCompleted)
 
                     }
                 }
                 // no active program
                 else {
                     // enrollment date for a new program can't be set before the completion date of any previous program
-
-                    this.minEnrollmentDate = this.getNextDay(new Date(this.patientPrograms[0].dateCompleted))
+                    this.minEnrollmentDate = new Date(this.patientPrograms[0].dateCompleted)
                 }
 
             }
@@ -538,25 +547,26 @@ export default class ProgramStatusController {
 
                     //ordered so each criteria is evaluated in order (e.g. not all "prev" crit. before "next" crit. is ever evaluated)
 
-                    //null end date prioritized over any other sort criteria
+                  // TODO: ** this appears to be doing string comparisons of dates, which is bad **
+                   //null end date prioritized over any other sort criteria
                     if(state2.value.endDate == null){
                         return -1;
                     } else if( state1.value.endDate == null){
                         return 1;
                     //sort by start date
-                    } else if( state1.value.startDate < state2.value.startDate) {
+                    } else if( new Date(state1.value.startDate) < new Date(state2.value.startDate)) {
                         return -1;
-                    } else if ( state1.value.startDate > state2.value.startDate) {
+                    } else if ( new Date(state1.value.startDate) > new Date(state2.value.startDate)) {
                         return 1;
                     //sort by end date
-                    } else if(state1.value.endDate < state2.value.endDate){
+                    } else if(new Date(state1.value.endDate) < new Date(state2.value.endDate)){
                         return -1;
-                    } else if (state1.value.endDate > state2.value.endDate) {
+                    } else if (new Date(state1.value.endDate) > new Date(state2.value.endDate)) {
                         return 1;
                     //sort by date created
-                    } else if(state1.value.dateCreated < state2.value.dateCreated){
+                    } else if(new Date(state1.value.dateCreated) < new Date(state2.value.dateCreated)){
                         return -1;
-                    } else if(state1.value.dateCreated > state2.value.dateCreated){
+                    } else if(new Date(state1.value.dateCreated) > new Date(state2.value.dateCreated)){
                         return 1;
                     }
 
@@ -567,23 +577,25 @@ export default class ProgramStatusController {
             angular.forEach(this.patientProgram.states, (patientState) => {
                 let workflow = this.getWorkflowForState(patientState.state);
 
-                if (!(workflow.uuid in this.sortedStatesByWorkflow)) {
+                if (workflow != null) {  // TODO: better handle if state can't be matched to workflow, right now we just "drop" the state
+                  if (!(workflow.uuid in this.sortedStatesByWorkflow)) {
                     this.sortedStatesByWorkflow[workflow.uuid] = [];
-                }
+                  }
 
-                // patient program entity lost information about `startDate` time value (date database type) and it
-                // causes an issue when the timezone is different than UTC
-                // that's why we had store start date as the date without
-                // the time and now we don't want to add timezone offset to that value (and use toUTCDate)
-                var newEntry = {
-                    startDate:  this.toUTCDate(patientState.startDate),
+                  // patient program entity lost information about `startDate` time value (date database type) and it
+                  // causes an issue when the timezone is different than UTC
+                  // that's why we had store start date as the date without
+                  // the time and now we don't want to add timezone offset to that value (and use toUTCDate)
+                  var newEntry = {
+                    startDate: this.toUTCDate(patientState.startDate),
                     dayAfterStartDate: this.getNextDay(patientState.startDate),
                     endDate: this.toUTCDate(patientState.endDate),
                     state: patientState.state,
                     uuid: patientState.uuid
-                }
+                  }
 
-                this.sortedStatesByWorkflow[workflow.uuid].unshift(newEntry);  // add to front
+                  this.sortedStatesByWorkflow[workflow.uuid].unshift(newEntry);  // add to front
+                }
             })
         }
     }
@@ -735,4 +747,58 @@ export default class ProgramStatusController {
         }
         return utcDate;
     }
+
+    patientProgramComparator(patientProgram1, patientProgram2) {
+        const dateEnrolled1 = new Date(patientProgram1.value.dateEnrolled);
+        const dateEnrolled2 = new Date(patientProgram2.value.dateEnrolled);
+
+        // first check enrollment dates
+        if (dateEnrolled1 > dateEnrolled2) {
+          return -1
+        }
+        else if (dateEnrolled1 < dateEnrolled2) {
+          return 1
+        }
+
+        // if enrollment dates are equal, check completion dates
+        const dateCompleted1 = patientProgram1.value.dateCompleted ? new Date(patientProgram1.value.dateCompleted) : null;
+        const dateCompleted2 = patientProgram2.value.dateCompleted ? new Date(patientProgram2.value.dateCompleted) : null;
+
+        // "active" (no completion date) ranks higher
+        // assumption: never should be two active programs (ie both date completed should not be null)
+        if (dateCompleted1 === null) {
+          return -1;
+        }
+        else if (dateCompleted2 === null) {
+          return 1;
+        }
+        // having two programs with the same start date but different end dates should be illegal, but just in case
+        else if (dateCompleted1 > dateCompleted2) {
+          return -1;
+        }
+        else if (dateCompleted1 < dateCompleted2) {
+          return 1;
+        }
+
+        // if still equal, fall back to date created
+        // if enrollment dates are equal, check completion dates
+        const dateCreated1 = patientProgram1.value.dateCreated;
+        const dateCreated2 = patientProgram2.value.dateCreated;
+
+        if (dateCreated1 > dateCreated2) {
+          return -1;
+        }
+        else if (dateCreated1 < dateCreated2) {
+          return 1;
+        }
+
+        // and finally, just use uuid, because we need to make sure the sort order is deterministic
+        if (patientProgram1.value.uuid < patientProgram2.value.uuid) {
+          return -1;
+        }
+        else {
+          return 1;
+        }
+    }
+
 }

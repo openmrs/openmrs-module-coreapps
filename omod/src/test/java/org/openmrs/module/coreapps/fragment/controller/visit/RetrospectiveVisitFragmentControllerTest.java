@@ -14,11 +14,11 @@ import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -140,6 +140,7 @@ public class RetrospectiveVisitFragmentControllerTest {
         Patient patient = createPatient();
         Location location = new Location();
         Visit mockVisit = new Visit();
+        mockVisit.setId(1);
 
         Date startDate = new DateTime().withTime(0,0,0,0).toDate();
         Date endDate = new DateTime().withTime(23,59,59,59).toDate();

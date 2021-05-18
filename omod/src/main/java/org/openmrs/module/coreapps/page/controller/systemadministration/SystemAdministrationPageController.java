@@ -3,6 +3,7 @@ package org.openmrs.module.coreapps.page.controller.systemadministration;
 import java.util.Collections;
 import java.util.List;
 
+import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
@@ -16,7 +17,11 @@ public class SystemAdministrationPageController {
     public void controller(PageModel model, UiSessionContext emrContext,
                            @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService) {
 
-        emrContext.requireAuthentication();
+        emrContext.requireAuthentication();	
+		if (!emrContext.getCurrentUser().hasPrivilege("App: coreapps.systemAdministration")
+		        && (!emrContext.getCurrentUser().isSuperUser())) {
+			throw new APIAuthenticationException();
+		}
 
         List<Extension> extensions = appFrameworkService.getExtensionsForCurrentUser(SYSTEM_ADMINISTRATION_EXTENSION_POINT);
 
