@@ -110,7 +110,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
             }
 
             // determine if there are any additional observations we need to collect for this disposition
-            if (disposition.getAdditionalObs() != null && disposition.getAdditionalObs().size() > 0) {
+            if (disposition.getAdditionalObs() != null && !disposition.getAdditionalObs().isEmpty()) {
                 controls.add(buildNewControl(disposition, disposition.getAdditionalObs()));
             }
         }
@@ -118,13 +118,13 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         dispositionObs.setAttribute("answerConceptIds", answerConceptIds.toString());
         dispositionObs.setAttribute("answerCodes", answerCodes.toString());
 
-        if (controls != null && controls.size() > 0) {
+        if (controls != null && !controls.isEmpty()) {
             generateControlsElement(dispositionObs, controls);
         }
 
         dispositionObsGroup.appendChild(dispositionObs);
 
-        if (controls != null && controls.size() > 0) {
+        if (controls != null && !controls.isEmpty()) {
             generateAdditionalObsElements(dispositionObsGroup, controls, exisitingDispositionObsGroup);
         }
 

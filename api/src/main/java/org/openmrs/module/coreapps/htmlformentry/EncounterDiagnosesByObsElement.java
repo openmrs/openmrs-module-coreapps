@@ -198,10 +198,10 @@ public class EncounterDiagnosesByObsElement implements HtmlGeneratorElement, For
 
         try {
             List<Diagnosis> diagnoses = parseDiagnoses(submitted, null);
-            if (diagnoses.size() == 0 && required) {
+            if (diagnoses.isEmpty() && required) {
                 return Collections.singleton(new FormSubmissionError(hiddenDiagnoses, "Required"));
             }
-            if (diagnoses.size() > 0) {
+            if (!diagnoses.isEmpty()) {
                 // at least one diagnosis must be primary
                 boolean foundPrimary = false;
                 for (Diagnosis diagnosis : diagnoses) {

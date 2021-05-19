@@ -84,7 +84,7 @@ public class LatestObsResource extends ObsResource1_11 {
 				questions.add(concept);
 				
 				List<Obs> latestObs = obsService.getObservations(who, null, questions, null, null, null, sort, nLatestObs, null, null, null, false);
-				if (latestObs.size() > 0) {
+				if (!latestObs.isEmpty()) {
 					obsList.addAll(latestObs);
 				}
 			}
