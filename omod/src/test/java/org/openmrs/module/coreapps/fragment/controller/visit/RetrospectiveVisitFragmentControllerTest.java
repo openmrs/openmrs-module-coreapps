@@ -151,7 +151,7 @@ public class RetrospectiveVisitFragmentControllerTest {
         controller.create(adtService, patient, location, startDate, endDate, request, ui);
         Date expectedMaxDateValue = new Date();
 
-        verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), argThat(new IsWithinDateRange(expectedMinDateValue, expectedMaxDateValue)));
+        verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), argThat(new IsWithinDateRange(expectedMinDateValue, endDate)));
 
     }
 
