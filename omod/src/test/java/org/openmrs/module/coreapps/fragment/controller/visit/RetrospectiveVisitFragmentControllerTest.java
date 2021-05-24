@@ -147,11 +147,9 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         when(adtService.createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), any(Date.class))).thenReturn(new VisitDomainWrapper(mockVisit));  // to prevent against NPE when generating success message
 
-        Date expectedMinDateValue = new Date();
         controller.create(adtService, patient, location, startDate, endDate, request, ui);
-        Date expectedMaxDateValue = new Date();
 
-        verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), argThat(new IsWithinDateRange(expectedMinDateValue, endDate)));
+        verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), argThat(new IsWithinDateRange(startDate, endDate)));
 
     }
 
