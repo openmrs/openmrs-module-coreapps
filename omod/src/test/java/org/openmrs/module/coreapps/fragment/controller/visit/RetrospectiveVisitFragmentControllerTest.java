@@ -95,11 +95,10 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         // should round to the time components to the start and end of the days, respectively
         Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
-        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59, 999).toDate();
 
         Visit visit = createVisit();
 
-        when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate)).thenReturn(new VisitDomainWrapper(visit));
+        when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, null)).thenReturn(new VisitDomainWrapper(visit));
 
         SimpleObject result = (SimpleObject) controller.create(adtService, patient, location, startDate, null, request, ui);
 
@@ -118,7 +117,7 @@ public class RetrospectiveVisitFragmentControllerTest {
         Patient patient = new Patient();
         Location location = new Location();
         Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
-
+        Date stopDate = startDate;
         // should round to the time components to the start and end of the days, respectively
         Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
         Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59, 999).toDate();
@@ -135,7 +134,7 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         when(ui.format(any())).thenReturn("someDate");
 
-        List<SimpleObject> result = (List<SimpleObject>) controller.create(adtService, patient, location, startDate, null, request, ui);
+        List<SimpleObject> result = (List<SimpleObject>) controller.create(adtService, patient, location, startDate, stopDate, request, ui);
 
         assertThat(result.size(), is(1));
         assertThat(result.get(0).toJson(), is("{\"startDate\":\"someDate\",\"stopDate\":\"someDate\",\"id\":null,\"uuid\":\"" + conflictingVisit.getUuid() + "\"}"));

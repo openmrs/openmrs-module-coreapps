@@ -21,7 +21,7 @@
                         defaultDate: config.defaultStartDate
                 ])}
             </p>
-            <% if(config.defaultEndDate != null) { %>
+            <% if(config.visitEndDate != null) { %>
                 <p>
                     <label for="stopDate" class="required">
                         ${ ui.message("coreapps.stopDate.label") }

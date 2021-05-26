@@ -31,31 +31,30 @@ public class RetrospectiveVisitFragmentController {
                                        @RequestParam(value = "stopDate", required = false) Date stopDate,
                                        HttpServletRequest request, UiUtils ui) {
 
-        // if no stop date, set it to start date
-        if (stopDate == null) {
-            stopDate = startDate;
-        }
 
         // set the startDate time component to the start of day
         startDate = new DateTime(startDate).withTime(0,0,0,0).toDate();
 
         // if stopDate is today, set stopDate to current datetime, otherwise set time component to end of date
+         if (stopDate != null){
         if (new DateTime().withTime(0,0,0,0).equals(new DateTime(stopDate).withTime(0,0,0,0))) {
             stopDate = new Date();
         }
         else {
             stopDate = new DateTime(stopDate).withTime(23, 59, 59, 999).toDate();
         }
+         }
 
         try {
+                        
             VisitDomainWrapper createdVisit = adtService.createRetrospectiveVisit(patient, location, startDate, stopDate);
-
             request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                     ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
             request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
             return SimpleObject.create("success", true, "id", createdVisit.getVisit().getId().toString(), "uuid", createdVisit.getVisit().getUuid());
-        }
+        
+             }
         catch (ExistingVisitDuringTimePeriodException e) {
 
             // if there are existing visit(s), return these existing visits
@@ -69,6 +68,7 @@ public class RetrospectiveVisitFragmentController {
                             "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));
                 }
             }
+
 
             return simpleVisits;
         }

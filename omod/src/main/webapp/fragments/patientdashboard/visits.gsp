@@ -103,7 +103,8 @@
                 startDateLowerLimit: (idx + 1 == visits.size || visits[idx + 1].stopDatetime == null) ? null : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx + 1].stopDatetime, 1)),
                 startDateUpperLimit: wrapper.oldestEncounter == null && wrapper.stopDatetime == null ? editDateFormat.format(new Date()) : editDateFormat.format(wrapper.oldestEncounter == null ? wrapper.stopDatetime : wrapper.oldestEncounter.encounterDatetime),
                 defaultStartDate: wrapper.startDatetime,
-                defaultEndDate: wrapper.stopDatetime
+                defaultEndDate:idx == 0 ? null : wrapper.stopDatetime,
+                visitEndDate: wrapper.stopDatetime
         ]) }
         ${ ui.includeFragment("coreapps", "patientdashboard/editVisit", [
                 visit: wrapper.visit,

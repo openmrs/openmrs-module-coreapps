@@ -78,14 +78,28 @@
                 ${ ui.message("coreapps.stopDate.label") }
             </label>
 
-            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+ <% if(activeVisits){ %>
+                ${ ui.includeFragment("uicommons", "field/datetimepicker", [
                     id: "retrospectiveVisitStopDate",
                     formFieldName: "retrospectiveVisitStopDate",
                     label:"",
                     defaultDate: visitEndTime,
                     endDate: editDateFormat.format(visitEndTime),
                     useTime: false,
-            ])}
+                ])}
+
+            <% } else { %>
+
+            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                    id: "noActiveVisitStopDate",
+                    formFieldName: "retrospectiveVisitStopDate",
+                    label:"",
+                    defaultDate: null,
+                    endDate: editDateFormat.format(visitEndTime),
+                    useTime: false,
+            ])}     
+
+          <%  } %>
         </p>
 
         <br><br>

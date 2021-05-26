@@ -135,8 +135,9 @@ visit.showEditVisitDateDialog = function(visitId) {
                             if (data.success) {
                                 jq('#edit-visit-dates-dialog-form-' + visitId + ' .icon-spin').css('display', 'inline-block').parent().addClass('disabled');
                                 // TODO Do we need to update this to specify return url, or is this link only going  to ever be used from the old visits view? 
+                                data.patientId = visit.patientId;
                                 window.location.search = data.search;
-                            }
+                                                           }
                         }
                     );
                     return false;
