@@ -66,9 +66,9 @@
                 if (patient.patient.deathDate) {
                   visitEndTime = patient.patient.deathDate
                 }
-            def endDate =editDateFormat.format(visitEndTime);
+            def endDate = editDateFormat.format(visitEndTime);
             if(ui.convertTimezones()){
-                    endDate =visitEndTime;
+                    endDate = visitEndTime;
                 }
             %>
 
