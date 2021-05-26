@@ -64,6 +64,7 @@ div {
   span, htmlform p {
     color: $highlight;
     font-size: 0.95em;
+    white-space: pre-wrap;
   }
 
   fieldset {
