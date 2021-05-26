@@ -54,8 +54,8 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
         selector: '#retrospective-visit-creation-dialog',
         actions: {
             confirm: function() {
-                var startVal= jq("#retrospectiveVisitStartDate-field").val();
-                var stopVal=jq("#retrospectiveVisitStopDate-field").val();
+                var startVal = jq("#retrospectiveVisitStartDate-field").val();
+                var stopVal = jq("#retrospectiveVisitStopDate-field").val();
                 startDate=new Date(new Date(moment(startVal)).setHours(0, 0, 0, 0));
                 stopDate=new Date(new Date(moment(stopVal)).setHours(23, 59, 59, 999));
 
