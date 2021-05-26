@@ -15,11 +15,15 @@
         "angular-translate-loader-url": "~2.15.1"
       },
       "dependencies": {
-        "angular":{
-          "version": "1.6.1" 
+        "angular": {
+          "version": "1.6.1",
+          "resolved": "https://registry.npmjs.org/angular/-/angular-1.6.1.tgz",
+          "integrity": "sha1-p7bXY6dMFXMlaSYZ6XJX5p2baic="
         },
         "angular-resource": {
-          "version":"1.6.1"
+          "version": "1.6.1",
+          "resolved": "https://registry.npmjs.org/angular-resource/-/angular-resource-1.6.1.tgz",
+          "integrity": "sha1-nu6oxZI4Q5uhWtMb4Otw8kQvd6E="
         }
       }
     },
@@ -119,8 +123,9 @@
       "dev": true
     },
     "angular": {
-      "version": "1.6.1",
-      "resolved": "https://registry.npmjs.org/angular/-/angular-1.6.1.tgz"
+      "version": "1.8.0",
+      "resolved": "https://registry.npmjs.org/angular/-/angular-1.8.0.tgz",
+      "integrity": "sha512-VdaMx+Qk0Skla7B5gw77a8hzlcOakwF8mjlW13DpIWIDlfqwAbSSLfd8N/qZnzEmQF4jC4iofInd3gE7vL8ZZg=="
     },
     "angular-animate": {
       "version": "1.5.8",
@@ -164,6 +169,13 @@
       "integrity": "sha1-+aPCuNXa6312yeLAH/PD1X/hK5A=",
       "requires": {
         "angular": ">=1.2.26 <=1.6"
+      },
+      "dependencies": {
+        "angular": {
+          "version": "1.6.10",
+          "resolved": "https://registry.npmjs.org/angular/-/angular-1.6.10.tgz",
+          "integrity": "sha512-PCZ5/hVdvPQiYyH0VwsPjrErPHRcITnaXxhksceOXgtJeesKHLA7KDu4X/yvcAi+1zdGgGF+9pDxkJvghXI9Wg=="
+        }
       }
     },
     "angular-translate-loader-url": {
