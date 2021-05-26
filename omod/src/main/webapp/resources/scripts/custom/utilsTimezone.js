@@ -6,7 +6,7 @@
  * @param {string} locale The preferred locale
  */
 function formatDatetime(date, format, locale) {
-    var DEFAULT_FORMAT = 'DD.MMM.YYYY, HH:mm:ss';
+    const DEFAULT_FORMAT = 'DD.MMM.YYYY, HH:mm:ss';
     if(locale == undefined) {
         locale= 'en'
     }
@@ -19,7 +19,7 @@ function formatDatetime(date, format, locale) {
 }
 
 function formatDate(date, format, locale) {
-    var DEFAULT_FORMAT = 'YYYY-MMM-DD';
+    const DEFAULT_FORMAT = 'YYYY-MMM-DD';
     if(locale == undefined) {
         locale= 'en'
     }
@@ -33,7 +33,7 @@ function formatDate(date, format, locale) {
 
 
 function formatTime(date, format) {
-    var DEFAULT_FORMAT = 'HH:mm';
+    const DEFAULT_FORMAT = 'HH:mm';
     try {
         return moment(date).format(format);
     } catch (err) {
