@@ -1,45 +1,57 @@
 (function () {
     'use strict';
-    var app = angular.module('app.restfulServices', ['restangular']);
+    angular.module('app.restfulServices', []).service('RestfulService', RestfulService);
 
-    app.service('RestfulService', RestfulService);
+    RestfulService.$inject = ['$http'];
 
-    RestfulService.$inject = ['Restangular', '$filter'];
+    function RestfulService($http) {
+        var baseUrl;
 
-    function RestfulService(Restangular, $filter) {
-        var service;
-
-        service = {
+        return {
             setBaseUrl: setBaseUrl,
             get: get,
             post: post
         };
 
-        return service;
-
         function setBaseUrl(restWsUrl) {
-            if (!angular.isUndefined(restWsUrl)) {
-                Restangular.setBaseUrl(restWsUrl);
+            if (restWsUrl) {
+                baseUrl = restWsUrl;
             }
         }
 
         function get(resource, request, successCallback, errorCallback) {
-            Restangular.all(resource).customGET('', request).then(function (data) {
+            var url = baseUrl + '/' + resource;
+            if (typeof request === 'object' && request !== null && Object.keys(request).length > 0) {
+                url += '?' + Object.keys(request).map(function (key) {
+                    return encodeURI(key) + '=' + encodeURI(request[key]);
+                }).join('&');
+            }
+
+            return $http({
+                method: 'GET',
+                headers: { Accept: 'application/json' },
+                url: url
+            }).then(function (response) {
                 if (typeof successCallback === 'function') {
-                    successCallback(data);
+                    successCallback(response.data);
                 }
-            }, function (error) {
+            }, function (response) {
                 if (typeof errorCallback === 'function') {
-                    errorCallback(error);
+                    errorCallback(response);
                 }
             });
         }
 
         function post(resource, request, successCallback, errorCallback) {
-            var params = JSON.stringify(request);
-
-            Restangular.one(resource).customPOST(params).then(function (data) {
-                if (typeof successCallback === 'function') successCallback(data);
+            return $http({
+                method: 'POST',
+                headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+                url: baseUrl + '/' + resource,
+                data: request
+            }).then(function (response) {
+                if (typeof successCallback === 'function') {
+                    successCallback(response.data);
+                }
             }, function (error) {
                 if (typeof errorCallback === 'function') {
                     errorCallback(error);

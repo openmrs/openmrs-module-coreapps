@@ -16,7 +16,7 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
 /**
- *  * Controller for a fragment that displays conditions for a patient
+ *  Controller for a fragment that displays conditions for a patient
  */
 public class ConditionsFragmentController {
 	
