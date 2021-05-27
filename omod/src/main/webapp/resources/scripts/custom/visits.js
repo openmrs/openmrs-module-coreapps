@@ -54,19 +54,16 @@ visit.createRetrospectiveVisitDialog = function(patientId) {
         selector: '#retrospective-visit-creation-dialog',
         actions: {
             confirm: function() {
-                var startVal = jq("#retrospectiveVisitStartDate-field").val();
-                var stopVal = jq("#retrospectiveVisitStopDate-field").val();
-                startDate=new Date(new Date(moment(startVal)).setHours(0, 0, 0, 0));
-                stopDate=new Date(new Date(moment(stopVal)).setHours(23, 59, 59, 999));
-
                 //If using timezones class .rfc3339-date then convert the date to ISO8601, if not, convert to a date without timezones associated with moment.
                 if(jq("#retrospective-visit-creation-dialog.rfc3339-date").length){
+                    var startVal = jq("#retrospectiveVisitStartDate-field").val();
+                    var stopVal = jq("#retrospectiveVisitStopDate-field").val();
+                    startDate=new Date(new Date(moment(startVal)).setHours(0, 0, 0, 0));
+                    stopDate=new Date(new Date(moment(stopVal)).setHours(23, 59, 59, 999));
                     jq("#retrospectiveVisitStartDate-field").val(startDate.toISOString());
                     jq("#retrospectiveVisitStopDate-field").val(stopDate.toISOString());
-                }else if(jq("#retrospective-visit-creation-dialog").length){
-                    jq("#retrospectiveVisitStartDate-field").val(moment(startDate).format("YYYY-MM-DD HH:mm:ss"));
-                    jq("#retrospectiveVisitStopDate-field").val(moment(stopDate).format("YYYY-MM-DD HH:mm:ss"));
                 }
+
                 emr.getFragmentActionWithCallback('coreapps', 'visit/retrospectiveVisit', 'create',
                     { patientId: patientId, locationId: sessionLocationModel.id(),
                         startDate: jq('[name=retrospectiveVisitStartDate]').val(),

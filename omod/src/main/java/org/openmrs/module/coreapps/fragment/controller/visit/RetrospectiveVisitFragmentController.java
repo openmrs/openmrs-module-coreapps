@@ -36,8 +36,22 @@ public class RetrospectiveVisitFragmentController {
             stopDate = startDate;
         }
 
-        //If stopDate is today, it cannot be today at 23:59:59, because that would be in the future.
-        stopDate = stopDate.after(new Date()) ? new Date() : stopDate;
+        if (ui.convertTimezones()) {
+            //If stopDate is today, it cannot be today at 23:59:59, because that would be in the future.
+            stopDate = stopDate.after(new Date()) ? new Date() : stopDate;
+        } else {
+            // set the startDate time component to the start of day
+            startDate = new DateTime(startDate).withTime(0,0,0,0).toDate();
+
+            // if stopDate is today, set stopDate to current datetime, otherwise set time component to end of date
+            if (new DateTime().withTime(0,0,0,0).equals(new DateTime(stopDate).withTime(0,0,0,0))) {
+                stopDate = new Date();
+            }
+            else {
+                stopDate = new DateTime(stopDate).withTime(23, 59, 59, 999).toDate();
+            }
+        }
+
 
 
         try {
