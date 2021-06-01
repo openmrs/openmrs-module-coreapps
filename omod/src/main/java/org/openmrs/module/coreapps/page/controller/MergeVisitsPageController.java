@@ -31,7 +31,8 @@ public class MergeVisitsPageController {
                              PageModel model, @SpringBean AdtService service,
                              @SpringBean("locationService") LocationService locationService,
                              @RequestParam(value = "returnUrl", required = false) String returnUrl,
-                             @RequestParam(value = "visitId", required = false) List<String> visitId) {
+                             @RequestParam(value = "mergedVisitsIDs", required = false) List<String> mergedVisitsIDs) {
+
 
         if (patient.isVoided() || patient.isPersonVoided()) {
             return new Redirect("coreapps", "patientdashboard/deletedPatient", "patientId=" + patient.getId());
@@ -41,21 +42,10 @@ public class MergeVisitsPageController {
         model.addAttribute("patient", patientDomainWrapper);
 
         //Remove the visit ID from URL, in case we merge that visit, it should not be possible to return to it.
-        if (!StringUtils.isEmpty(returnUrl) && returnUrl.contains("visitId=") && visitId.size() > 0) {
-            //Patter to get the visitID from url
-            Pattern pat = Pattern.compile("(?<=visitId=)[^&]+");
-            Matcher urlVisitId = pat.matcher(returnUrl);
-            //If find some visitID on url.
-            if (urlVisitId.find()) {
-                for (String s : visitId.get(0).split(",")) {
-                    if (urlVisitId.group(0).equals(s)) {
-                        //remove the visitID number from url
-                        returnUrl = returnUrl.replaceAll("(&visitId[^&]+)", "&visitId=");
-                        break;
-                    }
-                }
-            }
+        if (!StringUtils.isEmpty(returnUrl) && returnUrl.contains("visitId=") && mergedVisitsIDs.size() > 0) {
+            returnUrl = UpdateURLWithoutMergedVisits(returnUrl, mergedVisitsIDs);
         }
+
         model.addAttribute("returnUrl", returnUrl);
 
         Location sessionLocation = sessionContext.getSessionLocation();
@@ -78,7 +68,7 @@ public class MergeVisitsPageController {
                        @SpringBean AdtService service,
                        UiUtils ui,
                        HttpServletRequest request, PageModel model) {
-        List<String> mergeVisitsId = new ArrayList<String>();
+        List<String> mergedVisitsIDs = new ArrayList<String>();
         if (patient.isVoided() || patient.isPersonVoided()) {
             return "redirect:" + ui.pageLink("coreapps", "patientdashboard/deletedPatient",
                     SimpleObject.create("patientId", patient.getId().toString()));
@@ -95,11 +85,37 @@ public class MergeVisitsPageController {
             }
 
             for (int i = 1; i < mergeVisits.size(); i++) {
-                mergeVisitsId.add(mergeVisits.get(i).toString());
+                mergedVisitsIDs.add(mergeVisits.get(i).toString());
             }
         }
 
 
-        return "redirect:" + ui.pageLink("coreapps", "mergeVisits", SimpleObject.create("patientId", patient.getId(), "returnUrl", returnUrl, "visitId", mergeVisitsId));
+        return "redirect:" + ui.pageLink("coreapps", "mergeVisits", SimpleObject.create("patientId", patient.getId(), "returnUrl", returnUrl, "mergedVisitsIDs", mergedVisitsIDs));
+    }
+
+
+    /**
+     * This method receives the returnUrl and the list of the merged visit IDs
+     * If some of the merged visit IDs are on the return url, it will remove that parameter from the url
+     * so it doesn't return to a visit that no longer exists.
+     * @param returnUrl the return URL.
+     * @param mergedVisitsIDs list of voided visits that have been merged.
+     * @return The return URL, without the visit param if that visit was merged.
+     */
+    private String UpdateURLWithoutMergedVisits(String returnUrl, List<String> mergedVisitsIDs) {
+        //Pattern to get the visitID from url
+        Pattern pat = Pattern.compile("(?<=visitId=)[^&]+");
+        Matcher urlVisitId = pat.matcher(returnUrl);
+        //If find some visitID on url.
+        if (urlVisitId.find()) {
+            for (String s : mergedVisitsIDs.get(0).split(",")) {
+                if (urlVisitId.group(0).equals(s)) {
+                    //remove the visitID from url
+                    returnUrl = returnUrl.replaceAll("(&visitId[^&]+)", "");
+                    break;
+                }
+            }
+        }
+        return returnUrl;
     }
 }
