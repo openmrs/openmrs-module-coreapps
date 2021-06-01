@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.coreapps.fragment.controller.visit;
+package org.openmrs.module.coreapps.page.controller;
 
 
 import org.junit.Assert;
