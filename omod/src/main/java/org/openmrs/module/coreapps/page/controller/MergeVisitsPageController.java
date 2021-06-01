@@ -43,7 +43,7 @@ public class MergeVisitsPageController {
 
         //Remove the visit ID from URL, in case we merge that visit, it should not be possible to return to it.
         if (!StringUtils.isEmpty(returnUrl) && returnUrl.contains("visitId=") && mergedVisitsIDs.size() > 0) {
-            returnUrl = UpdateURLWithoutMergedVisits(returnUrl, mergedVisitsIDs);
+            returnUrl = updateURLWithoutMergedVisits(returnUrl, mergedVisitsIDs);
         }
 
         model.addAttribute("returnUrl", returnUrl);
@@ -102,7 +102,7 @@ public class MergeVisitsPageController {
      * @param mergedVisitsIDs list of voided visits that have been merged.
      * @return The return URL, without the visit param if that visit was merged.
      */
-    private String UpdateURLWithoutMergedVisits(String returnUrl, List<String> mergedVisitsIDs) {
+    public String updateURLWithoutMergedVisits(String returnUrl, List<String> mergedVisitsIDs) {
         //Pattern to get the visitID from url
         Pattern pat = Pattern.compile("(?<=visitId=)[^&]+");
         Matcher urlVisitId = pat.matcher(returnUrl);
