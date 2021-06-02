@@ -31,7 +31,7 @@ public class MergeVisitsPageController {
                              PageModel model, @SpringBean AdtService service,
                              @SpringBean("locationService") LocationService locationService,
                              @RequestParam(value = "returnUrl", required = false) String returnUrl,
-                             @RequestParam(value = "mergedVisitsIDs", required = false) List<String> mergedVisitsIDs) {
+                             @RequestParam(value = "mergedVisitIds", required = false) List<String> mergedVisitIds) {
 
 
         if (patient.isVoided() || patient.isPersonVoided()) {
@@ -42,8 +42,8 @@ public class MergeVisitsPageController {
         model.addAttribute("patient", patientDomainWrapper);
 
         //Remove the visit ID from URL, in case we merge that visit, it should not be possible to return to it.
-        if (!StringUtils.isEmpty(returnUrl) && returnUrl.contains("visitId=") && mergedVisitsIDs.size() > 0) {
-            returnUrl = updateURLWithoutMergedVisits(returnUrl, mergedVisitsIDs);
+        if (!StringUtils.isEmpty(returnUrl) && returnUrl.contains("visitId=") && mergedVisitIds.size() > 0) {
+            returnUrl = updateVisitIdUrlParameter(returnUrl, mergedVisitIds);
         }
 
         model.addAttribute("returnUrl", returnUrl);
@@ -68,7 +68,8 @@ public class MergeVisitsPageController {
                        @SpringBean AdtService service,
                        UiUtils ui,
                        HttpServletRequest request, PageModel model) {
-        List<String> mergedVisitsIDs = new ArrayList<String>();
+
+        List<String> mergedVisitIds = new ArrayList<String>();
         if (patient.isVoided() || patient.isPersonVoided()) {
             return "redirect:" + ui.pageLink("coreapps", "patientdashboard/deletedPatient",
                     SimpleObject.create("patientId", patient.getId().toString()));
@@ -84,25 +85,19 @@ public class MergeVisitsPageController {
                 request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
             }
 
-            for (int i = 1; i < mergeVisits.size(); i++) {
-                mergedVisitsIDs.add(mergeVisits.get(i).toString());
+           for (int i = 1; i < mergeVisits.size(); i++) {
+                mergedVisitIds.add(mergeVisits.get(i).toString());
             }
         }
-
-
-        return "redirect:" + ui.pageLink("coreapps", "mergeVisits", SimpleObject.create("patientId", patient.getId(), "returnUrl", returnUrl, "mergedVisitsIDs", mergedVisitsIDs));
+        return "redirect:" + ui.pageLink("coreapps", "mergeVisits", SimpleObject.create("patientId", patient.getId(), "returnUrl", returnUrl, "mergedVisitIds", mergedVisitIds));
     }
 
 
     /**
-     * This method receives the returnUrl and the list of the merged visit IDs
-     * If some of the merged visit IDs are on the return url, it will remove that parameter from the url
+     * If some of the merged visit IDs are on the return url,  it scraps the visitId param altogether off the UR
      * so it doesn't return to a visit that no longer exists.
-     * @param returnUrl the return URL.
-     * @param mergedVisitsIDs list of voided visits that have been merged.
-     * @return The return URL, without the visit param if that visit was merged.
      */
-    public String updateURLWithoutMergedVisits(String returnUrl, List<String> mergedVisitsIDs) {
+    public String updateVisitIdUrlParameter(String returnUrl, List<String> mergedVisitsIDs) {
         //Pattern to get the visitID from url
         Pattern pat = Pattern.compile("(?<=visitId=)[^&]+");
         Matcher urlVisitId = pat.matcher(returnUrl);

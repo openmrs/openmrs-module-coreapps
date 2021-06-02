@@ -18,8 +18,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.openmrs.module.coreapps.page.controller.MergeVisitsPageController;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,14 +37,14 @@ public class MergeVisitsPageControllerTest {
       List<String> MERGED_VISITS_IDS = Arrays.asList("6,7,8,9");
       String RETURN_URL = "http://localhost:8080/openmrs/coreapps/patientdashboard/patientDashboard.page?patientId=9e121f61-457f-4eaa-9121-62fbb9acdaad&visitId=7";
       String EXPECTED_URL = "http://localhost:8080/openmrs/coreapps/patientdashboard/patientDashboard.page?patientId=9e121f61-457f-4eaa-9121-62fbb9acdaad";
-      Assert.assertEquals(controller.updateURLWithoutMergedVisits( RETURN_URL, MERGED_VISITS_IDS ) , EXPECTED_URL);
+      Assert.assertEquals(controller.updateVisitIdUrlParameter( RETURN_URL, MERGED_VISITS_IDS ) , EXPECTED_URL);
    }
 
    @Test
    public void test_shouldNotRemoveVisitParameterFromReturnURL() {
       List<String> MERGED_VISITS_IDS = Arrays.asList("3,4,5,6");
       String RETURN_URL = "http://localhost:8080/openmrs/coreapps/patientdashboard/patientDashboard.page?patientId=9e121f61-457f-4eaa-9121-62fbb9acdaad&visitId=7";
-      Assert.assertEquals(controller.updateURLWithoutMergedVisits( RETURN_URL, MERGED_VISITS_IDS ) , RETURN_URL);
+      Assert.assertEquals(controller.updateVisitIdUrlParameter( RETURN_URL, MERGED_VISITS_IDS ) , RETURN_URL);
    }
 
 }
