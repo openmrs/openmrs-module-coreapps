@@ -12,6 +12,7 @@ export default class ObsAcrossEncountersController {
     this.simpleEncs = [];
     this.headers = [];
     this.openmrsRest.setBaseAppPath("/coreapps");
+    this.isArray = angular.isArray;
 
     this.output = {
       headers: [],
@@ -100,11 +101,15 @@ export default class ObsAcrossEncountersController {
           this.config.JSDateFormat,
           this.config.language)
       });
-      for (var uuid of Object.keys(this.conceptsMap)) {
-        row.push({
-          value: (encounter.obs[uuid] ? this.getObsValue(encounter.obs[uuid]) : '') || '',
-          className: this.isRetired(encounter.obs[uuid]) ? 'retiredConcept' : ''
-        });
+      for (let uuid of Object.keys(this.conceptsMap)) {
+        let obsArray = [];
+        for (let obs of encounter.obs[uuid]) {
+          obsArray.push({
+            value: (obs ? this.getObsValue(obs) : '') || '',
+            className: this.isRetired(obs) ? 'retiredConcept' : ''
+          });
+        }
+        row.push(obsArray);
       }
     }
   }
@@ -147,7 +152,10 @@ export default class ObsAcrossEncountersController {
           }
         } else // otherwise, add the obs value (if it matches one of our concepts)
           if (conceptKeys.includes(obs.concept.uuid)) {
-          foundObsByUuid[obs.concept.uuid] = obs;
+            if (!foundObsByUuid[obs.concept.uuid]) {
+              foundObsByUuid[obs.concept.uuid] = [];
+            }
+            foundObsByUuid[obs.concept.uuid].push(obs);
         }
       }
       if (Object.keys(foundObsByUuid).length > 0) {
