@@ -42,7 +42,7 @@
                     {{ cell.translate ? (cell.value | translate) : cell.value }}
                 </span>
                 <span ng-if="$ctrl.isArray(cell)" ng-repeat="cellElem in cell">
-                    <span ng-class="cellElem.className">{{ cellElem.translate ? (cellElem.value | translate) : cellElem.value }}</span><span>{{ $last ? '' : ',&nbsp;' }}</span>
+                    <span ng-class="cellElem.className">{{ cellElem.translate ? (cellElem.value | translate) : cellElem.value }}{{ $last ? '' : ',&nbsp;' }}</span>
                 </span>
             </td>
         </tr>
