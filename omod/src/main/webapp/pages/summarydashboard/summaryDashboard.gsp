@@ -81,7 +81,7 @@ ${ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, c
                     <%
                             actions.each { ext -> %>
                     <li class="float-left">
-                        <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
+                        <a href="${ ui.encodeJavaScript(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
                             <i class="${ ext.icon } float-left"></i>
                             ${ ui.message(ext.label) }
                         </a>

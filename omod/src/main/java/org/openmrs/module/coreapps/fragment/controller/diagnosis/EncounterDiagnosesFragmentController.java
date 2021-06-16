@@ -48,7 +48,7 @@ public class EncounterDiagnosesFragmentController {
             CodedOrFreeTextAnswer diagnosis = d.getDiagnosis();
             String jsDiagnosis;
             if (diagnosis.getNonCodedAnswer() != null) {
-                jsDiagnosis = "'" + ui.escapeJs(diagnosis.getNonCodedAnswer()) + "'";
+                jsDiagnosis = "'" + ui.encodeJavaScript(diagnosis.getNonCodedAnswer()) + "'";
             } else {
                 ConceptSearchResult csr = new ConceptSearchResult(null, diagnosis.getCodedAnswer(), diagnosis.getSpecificCodedAnswer());
                 SimpleObject simple = diagnosesFragmentController.simplify(csr, ui, Context.getLocale());

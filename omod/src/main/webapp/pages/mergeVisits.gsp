@@ -22,7 +22,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" , link: '${ui.escapeJs( ui.encodeHtmlAttribute(returnUrl) )}'},
+        { label: "${ ui.encodeJavaScript(ui.encodeHtmlContent(ui.format(patient.patient))) }" , link: '${ui.encodeJavaScript( ui.encodeHtmlAttribute(returnUrl) )}'},
         { label: "${ ui.message("coreapps.task.mergeVisits.label")}"}
     ];
 

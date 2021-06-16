@@ -30,7 +30,7 @@
                 def url = task.url(contextPath, appContextModel.with("visit", [id: "{{visit.id}}", uuid: "{{visit.uuid}}", active: "{{visit.active}}"]), returnUrl);   // strip out any hard-coded id, uuid, or active with the appropriate template  so that it can be dynamically populated based on current selected visit
                 if (task.type != "script") {
                 %>
-                <a href="[[= emr.applyContextModel('${ ui.escapeJs(url) }', { 'visit.id': id, 'visit.uuid': uuid, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task activelist">
+                <a href="[[= emr.applyContextModel('${ ui.encodeJavaScript(url) }', { 'visit.id': id, 'visit.uuid': uuid, 'visit.active': stopDatetime == null }) ]]" id="${task.id}" class="button task activelist">
             <% } else { // script
                 %>
                 <a href="[[= emr.applyContextModel('${ url }', {'visit.id': id, 'visit.uuid': uuid, 'visit.active': stopDatetime == null })]]" class="button task activelist">
