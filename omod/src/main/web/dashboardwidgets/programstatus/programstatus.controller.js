@@ -6,10 +6,10 @@ export default class ProgramStatusController {
 
     // TODO add support for special logic around "initial" and "terminal?"
 
-    constructor($filter, $window, $q, openmrsRest, openmrsTranslate) {
+    constructor($filter, $window, $q, openmrsRest, openmrsTranslate, widgetsCommons) {
         'ngInject';
 
-        Object.assign(this, {$filter, $window, $q, openmrsRest, openmrsTranslate});
+        Object.assign(this, {$filter, $window, $q, openmrsRest, openmrsTranslate, widgetsCommons});
     }
 
     $onInit() {
@@ -47,6 +47,7 @@ export default class ProgramStatusController {
         this.markPatientDeadOutcome = null;
         this.markPatientDeadPage = "/coreapps/markPatientDead.page?patientId={{patientUuid}}&returnDashboard={{dashboard}}&defaultDeathDate={{date}}&defaultDead=true";
         this.canMarkPatientDead = false;
+        this.requestInProgress = false;
 
         // config parameter that can be passed in so the widget knows what dashboard it is being rendered on,
         // currently only use is to pass on to Mark Patient Dead page to use as a return url
@@ -97,18 +98,25 @@ export default class ProgramStatusController {
     fetchPrivileges() {
         this.openmrsRest.get('session').then((response) => {
             if (response && response.user && angular.isArray(response.user.privileges)) {
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                if (this.widgetsCommons.isSystemDeveloper(response.user)) {
                     this.canEnrollInProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.editPatientProgram'; })) {
                     this.canEditProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.deletePatientProgram'; })) {
                     this.canDeleteProgram = true;
-                };
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.markPatientDead'; })) {
-                  this.canMarkPatientDead = true;
-                };
+                    this.canMarkPatientDead = true;
+                } else {
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                        this.canEnrollInProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.editPatientProgram'; })) {
+                        this.canEditProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.deletePatientProgram'; })) {
+                        this.canDeleteProgram = true;
+                    };
+                    if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.markPatientDead'; })) {
+                      this.canMarkPatientDead = true;
+                    };
+                }
             }
         }, function(error) {
           console.log(`failed to retrieve user privileges, error: ${error}`);
@@ -313,6 +321,7 @@ export default class ProgramStatusController {
 
     enrollInProgram() {
         if (this.input.dateEnrolled && this.input.enrollmentLocation) {
+            this.requestInProgress = true;
 
             var states = [];
             angular.forEach(this.input.initialWorkflowStateByWorkflow, (state) => {
@@ -329,6 +338,7 @@ export default class ProgramStatusController {
             }).then((response) => {
                 if (this.config.disableReloadPage) {
                     this.fetchPatientProgram(this.patientProgram.uuid); // refresh display
+                    this.requestInProgress = false;
                 }
                 else {
                     this.reloadPage();  // closing a program affects other widgets, so we need to reload the entire page
@@ -674,7 +684,8 @@ export default class ProgramStatusController {
         return this.input.enrollmentLocation && this.input.dateEnrolled &&  // must have enrollmentLocation and date enrolled
             (!this.input.dateCompleted || this.input.dateCompleted >= this.input.dateEnrolled) &&  // date completed must be after date enrolled
             ((!this.input.dateCompleted && !this.input.outcome) || (this.input.dateCompleted && this.input.outcome)) &&  // if there's a completion date, must specific an outcome (and vice versa)
-            (this.isMostRecentProgram() || this.input.dateCompleted);  // must be the most recent program or have a date completed
+            (this.isMostRecentProgram() || this.input.dateCompleted) && // must be the most recent program or have a date completed
+            !this.requestInProgress;
     }
 
     workflowTransitionValid(workflowUuid) {

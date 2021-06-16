@@ -3,10 +3,10 @@ import angular from 'angular';
 
 export default class ProgramsController {
 
-    constructor($filter, openmrsRest, openmrsTranslate) {
+    constructor($filter, openmrsRest, openmrsTranslate, widgetsCommons) {
         'ngInject';
 
-        Object.assign(this, {$filter, openmrsRest, openmrsTranslate});
+        Object.assign(this, {$filter, openmrsRest, openmrsTranslate, widgetsCommons});
     }
 
     $onInit() {
@@ -59,7 +59,9 @@ export default class ProgramsController {
             v: 'custom:(privileges:(name))'
         }).then((response) => {
             if (response && response.user && angular.isArray(response.user.privileges)) {
-                if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
+                if (this.widgetsCommons.isSystemDeveloper(response.user)) {
+                    this.canEnrollInProgram = true;
+                }else if (response.user.privileges.some( (p) => { return p.name === 'Task: coreapps.enrollInProgram'; })) {
                     this.canEnrollInProgram = true;
                 };
             }

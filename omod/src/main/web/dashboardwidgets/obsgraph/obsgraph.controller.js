@@ -205,7 +205,7 @@ export default class ObsGraphController {
           }
           return this.$q.all(promises).then(function(data) {
             let isEncounterTypeNotAllowed = function (encounterType) {
-              return angular.isDefined(self.encounterTypes) && 
+              return angular.isDefined(self.encounterTypes) &&
                 self.encounterTypes.indexOf(encounterType) < 0;
             };
             let getEncounterType = function(observation) {
@@ -236,7 +236,7 @@ export default class ObsGraphController {
                     let xValue = self.widgetsCommons.daysSinceDate(obs.obsDatetime);
                     if (angular.isUndefined(self.maxAgeInDays) || xValue <= self.maxAgeInDays) {
                       // Add obs data for chart display
-                      var obsDate = self.$filter('date')(new Date(obs.obsDatetime), self.config.dateFormat);
+                      var obsDate = self.widgetsCommons.formatDate(obs.obsDatetime, self.config.JSDateFormat, self.config.language);
                       conceptObject.values[xValue] = obs.value;
                       self.xAxis[xValue] = obsDate;
                     }
@@ -250,7 +250,7 @@ export default class ObsGraphController {
       };
 
       this.getConfig();
-      
+
       const getConceptNamesPromise = this.getConceptNames();
       const getAllObsPromise = this.getAllObs();
 
