@@ -38,7 +38,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <emrapiVersion>1.31.0-SNAPSHOT</emrapiVersion>
+        <emrapiVersion>1.32.0-SNAPSHOT</emrapiVersion>
         <uiframeworkVersion>3.21.0</uiframeworkVersion>
         <eventVersion>2.8.0</eventVersion>
         <htmlformentryVersion>3.3.0</htmlformentryVersion>
