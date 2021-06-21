@@ -355,6 +355,19 @@ function PatientSearchWidget(configuration){
                             }
                         });
                     }
+					/* Added Identifier type for the patient list in the main dashboard */
+					else {
+						const identifiersFiltered = patient.identifiers.filter(i => i.identifierType.uuid === "ffbd60fb-599a-4a57-b2f1-4b55847cd938" || i.identifierType.uuid === "3fa0990e-900d-4a80-a4c1-dcf01a0d4f9c");
+						if (identifiersFiltered.length > 0) {
+							const identifierFiltered = identifiersFiltered[0];
+							if (column.type === "identifierType") {
+								columnValue = identifierFiltered.identifierType.name;
+							}
+							else if (column.type === "identifierNumber") {
+								columnValue = identifierFiltered.identifier;
+							}
+						}
+					}
                     if (index === 0) {
                         if(_.contains(initialPatientUuids, patient.uuid)){
                             columnValue += "<span class='recent-lozenge'>" + config.messages.recent + "</span>";
