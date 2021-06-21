@@ -38,8 +38,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <emrapiVersion>1.29.0</emrapiVersion>
-        <uiframeworkVersion>3.21.0</uiframeworkVersion>
+        <emrapiVersion>1.31.0-SNAPSHOT</emrapiVersion>
+        <uiframe
         <eventVersion>2.8.0</eventVersion>
         <htmlformentryVersion>3.3.0</htmlformentryVersion>
         <appuiVersion>1.7</appuiVersion>
@@ -226,7 +226,8 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>uicommons-api</artifactId>
 				<version>${uicommonsVersion}</version>
-				<scope>provided</scope>
+				<scope>provided</scope><<<<<< RA-1932
+
 			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
