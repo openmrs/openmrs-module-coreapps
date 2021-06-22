@@ -108,7 +108,7 @@ export default class ObsAcrossEncountersController {
         });
         row.push({ value: providersNameToDisplay , translate: false });
       }
-      if (this.config.showDateTime) {
+      if (this.config.showDateWithTime) {
          encounterDateToDisplay = this.widgetsCommons.formatDateTime(
             encounter.encounterDatetime,
             this.config.JSDateTimeFormat,
