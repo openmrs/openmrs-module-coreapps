@@ -147,6 +147,23 @@ export default class WidgetsCommons {
     }
 
     /**
+     * Returns date and time translated according to preferred locale.
+     * Ex: Date: 02-Jan-2021 15:10 Format: DD.MMM.YYYY HH:mm Locale: fr --> Return: 02-janv.-2021 15:10
+     *
+     * @param {object} date Input Datetime
+     * @param {string} format Date Format
+     * @param {string} locale The preferred locale
+     */
+    formatDateTime(date, format, locale) {
+        try{
+            moment.locale(locale);
+            return moment(date).format(format);
+        } catch(err) {
+            return moment(date).format("DD.MMM.YYYY HH:mm");
+        }
+    }
+
+    /**
      * Return true if the user has the System Developer role
      *
      * @param user
