@@ -491,14 +491,14 @@ describe('ObsAcrossEncounters', () => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Height (cm)', 'Foot examination results']);
             expect(ctrl.output.rows.length).toEqual(3);
             expect(ctrl.output.rows[0][0]).toEqual({ value: "2021-02-01T07:00:00-05:00"});
-            expect(ctrl.output.rows[0][1].value).toEqual(165);
-            expect(ctrl.output.rows[0][2].value).toEqual("");
+            expect(ctrl.output.rows[0][1][0].value).toEqual(165);
+            expect(ctrl.output.rows[0][2][0].value).toEqual("");
             expect(ctrl.output.rows[1][0]).toEqual({ value: "2021-03-04T07:02:00-05:00"});
-            expect(ctrl.output.rows[1][1].value).toEqual(170);
-            expect(ctrl.output.rows[1][2].value).toEqual("Normal");
+            expect(ctrl.output.rows[1][1][0].value).toEqual(170);
+            expect(ctrl.output.rows[1][2][0].value).toEqual("Normal");
             expect(ctrl.output.rows[2][0]).toEqual({ value: "2021-03-15T08:03:00-04:00"});
-            expect(ctrl.output.rows[2][1].value).toEqual(175);
-            expect(ctrl.output.rows[2][2].value).toEqual("");
+            expect(ctrl.output.rows[2][1][0].value).toEqual(175);
+            expect(ctrl.output.rows[2][2][0].value).toEqual("");
         });
     });
 
@@ -512,11 +512,11 @@ describe('ObsAcrossEncounters', () => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Foot examination results', 'Height (cm)']);
             expect(ctrl.output.rows.length).toEqual(2);
             expect(ctrl.output.rows[0][0]).toEqual({ value: "2021-03-04T07:02:00-05:00"});
-            expect(ctrl.output.rows[0][1].value).toEqual("Normal");
-            expect(ctrl.output.rows[0][2].value).toEqual(170);
+            expect(ctrl.output.rows[0][1][0].value).toEqual("Normal");
+            expect(ctrl.output.rows[0][2][0].value).toEqual(170);
             expect(ctrl.output.rows[1][0]).toEqual({ value: "2021-03-15T08:03:00-04:00"});
-            expect(ctrl.output.rows[1][1].value).toEqual("");
-            expect(ctrl.output.rows[1][2].value).toEqual(175);
+            expect(ctrl.output.rows[1][1][0].value).toEqual("");
+            expect(ctrl.output.rows[1][2][0].value).toEqual(175);
         });
     });
 
@@ -531,16 +531,16 @@ describe('ObsAcrossEncounters', () => {
             expect(ctrl.output.rows.length).toEqual(3);
             expect(ctrl.output.rows[0][0]).toEqual({ value: 'Registration', translate: true });
             expect(ctrl.output.rows[0][1]).toEqual({ value: "2021-02-01T07:00:00-05:00"});
-            expect(ctrl.output.rows[0][2].value).toEqual(165);
-            expect(ctrl.output.rows[0][3].value).toEqual("");
+            expect(ctrl.output.rows[0][2][0].value).toEqual(165);
+            expect(ctrl.output.rows[0][3][0].value).toEqual("");
             expect(ctrl.output.rows[1][0]).toEqual({ value: 'Consult', translate: true });
             expect(ctrl.output.rows[1][1]).toEqual({ value: "2021-03-04T07:02:00-05:00"});
-            expect(ctrl.output.rows[1][2].value).toEqual(170);
-            expect(ctrl.output.rows[1][3].value).toEqual("Normal");
+            expect(ctrl.output.rows[1][2][0].value).toEqual(170);
+            expect(ctrl.output.rows[1][3][0].value).toEqual("Normal");
             expect(ctrl.output.rows[2][0]).toEqual({ value: 'Consult', translate: true });
             expect(ctrl.output.rows[2][1]).toEqual({ value: "2021-03-15T08:03:00-04:00"});
-            expect(ctrl.output.rows[2][2].value).toEqual(175);
-            expect(ctrl.output.rows[2][3].value).toEqual("");
+            expect(ctrl.output.rows[2][2][0].value).toEqual(175);
+            expect(ctrl.output.rows[2][3][0].value).toEqual("");
         });
     });
 
@@ -553,7 +553,7 @@ describe('ObsAcrossEncounters', () => {
         return ctrl.$onInit().then(() => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Height (cm)', 'Foot examination results']);
             expect(ctrl.output.rows.length).toEqual(3);
-            expect(ctrl.output.rows[1][2].value).toEqual("nrml");
+            expect(ctrl.output.rows[1][2][0].value).toEqual("nrml");
         });
     });
 
@@ -566,7 +566,7 @@ describe('ObsAcrossEncounters', () => {
         return ctrl.$onInit().then(() => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Medication orders']);
             expect(ctrl.output.rows.length).toEqual(1);
-            expect(ctrl.output.rows[0][1].value).toEqual("Paracetamol");
+            expect(ctrl.output.rows[0][1][0].value).toEqual("Paracetamol");
         });
     });
 
@@ -580,11 +580,11 @@ describe('ObsAcrossEncounters', () => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Medication orders', 'Prescription instructions, non-coded']);
             expect(ctrl.output.rows.length).toEqual(2);
             expect(ctrl.output.rows[0][0]).toEqual({ value: "2021-03-04T07:02:00-05:00"});
-            expect(ctrl.output.rows[0][1].value).toEqual("Paracetamol 500mg - 10 tabletas");
-            expect(ctrl.output.rows[0][2].value).toEqual("Take with food");
+            expect(ctrl.output.rows[0][1][0].value).toEqual("Paracetamol 500mg - 10 tabletas");
+            expect(ctrl.output.rows[0][2][0].value).toEqual("Take with food");
             expect(ctrl.output.rows[1][0]).toEqual({ value: "2021-03-04T07:02:00-05:00"});
-            expect(ctrl.output.rows[1][1].value).toEqual("");
-            expect(ctrl.output.rows[1][2].value).toEqual("As needed");
+            expect(ctrl.output.rows[1][1][0].value).toEqual("");
+            expect(ctrl.output.rows[1][2][0].value).toEqual("As needed");
         });
     });
 

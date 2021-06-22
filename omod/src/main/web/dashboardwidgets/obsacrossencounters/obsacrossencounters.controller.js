@@ -103,12 +103,18 @@ export default class ObsAcrossEncountersController {
       });
       for (let uuid of Object.keys(this.conceptsMap)) {
         let obsArray = [];
-        for (let obs of encounter.obs[uuid]) {
-          obsArray.push({
-            value: (obs ? this.getObsValue(obs) : '') || '',
-            className: this.isRetired(obs) ? 'retiredConcept' : ''
-          });
-        }
+         if (angular.isArray(encounter.obs[uuid])) {
+          for (let obs of encounter.obs[uuid]) {
+             obsArray.push({
+               value: (obs ? this.getObsValue(obs) : '') || '',
+               className: this.isRetired(obs) ? 'retiredConcept' : ''
+              });
+            }
+        } else {
+           obsArray.push({
+             value: ''
+           });
+         }
         row.push(obsArray);
       }
     }
@@ -142,7 +148,10 @@ export default class ObsAcrossEncountersController {
           if (foundMembers.length) {
             const foundMembersByUuid = {};
             for (let m of foundMembers) {
-              foundMembersByUuid[m.concept.uuid] = m;
+              if (!foundMembersByUuid[m.concept.uuid]) {
+                foundMembersByUuid[m.concept.uuid] = [];
+              }
+              foundMembersByUuid[m.concept.uuid].push(m);
             }
             this.simpleEncs.push({
               encounterType: encounter.encounterType.name,
@@ -181,11 +190,13 @@ export default class ObsAcrossEncountersController {
   updateWithConceptShortNames(encounters) {
     const resultPromises = [];
     for (let encounter of encounters) {
-      for (let obs of Object.values(encounter.obs)) {
-        if (this.widgetsCommons.isDrug(obs.value)) {
-          resultPromises.push(this.updateWithShortName(obs.value.concept));
-        } else if (this.widgetsCommons.hasDatatypeCoded(obs.concept)) {
-          resultPromises.push(this.updateWithShortName(obs.value));
+      for (let obsArray of Object.values(encounter.obs)) {
+        for (let obs of obsArray) {
+          if (this.widgetsCommons.isDrug(obs.value)) {
+            resultPromises.push(this.updateWithShortName(obs.value.concept));
+          } else if (this.widgetsCommons.hasDatatypeCoded(obs.concept)) {
+            resultPromises.push(this.updateWithShortName(obs.value));
+          }
         }
       }
     }
