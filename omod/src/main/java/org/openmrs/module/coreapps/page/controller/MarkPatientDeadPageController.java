@@ -46,7 +46,7 @@ public class MarkPatientDeadPageController {
         pageModel.put("breadcrumbOverride", breadcrumbOverride);
         pageModel.put("defaultDead", defaultDead);
         pageModel.put("defaultDeathDate", defaultDeathDate);
-        // if the getPatientDied property is configured, the ExitFromCare service will close
+        // if the getPatientDied property is configured, the ExitFromCare service will close/reopen patient programs when marking a patient dead/not dead
         pageModel.put("renderProgramWarning", emrApiProperties.getPatientDiedConcept() != null);
 
         String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
