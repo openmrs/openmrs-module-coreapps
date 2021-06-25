@@ -29,12 +29,16 @@
                 showContainer('#cause-of-death-container');
                 <% if (patient?.getDead() != true) { %>
                     showAlert('#mark-patient-dead-warning');
+                <% } else { %>
+                    hideAlert('#mark-patient-not-dead-warning');
                 <% } %>
             } else {
                 hideContainer('#death-date-container');
                 hideContainer('#cause-of-death-container');
                 <% if (patient?.getDead() != true) { %>
                     hideAlert('#mark-patient-dead-warning');
+                <% } else if (renderProgramWarning == true) { %>
+                    showAlert('#mark-patient-not-dead-warning');
                 <% } %>
             }
         });
@@ -49,9 +53,9 @@
             } else {
                 hideContainer('#death-date-container');
                 hideContainer('#cause-of-death-container');
-                <% if (patient?.getDead() != true) { %>
-                  hideAlert('#mark-patient-dead-warning');
-                 <% } %>
+                <% if (patient?.getDead() == true && renderProgramWarning == true) { %>
+                  showAlert('#mark-patient-not-dead-warning');
+                <% } %>
             }
         });
 
@@ -81,8 +85,17 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
 <h3>${ui.message("coreapps.markPatientDead.label")}</h3>
 
 <div id="mark-patient-dead-warning" class="alert alert-warning hidden" role="alert">
-    ${ui.message("coreapps.markPatientDead.warning")}
+    <% if (renderProgramWarning == true) { %>
+        ${ui.message("coreapps.markPatientDead.warning")}
+    <% } else { %>
+        ${ui.message("coreapps.markPatientDead.warning.visitsOnly")}
+    <% } %>
 </div>
+
+<div id="mark-patient-not-dead-warning" class="alert alert-warning hidden" role="alert">
+    ${ui.message("coreapps.markPatientDead.markPatientNotDead.warning")}
+</div>
+
 
 <form method="post" id="mark-patient-dead">
     <fieldset style="min-width: 40%">

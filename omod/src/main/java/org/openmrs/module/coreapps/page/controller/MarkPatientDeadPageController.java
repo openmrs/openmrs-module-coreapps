@@ -11,6 +11,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.exitfromcare.ExitFromCareService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
@@ -33,6 +34,7 @@ public class MarkPatientDeadPageController {
     public void get(@SpringBean PageModel pageModel,
                     @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
                     @SpringBean("patientService") PatientService patientService,
+                    @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                     @RequestParam("patientId") Patient patient,
                     @RequestParam(value = "defaultDead", required = false) Boolean defaultDead,
                     @RequestParam(value = "defaultDeathDate", required = false) Date defaultDeathDate
@@ -44,6 +46,8 @@ public class MarkPatientDeadPageController {
         pageModel.put("breadcrumbOverride", breadcrumbOverride);
         pageModel.put("defaultDead", defaultDead);
         pageModel.put("defaultDeathDate", defaultDeathDate);
+        // if the getPatientDied property is configured, the ExitFromCare service will close/reopen patient programs when marking a patient dead/not dead
+        pageModel.put("renderProgramWarning", emrApiProperties.getPatientDiedConcept() != null);
 
         String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
 
@@ -75,12 +79,9 @@ public class MarkPatientDeadPageController {
             Date date = new Date();
             if (dead != null && StringUtils.isNotBlank(causeOfDeath) && deathDate != null && !deathDate.before(patient.getBirthdate()) && !deathDate.after(date)) {
                 // TODO should more gracefully handle bad cause of death concept
-                exitFromCareService.markPatientDied(patient, conceptService.getConceptByUuid(causeOfDeath), deathDate);
+                exitFromCareService.markPatientDead(patient, conceptService.getConceptByUuid(causeOfDeath), deathDate);
             } else {
-                patient.setDeathDate(null);
-                patient.setDead(false);
-                patient.setCauseOfDeath(null);
-                patientService.savePatient(patient);
+                exitFromCareService.markPatientNotDead(patient);
             }
 
             return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "dashboard", returnDashboard, "returnUrl", returnUrl));
