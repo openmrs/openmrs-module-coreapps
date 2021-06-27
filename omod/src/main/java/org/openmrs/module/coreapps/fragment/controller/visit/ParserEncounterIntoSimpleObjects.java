@@ -21,10 +21,12 @@ import org.openmrs.api.LocationService;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisService;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -45,6 +47,9 @@ public class ParserEncounterIntoSimpleObjects {
     private LocationService locationService;
 
     private DispositionService dispositionService;
+    
+    @Autowired
+    private DiagnosisService emrDiagnosisService;
 
     public ParserEncounterIntoSimpleObjects(Encounter encounter, UiUtils uiUtils, EmrApiProperties emrApiProperties,
                                             LocationService locationService, DispositionService dispositionService) {
@@ -92,8 +97,9 @@ public class ParserEncounterIntoSimpleObjects {
         }
 		
 		ParsedObs parsedObs = new ParsedObs();
+		List <Obs> observations = getObsFromPrimaryDiagnosis(encounter);
 		
-		for (Obs obs : encounter.getObsAtTopLevel(false)) {
+		for (Obs obs : observations) {
 			if (diagnosisMetadata.isDiagnosis(obs)) {
 				parsedObs.getDiagnoses().add(parseDiagnosis(diagnosisMetadata, obs));
 			} else if (dispositionDescriptor != null && dispositionDescriptor.isDisposition(obs)) {
@@ -183,6 +189,21 @@ public class ParserEncounterIntoSimpleObjects {
 		simpleObject.put("answer", answer);
 		simpleObject.put("order", diagnosis.getOrder().ordinal());
 		return simpleObject;
+	}
+	
+
+
+    private List<Obs> getObsFromPrimaryDiagnosis(Encounter  encounter) {
+		@SuppressWarnings("deprecation")
+		List<Diagnosis> diagnosis = emrDiagnosisService.getPrimaryDiagnoses(encounter);
+		List <Obs> obs = new ArrayList<Obs>();
+		for(Diagnosis diag:diagnosis) {
+			if(diag != null) {
+				obs.add(diag.getExistingObs());
+			}
+		}
+		return obs;
+		
 	}
 
     private SimpleObject parseObsWithLocationAnswer(Obs obs, Location location) {
