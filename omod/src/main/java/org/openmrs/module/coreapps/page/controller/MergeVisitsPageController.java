@@ -85,6 +85,7 @@ public class MergeVisitsPageController {
                 request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
             }
 
+            //Pass by all visits except the first one.
             for (int i = 1; i < mergeVisits.size(); i++) {
                 mergedVisitIds.add(mergeVisits.get(i).toString());
             }
