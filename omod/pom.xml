@@ -158,6 +158,12 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api-pre2.2</artifactId>
         </dependency>
+        <dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>emrapi-api-2.2</artifactId>
+			<version>1.31.0</version>
+			<scope>provided</scope>
+		</dependency>
         
         <dependency>
             <groupId>org.openmrs</groupId>
