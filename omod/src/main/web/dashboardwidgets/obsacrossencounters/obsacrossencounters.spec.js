@@ -264,6 +264,48 @@ const mockEncounters = [
                 "groupMembers": null
             }
         ]
+    },
+    {
+        "uuid": "a8b338cc-3978-43eb-99b5-f1c601ac7e76",
+        "encounterDatetime": "2021-06-01T09:00:00.000-0000",
+        "encounterType": {
+            "name": "Report",
+            "description": "Patient operation report"
+        },
+        "obs": [
+            {
+                "id": 60,
+                "uuid": "c098deb2-187c-4bfe-813a-cb2e1a4138db",
+                "display": "Affected limb, non-coded: Left arm",
+                "concept": {
+                    "id": 231,
+                    "uuid": "uuid-limb-text",
+                    "name": {
+                        "display": "Prescription instructions, non-coded"
+                    },
+                    "datatype": {
+                        "uuid": "8d4a4ab4-c2cc-11de-8d13-0010c6dffd0f"
+                    }
+                },
+                "value": "Left arm"
+            },
+            {
+                "id": 61,
+                "uuid": "c7ee73d9-9aaa-498f-a707-4b5ea8aaa076",
+                "display": "Affected limb, non-coded: Left leg",
+                "concept": {
+                    "id": 231,
+                    "uuid": "uuid-limb-text",
+                    "name": {
+                        "display": "Affected limb, non-coded"
+                    },
+                    "datatype": {
+                        "uuid": "8d4a4ab4-c2cc-11de-8d13-0010c6dffd0f"
+                    }
+                },
+                "value": "Left leg"
+            }
+        ]
     }
 ];
 
@@ -344,6 +386,19 @@ const mockConcepts = {
                 "conceptNameType": "FULLY_SPECIFIED",
                 "localePreferred": true,
                 "name": "Prescription instructions, non-coded"
+            }
+        ]
+    },
+    'uuid-limb-text': {
+        "uuid": "uuid-limb-text",
+        "display": "Affected limb, non-coded",
+        "names": [
+            {
+                "voided": false,
+                "locale": "en",
+                "conceptNameType": "FULLY_SPECIFIED",
+                "localePreferred": true,
+                "name": "Affected limb, non-coded"
             }
         ]
     },
@@ -588,4 +643,18 @@ describe('ObsAcrossEncounters', () => {
         });
     });
 
+    it('should show two obs values on same cell when they\'re answer to same concept within same form', () => {
+        let bindings = { config: { concepts: 'uuid-limb-text', patientUuid: 'some-patient-uuid', encounterTypes: 'Report' }};
+        let ctrl = $componentController('obsacrossencounters', {$scope}, bindings);
+
+        spyOn(ctrl.openmrsRest, "get").and.callFake(fakeGetFunction(mockEncounters));
+
+        return ctrl.$onInit().then(() => {
+            expect(ctrl.output.headers).toEqual(['coreapps.date', 'Affected limb, non-coded']);
+            expect(ctrl.output.rows.length).toEqual(1);
+            expect(ctrl.output.rows[0][0]).toEqual({ value: "2021-06-01T05:00:00-04:00"});
+            expect(ctrl.output.rows[0][1][0].value).toEqual("Take with food");
+            expect(ctrl.output.rows[0][1][1].value).toEqual("Don't mix with alcohol");
+        });
+    });
 });
