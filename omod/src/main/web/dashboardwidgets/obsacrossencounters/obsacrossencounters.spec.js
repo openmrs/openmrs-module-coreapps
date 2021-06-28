@@ -653,8 +653,8 @@ describe('ObsAcrossEncounters', () => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Affected limb, non-coded']);
             expect(ctrl.output.rows.length).toEqual(1);
             expect(ctrl.output.rows[0][0]).toEqual({ value: "2021-06-01T05:00:00-04:00"});
-            expect(ctrl.output.rows[0][1][0].value).toEqual("Take with food");
-            expect(ctrl.output.rows[0][1][1].value).toEqual("Don't mix with alcohol");
+            expect(ctrl.output.rows[0][1][0].value).toEqual("Left arm");
+            expect(ctrl.output.rows[0][1][1].value).toEqual("Left leg");
         });
     });
 });
