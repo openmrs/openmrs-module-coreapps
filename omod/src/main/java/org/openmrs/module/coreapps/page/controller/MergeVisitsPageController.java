@@ -98,7 +98,7 @@ public class MergeVisitsPageController {
      * If some of the merged visit IDs are on the return url, it scraps the visitId param altogether off the URL
      * so it doesn't return to a visit that no longer exists.
      */
-    public String removeVisitIdFromURLIfVisitWasMerged(String returnUrl, List<String> mergedVisitsIDs) {
+    protected String removeVisitIdFromURLIfVisitWasMerged(String returnUrl, List<String> mergedVisitsIDs) {
         //Pattern to get the visitID from url
         Pattern pat = Pattern.compile("(?<=visitId=)[^&]+");
         Matcher urlVisitId = pat.matcher(returnUrl);
