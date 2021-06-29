@@ -388,9 +388,10 @@ export default class ProgramStatusController {
             outcome: this.input.outcome//,
             //states: states
         }).then((response) => {
-            // redirect to Mark Patient Dead page if specific "death" outcome is configured and selected
+            // redirect to Mark Patient Dead page if status is being set to "dead" or is currently "dead"
             if (this.markPatientDeadOutcome && this.canMarkPatientDead &&
-                response.outcome && response.outcome.uuid === this.markPatientDeadOutcome) {
+                ((response.outcome && response.outcome.uuid === this.markPatientDeadOutcome)
+                || (this.patientProgram.outcome && this.patientProgram.outcome.uuid == this.markPatientDeadOutcome))) {
               var destinationPage = Handlebars.compile(this.markPatientDeadPage)({
                 patientUuid: this.config.patientUuid,
                 dashboard: this.config.dashboard,
