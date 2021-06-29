@@ -43,7 +43,7 @@ public class MergeVisitsPageController {
 
         //Remove the visit ID from URL, in case we merge that visit, it should not be possible to return to it.
         if (!StringUtils.isEmpty(returnUrl) && returnUrl.contains("visitId=") && mergedVisitIds.size() > 0) {
-            returnUrl = updateVisitIdUrlParameter(returnUrl, mergedVisitIds);
+            returnUrl = removeVisitIdFromURLIfVisitWasMerged(returnUrl, mergedVisitIds);
         }
 
         model.addAttribute("returnUrl", returnUrl);
@@ -95,17 +95,17 @@ public class MergeVisitsPageController {
 
 
     /**
-     * If some of the merged visit IDs are on the return url,  it scraps the visitId param altogether off the UR
+     * If some of the merged visit IDs are on the return url, it scraps the visitId param altogether off the URL
      * so it doesn't return to a visit that no longer exists.
      */
-    public String updateVisitIdUrlParameter(String returnUrl, List<String> mergedVisitsIDs) {
+    public String removeVisitIdFromURLIfVisitWasMerged(String returnUrl, List<String> mergedVisitsIDs) {
         //Pattern to get the visitID from url
         Pattern pat = Pattern.compile("(?<=visitId=)[^&]+");
         Matcher urlVisitId = pat.matcher(returnUrl);
         //If find some visitID on url.
         if (urlVisitId.find()) {
-            for (String s : mergedVisitsIDs.get(0).split(",")) {
-                if (urlVisitId.group(0).equals(s)) {
+            for (String mergedVisitId : mergedVisitsIDs.get(0).split(",")) {
+                if (urlVisitId.group(0).equals(mergedVisitId)) {
                     //remove the visitID from url
                     returnUrl = returnUrl.replaceAll("(&visitId[^&]+)", "");
                     break;
