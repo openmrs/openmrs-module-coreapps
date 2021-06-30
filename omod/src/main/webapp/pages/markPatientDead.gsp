@@ -9,7 +9,7 @@
 
     Calendar cal = Calendar.getInstance()
     def maxAgeYear = cal.get(Calendar.YEAR)
-    def minAgeYear = maxAgeYear - patient.getAge()
+    def minAgeYear = patient.getAge() ? maxAgeYear - patient.getAge() : null;
     def breadcrumbMiddle = breadcrumbOverride ?: '';
 %>
 <script type="text/javascript">
