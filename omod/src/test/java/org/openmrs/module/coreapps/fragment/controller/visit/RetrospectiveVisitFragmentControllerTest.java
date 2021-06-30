@@ -169,6 +169,8 @@ public class RetrospectiveVisitFragmentControllerTest {
     @Test
     public void test_shouldCreateNewRetrospectiveVisitWithTimezoneAndDontChangeEndDateToEndOfDay() throws Exception {
 
+        TimeZone existingDefault = TimeZone.getDefault();
+
         when(ui.message("coreapps.retrospectiveVisit.addedVisitMessage")).thenReturn("success message");
         when(ui.convertTimezones()).thenReturn(true);
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
@@ -186,6 +188,8 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), eq(endDate));
 
+        // clean up by setting time zone back to original value
+        TimeZone.setDefault(existingDefault);
     }
 
     @Test
