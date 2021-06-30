@@ -103,7 +103,7 @@ export default class ObsAcrossEncountersController {
       });
       for (let uuid of Object.keys(this.conceptsMap)) {
         let obsArray = [];
-         if (angular.isArray(encounter.obs[uuid])) {
+         if (encounter.obs[uuid]) {
           for (let obs of encounter.obs[uuid]) {
              obsArray.push({
                value: (obs ? this.getObsValue(obs) : '') || '',
@@ -111,10 +111,10 @@ export default class ObsAcrossEncountersController {
               });
             }
         } else {
-           obsArray.push({
-             value: ''
-           });
-         }
+          obsArray.push({
+            value: ''
+          });
+        }
         row.push(obsArray);
       }
     }

@@ -17,6 +17,9 @@ import timezoneMock from 'timezone-mock';
 //     - uuid-text
 // Consult
 //   - uuid-numeric
+// Report
+//   - uuid-limb-text
+//   - uuid-limb-text
 const mockEncounters = [
     {
         "uuid": "1a742d56-6528-4eac-b3a5-b222f2120ffa",
