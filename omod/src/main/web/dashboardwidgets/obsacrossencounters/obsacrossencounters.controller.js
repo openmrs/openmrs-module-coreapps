@@ -56,14 +56,13 @@ export default class ObsAcrossEncountersController {
 
     const encounterQueryParams = {
       patient: this.config.patientUuid,
-      v: 'custom:(uuid,encounterDatetime,encounterType:(name,description),obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
+      v: 'custom:(uuid,encounterDatetime,encounterProviders:(uuid,provider:(uuid,name)),encounterType:(name,description),obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
       limit: this.config.maxRecords || 4,
       fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge)
     };
     const encounterPromises = encounterTypes.length ? encounterTypes.map(e =>
       this.openmrsRest.get("encounter",
-          Object.assign({ encounterType: e }, encounterQueryParams)
-      ).then(response => response.results))
+          Object.assign({ encounterType: e }, encounterQueryParams)).then(response => response.results))
     : [this.openmrsRest.get("encounter",
           Object.assign({ encounterType: '' }, encounterQueryParams)  // `encounterType: ''` is required to prevent a 400 error
       ).then(response => response.results)];
@@ -79,6 +78,9 @@ export default class ObsAcrossEncountersController {
       if (this.config.showEncounterTypeName) {
         this.output.headers.push('coreapps.patientDashBoard.encounter');
       }
+      if (this.config.showEncounterProviderName) {
+        this.output.headers.push('coreapps.patientDashBoard.provider');
+      }
       this.output.headers.push('coreapps.date');
       for (const concept of Object.values(this.conceptsMap)) {
         this.output.headers.push(concept.display);
@@ -86,6 +88,8 @@ export default class ObsAcrossEncountersController {
     }
 
     this.output.rows = [];
+    let encounterDateToDisplay = "";
+    let providersNameToDisplay = "";
     const sortedEncs = this.simpleEncs.sort((a, b) => a.encounterDatetime - b.encounterDatetime);
     for (let i = 0; i < sortedEncs.length; i++) {
       const encounter = sortedEncs[i]
@@ -94,12 +98,31 @@ export default class ObsAcrossEncountersController {
       if (this.config.showEncounterTypeName) {
         row.push({ value: encounter.encounterType, translate: true });
       }
-      row.push({
-        value: this.widgetsCommons.formatDate(
-          encounter.encounterDatetime,
-          this.config.JSDateFormat,
-          this.config.language)
-      });
+
+      if (this.config.showEncounterProviderName) {
+        encounter.encounterProviders.map((element , index) => {
+          providersNameToDisplay += element.provider.name;
+          if(index != (encounter.encounterProviders.length - 1)){
+            providersNameToDisplay +=  ", "
+          }
+        });
+        row.push({ value: providersNameToDisplay , translate: false });
+      }
+      if (this.config.showDateWithTime) {
+         encounterDateToDisplay = this.widgetsCommons.formatDateTime(
+            encounter.encounterDatetime,
+            this.config.JSDateTimeFormat,
+            this.config.language);
+      } else {
+        encounterDateToDisplay = this.widgetsCommons.formatDate(
+            encounter.encounterDatetime,
+            this.config.JSDateFormat,
+            this.config.language);
+      }
+        row.push({
+          value: encounterDateToDisplay
+        });
+
       for (var uuid of Object.keys(this.conceptsMap)) {
         row.push({
           value: (encounter.obs[uuid] ? this.getObsValue(encounter.obs[uuid]) : '') || '',
@@ -142,6 +165,7 @@ export default class ObsAcrossEncountersController {
             this.simpleEncs.push({
               encounterType: encounter.encounterType.name,
               encounterDatetime: encounter.encounterDatetime,
+              encounterProviders: encounter.encounterProviders,
               obs: foundMembersByUuid
             });
           }
@@ -154,6 +178,7 @@ export default class ObsAcrossEncountersController {
         this.simpleEncs.push({
           encounterType: encounter.encounterType.name,
           encounterDatetime: encounter.encounterDatetime,
+          encounterProviders: encounter.encounterProviders,
           obs: foundObsByUuid
         });
       }
