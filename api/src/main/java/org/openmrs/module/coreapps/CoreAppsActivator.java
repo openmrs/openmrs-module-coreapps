@@ -80,13 +80,15 @@ public class CoreAppsActivator extends BaseModuleActivator {
     /**
 	 * @see ModuleActivator#willRefreshContext()
 	 */
+	@Override
 	public void willRefreshContext() {
 		log.info("Refreshing Core Apps Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#contextRefreshed()
 	 */
+	@Override
 	public void contextRefreshed() {
 		ConceptService conceptService = Context.getConceptService();
         EmrApiProperties emrApiProperties = Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class);
@@ -109,20 +111,22 @@ public class CoreAppsActivator extends BaseModuleActivator {
 
             htmlFormEntryService.addHandler(CoreAppsConstants.HTMLFORMENTRY_CODED_OR_FREE_TEXT_OBS_TAG_NAME, new CodedOrFreeTextObsTagHandler());
         }
-        
+
 		log.info("Core Apps Module refreshed");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#willStart()
 	 */
+	@Override
 	public void willStart() {
 		log.info("Starting Core Apps Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#started()
 	 */
+	@Override
 	public void started() {
 
         // purge old global property no longer used
@@ -133,10 +137,11 @@ public class CoreAppsActivator extends BaseModuleActivator {
 
         log.info("Core Apps Module started");
     }
-	
+
 	/**
 	 * @see ModuleActivator#willStop()
 	 */
+	@Override
 	public void willStop() {
 		log.info("Stopping Core Apps Module");
 	}
@@ -144,6 +149,7 @@ public class CoreAppsActivator extends BaseModuleActivator {
 	/**
 	 * @see ModuleActivator#stopped()
 	 */
+	@Override
 	public void stopped() {
         try {
             HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
