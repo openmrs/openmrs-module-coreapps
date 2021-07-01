@@ -88,10 +88,12 @@ export default class ObsAcrossEncountersController {
     }
 
     this.output.rows = [];
-    let encounterDateToDisplay = "";
-    let providersNameToDisplay = "";
+    let encounterDateToDisplay;
+    let providersNameToDisplay;
     const sortedEncs = this.simpleEncs.sort((a, b) => a.encounterDatetime - b.encounterDatetime);
     for (let i = 0; i < sortedEncs.length; i++) {
+      encounterDateToDisplay = "";
+      providersNameToDisplay = "";
       const encounter = sortedEncs[i]
       const row = [];
       this.output.rows.push(row);
