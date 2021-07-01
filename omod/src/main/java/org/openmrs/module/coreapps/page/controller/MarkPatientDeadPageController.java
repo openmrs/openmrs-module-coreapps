@@ -8,8 +8,11 @@ import org.openmrs.ConceptAnswer;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.exitfromcare.ExitFromCareService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -31,6 +34,7 @@ public class MarkPatientDeadPageController {
     public void get(@SpringBean PageModel pageModel,
                     @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
                     @SpringBean("patientService") PatientService patientService,
+                    @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                     @RequestParam("patientId") Patient patient,
                     @RequestParam(value = "defaultDead", required = false) Boolean defaultDead,
                     @RequestParam(value = "defaultDeathDate", required = false) Date defaultDeathDate
@@ -42,6 +46,8 @@ public class MarkPatientDeadPageController {
         pageModel.put("breadcrumbOverride", breadcrumbOverride);
         pageModel.put("defaultDead", defaultDead);
         pageModel.put("defaultDeathDate", defaultDeathDate);
+        // if the getPatientDied property is configured, the ExitFromCare service will close/reopen patient programs when marking a patient dead/not dead
+        pageModel.put("renderProgramWarning", emrApiProperties.getPatientDiedConcept() != null);
 
         String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
 
@@ -60,6 +66,9 @@ public class MarkPatientDeadPageController {
 
     public String post(@SpringBean("patientService")
                        PatientService patientService,
+                       @SpringBean("exitFromCareService")
+                       ExitFromCareService exitFromCareService,
+                       @SpringBean("conceptService") ConceptService conceptService,
                        @RequestParam(value = "causeOfDeath", required = false) String causeOfDeath,
                        @RequestParam(value = "dead", required = false) Boolean dead,
                        @RequestParam(value = "deathDate", required = false) Date deathDate,
@@ -69,21 +78,12 @@ public class MarkPatientDeadPageController {
         try {
             Date date = new Date();
             if (dead != null && StringUtils.isNotBlank(causeOfDeath) && deathDate != null && !deathDate.before(patient.getBirthdate()) && !deathDate.after(date)) {
-                patient.setDead(dead);
-                patient.setCauseOfDeath(Context.getConceptService().getConceptByUuid(causeOfDeath));
-                patient.setDeathDate(deathDate);
+                // TODO should more gracefully handle bad cause of death concept
+                exitFromCareService.markPatientDead(patient, conceptService.getConceptByUuid(causeOfDeath), deathDate);
             } else {
-                patient.setDeathDate(null);
-                patient.setDead(false);
-                patient.setCauseOfDeath(null);
+                exitFromCareService.markPatientNotDead(patient);
             }
 
-
-            patientService.savePatient(patient);
-
-            if (patient.isDead() && patient.getDeathDate() != null) {
-                closeActiveVisitsAfterDeath(patient);
-            }
             return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "dashboard", returnDashboard, "returnUrl", returnUrl));
         } catch (APIException e) {
             log.error(e.getMessage(), e);
@@ -103,19 +103,6 @@ public class MarkPatientDeadPageController {
             conceptAnswers = concept.getAnswers();
         }
         return conceptAnswers;
-    }
-
-    /**
-     * The Method closeActiveVisitsAfterDeath closes all active visits when a patient dies.
-     * @param patient
-     */
-    private void closeActiveVisitsAfterDeath(Patient patient) {
-        List<Visit> visitList = Context.getVisitService().getActiveVisitsByPatient(patient);
-        if (visitList.size() <= 0) {
-            for (Visit visit : visitList) {
-                Context.getVisitService().endVisit(visit, patient.getDeathDate());
-            }
-        }
     }
 }
 

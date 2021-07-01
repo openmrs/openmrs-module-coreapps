@@ -51,8 +51,7 @@ public class ParseEncounterToJson {
         simpleEncounter.put("uuid", encounter.getUuid());
         // manually set the date and time components so we can control how we format them
         simpleEncounter.put("encounterDate", uiUtils.format(encounter.getEncounterDatetime()));
-        simpleEncounter.put("encounterTime",
-                DateFormatUtils.format(encounter.getEncounterDatetime(), "hh:mm a", Context.getLocale()));
+        simpleEncounter.put("encounterTime", uiUtils.convertTimezones() ? uiUtils.formatTimeWithClientTimezone(encounter.getEncounterDatetime()) : DateFormatUtils.format(encounter.getEncounterDatetime(), "hh:mm a", Context.getLocale()));
 
         // do the same for other date fields
         simpleEncounter.put("dateCreated", uiUtils.format(encounter.getDateCreated()));

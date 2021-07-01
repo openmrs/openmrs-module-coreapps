@@ -76,7 +76,7 @@
     <% if (patient.patient.dead) { %>
         <div class="death-header col-12">
             <span class="death-message">
-                ${ ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath)) }
+                    ${ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath))}
             </span>
             <span class="death-info-extension">
                 <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.deathInfo", contextModel: appContextModel ]) %>

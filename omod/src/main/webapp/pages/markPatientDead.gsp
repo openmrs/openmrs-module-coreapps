@@ -9,7 +9,7 @@
 
     Calendar cal = Calendar.getInstance()
     def maxAgeYear = cal.get(Calendar.YEAR)
-    def minAgeYear = maxAgeYear - patient.getAge()
+    def minAgeYear = patient.getAge() ? maxAgeYear - patient.getAge() : null;
     def breadcrumbMiddle = breadcrumbOverride ?: '';
 %>
 <script type="text/javascript">
@@ -27,9 +27,19 @@
             if (this.checked) {
                 showContainer('#death-date-container');
                 showContainer('#cause-of-death-container');
+                <% if (patient?.getDead() != true) { %>
+                    showAlert('#mark-patient-dead-warning');
+                <% } else { %>
+                    hideAlert('#mark-patient-not-dead-warning');
+                <% } %>
             } else {
                 hideContainer('#death-date-container');
                 hideContainer('#cause-of-death-container');
+                <% if (patient?.getDead() != true) { %>
+                    hideAlert('#mark-patient-dead-warning');
+                <% } else if (renderProgramWarning == true) { %>
+                    showAlert('#mark-patient-not-dead-warning');
+                <% } %>
             }
         });
 
@@ -37,9 +47,15 @@
             if (this.checked) {
                 showContainer('#death-date-container');
                 showContainer('#cause-of-death-container');
+                <% if (patient?.getDead() != true) { %>
+                    showAlert('#mark-patient-dead-warning');
+                <% } %>
             } else {
                 hideContainer('#death-date-container');
                 hideContainer('#cause-of-death-container');
+                <% if (patient?.getDead() == true && renderProgramWarning == true) { %>
+                  showAlert('#mark-patient-not-dead-warning');
+                <% } %>
             }
         });
 
@@ -58,6 +74,10 @@
                     jq("#cause-of-death-container > .field-error").append("${ui.message("coreapps.markPatientDead.causeOfDeath.errorMessage")}").show();
                     hasError = true;
                 }
+                if(!hasError && ${ui.convertTimezones()}){
+                    var inputDate = new Date(jq("#death-date-field").val());
+                    jq("#death-date-field").val(inputDate.toISOString())
+                }
             }
             return !hasError;
         });
@@ -67,6 +87,19 @@
 
 ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
 <h3>${ui.message("coreapps.markPatientDead.label")}</h3>
+
+<div id="mark-patient-dead-warning" class="alert alert-warning hidden" role="alert">
+    <% if (renderProgramWarning == true) { %>
+        ${ui.message("coreapps.markPatientDead.warning")}
+    <% } else { %>
+        ${ui.message("coreapps.markPatientDead.warning.visitsOnly")}
+    <% } %>
+</div>
+
+<div id="mark-patient-not-dead-warning" class="alert alert-warning hidden" role="alert">
+    ${ui.message("coreapps.markPatientDead.markPatientNotDead.warning")}
+</div>
+
 
 <form method="post" id="mark-patient-dead">
     <fieldset style="min-width: 40%">
@@ -94,7 +127,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                         formFieldName: "deathDate",
                         left         : true,
                         defaultDate  : patient?.getDeathDate() ?: defaultDeathDate ?: null,
-                        useTime      : true,
+                        useTime      : false,
                         showEstimated: false,
                         initialValue : lastVisitDate ?:new Date(),
                         startDate    : lastVisitDate?:birthDate,

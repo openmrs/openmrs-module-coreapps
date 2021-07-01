@@ -3,7 +3,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>coreapps</artifactId>
-	<version>1.32.0-SNAPSHOT</version>
+	<version>1.33.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Core Apps Module</name>
 	<description>Provides apps for performing the common tasks</description>
@@ -38,8 +38,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <emrapiVersion>1.29.0</emrapiVersion>
-        <uiframeworkVersion>3.21.0-SNAPSHOT</uiframeworkVersion>
+        <emrapiVersion>1.32.0-SNAPSHOT</emrapiVersion>
+        <uiframeworkVersion>3.21.0</uiframeworkVersion>
         <eventVersion>2.8.0</eventVersion>
         <htmlformentryVersion>3.3.0</htmlformentryVersion>
         <appuiVersion>1.7</appuiVersion>

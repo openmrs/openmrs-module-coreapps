@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -165,7 +166,52 @@ public class RetrospectiveVisitFragmentControllerTest {
 
     }
 
+    @Test
+    public void test_shouldCreateNewRetrospectiveVisitWithTimezoneAndDontChangeEndDateToEndOfDay() throws Exception {
 
+        TimeZone existingDefault = TimeZone.getDefault();
+
+        when(ui.message("coreapps.retrospectiveVisit.addedVisitMessage")).thenReturn("success message");
+        when(ui.convertTimezones()).thenReturn(true);
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        Patient patient = createPatient();
+        Location location = new Location();
+        Visit mockVisit = new Visit();
+        mockVisit.setId(1);
+
+        Date startDate = new DateTime(2012, 1, 1, 13, 13, 13, 0).toDate();
+        Date endDate = new DateTime(2012, 1, 1, 16, 16, 16, 0).toDate();
+
+        when(adtService.createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), any(Date.class))).thenReturn(new VisitDomainWrapper(mockVisit));  // to prevent against NPE when generating success message
+
+        controller.create(adtService, patient, location, startDate, endDate, request, ui);
+
+        verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), eq(endDate));
+
+        // clean up by setting time zone back to original value
+        TimeZone.setDefault(existingDefault);
+    }
+
+    @Test
+    public void test_shouldNotSetEndDateToCurrentTimeIfEndDateIsCurrentDay() throws Exception {
+
+        when(ui.message("coreapps.retrospectiveVisit.addedVisitMessage")).thenReturn("success message");
+        when(ui.convertTimezones()).thenReturn(true);
+        Patient patient = createPatient();
+        Location location = new Location();
+        Visit mockVisit = new Visit();
+        mockVisit.setId(1);
+
+        Date startDate = new DateTime().withTime(0,0,0,0).toDate();
+        Date endDate = startDate;
+
+        when(adtService.createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), any(Date.class))).thenReturn(new VisitDomainWrapper(mockVisit));  // to prevent against NPE when generating success message
+
+        controller.create(adtService, patient, location, startDate, endDate, request, ui);
+
+        verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), eq(endDate));
+
+    }
 
     private Visit createVisit() {
         Visit visit = new Visit();

@@ -66,29 +66,29 @@ import org.springframework.context.MessageSource;
  *
  */
 public class ParserEncounterIntoSimpleObjectsTest {
-	
+
 	private DiagnosisMetadata diagnosisMetadata;
-	
+
 	private DispositionDescriptor dispositionDescriptor;
-	
+
 	private EmrApiProperties emrApiProperties;
-	
+
 	private EmrConceptService emrConceptService;
-	
+
 	private ConceptService conceptService;
 
     private LocationService locationService;
 
     private DispositionService dispositionService;
-    
+
     private MessageSource messageSource;
-	
+
 	private UiUtils uiUtils;
-	
+
 	private Encounter encounter;
-	
+
 	private ParserEncounterIntoSimpleObjects parser;
-	
+
 	/*
 	 * Just a TestUiUtils with explicit control on the Formatter
 	 */
@@ -98,18 +98,18 @@ public class ParserEncounterIntoSimpleObjectsTest {
 			this.formatter = formatter;
 		};
 	}
-	
+
 	@Before
 	public void setUp() throws Exception {
 		emrApiProperties = mock(EmrApiProperties.class);
 		conceptService = mock(ConceptService.class);
         locationService = mock(LocationService.class);
         dispositionService = mock(DispositionService.class);
-		
+
 		MockMetadataTestUtil.setupMockConceptService(conceptService, emrApiProperties);
-		
+
 		emrConceptService = mock(EmrConceptService.class);
-		
+
 		diagnosisMetadata = MockMetadataTestUtil.setupDiagnosisMetadata(emrApiProperties, conceptService);
 		dispositionDescriptor = MockMetadataTestUtil.setupDispositionDescriptor(conceptService);
 		when(dispositionService.getDispositionDescriptor()).thenReturn(dispositionDescriptor);
@@ -125,17 +125,17 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		TestUiUtils testUiUtils = new MockUiUtils(new FormatterImpl(messageSource, mock(AdministrationService.class)));
 		testUiUtils.setMockFormattingConcepts(true);
 		uiUtils = testUiUtils;
-		
+
 		encounter = new Encounter();
 		parser = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties, locationService, dispositionService);
 	}
-	
+
 	@Test
 	public void testParsingDiagnoses() throws Exception {
 		encounter.addObs(diagnosisMetadata.buildDiagnosisObsGroup(new Diagnosis(new CodedOrFreeTextAnswer("Random Disease"),
 		        Diagnosis.Order.PRIMARY)));
 		ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
-		
+
 		assertThat(parsed.getDiagnoses().size(), is(1));
 		assertThat(parsed.getDispositions().size(), is(0));
 		assertThat(parsed.getObs().size(), is(0));
@@ -144,7 +144,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		    is((Object) "(coreapps.Diagnosis.Certainty.PRESUMED) \"Random Disease\""));
 		assertThat(path(parsed.getDiagnoses(), 0, "order"), is((Object) 0));
 	}
-	
+
 	@Test
 	public void testParsingDispositions() throws Exception {
 		Concept admit = new ConceptBuilder(null, conceptService.getConceptDatatypeByName("N/A"),
@@ -154,7 +154,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		        Collections.<String> emptyList(), Collections.<DispositionObs> emptyList()), emrConceptService);
 		encounter.addObs(doNotGoToServiceToFormatMembers(dispositionObs));
 		ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
-		
+
 		assertThat(parsed.getDiagnoses().size(), is(0));
 		assertThat(parsed.getDispositions().size(), is(1));
 		assertThat(parsed.getObs().size(), is(0));
@@ -255,7 +255,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 
         SimpleObject expectedAdmissionLocationObject = SimpleObject.create("obsId", dateOfDeathObs.getObsId());
         expectedAdmissionLocationObject.put("question","Date of death");
-        expectedAdmissionLocationObject.put("answer", "20 Feb 2012 10:10 AM");
+        expectedAdmissionLocationObject.put("answer", new SimpleDateFormat("dd MMM yyyy hh:mm a").format(dateOfDeath));
 
         List<SimpleObject> expectedAdditionalObsList = new ArrayList<SimpleObject>();
         expectedAdditionalObsList.add(expectedAdmissionLocationObject);
@@ -272,24 +272,24 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		for (Obs member : obsGroup.getGroupMembers()) {
 			replacements.add(new DoNotGoToServiceWhenFormatting(member));
 		}
-		
+
 		obsGroup.setGroupMembers(replacements);
 		return obsGroup;
 	}
-	
+
 	@Test
 	public void testParsingSimpleObs() throws Exception {
 		ConceptDatatype textDatatype = conceptService.getConceptDatatypeByName("Text");
 		ConceptClass misc = conceptService.getConceptClassByName("Misc");
-		
+
 		String consultNote = "Consult note"; // intentionally the same as what will result from capitalizeFirstLetter(consultNote)
 		String valueText = "Patient is here for blah blah blah.";
-		
+
 		Concept consultComments = new ConceptBuilder(conceptService, textDatatype, misc).addName(consultNote).get();
-		
+
 		encounter.addObs(new ObsBuilder().setConcept(consultComments).setValue(valueText).get());
 		ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
-		
+
 		assertThat(parsed.getDiagnoses().size(), is(0));
 		assertThat(parsed.getDispositions().size(), is(0));
 		assertThat(parsed.getObs().size(), is(1));
@@ -310,7 +310,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 
         encounter.addObs(new ObsBuilder().setConcept(someLocation).setValue("2").setComment("org.openmrs.Location").get());
         ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
-        
+
         assertThat(parsed.getObs().size(), is(1));
         assertThat(path(parsed.getObs(), 0, "question"), is((Object) "Some location"));
         assertThat(path(parsed.getObs(), 0, "answer"), is((Object) "Xanadu"));
@@ -332,11 +332,11 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		}
 		return current;
 	}
-	
+
 	private class DoNotGoToServiceWhenFormatting extends Obs {
-		
+
 		private Obs obs;
-		
+
 		public DoNotGoToServiceWhenFormatting(Obs obs) {
 			this.obs = obs;
 		}
