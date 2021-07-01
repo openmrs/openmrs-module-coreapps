@@ -103,13 +103,13 @@ export default class ObsAcrossEncountersController {
       });
       for (let uuid of Object.keys(this.conceptsMap)) {
         let obsArray = [];
-         if (encounter.obs[uuid]) {
+        if (encounter.obs[uuid]) {
           for (let obs of encounter.obs[uuid]) {
-             obsArray.push({
-               value: (obs ? this.getObsValue(obs) : '') || '',
-               className: this.isRetired(obs) ? 'retiredConcept' : ''
-              });
-            }
+            obsArray.push({
+              value: (obs ? this.getObsValue(obs) : '') || '',
+              className: this.isRetired(obs) ? 'retiredConcept' : ''
+            });
+          }
         } else {
           obsArray.push({
             value: ''
