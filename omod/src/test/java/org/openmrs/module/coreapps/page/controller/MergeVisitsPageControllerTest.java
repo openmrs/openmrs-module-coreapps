@@ -25,8 +25,10 @@ import java.util.List;
 public class MergeVisitsPageControllerTest {
 
     MergeVisitsPageController controller;
+
     private final String RETURN_URL_WITH_VISIT_ID = "http://localhost:8080/openmrs/coreapps/patientdashboard/patientDashboard.page?patientId=9e121f61-457f-4eaa-9121-62fbb9acdaad&visitId=7";
     private final String RETURN_URL_WITHOUT_VISIT_ID = "http://localhost:8080/openmrs/coreapps/patientdashboard/patientDashboard.page?patientId=9e121f61-457f-4eaa-9121-62fbb9acdaad";
+
     @Before
     public void setup() {
         controller = new MergeVisitsPageController();
