@@ -12,6 +12,7 @@ export default class ObsAcrossEncountersController {
     this.simpleEncs = [];
     this.headers = [];
     this.openmrsRest.setBaseAppPath("/coreapps");
+    this.isArray = angular.isArray;
 
     this.output = {
       headers: [],
@@ -123,11 +124,21 @@ export default class ObsAcrossEncountersController {
           value: encounterDateToDisplay
         });
 
-      for (var uuid of Object.keys(this.conceptsMap)) {
-        row.push({
-          value: (encounter.obs[uuid] ? this.getObsValue(encounter.obs[uuid]) : '') || '',
-          className: this.isRetired(encounter.obs[uuid]) ? 'retiredConcept' : ''
-        });
+      for (let uuid of Object.keys(this.conceptsMap)) {
+        let obsArray = [];
+        if (encounter.obs[uuid]) {
+          for (let obs of encounter.obs[uuid]) {
+            obsArray.push({
+              value: (obs ? this.getObsValue(obs) : '') || '',
+              className: this.isRetired(obs) ? 'retiredConcept' : ''
+            });
+          }
+        } else {
+          obsArray.push({
+            value: ''
+          });
+        }
+        row.push(obsArray);
       }
     }
   }
@@ -160,7 +171,10 @@ export default class ObsAcrossEncountersController {
           if (foundMembers.length) {
             const foundMembersByUuid = {};
             for (let m of foundMembers) {
-              foundMembersByUuid[m.concept.uuid] = m;
+              if (!foundMembersByUuid[m.concept.uuid]) {
+                foundMembersByUuid[m.concept.uuid] = [];
+              }
+              foundMembersByUuid[m.concept.uuid].push(m);
             }
             this.simpleEncs.push({
               encounterType: encounter.encounterType.name,
@@ -171,7 +185,10 @@ export default class ObsAcrossEncountersController {
           }
         } else // otherwise, add the obs value (if it matches one of our concepts)
           if (conceptKeys.includes(obs.concept.uuid)) {
-          foundObsByUuid[obs.concept.uuid] = obs;
+            if (!foundObsByUuid[obs.concept.uuid]) {
+              foundObsByUuid[obs.concept.uuid] = [];
+            }
+            foundObsByUuid[obs.concept.uuid].push(obs);
         }
       }
       if (Object.keys(foundObsByUuid).length > 0) {
@@ -198,11 +215,13 @@ export default class ObsAcrossEncountersController {
   updateWithConceptShortNames(encounters) {
     const resultPromises = [];
     for (let encounter of encounters) {
-      for (let obs of Object.values(encounter.obs)) {
-        if (this.widgetsCommons.isDrug(obs.value)) {
-          resultPromises.push(this.updateWithShortName(obs.value.concept));
-        } else if (this.widgetsCommons.hasDatatypeCoded(obs.concept)) {
-          resultPromises.push(this.updateWithShortName(obs.value));
+      for (let obsArray of Object.values(encounter.obs)) {
+        for (let obs of obsArray) {
+          if (this.widgetsCommons.isDrug(obs.value)) {
+            resultPromises.push(this.updateWithShortName(obs.value.concept));
+          } else if (this.widgetsCommons.hasDatatypeCoded(obs.concept)) {
+            resultPromises.push(this.updateWithShortName(obs.value));
+          }
         }
       }
     }
