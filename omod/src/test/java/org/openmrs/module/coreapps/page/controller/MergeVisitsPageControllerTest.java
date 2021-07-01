@@ -23,9 +23,10 @@ import java.util.List;
 
 
 public class MergeVisitsPageControllerTest {
+
     MergeVisitsPageController controller;
-    private final String RETURN_URL = "http://localhost:8080/openmrs/coreapps/patientdashboard/patientDashboard.page?patientId=9e121f61-457f-4eaa-9121-62fbb9acdaad&visitId=7";
-    private final String EXPECTED_URL = "http://localhost:8080/openmrs/coreapps/patientdashboard/patientDashboard.page?patientId=9e121f61-457f-4eaa-9121-62fbb9acdaad";
+    private final String RETURN_URL_WITH_VISIT_ID = "http://localhost:8080/openmrs/coreapps/patientdashboard/patientDashboard.page?patientId=9e121f61-457f-4eaa-9121-62fbb9acdaad&visitId=7";
+    private final String RETURN_URL_WITHOUT_VISIT_ID = "http://localhost:8080/openmrs/coreapps/patientdashboard/patientDashboard.page?patientId=9e121f61-457f-4eaa-9121-62fbb9acdaad";
     @Before
     public void setup() {
         controller = new MergeVisitsPageController();
@@ -35,13 +36,13 @@ public class MergeVisitsPageControllerTest {
     @Test
     public void test_shouldRemoveVisitParameterFromReturnURL() {
         List<String> merged_visits_ids = Arrays.asList("6,7,8,9");
-        Assert.assertEquals(controller.removeVisitIdFromURLIfVisitWasMerged(RETURN_URL, merged_visits_ids), EXPECTED_URL);
+        Assert.assertEquals(controller.removeVisitIdFromURLIfVisitWasMerged(RETURN_URL_WITH_VISIT_ID, merged_visits_ids), RETURN_URL_WITHOUT_VISIT_ID);
     }
 
     @Test
     public void test_shouldNotRemoveVisitParameterFromReturnURL() {
         List<String> merged_visits_ids = Arrays.asList("3,4,5,6");
-        Assert.assertEquals(controller.removeVisitIdFromURLIfVisitWasMerged(RETURN_URL, merged_visits_ids), RETURN_URL);
+        Assert.assertEquals(controller.removeVisitIdFromURLIfVisitWasMerged(RETURN_URL_WITH_VISIT_ID, merged_visits_ids), RETURN_URL_WITH_VISIT_ID);
     }
 
 }
