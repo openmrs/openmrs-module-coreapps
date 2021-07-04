@@ -118,6 +118,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                     <h3 >${ ui.message("coreapps.clinicianfacing.activeVisitActions") }</h3>
                     <% visitActions.each { ext -> %>
                     <li class="float-left">
+                    <% if((ext.label) != "Admit to inpatient") %>
                         <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
                             <div class="row">
                                <div class="col-1 col-lg-2">
@@ -128,6 +129,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient, a
                                 </div>
                             </div>
                         </a>
+                       <% } %>
                     </li>
                     <% } %>
                 </ul>
