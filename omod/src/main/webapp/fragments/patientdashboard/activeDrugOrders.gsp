@@ -19,7 +19,7 @@
         <i class="icon-medicine"></i>
         <h3>${ ui.message("coreapps.patientdashboard.activeDrugOrders").toUpperCase() }</h3>
         <% if (detailsUrl && context.hasPrivilege("App: orderentryui.drugOrders")) { %>
-        	<a href="${ detailsUrl + "&" + "returnUrl=" + ui.urlEncode(ui.escapeJs( ui.encodeHtmlAttribute(returnUrl))) }">
+        	<a href="${ detailsUrl + "&" + "returnUrl=" + ui.urlEncode(ui.encodeJavaScript( ui.encodeHtmlAttribute(returnUrl))) }">
                 <i class="icon-share-alt edit-action right" title="${ ui.message("coreapps.edit") }"></i>
             </a>
         <% } %>

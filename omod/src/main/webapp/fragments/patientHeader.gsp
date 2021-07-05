@@ -239,7 +239,7 @@
         <ul>
             <li class="info">
                 <span>${ui.message("coreapps.patient")}</span>
-                <h5>${ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient)))}</h5>
+                <h5>${ui.encodeJavaScript(ui.encodeHtmlContent(ui.format(patient.patient)))}</h5>
             </li>
             <li class="info">
                 <span id="identifierTypeNameSpan"></span>

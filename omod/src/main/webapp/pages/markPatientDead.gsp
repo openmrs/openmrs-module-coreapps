@@ -16,7 +16,7 @@
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
         {
-            label: "${ ui.escapeJs(ui.message("coreapps.markPatientDead.label")) }",
+            label: "${ ui.encodeJavaScript(ui.message("coreapps.markPatientDead.label")) }",
             link: '${ ui.urlBind("/" + contextPath + "coreapps/clinicianfacing/patient.page?patientId="+patientId, [ patientId: patient ] ) }'
         }
     ];
