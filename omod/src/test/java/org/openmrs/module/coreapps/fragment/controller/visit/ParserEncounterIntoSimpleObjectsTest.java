@@ -16,6 +16,7 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +36,8 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openmrs.Concept;
+import org.openmrs.ConceptName;
+import org.openmrs.ConceptNumeric;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.Encounter;
@@ -127,7 +130,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		uiUtils = testUiUtils;
 
 		encounter = new Encounter();
-		parser = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties, locationService, dispositionService);
+		parser = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties, locationService, conceptService, dispositionService);
 	}
 
 	@Test
@@ -295,6 +298,29 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		assertThat(parsed.getObs().size(), is(1));
 		assertThat(path(parsed.getObs(), 0, "question"), is((Object) consultNote));
 		assertThat(path(parsed.getObs(), 0, "answer"), is((Object) valueText));
+	}
+
+	@Test
+	public void testParsingNumericDataTypeWithAllowDecimalAsFalseToSimpleObs() throws Exception {
+		ConceptDatatype numericDatatype  = new ConceptDatatype() ;
+		numericDatatype.setName("Numeric");
+		numericDatatype.setHl7Abbreviation("NM");
+
+		ConceptName conceptName = new ConceptName("numericConceptTest" , Locale.ENGLISH);
+		ConceptNumeric conceptNumeric = new ConceptNumeric();
+		conceptNumeric.setId(1000);
+		conceptNumeric.addName(conceptName);
+		conceptNumeric.setUuid("uuid");
+		conceptNumeric.setAllowDecimal(false);
+		conceptNumeric.setDatatype(numericDatatype);
+
+		Double numericValue = 2.0;
+
+		when(conceptService.getConceptNumeric(anyInt())).thenReturn(conceptNumeric);
+		encounter.addObs(new ObsBuilder().setConcept(conceptNumeric).setValue(numericValue).get());
+		ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
+		assertThat(parsed.getObs().size(), is(1));
+		assertThat(path(parsed.getObs(), 0, "answer"), is((Object) "2"));
 	}
 
     @Test

@@ -17,6 +17,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
@@ -44,14 +45,17 @@ public class ParserEncounterIntoSimpleObjects {
 
     private LocationService locationService;
 
+    private ConceptService conceptService;
+
     private DispositionService dispositionService;
 
     public ParserEncounterIntoSimpleObjects(Encounter encounter, UiUtils uiUtils, EmrApiProperties emrApiProperties,
-                                            LocationService locationService, DispositionService dispositionService) {
+                                            LocationService locationService, ConceptService conceptService, DispositionService dispositionService) {
         this.encounter = encounter;
         this.uiUtils = uiUtils;
         this.emrApiProperties = emrApiProperties;
         this.locationService = locationService;
+        this.conceptService = conceptService;
         this.dispositionService = dispositionService;
     }
 	
@@ -130,6 +134,14 @@ public class ParserEncounterIntoSimpleObjects {
         }
         else {
             SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
+
+            if (obs.getConcept().isNumeric()) {
+                Boolean integerNumber = false;
+                if (!conceptService.getConceptNumeric(obs.getConcept().getConceptId()).isAllowDecimal()) {
+                    integerNumber = true;
+                }
+                simpleObject.put("integerNumber", integerNumber);
+            }
 
             simpleObject.put("question", capitalizeString(uiUtils.format(obs.getConcept())));
             simpleObject.put("answer", uiUtils.format(obs));
