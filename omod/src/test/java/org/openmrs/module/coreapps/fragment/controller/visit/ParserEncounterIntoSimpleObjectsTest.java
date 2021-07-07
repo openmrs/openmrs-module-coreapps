@@ -15,6 +15,7 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -299,6 +300,28 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		assertThat(path(parsed.getObs(), 0, "question"), is((Object) consultNote));
 		assertThat(path(parsed.getObs(), 0, "answer"), is((Object) valueText));
 	}
+	@Test
+	public void testParsingNumericDataTypeWithAllowDecimalToSimpleObs() throws Exception {
+		ConceptDatatype numericDatatype  = new ConceptDatatype() ;
+		numericDatatype.setName("Numeric");
+		numericDatatype.setHl7Abbreviation("NM");
+
+		ConceptName conceptName = new ConceptName("numericConceptTest" , Locale.ENGLISH);
+		ConceptNumeric conceptNumeric = new ConceptNumeric();
+		conceptNumeric.setId(1000);
+		conceptNumeric.addName(conceptName);
+		conceptNumeric.setUuid("uuid");
+		conceptNumeric.setAllowDecimal(true);
+		conceptNumeric.setDatatype(numericDatatype);
+
+		Double numericValue = 2.0;
+
+		when(conceptService.getConceptNumeric(eq(1000))).thenReturn(conceptNumeric);
+		encounter.addObs(new ObsBuilder().setConcept(conceptNumeric).setValue(numericValue).get());
+		ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
+		assertThat(parsed.getObs().size(), is(1));
+		assertThat(path(parsed.getObs(), 0, "answer"), is((Object) "2.0"));
+	}
 
 	@Test
 	public void testParsingNumericDataTypeWithAllowDecimalAsFalseToSimpleObs() throws Exception {
@@ -316,7 +339,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 
 		Double numericValue = 2.0;
 
-		when(conceptService.getConceptNumeric(anyInt())).thenReturn(conceptNumeric);
+		when(conceptService.getConceptNumeric(eq(1000))).thenReturn(conceptNumeric);
 		encounter.addObs(new ObsBuilder().setConcept(conceptNumeric).setValue(numericValue).get());
 		ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
 		assertThat(parsed.getObs().size(), is(1));
