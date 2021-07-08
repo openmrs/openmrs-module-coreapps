@@ -136,11 +136,11 @@ public class ParserEncounterIntoSimpleObjects {
             SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
 
             if (obs.getConcept().isNumeric()) {
-                Boolean integerNumber = false;
+                Boolean isIntegerValue = false;
                 if (!conceptService.getConceptNumeric(obs.getConcept().getConceptId()).isAllowDecimal()) {
-                    integerNumber = true;
+                    isIntegerValue = true;
                 }
-                simpleObject.put("integerNumber", integerNumber);
+                simpleObject.put("isIntegerValue", isIntegerValue);
             }
 
             simpleObject.put("question", capitalizeString(uiUtils.format(obs.getConcept())));

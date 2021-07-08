@@ -64,7 +64,7 @@
 
     {{ _.each(observations, function(observation) { }}
         {{ if(observation.answer != null) {}}
-            <p><small>{{- observation.question}}</small><span>{{- observation.integerNumber ? parseInt(observation.answer) : observation.answer}}</span></p>
+            <p><small>{{- observation.question}}</small><span>{{- observation.isIntegerValue ? parseInt(observation.answer) : observation.answer}}</span></p>
         {{}}}
     {{ }); }}
 

@@ -301,7 +301,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		assertThat(path(parsed.getObs(), 0, "answer"), is((Object) valueText));
 	}
 	@Test
-	public void testParsingNumericDataTypeWithAllowDecimalToSimpleObs() throws Exception {
+	public void testParsingNumericObsShouldHandleAllowDecimal() throws Exception {
 		ConceptDatatype numericDatatype  = new ConceptDatatype() ;
 		numericDatatype.setName("Numeric");
 		numericDatatype.setHl7Abbreviation("NM");
@@ -324,7 +324,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 	}
 
 	@Test
-	public void testParsingNumericDataTypeWithAllowDecimalAsFalseToSimpleObs() throws Exception {
+	public void testParsingNumericObsShouldHandleDisallowDecimal() throws Exception {
 		ConceptDatatype numericDatatype  = new ConceptDatatype() ;
 		numericDatatype.setName("Numeric");
 		numericDatatype.setHl7Abbreviation("NM");
