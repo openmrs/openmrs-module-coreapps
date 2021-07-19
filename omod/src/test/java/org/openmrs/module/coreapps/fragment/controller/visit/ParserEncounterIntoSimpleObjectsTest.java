@@ -321,11 +321,13 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
 		assertThat(parsed.getObs().size(), is(1));
 		assertThat(path(parsed.getObs(), 0, "answer"), is((Object) "2.0"));
+		assertThat(path(parsed.getObs(), 0, "isIntegerValue"), is((Object) false));
+
 	}
 
 	@Test
 	public void testParsingNumericObsShouldHandleDisallowDecimal() throws Exception {
-		ConceptDatatype numericDatatype  = new ConceptDatatype() ;
+		ConceptDatatype numericDatatype  = new ConceptDatatype();
 		numericDatatype.setName("Numeric");
 		numericDatatype.setHl7Abbreviation("NM");
 
@@ -344,6 +346,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
 		assertThat(parsed.getObs().size(), is(1));
 		assertThat(path(parsed.getObs(), 0, "answer"), is((Object) "2"));
+		assertThat(path(parsed.getObs(), 0, "isIntegerValue"), is((Object) true));
 	}
 
     @Test
