@@ -40,12 +40,12 @@ public class ParserEncounterIntoSimpleObjects {
 	private Encounter encounter;
 	
 	private UiUtils uiUtils;
-	
+
+    private ConceptService conceptService;
+
 	private EmrApiProperties emrApiProperties;
 
     private LocationService locationService;
-
-    private ConceptService conceptService;
 
     private DispositionService dispositionService;
 
@@ -55,8 +55,8 @@ public class ParserEncounterIntoSimpleObjects {
         this.uiUtils = uiUtils;
         this.emrApiProperties = emrApiProperties;
         this.locationService = locationService;
-        this.conceptService = conceptService;
         this.dispositionService = dispositionService;
+        this.conceptService = conceptService;
     }
 	
 	public List<SimpleObject> parseOrders() {
@@ -129,19 +129,14 @@ public class ParserEncounterIntoSimpleObjects {
 	}
 	
 	private SimpleObject parseObs(Obs obs, Locale locale) {
+        if(obs.getConcept() != null && obs.getConcept().isNumeric()){
+            obs.setConcept(this.conceptService.getConceptNumeric(obs.getConcept().getConceptId()));
+        }
         if ("org.openmrs.Location".equals(obs.getComment())) {
             return (parseObsWithLocationAnswer(obs, locationService.getLocation(Integer.valueOf(obs.getValueText()))));
         }
         else {
             SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
-
-            if (obs.getConcept().isNumeric()) {
-                Boolean isIntegerValue = false;
-                if (!conceptService.getConceptNumeric(obs.getConcept().getConceptId()).isAllowDecimal()) {
-                    isIntegerValue = true;
-                }
-                simpleObject.put("isIntegerValue", isIntegerValue);
-            }
 
             simpleObject.put("question", capitalizeString(uiUtils.format(obs.getConcept())));
             simpleObject.put("answer", uiUtils.format(obs));
