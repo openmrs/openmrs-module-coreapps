@@ -94,9 +94,9 @@ public class RetrospectiveVisitFragmentControllerTest {
         Location location = new Location();
         Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
 
-        // should round to the time components to the start and end of the days, respectively
+        // should round to the time components to the start of date, and keep stop date null
         Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
-        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59, 999).toDate();
+        Date expectedStopDate = null;
 
         Visit visit = createVisit();
 
@@ -120,9 +120,9 @@ public class RetrospectiveVisitFragmentControllerTest {
         Location location = new Location();
         Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
 
-        // should round to the time components to the start and end of the days, respectively
+        // should round to the time components to the start of date, and keep stop date null
         Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
-        Date expectedStopDate = new DateTime(2012, 1, 1, 23, 59, 59, 999).toDate();
+        Date expectedStopDate = null;
 
         Visit conflictingVisit = new Visit();
         conflictingVisit.setStartDatetime(new DateTime(2012, 1, 1, 0, 0, 0,0).toDate());
