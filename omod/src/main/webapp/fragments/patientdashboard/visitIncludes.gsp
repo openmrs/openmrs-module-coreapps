@@ -94,6 +94,7 @@
                     defaultDate: visitEndTime,
                     endDate: endDate,
                     useTime: false,
+                    clearButton: true
             ])}
         </p>
 
