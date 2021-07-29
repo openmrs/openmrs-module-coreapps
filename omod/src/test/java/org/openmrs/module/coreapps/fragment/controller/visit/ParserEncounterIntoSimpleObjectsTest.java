@@ -127,7 +127,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
 		uiUtils = testUiUtils;
 
 		encounter = new Encounter();
-		parser = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties, locationService, conceptService, dispositionService);
+		parser = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties, locationService, dispositionService);
 	}
 
 	@Test

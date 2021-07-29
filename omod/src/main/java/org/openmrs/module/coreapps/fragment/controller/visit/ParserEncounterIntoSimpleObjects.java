@@ -19,7 +19,6 @@ import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Concept;
 import org.openmrs.ConceptNumeric;
-import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.db.hibernate.HibernateUtil;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -44,8 +43,6 @@ public class ParserEncounterIntoSimpleObjects {
 	
 	private UiUtils uiUtils;
 
-    private ConceptService conceptService;
-
 	private EmrApiProperties emrApiProperties;
 
     private LocationService locationService;
@@ -53,13 +50,12 @@ public class ParserEncounterIntoSimpleObjects {
     private DispositionService dispositionService;
 
     public ParserEncounterIntoSimpleObjects(Encounter encounter, UiUtils uiUtils, EmrApiProperties emrApiProperties,
-                                            LocationService locationService, ConceptService conceptService, DispositionService dispositionService) {
+                                            LocationService locationService, DispositionService dispositionService) {
         this.encounter = encounter;
         this.uiUtils = uiUtils;
         this.emrApiProperties = emrApiProperties;
         this.locationService = locationService;
         this.dispositionService = dispositionService;
-        this.conceptService = conceptService;
     }
 	
 	public List<SimpleObject> parseOrders() {
