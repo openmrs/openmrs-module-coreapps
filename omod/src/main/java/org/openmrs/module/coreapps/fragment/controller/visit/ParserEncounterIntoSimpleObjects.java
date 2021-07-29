@@ -17,8 +17,11 @@ import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
+import org.openmrs.Concept;
+import org.openmrs.ConceptNumeric;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.db.hibernate.HibernateUtil;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
@@ -129,8 +132,13 @@ public class ParserEncounterIntoSimpleObjects {
 	}
 	
 	private SimpleObject parseObs(Obs obs, Locale locale) {
-        if(obs.getConcept() != null && obs.getConcept().isNumeric()){
-            obs.setConcept(this.conceptService.getConceptNumeric(obs.getConcept().getConceptId()));
+        if (obs.getConcept() != null) {
+            //TODO HibernateUtil.getRealObjectFromProxy(obs.getConcept()) should be moved to a better place in the future,
+            //If we remove it, the concept type will never be an instanceof ConceptNumeric
+            Concept concept = HibernateUtil.getRealObjectFromProxy(obs.getConcept());
+            if (concept instanceof ConceptNumeric) {
+                obs.setConcept(concept);
+            }
         }
         if ("org.openmrs.Location".equals(obs.getComment())) {
             return (parseObsWithLocationAnswer(obs, locationService.getLocation(Integer.valueOf(obs.getValueText()))));
