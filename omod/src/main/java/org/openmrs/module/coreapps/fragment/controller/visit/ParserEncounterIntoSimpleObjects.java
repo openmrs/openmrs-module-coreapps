@@ -140,7 +140,7 @@ public class ParserEncounterIntoSimpleObjects {
         else {
             SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
 
-            simpleObject.put("question", capitalizeString(uiUtils.format(concept)));
+            simpleObject.put("question", capitalizeString(uiUtils.format(obs.getConcept())));
             simpleObject.put("answer", uiUtils.format(obs));
             return simpleObject;
         }
