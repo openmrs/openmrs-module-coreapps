@@ -128,11 +128,11 @@ public class ParserEncounterIntoSimpleObjects {
 	}
 	
 	private SimpleObject parseObs(Obs obs, Locale locale) {
-        if (obs.getConcept() != null && obs.getConcept().isNumeric()) {
+        Concept concept = obs.getConcept();
+        if (concept != null && concept.isNumeric()) {
                 //TODO HibernateUtil.getRealObjectFromProxy(obs.getConcept()) should be moved to a better place in the future,
                 //If we remove it, the concept type will never be an instanceof ConceptNumeric
-                Concept concept = HibernateUtil.getRealObjectFromProxy(obs.getConcept());
-                obs.setConcept(concept);
+                obs.setConcept(HibernateUtil.getRealObjectFromProxy(concept));
         }
         if ("org.openmrs.Location".equals(obs.getComment())) {
             return (parseObsWithLocationAnswer(obs, locationService.getLocation(Integer.valueOf(obs.getValueText()))));
@@ -140,7 +140,7 @@ public class ParserEncounterIntoSimpleObjects {
         else {
             SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
 
-            simpleObject.put("question", capitalizeString(uiUtils.format(obs.getConcept())));
+            simpleObject.put("question", capitalizeString(uiUtils.format(concept)));
             simpleObject.put("answer", uiUtils.format(obs));
             return simpleObject;
         }
