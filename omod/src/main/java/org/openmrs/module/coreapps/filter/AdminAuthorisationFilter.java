@@ -23,8 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.Module;
-import org.openmrs.module.ModuleFactory;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.web.WebConstants;
 
 import org.slf4j.Logger;
@@ -38,9 +37,7 @@ import org.slf4j.LoggerFactory;
 public class AdminAuthorisationFilter implements Filter {
 	
 	private static final Logger log = LoggerFactory.getLogger(AdminAuthorisationFilter.class);
-		
-	private static final String COREAPPS_SYSTEM_ADMINISTRATOR_PRIVELEGE = "App: coreapps.systemAdministration";
-	
+			
 	/**
 	 * @see Filter#init(FilterConfig)
 	 */
@@ -55,11 +52,12 @@ public class AdminAuthorisationFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpReq = (HttpServletRequest) req;
 		User user = Context.getAuthenticatedUser();
-		if (user != null && !user.hasPrivilege(COREAPPS_SYSTEM_ADMINISTRATOR_PRIVELEGE)) {
+		if (user != null && !user.hasPrivilege(CoreAppsConstants.PRIVILEGE_SYSTEM_ADMINISTRATOR)) {
 			httpReq.getSession().setAttribute(WebConstants.DENIED_PAGE, httpReq.getRequestURI());
 			HttpServletResponse httpRes = (HttpServletResponse) res;
-			log.info("User " + user + " has no privilage \"" + COREAPPS_SYSTEM_ADMINISTRATOR_PRIVELEGE + "\"");
+			log.info("User {} lacks the privilege {}", user, CoreAppsConstants.PRIVILEGE_SYSTEM_ADMINISTRATOR);
 			httpRes.sendRedirect(httpReq.getContextPath() + "/login.htm");
+			return;
 		}
 		chain.doFilter(req, res);
 	}
