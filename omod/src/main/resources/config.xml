@@ -86,6 +86,16 @@
 				
 	</mappingFiles>
 
+    <filter>
+        <filter-name>${project.parent.artifactId}AdminAuthorisationFilter</filter-name>
+        <filter-class>${project.parent.groupId}.${project.parent.artifactId}.filter.AdminAuthorisationFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>${project.parent.artifactId}AdminAuthorisationFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
 	<!-- Internationalization -->
 	<!-- All message codes should start with ${project.parent.artifactId}. -->
 	<messages>
