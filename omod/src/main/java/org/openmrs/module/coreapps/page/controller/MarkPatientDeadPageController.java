@@ -11,6 +11,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.exitfromcare.ExitFromCareService;
 import org.openmrs.ui.framework.SimpleObject;
@@ -48,7 +49,7 @@ public class MarkPatientDeadPageController {
         pageModel.put("defaultDeathDate", defaultDeathDate);
         // if the getPatientDied property is configured, the ExitFromCare service will close/reopen patient programs when marking a patient dead/not dead
         pageModel.put("renderProgramWarning", emrApiProperties.getPatientDiedConcept() != null);
-
+        pageModel.put("deceasedDateTimeComponent", Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.DECEASED_DATE_USING_TIME , "false"));
         String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
 
         if (conceptId != null) {
