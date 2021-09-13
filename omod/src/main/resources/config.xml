@@ -294,6 +294,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>coreapps.deceasedDateUsingTime</property>
+        <defaultValue>false</defaultValue>
+        <description>
+            Deceased date using time component or only date.
+        </description>
+    </globalProperty>
+
     <privilege>
         <name>Task: coreapps.editRelationships</name>
         <description>Able to edit relationships</description>

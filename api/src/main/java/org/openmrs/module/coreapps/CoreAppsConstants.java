@@ -58,4 +58,6 @@ public class CoreAppsConstants {
    public static final String GLOBAL_PROPERTY_CONDITIONS_CRITERIA = "coreapps.conditionListClasses";
 
    public static final String DEFAULT_CODING_SOURCE = "ICD-10-WHO";
+
+   public static final String GP_DECEASED_DATE_USING_TIME = "coreapps.deceasedDateUsingTime";
 }
