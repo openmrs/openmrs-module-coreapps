@@ -127,7 +127,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                         formFieldName: "deathDate",
                         left         : true,
                         defaultDate  : patient?.getDeathDate() ?: defaultDeathDate ?: null,
-                        useTime      : deceasedDateTimeComponent,
+                        useTime      : includesTime,
                         showEstimated: false,
                         initialValue : lastVisitDate ?:new Date(),
                         startDate    : lastVisitDate?:birthDate,
