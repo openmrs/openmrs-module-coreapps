@@ -22,6 +22,7 @@ import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
@@ -44,10 +45,10 @@ import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Ideally you pass in a PatientDomainWrapper as the "patient" config parameter. But if you pass in
@@ -57,6 +58,7 @@ public class PatientHeaderFragmentController {
 	
 	public void controller(FragmentConfiguration config, @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                            @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
+                           @SpringBean("patientService") PatientService patientService,
 	                       @SpringBean("baseIdentifierSourceService") IdentifierSourceService identifierSourceService,
                            @FragmentParam(required = false, value="appContextModel") AppContextModel appContextModel,
                            @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
@@ -97,8 +99,19 @@ public class PatientHeaderFragmentController {
                     options.size() > 0 ? options.get(0).isManualEntryEnabled() : true));
 		}
 
+        Map<PatientIdentifierType, Extension> extraIdentifierLinks = new HashMap<PatientIdentifierType, Extension>();
+        for (Extension ext : appFrameworkService.getExtensionsForCurrentUser("patientHeader.extraIdentifierLinks")) {
+            Map<String, Object> params = ext.getExtensionParams() == null ? new HashMap<String, Object>() : ext.getExtensionParams();
+            Object identifierType = params == null ? null : params.get("identifierType");
+            if (identifierType != null) {
+                PatientIdentifierType piType = patientService.getPatientIdentifierTypeByUuid(identifierType.toString());
+                extraIdentifierLinks.put(piType, ext);
+            }
+        }
+
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
         config.addAttribute("extraPatientIdentifiersMappedByType", wrapper.getExtraIdentifiersMappedByType(sessionContext.getSessionLocation()));
+        config.addAttribute("extraIdentifierLinks", extraIdentifierLinks);
         config.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
     }
 

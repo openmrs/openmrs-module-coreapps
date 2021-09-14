@@ -161,27 +161,32 @@
                 <% def extraPatientIdentifiers = config.extraPatientIdentifiersMappedByType.get(extraPatientIdentifierType.patientIdentifierType) %>
 
                 <% if (extraPatientIdentifiers) { %>
+
                     <div class="float-sm-right">
                         <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
-
-                        <% if (extraPatientIdentifierType.editable) { %>
-                            <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
-                                <span>
+                        <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
+                        <%  def identifierLink = config.extraIdentifierLinks.get(extraPatientIdentifierType.patientIdentifierType)
+                            if (identifierLink) {
+                                def url = identifierLink.url.replace("{{identifier}}", extraPatientIdentifier.identifier) %>
+                                <a href="${url}" target="_blank">
+                                    <i class="${ identifierLink.icon ?: 'icon-external-link' }" title="${ ui.message(identifierLink.label) }"></i>
+                                </a>
+                            <% } %>
+                            <span>
+                                <% if (extraPatientIdentifierType.editable) { %>
                                     <a class="editPatientIdentifier"
-                                        data-patient-identifier-id="${extraPatientIdentifier.id}"
-                                        data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
-                                        data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}"
-                                        data-patient-identifier-value="${extraPatientIdentifier}"
-                                        href="#${extraPatientIdentifierType.patientIdentifierType.id}"
+                                       data-patient-identifier-id="${extraPatientIdentifier.id}"
+                                       data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
+                                       data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}"
+                                       data-patient-identifier-value="${extraPatientIdentifier}"
+                                       href="#${extraPatientIdentifierType.patientIdentifierType.id}"
                                     >
                                         ${extraPatientIdentifier}
                                     </a>
-                                </span>
-                            <% } %>
-                        <% } else {%>
-                            <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
-                                <span>${extraPatientIdentifier}</span>
-                            <% } %>
+                                <% } else { %>
+                                    ${extraPatientIdentifier}
+                                <% } %>
+                            </span>
                         <% } %>
                     </div>
                 <% } else if (extraPatientIdentifierType.editable) { %>
