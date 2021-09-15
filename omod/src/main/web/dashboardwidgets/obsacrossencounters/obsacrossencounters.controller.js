@@ -9,6 +9,7 @@ export default class ObsAcrossEncountersController {
     this.sessionLocale = null;
     this.CONCEPT_CUSTOM_REP = 'custom:(uuid,display,names:(voided,locale,conceptNameType,localePreferred,name)';
     this.conceptsMap = {};  // a map of conceptUUID --> concept(REST response)
+    this.conceptKeys = [];
     this.simpleEncs = [];
     this.headers = [];
     this.openmrsRest.setBaseAppPath("/coreapps");
@@ -38,8 +39,8 @@ export default class ObsAcrossEncountersController {
   }
 
   fetchConcepts() {
-    let conceptKeys = this.config.concepts.split(",").map(c => c.trim());
-    return Promise.all(conceptKeys.map((key) => (
+    this.conceptKeys = this.config.concepts.split(",").map(c => c.trim());
+    return Promise.all(this.conceptKeys.map((key) => (
       this.openmrsRest.get("concept/" + key, {
         v: this.CONCEPT_CUSTOM_REP
       }).then((concept) => {
@@ -83,9 +84,10 @@ export default class ObsAcrossEncountersController {
         this.output.headers.push('coreapps.patientDashBoard.provider');
       }
       this.output.headers.push('coreapps.date');
-      for (const concept of Object.values(this.conceptsMap)) {
-        this.output.headers.push(concept.display);
-      }
+
+      this.conceptKeys.map(uuid => {
+        this.output.headers.push(this.conceptsMap[uuid].display);
+      });
     }
 
     this.output.rows = [];
@@ -126,7 +128,7 @@ export default class ObsAcrossEncountersController {
           value: encounterDateToDisplay
         });
 
-      for (let uuid of Object.keys(this.conceptsMap)) {
+      this.conceptKeys.map(uuid => {
         let obsArray = [];
         if (encounter.obs[uuid]) {
           for (let obs of encounter.obs[uuid]) {
@@ -141,7 +143,7 @@ export default class ObsAcrossEncountersController {
           });
         }
         row.push(obsArray);
-      }
+      });
     }
   }
 
@@ -163,13 +165,12 @@ export default class ObsAcrossEncountersController {
   addToSimpleEncs(encounters) {
     const resultPromises = []
     for (let encounter of encounters) {
-      const conceptKeys = Object.keys(this.conceptsMap);
       // all normal concepts will go in one row
       const foundObsByUuid = {};
       for (let obs of encounter.obs) {
         // if it's a group, add a row for each member matching one of the concepts
         if (obs.groupMembers) {
-          const foundMembers = obs.groupMembers.filter(member => conceptKeys.includes(member.concept.uuid));
+          const foundMembers = obs.groupMembers.filter(member => this.conceptKeys.includes(member.concept.uuid));
           if (foundMembers.length) {
             const foundMembersByUuid = {};
             for (let m of foundMembers) {
@@ -186,7 +187,7 @@ export default class ObsAcrossEncountersController {
             });
           }
         } else // otherwise, add the obs value (if it matches one of our concepts)
-          if (conceptKeys.includes(obs.concept.uuid)) {
+          if (this.conceptKeys.includes(obs.concept.uuid)) {
             if (!foundObsByUuid[obs.concept.uuid]) {
               foundObsByUuid[obs.concept.uuid] = [];
             }
