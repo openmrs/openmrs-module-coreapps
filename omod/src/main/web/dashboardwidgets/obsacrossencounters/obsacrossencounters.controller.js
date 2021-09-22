@@ -93,7 +93,14 @@ export default class ObsAcrossEncountersController {
     this.output.rows = [];
     let encounterDateToDisplay;
     let providersNameToDisplay;
-    const sortedEncs = this.simpleEncs.sort((a, b) => a.encounterDatetime - b.encounterDatetime);
+    let sortedEncs = [];
+    if (this.config.sortOrder === 'desc') {
+      // sort obs by encounter datetime in descending order
+      sortedEncs = this.simpleEncs.sort((a, b) => (new Date(b.encounterDatetime)).getTime() - (new Date(a.encounterDatetime)).getTime());
+    } else {
+      //by default, sort obs by encounter datetime in ascending order(the oldest obs will be on top of the list)
+      sortedEncs = this.simpleEncs.sort((a, b) => (new Date(a.encounterDatetime)).getTime() - (new Date(b.encounterDatetime)).getTime());
+    }
     for (let i = 0; i < sortedEncs.length; i++) {
       encounterDateToDisplay = "";
       providersNameToDisplay = "";
