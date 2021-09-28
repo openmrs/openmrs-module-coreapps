@@ -119,7 +119,6 @@
                         <% } else { %>
                             ${ ui.formatDatePretty(patient.birthdate) })
                         <% } %>
-                    ${ ui.formatDatePretty(patient.birthdate) })
                     <% } else { %>
                         ${ui.message("coreapps.unknownAge")}
                     <% } %>
