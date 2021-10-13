@@ -27,7 +27,7 @@
         // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
         def configs = [:];
         if(it.extensionParams.fragmentConfig != null){
-            configs = it.extensionParams.fragmentConfig;
+            configs.putAll(it.extensionParams.fragmentConfig);
         }
  %>
 ${ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs)}

@@ -113,7 +113,12 @@
                     <% } else { %>
                         ${ui.message("coreapps.ageDays", patient.ageInDays)}
                     <% } %>
-                    (<% if (patient.birthdateEstimated) { %>~<% } %>${ ui.formatDatePretty(patient.birthdate) })
+                    (<% if (patient.birthdateEstimated) { %>~<% } %>
+                        <% if(ui.convertTimezones()) { %>
+                            ${ ui.formatDateWithoutTimezoneConversion(patient.birthdate) })
+                        <% } else { %>
+                            ${ ui.formatDatePretty(patient.birthdate) })
+                        <% } %>
                     <% } else { %>
                         ${ui.message("coreapps.unknownAge")}
                     <% } %>
