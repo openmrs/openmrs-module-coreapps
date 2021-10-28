@@ -106,12 +106,17 @@ function PatientSearchWidget(configuration){
 
             jq.each(columnConfig, function(index, column) {
                 var columnValue = '';
+
                 if (column.type === 'identifier') {
                     if (!column.value || column.value === 'primary') {
                         columnValue = p.identifier || '';
                     }
                     else {
-                        columnValue = p[column.value] || '';
+                        _.each(column.value.split(','), function(identifierTypeUuid) {
+                          if (p[identifierTypeUuid]) {
+                            columnValue = columnValue + (columnValue !== '' ? ', ' : '') + p[identifierTypeUuid];
+                          }
+                      })
                     }
                 }
                 else if (column.type === 'name') {
@@ -308,11 +313,10 @@ function PatientSearchWidget(configuration){
                             jq.each(patient.identifiers, function (index, patientIdentifier) {
                                 var identifierType = patientIdentifier.identifierType;
                                 if (identifierType != null && !patientIdentifier.voided &&
-                                    (column.value === identifierType.uuid)) {
+                                    column.value && column.value.includes(identifierType.uuid)) {
                                     if (patientIdentifier.identifier) {
-                                        columnValue = patientIdentifier.identifier;
+                                        columnValue = columnValue + (columnValue !== '' ? ', ' : '') + patientIdentifier.identifier;
                                     }
-                                    return false;
                                 }
                             });
                         }
