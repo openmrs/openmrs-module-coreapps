@@ -139,8 +139,11 @@ public class VisitsSectionFragmentController {
 		}
 
 		Map<VisitDomainWrapper, String> recentVisitsWithLinks = new LinkedHashMap<VisitDomainWrapper, String>();
+
+		if (!recentVisits.isEmpty()) {
+			contextModel.put("visit", new VisitContextModel(recentVisits.get(recentVisits.size() - 1)));
+		}
 		for (VisitDomainWrapper recentVisit : recentVisits) {
-			contextModel.put("visit", new VisitContextModel(recentVisit));
             // since the "recentVisit" isn't part of the context module, we bind it first to the visit url, before doing the handlebars binding against the context
 			recentVisitsWithLinks.put(recentVisit, templateFactory.handlebars(ui.urlBind(visitsPageWithSpecificVisitUrl, recentVisit.getVisit()), contextModel));
 		}

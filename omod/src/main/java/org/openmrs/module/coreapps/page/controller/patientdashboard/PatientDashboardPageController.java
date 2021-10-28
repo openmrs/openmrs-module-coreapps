@@ -13,9 +13,11 @@
  */
 package org.openmrs.module.coreapps.page.controller.patientdashboard;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -28,6 +30,7 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
+import org.openmrs.module.coreapps.contextmodel.PatientEncounterContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.event.ApplicationEventService;
@@ -83,10 +86,16 @@ public class PatientDashboardPageController {
             .getExtensionsForCurrentUser(CoreAppsConstants.ENCOUNTER_TEMPLATE_EXTENSION);
       model.addAttribute("encounterTemplateExtensions", encounterTemplateExtensions);
 
+      List<Encounter> encounters = Context.getEncounterService().getEncountersByPatient(patient);
 
       AppContextModel contextModel = sessionContext.generateAppContextModel();
       contextModel.put("patient", new PatientContextModel(patient));
       contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
+      ArrayList<PatientEncounterContextModel> encountersModel = new ArrayList<PatientEncounterContextModel>();
+      for (Encounter encounter : encounters) {
+         encountersModel.add(new PatientEncounterContextModel(encounter));
+      }
+      contextModel.put("encounters", encountersModel);
       model.addAttribute("appContextModel", contextModel);
 
       List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions", contextModel);
