@@ -312,7 +312,7 @@ function PatientSearchWidget(configuration){
                         else {
                             jq.each(patient.identifiers, function (index, patientIdentifier) {
                                 var identifierType = patientIdentifier.identifierType;
-                                var multipleIdentifierTypes = column.value && column.value.includes(',');  // is this a list of multiple identifier types to display?
+                                var isMultipleIdentifierTypes = column.value && column.value.includes(',');
                                 if (identifierType != null && !patientIdentifier.voided &&
                                     column.value && column.value.includes(identifierType.uuid)) {
                                     if (patientIdentifier.identifier) {
