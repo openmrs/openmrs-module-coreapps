@@ -318,7 +318,7 @@ function PatientSearchWidget(configuration){
                                     if (patientIdentifier.identifier) {
                                         columnValue = columnValue
                                           + (columnValue !== '' ? ', ' : '')
-                                          + (multipleIdentifierTypes ? identifierType.name + ':' : '')  // if multiple possible types, display name as a label
+                                          + (isMultipleIdentifierTypes ? identifierType.name + ':' : '')  // if multiple possible types, display name as a label
                                           + patientIdentifier.identifier;
                                     }
                                 }
