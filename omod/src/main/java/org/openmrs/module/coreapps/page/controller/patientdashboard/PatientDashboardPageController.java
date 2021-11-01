@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -36,6 +37,8 @@ import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.event.ApplicationEventService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.module.webservices.rest.web.ConversionUtil;
+import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -91,11 +94,16 @@ public class PatientDashboardPageController {
       AppContextModel contextModel = sessionContext.generateAppContextModel();
       contextModel.put("patient", new PatientContextModel(patient));
       contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
+
+      List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
       ArrayList<PatientEncounterContextModel> encountersModel = new ArrayList<PatientEncounterContextModel>();
       for (Encounter encounter : encounters) {
+         encounterTypes.add(encounter.getEncounterType());
          encountersModel.add(new PatientEncounterContextModel(encounter));
       }
+      contextModel.put("encounterTypes", ConversionUtil.convertToRepresentation(encounterTypes, Representation.DEFAULT));
       contextModel.put("encounters", encountersModel);
+
       model.addAttribute("appContextModel", contextModel);
 
       List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions", contextModel);

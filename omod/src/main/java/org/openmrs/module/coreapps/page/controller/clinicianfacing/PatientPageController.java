@@ -106,16 +106,14 @@ public class PatientPageController {
         contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
 
         List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
+        ArrayList<PatientEncounterContextModel> encountersModel = new ArrayList<PatientEncounterContextModel>();
         List<Encounter> encounters = encounterService.getEncountersByPatient(patient);
         for (Encounter encounter : encounters) {
             encounterTypes.add(encounter.getEncounterType());
+            encountersModel.add(new PatientEncounterContextModel(encounter));
         }
         contextModel.put("encounterTypes", ConversionUtil.convertToRepresentation(encounterTypes, Representation.DEFAULT));
-       ArrayList<PatientEncounterContextModel> encountersModel = new ArrayList<PatientEncounterContextModel>();
-       for (Encounter encounter : encounters) {
-           encountersModel.add(new PatientEncounterContextModel(encounter));
-       }
-       contextModel.put("encounters", encountersModel);
+        contextModel.put("encounters", encountersModel);
 
         List<Program> programs = new ArrayList<Program>();
         List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(patient, null, null, null, null, null, false);
