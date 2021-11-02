@@ -30,6 +30,7 @@ import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
+import org.openmrs.module.coreapps.contextmodel.PatientEncounterContextModel;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
@@ -105,11 +106,14 @@ public class PatientPageController {
         contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
 
         List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
+        ArrayList<PatientEncounterContextModel> encountersModel = new ArrayList<PatientEncounterContextModel>();
         List<Encounter> encounters = encounterService.getEncountersByPatient(patient);
         for (Encounter encounter : encounters) {
             encounterTypes.add(encounter.getEncounterType());
+            encountersModel.add(new PatientEncounterContextModel(encounter));
         }
         contextModel.put("encounterTypes", ConversionUtil.convertToRepresentation(encounterTypes, Representation.DEFAULT));
+        contextModel.put("encounters", encountersModel);
 
         List<Program> programs = new ArrayList<Program>();
         List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(patient, null, null, null, null, null, false);
