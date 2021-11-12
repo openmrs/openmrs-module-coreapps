@@ -220,7 +220,7 @@ export default class RelationshipsController  {
             return this.config.maxRecords;
         }
     }
-    
+
     navigateTo(personUuid) {
         var destinationPage ="";
 
@@ -229,7 +229,8 @@ export default class RelationshipsController  {
                 if ( relationship.isPatient === true ) {
                     if (this.dashboardPage) {
                         destinationPage = Handlebars.compile(this.dashboardPage)({
-                            patientUuid: personUuid
+                            patientUuid: personUuid,
+                            patientId: personUuid
                         });
                     }
                 } else if ( relationship.isProvider === true ) {
@@ -291,7 +292,7 @@ export default class RelationshipsController  {
             this.relationships = tempRelationships;
         }
     }
-    
+
     remove() {
         if (angular.isDefined(this.relationships) && (this.relationships.length == 1) ){
             //we only allow to delete one relationship at the time
