@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MostRecentEncounterFragmentController {
-	
+
 	public void controller(FragmentConfiguration config, FragmentModel model, UiUtils ui,
 						   @FragmentParam("patientId") Patient patient,
 						   @FragmentParam("app") AppDescriptor app,
@@ -97,6 +97,7 @@ public class MostRecentEncounterFragmentController {
 				returnUrl = ui.pageLink(returnProvider, returnPage, SimpleObject.create("patientId", patient.getId()));
 			}
 		}
+		returnUrl = ui.urlBind(returnUrl, patient);
 		model.addAttribute("returnUrl", returnUrl);
 	}
 

@@ -30,6 +30,7 @@ import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
+import org.openmrs.module.coreapps.contextmodel.PatientEncounterContextModel;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
@@ -66,9 +67,9 @@ public class PatientPageController {
                              @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
                              @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
                              UiSessionContext sessionContext) {
-    
-      
-        
+
+
+
        try{
            if (!Context.hasPrivilege(CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD)) {
             return new Redirect("coreapps", "noAccess", "");
@@ -77,7 +78,7 @@ public class PatientPageController {
          else if (patient.isVoided() || patient.isPersonVoided()) {
             return new Redirect("coreapps", "patientdashboard/deletedPatient", "patientId=" + patient.getId());
         }
-      
+
         if (StringUtils.isEmpty(dashboard)) {
             dashboard = "patientDashboard";
         }
@@ -102,14 +103,18 @@ public class PatientPageController {
 
         AppContextModel contextModel = sessionContext.generateAppContextModel();
         contextModel.put("patient", new PatientContextModel(patient));
+		contextModel.put("patientId", patient != null ? patient.getUuid() : null);  // support legacy substitution methods that use "{{patientId}}" as a template and expect a uuid substitution
         contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
 
         List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
+        ArrayList<PatientEncounterContextModel> encountersModel = new ArrayList<PatientEncounterContextModel>();
         List<Encounter> encounters = encounterService.getEncountersByPatient(patient);
         for (Encounter encounter : encounters) {
             encounterTypes.add(encounter.getEncounterType());
+            encountersModel.add(new PatientEncounterContextModel(encounter));
         }
         contextModel.put("encounterTypes", ConversionUtil.convertToRepresentation(encounterTypes, Representation.DEFAULT));
+        contextModel.put("encounters", encountersModel);
 
         List<Program> programs = new ArrayList<Program>();
         List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(patient, null, null, null, null, null, false);
@@ -152,9 +157,9 @@ public class PatientPageController {
 
         model.addAttribute("baseDashboardUrl", coreAppsProperties.getDashboardUrl());  // used for breadcrumbs to link back to the base dashboard in the case when this is used to render a context-specific dashboard
         model.addAttribute("dashboard", dashboard);
-        
+
         model.addAttribute("breadCrumbsDetails", getBreadCrumbsDetails(patient));
-        
+
         model.addAttribute("breadCrumbsFormatters", Context.getAdministrationService().getGlobalProperty("breadCrumbs.formatters", "(;, ;)").split(";"));
 
         applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
@@ -162,17 +167,17 @@ public class PatientPageController {
         return null;
 
          }catch(NullPointerException x){
-          return new Redirect("coreapps", "patientdashboard/patientNotFound", "patientId=" + "Not Found");  
+          return new Redirect("coreapps", "patientdashboard/patientNotFound", "patientId=" + "Not Found");
        }
-    
+
     }
-    
+
     /**
      * @since 2.24.0
-     * 
+     *
      * Gets person attributes containing additional breadcrumbs details defined by 'breadCrumbs.details.uuids' global
      * property
-     * 
+     *
      * @param patient whose breadcrumbs details are required from person attribute types specified by global property
      * @return list of person attributes with breadcrumbs details if present or null otherwise
      */
@@ -190,5 +195,5 @@ public class PatientPageController {
     		}
     	}
     	return CollectionUtils.isNotEmpty(personNamePersonAttrs) ? personNamePersonAttrs : null;
-    } 
+    }
 }
