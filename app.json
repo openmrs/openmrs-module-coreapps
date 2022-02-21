@@ -1,0 +1,19 @@
+{
+  "addons": [],
+  "buildpacks": [
+    {
+      "url": "https://github.com/mars/create-react-app-buildpack.git"
+    }
+  ],
+  "description": "QA Framework for OpenMRS",
+  "env": {},
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "openmrs-contrib-qaframework",
+  "scripts": {
+  },
+  "stack": "heroku-20"
+}
