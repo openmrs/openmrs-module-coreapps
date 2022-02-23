@@ -1,8 +1,8 @@
 export default class ObsAcrossEncountersController {
-  constructor($q, $filter, openmrsRest, openmrsTranslate, widgetsCommons) {
+  constructor($scope, $q, $filter, openmrsRest, openmrsTranslate, widgetsCommons) {
     'ngInject';
 
-    Object.assign(this, {$q, $filter, openmrsRest, openmrsTranslate, widgetsCommons});
+    Object.assign(this, {$scope, $q, $filter, openmrsRest, openmrsTranslate, widgetsCommons});
   }
 
   $onInit() {
@@ -143,6 +143,7 @@ export default class ObsAcrossEncountersController {
         row.push(obsArray);
       }
     }
+    this.$scope.$apply();
   }
 
   isRetired(obs) {
