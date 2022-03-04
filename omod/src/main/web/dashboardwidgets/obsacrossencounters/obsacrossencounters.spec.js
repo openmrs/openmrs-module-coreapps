@@ -469,6 +469,8 @@ describe('ObsAcrossEncounters', () => {
         timezoneMock.register('US/Eastern');
 
         $httpBackend.expectGET('/module/uicommons/messages/messages.json?localeKey=en').respond({});
+
+        $httpBackend.when('GET', '/ws/rest/v1/session').respond({});
     });
 
     afterEach(() => {
