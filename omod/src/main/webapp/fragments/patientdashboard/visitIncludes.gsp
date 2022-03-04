@@ -94,6 +94,7 @@
                     defaultDate: visitEndTime,
                     endDate: endDate,
                     useTime: false,
+                    clearButton: true
             ])}
         </p>
 
@@ -140,9 +141,6 @@
     </div>
     <div class="dialog-content">
         <% if (activeVisits) { %>
-            <script type="text/javascript">
-                jq("#start-visit-with-visittype-confirm").remove();
-            </script>
             <p class="dialog-instructions">
                 <i class="icon-sign-warning">&#xf071;</i>
                 ${ui.message("coreapps.task.visitType.start.warning", ui.encodeHtmlContent(ui.format(patient.patient)))}
@@ -215,9 +213,10 @@
                 <input type="hidden" id="dateFormat" value='<%= org.openmrs.api.context.Context.getDateFormat().toPattern().toLowerCase() %>' />
                 <p class="dialog-instructions">${ ui.message("coreapps.task.startVisit.message", ui.encodeHtmlContent(ui.format(patient.patient))) }</p>
                 <% } %>
-
+    <% if (!activeVisits) { %>
         <button id="start-visit-with-visittype-confirm" class="confirm right">${ ui.message("coreapps.confirm") }<i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i></button>
-        <button class="cancel">${ ui.message("coreapps.cancel") }</button>
+    <% } %>
+    <button class="cancel">${ ui.message("coreapps.cancel") }</button>
     </div>
 </div>
 

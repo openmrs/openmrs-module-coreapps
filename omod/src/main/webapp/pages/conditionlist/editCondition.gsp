@@ -4,6 +4,7 @@
     ui.includeJavascript("uicommons", "angular-ui/ui-bootstrap-tpls-0.11.2.min.js")
     ui.includeJavascript("uicommons", "angular-resource.min.js")
     ui.includeJavascript("uicommons", "angular-common.js")
+    ui.includeJavascript("uicommons", "angular-sanitize.min.js")
     ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
     ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
     ui.includeJavascript("uicommons", "services/conceptSearchService.js")

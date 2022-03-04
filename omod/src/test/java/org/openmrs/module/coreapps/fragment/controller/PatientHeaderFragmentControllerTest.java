@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -86,6 +87,10 @@ public class PatientHeaderFragmentControllerTest extends BaseModuleWebContextSen
     @Qualifier("adtService")
     @Autowired
     private AdtService adtService;
+
+	@Qualifier("patientService")
+	@Autowired
+	private PatientService patientService;
     
     @Before
     public void setup() {
@@ -126,7 +131,7 @@ public class PatientHeaderFragmentControllerTest extends BaseModuleWebContextSen
     	Context.getPersonService().savePerson(patient);
 
     	// Replay
-        controller.controller(config, emrApiProperties, coreAppsProperties, identifierSourceService
+        controller.controller(config, emrApiProperties, coreAppsProperties, patientService, identifierSourceService
         		             ,appContextModel, appFrameworkService, patient, wrapper, adtService
         		             ,context, uiUtils, model);
         
@@ -160,7 +165,7 @@ public class PatientHeaderFragmentControllerTest extends BaseModuleWebContextSen
         when(uiUtils.message(pat.getName())).thenReturn(pat.getName());
 
     	// Replay
-        controller.controller(config, emrApiProperties, coreAppsProperties, identifierSourceService
+        controller.controller(config, emrApiProperties, coreAppsProperties, patientService, identifierSourceService
         		             ,appContextModel, appFrameworkService, patient, wrapper, adtService
         		             ,context, uiUtils, model);
         

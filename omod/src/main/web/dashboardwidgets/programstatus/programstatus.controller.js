@@ -331,11 +331,13 @@ export default class ProgramStatusController {
 
             var states = [];
             angular.forEach(this.input.initialWorkflowStateByWorkflow, (state) => {
-                // program entity lost information about `startDate` time value (date database type) and it
-                // causes an issue when the timezone is different than UTC, that's why we remove information
-                // about a time before sending a request
-                state.startDate = this.dateWithoutTime(this.input.dateEnrolled);
-                states.push(state);
+                if (state && state.state) {
+                    // program entity lost information about `startDate` time value (date database type) and it
+                    // causes an issue when the timezone is different than UTC, that's why we remove information
+                    // about a time before sending a request
+                    state.startDate = this.dateWithoutTime(this.input.dateEnrolled);
+                    states.push(state);
+                }
             });
 
             this.openmrsRest.create('programenrollment', {
