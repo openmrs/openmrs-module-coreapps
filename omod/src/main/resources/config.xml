@@ -302,6 +302,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>coreapps.allowChangingVisitTime</property>
+        <defaultValue>true</defaultValue>
+        <description>
+            Be able to change the start hour of a visit.
+        </description>
+    </globalProperty>
+
     <privilege>
         <name>Task: coreapps.editRelationships</name>
         <description>Able to edit relationships</description>

@@ -128,6 +128,8 @@ public class PatientDashboardPageController {
 
       model.addAttribute("userId", sessionContext.getCurrentUser().getUserId());
 
+      model.addAttribute("allowChangingVisitTime", Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_ALLOW_CHANGING_VISIT_TIME));
+
       return null;
    }
 }

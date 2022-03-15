@@ -112,6 +112,7 @@
         </li>
         ${ ui.includeFragment("coreapps", "patientdashboard/editVisitDatesDialog", [
                 visitId: wrapper.visit.visitId,
+                allowChangingVisitTime: allowChangingVisitTime,
                 endDateUpperLimit: idx == 0 ? editDateFormat.format(new Date()) : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx - 1].startDatetime, -1)),
                 endDateLowerLimit: editDateFormat.format(wrapper.mostRecentEncounter == null ? wrapper.startDatetime : wrapper.mostRecentEncounter.encounterDatetime),
                 startDateLowerLimit: (idx + 1 == visits.size || visits[idx + 1].stopDatetime == null) ? null : editDateFormat.format(org.apache.commons.lang.time.DateUtils.addDays(visits[idx + 1].stopDatetime, 1)),

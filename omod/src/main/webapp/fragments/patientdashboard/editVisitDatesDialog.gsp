@@ -15,7 +15,7 @@
                         id: "startDate" + config.visitId,
                         formFieldName: "startDate",
                         label:"",
-                        useTime: false,
+                        useTime: config.allowChangingVisitTime,
                         startDate: config.startDateLowerLimit,
                         endDate: config.startDateUpperLimit,
                         defaultDate: config.defaultStartDate
