@@ -97,7 +97,11 @@ public class MostRecentEncounterFragmentController {
 				returnUrl = ui.pageLink(returnProvider, returnPage, SimpleObject.create("patientId", patient.getId()));
 			}
 		}
-		returnUrl = ui.urlBind(returnUrl, patient);
+		
+		if (StringUtils.isNotBlank(returnUrl)) {
+			returnUrl = ui.urlBind(returnUrl, patient);
+		}
+		
 		model.addAttribute("returnUrl", returnUrl);
 	}
 
