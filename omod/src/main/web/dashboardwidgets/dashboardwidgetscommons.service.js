@@ -23,8 +23,8 @@ export default class WidgetsCommons {
         if (date !== null) {
             let givenDate = new Date(date).setHours(0,0,0,0);
             let today = new Date().setHours(0,0,0,0);
-            let seconds = Math.floor((today - givenDate) / 1000);
-            days = Math.floor(seconds / 86400);
+            let seconds = Math.round((today - givenDate) / 1000);
+            days = Math.round(seconds / 86400);
         }
 
         return days;
@@ -33,8 +33,8 @@ export default class WidgetsCommons {
     // Method used to define days since given date
     dateToDaysAgo(date) {
         const time = new Date(date).getTime();
-        const seconds = Math.floor((new Date().getTime() - time) / 1000);
-        const interval = Math.floor(seconds / 86400);
+        const seconds = Math.round((new Date().getTime() - time) / 1000);
+        const interval = Math.round(seconds / 86400);
         let days = 0;
         if (interval > 0) {
             days = interval;
