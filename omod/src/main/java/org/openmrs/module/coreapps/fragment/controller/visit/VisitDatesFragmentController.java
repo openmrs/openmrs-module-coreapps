@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.openmrs.Visit;
 import org.openmrs.api.VisitService;
@@ -39,7 +40,7 @@ public class VisitDatesFragmentController {
                                             @RequestParam(value="stopDate", required = false) Date stopDate,
                                             HttpServletRequest request, UiUtils ui) {
 
-        Boolean allowChangingVisitTime = new Boolean(Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_ALLOW_CHANGING_VISIT_TIME));
+        boolean allowChangingVisitTime = BooleanUtils.toBoolean(Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_ALLOW_CHANGING_VISIT_TIME));
 
         if (!allowChangingVisitTime && !isSameDay(startDate, visit.getStartDatetime())) {
             visit.setStartDatetime(new DateTime(startDate).toDateMidnight().toDate());
