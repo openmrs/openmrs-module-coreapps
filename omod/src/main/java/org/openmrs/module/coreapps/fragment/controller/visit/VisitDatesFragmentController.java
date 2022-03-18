@@ -44,7 +44,7 @@ public class VisitDatesFragmentController {
 
         if (!allowChangingVisitTime && !isSameDay(startDate, visit.getStartDatetime())) {
             visit.setStartDatetime(new DateTime(startDate).toDateMidnight().toDate());
-        }else{
+        } else if (allowChangingVisitTime && !isSameDay(startDate, visit.getStartDatetime())){
             visit.setStartDatetime(new DateTime(startDate).toDate());
         }
 
