@@ -42,11 +42,14 @@ public class VisitDatesFragmentController {
 
         boolean allowChangingVisitTime = BooleanUtils.toBoolean(Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_ALLOW_CHANGING_VISIT_TIME));
 
-        if (!allowChangingVisitTime && !isSameDay(startDate, visit.getStartDatetime())) {
-            visit.setStartDatetime(new DateTime(startDate).toDateMidnight().toDate());
-        } else if (allowChangingVisitTime && !isSameDay(startDate, visit.getStartDatetime())){
-            visit.setStartDatetime(new DateTime(startDate).toDate());
+        if (!isSameDay(startDate, visit.getStartDatetime())) {
+            if(!allowChangingVisitTime){
+                visit.setStartDatetime(new DateTime(startDate).toDateMidnight().toDate());
+            }else{
+                visit.setStartDatetime(new DateTime(startDate).toDate());
+            }
         }
+
 
         if ( (stopDate!=null) && !isSameDay(stopDate, visit.getStopDatetime())) {
             Date now = new DateTime().toDate();

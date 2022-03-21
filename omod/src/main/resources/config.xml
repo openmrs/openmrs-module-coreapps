@@ -306,7 +306,7 @@
         <property>coreapps.allowChangingVisitTime</property>
         <defaultValue>false</defaultValue>
         <description>
-            Be able to change the start hour of a visit.
+            Be able to change the start time of a visit.
         </description>
     </globalProperty>
 
