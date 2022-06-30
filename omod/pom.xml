@@ -409,7 +409,7 @@
 						</goals>
 						<phase>test</phase>
 						<configuration>
-							<arguments>run test</arguments>
+							<arguments>run test:dev-chrome</arguments>
 							<workingDirectory>../</workingDirectory>
 						</configuration>
 					</execution>
