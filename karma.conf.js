@@ -17,6 +17,12 @@ module.exports = function(config) {
 			FirefoxNoSandbox: {
 				base: 'Firefox',
 				flags: ['--no-sandbox']
+			},FirefoxHeadless: {
+				base: 'Firefox',
+				flags: [
+					'--no-sandbox',
+					'--headless'
+				]
 			}
 		},
         files: [

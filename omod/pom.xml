@@ -409,7 +409,7 @@
 						</goals>
 						<phase>test</phase>
 						<configuration>
-							<arguments>run test:dev-firefox</arguments>
+							<arguments>run test</arguments>
 							<workingDirectory>../</workingDirectory>
 						</configuration>
 					</execution>
