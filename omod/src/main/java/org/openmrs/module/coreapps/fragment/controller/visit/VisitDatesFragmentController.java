@@ -19,8 +19,8 @@ import org.openmrs.Visit;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.AppUiConstants;
-import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.ui.framework.SimpleObject;
+import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,10 +40,10 @@ public class VisitDatesFragmentController {
                                             @RequestParam(value="stopDate", required = false) Date stopDate,
                                             HttpServletRequest request, UiUtils ui) {
 
-        boolean allowChangingVisitTime = BooleanUtils.toBoolean(Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_ALLOW_CHANGING_VISIT_TIME));
+        boolean allowConvertingTimezones = BooleanUtils.toBoolean(Context.getAdministrationService().getGlobalProperty(UiFrameworkConstants.GP_TIMEZONE_CONVERSIONS));
 
         if (!isSameDay(startDate, visit.getStartDatetime())) {
-            if(!allowChangingVisitTime){
+            if(!allowConvertingTimezones){
                 visit.setStartDatetime(new DateTime(startDate).toDateMidnight().toDate());
             }else{
                 visit.setStartDatetime(new DateTime(startDate).toDate());
