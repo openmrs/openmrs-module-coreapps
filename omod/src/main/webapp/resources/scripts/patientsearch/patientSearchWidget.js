@@ -170,7 +170,7 @@ function PatientSearchWidget(configuration){
     var customRep = 'custom:(patientId,uuid,' +
                     'patientIdentifier:(uuid,identifier),' +
                     'person:(gender,age,birthdate,birthdateEstimated,personName),' +
-                    'identifiers:(identifier,identifierType:(uuid,name)),' +
+                    'identifiers:(identifier,identifierType:(uuid,name),location:(display)),' +
                     'attributes:(value,attributeType:(name)))';
 
     var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
@@ -360,6 +360,20 @@ function PatientSearchWidget(configuration){
                                     }
                                 }
                                 return false;
+                            }
+                        });
+                    }
+                    else if (column.type === 'identifierLocation') {
+                        jq.each(patient.identifiers, function (index, patientIdentifier) {
+                            var identifierType = patientIdentifier.identifierType;
+                            var identifierLocation = patientIdentifier.location;
+                            if (identifierType != null && !patientIdentifier.voided &&
+                                    column.value && column.value.includes(identifierType.uuid)) {
+                                    if (identifierLocation != null) {
+                                        columnValue = columnValue
+                                          + (columnValue !== '' ? ', ' : '') 
+                                          + identifierLocation.display;
+                                    }
                             }
                         });
                     }
