@@ -365,9 +365,15 @@ function PatientSearchWidget(configuration){
                     }
                     else if (column.type === 'identifierLocation') {
                         jq.each(patient.identifiers, function (index, patientIdentifier) {
+                            var identifierType = patientIdentifier.identifierType;
                             var identifierLocation = patientIdentifier.location;
-                            if (identifierLocation != null) {
-                                columnValue = identifierLocation.display
+                            if (identifierType != null && !patientIdentifier.voided &&
+                                    column.value && column.value.includes(identifierType.uuid)) {
+                                    if (identifierLocation != null) {
+                                        columnValue = columnValue
+                                          + (columnValue !== '' ? ', ' : '') 
+                                          + identifierLocation.display;
+                                    }
                             }
                         });
                     }
