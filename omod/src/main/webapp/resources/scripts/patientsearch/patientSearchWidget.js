@@ -363,11 +363,11 @@ function PatientSearchWidget(configuration){
                             }
                         });
                     }
-                    else if (column.type === 'location') {
-                        jq.each(patient.identifiers, function(index, identifier) {
-                            var location = identifier.location;
-                            if (location != null) {
-                                columnValue = location.display;
+                    else if (column.type === 'identifierLocation') {
+                        jq.each(patient.identifiers, function (index, patientIdentifier) {
+                            var identifierLocation = patientIdentifier.location;
+                            if (identifierLocation != null) {
+                                columnValue = identifierLocation.display
                             }
                         });
                     }
