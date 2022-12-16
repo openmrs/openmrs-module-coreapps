@@ -157,6 +157,7 @@ export default class ProgramStatusController {
             // The `dateCompleted` is set based on the `startDate` from patient program state because we
             // had stored this date as the date without the time that's why now we don't want
             // to add timezone offset to that value (and use toUTCDate)
+            // TODO: can we possibly remove this if we implement TRUNK-6157?
             this.patientProgram.dateCompleted = this.patientProgram && this.patientProgram.dateCompleted ?
                 this.toUTCDate(this.patientProgram.dateCompleted) : null;
         }
@@ -343,7 +344,7 @@ export default class ProgramStatusController {
             this.openmrsRest.create('programenrollment', {
                 patient: this.config.patientUuid,
                 program: this.config.program,
-                dateEnrolled: this.input.dateEnrolled,
+                dateEnrolled: this.dateWithoutTime(this.input.dateEnrolled),
                 location: this.input.enrollmentLocation,
                 states: states
             }).then((response) => {
@@ -384,8 +385,8 @@ export default class ProgramStatusController {
         })*/
 
         this.openmrsRest.update('programenrollment/' + this.patientProgram.uuid, {
-            dateEnrolled: this.input.dateEnrolled,
-            dateCompleted: this.input.dateCompleted,
+            dateEnrolled: this.dateWithoutTime(this.input.dateEnrolled),
+            dateCompleted: this.dateWithoutTime(this.input.dateCompleted),
             location: this.input.enrollmentLocation,
             outcome: this.input.outcome//,
             //states: states
@@ -589,6 +590,7 @@ export default class ProgramStatusController {
                   // causes an issue when the timezone is different than UTC
                   // that's why we had store start date as the date without
                   // the time and now we don't want to add timezone offset to that value (and use toUTCDate)
+                    // TODO: can we possibly remove this if we implement TRUNK-6157?
                   var newEntry = {
                     startDate: this.toUTCDate(patientState.startDate),
                     dayAfterStartDate: this.getNextDay(patientState.startDate),
