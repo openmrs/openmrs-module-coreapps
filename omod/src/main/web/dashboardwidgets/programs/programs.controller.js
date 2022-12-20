@@ -106,6 +106,10 @@ export default class ProgramsController {
                 this.patientPrograms.push(patientProgram);
             }
         });
+
+        // strip off any time component received from server; we want to display the actual date received from the
+        // server, regardless of time zone
+        this.widgetsCommons.stripTimeComponentFromProgramDates(patientPrograms);
     }
 
     getMaxRecords() {

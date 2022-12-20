@@ -124,9 +124,9 @@ export default class ProgramStatusController {
     }
 
     setInputsToStartingValues() {
-        this.input.dateEnrolled = this.patientProgram ? new Date(this.patientProgram.dateEnrolled) : new Date();
-
-        this.input.dateCompleted = this.patientProgram && this.patientProgram.dateCompleted ? new Date(this.patientProgram.dateCompleted) : null;
+        // we always use moment to parse dates (instead of new Date()) because it parses an date-only string as being in local time
+        this.input.dateEnrolled = this.patientProgram ? moment(this.patientProgram.dateEnrolled).toDate() : new Date();
+        this.input.dateCompleted = this.patientProgram && this.patientProgram.dateCompleted ? moment(this.patientProgram.dateCompleted).toDate() : null;
         this.input.outcome = this.patientProgram && this.patientProgram.outcome ? this.patientProgram.outcome.uuid : null;
 
         if (this.patientProgram && this.patientProgram.location) {
@@ -153,13 +153,10 @@ export default class ProgramStatusController {
 
     convertDateEnrolledAndDateCompletedStringsToDates() {
         if (this.patientProgram) {
-            this.patientProgram.dateEnrolled = this.patientProgram ? new Date(this.patientProgram.dateEnrolled) : null;
-            // The `dateCompleted` is set based on the `startDate` from patient program state because we
-            // had stored this date as the date without the time that's why now we don't want
-            // to add timezone offset to that value (and use toUTCDate)
-            // TODO: can we possibly remove this if we implement TRUNK-6157?
+            // we always use moment to parse dates (insterad of new Date()) because it parses an date-only string as being in local timee
+            this.patientProgram.dateEnrolled = this.patientProgram ? moment(this.patientProgram.dateEnrolled).toDate() : null;
             this.patientProgram.dateCompleted = this.patientProgram && this.patientProgram.dateCompleted ?
-                this.toUTCDate(this.patientProgram.dateCompleted) : null;
+                moment(this.patientProgram.dateCompleted).toDate() : null;
         }
     }
 
@@ -277,6 +274,10 @@ export default class ProgramStatusController {
             return (patientProgram.program.uuid == this.config.program);
         });
 
+        // we only want to operate on dates, so as a hack, we strip off any time component received from server
+        // (and then will use dateWithoutTimeAsString to make sure we strip off time before submitted back)
+        this.widgetsCommons.stripTimeComponentFromProgramDates(this.patientPrograms);
+
         // if there's more than one enrollment for this patient, we need to figure out which one this widget is meant
         // to display
         if (this.patientPrograms.length > 0) {
@@ -294,10 +295,10 @@ export default class ProgramStatusController {
                     if (patientProgram.uuid == this.config.patientProgram) {
                         this.patientProgram = patientProgram;
                         if (i > 0) {
-                            this.maxCompletionDate = new Date(this.patientPrograms[i-1].dateEnrolled);
+                            this.maxCompletionDate = moment(this.patientPrograms[i-1].dateEnrolled).toDate();
                         }
                         if (i + 1 < this.patientPrograms.length) {
-                            this.minEnrollmentDate = new Date(this.patientPrograms[i+1].dateCompleted);
+                            this.minEnrollmentDate = moment(this.patientPrograms[i+1].dateCompleted).toDate();
                         }
                     }
                 })
@@ -311,14 +312,14 @@ export default class ProgramStatusController {
                     this.patientProgram = this.patientPrograms[0];
                     if (this.patientPrograms.length > 1) {
                         // enrollment date cannot be shifted to before completion date of previous program
-                        this.minEnrollmentDate = new Date(this.patientPrograms[1].dateCompleted)
+                        this.minEnrollmentDate = moment(this.patientPrograms[1].dateCompleted).toDate();
 
                     }
                 }
                 // no active program
                 else {
                     // enrollment date for a new program can't be set before the completion date of any previous program
-                    this.minEnrollmentDate = new Date(this.patientPrograms[0].dateCompleted)
+                    this.minEnrollmentDate = moment(this.patientPrograms[0].dateCompleted).toDate()
                 }
 
             }
@@ -333,18 +334,17 @@ export default class ProgramStatusController {
             var states = [];
             angular.forEach(this.input.initialWorkflowStateByWorkflow, (state) => {
                 if (state && state.state) {
-                    // program entity lost information about `startDate` time value (date database type) and it
-                    // causes an issue when the timezone is different than UTC, that's why we remove information
-                    // about a time before sending a request
-                    state.startDate = this.dateWithoutTime(this.input.dateEnrolled);
+                    // note that we strip off any time component before submitting to server
+                    state.startDate = this.widgetsCommons.dateWithoutTimeAsString(this.input.dateEnrolled);
                     states.push(state);
                 }
             });
 
+            // note that we strip off any time component before submitting to server
             this.openmrsRest.create('programenrollment', {
                 patient: this.config.patientUuid,
                 program: this.config.program,
-                dateEnrolled: this.dateWithoutTime(this.input.dateEnrolled),
+                dateEnrolled: this.widgetsCommons.dateWithoutTimeAsString(this.input.dateEnrolled),
                 location: this.input.enrollmentLocation,
                 states: states
             }).then((response) => {
@@ -384,9 +384,10 @@ export default class ProgramStatusController {
             }
         })*/
 
+        // note that we strip off any time component before submitting to server
         this.openmrsRest.update('programenrollment/' + this.patientProgram.uuid, {
-            dateEnrolled: this.dateWithoutTime(this.input.dateEnrolled),
-            dateCompleted: this.dateWithoutTime(this.input.dateCompleted),
+            dateEnrolled: this.widgetsCommons.dateWithoutTimeAsString(this.input.dateEnrolled),
+            dateCompleted: this.widgetsCommons.dateWithoutTimeAsString(this.input.dateCompleted),
             location: this.input.enrollmentLocation,
             outcome: this.input.outcome//,
             //states: states
@@ -454,14 +455,12 @@ export default class ProgramStatusController {
     }
 
     createPatientState(state) {
-        // patient program entity lost information about `startDate` time value (date database type) and it
-        // causes an issue when the timezone is different than UTC, that's why we remove information
-        // about a time before sending a request
+        // note that we strip off any time component before submitting
         this.openmrsRest.update('programenrollment/' + this.patientProgram.uuid, {
             states: [
                 {
                     state: state.state,
-                    startDate: this.dateWithoutTime(state.date)  // TODO is it okay that we set this date on the client-side? need to sync with
+                    startDate: this.widgetsCommons.dateWithoutTimeAsString(state.date)
                 }
             ]
         }).then((response) => {
@@ -558,19 +557,19 @@ export default class ProgramStatusController {
                     } else if( state1.value.endDate == null){
                         return 1;
                     //sort by start date
-                    } else if( new Date(state1.value.startDate) < new Date(state2.value.startDate)) {
+                    } else if(moment(state1.value.startDate) < moment(state2.value.startDate)) {
                         return -1;
-                    } else if ( new Date(state1.value.startDate) > new Date(state2.value.startDate)) {
+                    } else if (moment(state1.value.startDate) > moment(state2.value.startDate)) {
                         return 1;
                     //sort by end date
-                    } else if(new Date(state1.value.endDate) < new Date(state2.value.endDate)){
+                    } else if(moment(state1.value.endDate) < moment(state2.value.endDate)){
                         return -1;
-                    } else if (new Date(state1.value.endDate) > new Date(state2.value.endDate)) {
+                    } else if (moment(state1.value.endDate) > moment(state2.value.endDate)) {
                         return 1;
                     //sort by date created
-                    } else if(new Date(state1.value.dateCreated) < new Date(state2.value.dateCreated)){
+                    } else if(moment(state1.value.dateCreated) < moment(state2.value.dateCreated)){
                         return -1;
-                    } else if(new Date(state1.value.dateCreated) > new Date(state2.value.dateCreated)){
+                    } else if(moment(state1.value.dateCreated) > moment(state2.value.dateCreated)){
                         return 1;
                     }
 
@@ -586,15 +585,11 @@ export default class ProgramStatusController {
                     this.sortedStatesByWorkflow[workflow.uuid] = [];
                   }
 
-                  // patient program entity lost information about `startDate` time value (date database type) and it
-                  // causes an issue when the timezone is different than UTC
-                  // that's why we had store start date as the date without
-                  // the time and now we don't want to add timezone offset to that value (and use toUTCDate)
-                    // TODO: can we possibly remove this if we implement TRUNK-6157?
+                  // we use moment instead of new Date() because moment interprets a string with no time as local time, not UTC
                   var newEntry = {
-                    startDate: this.toUTCDate(patientState.startDate),
+                    startDate: moment(patientState.startDate).toDate(),
                     dayAfterStartDate: this.getNextDay(patientState.startDate),
-                    endDate: this.toUTCDate(patientState.endDate),
+                    endDate: moment(patientState.endDate).toDate(),
                     state: patientState.state,
                     uuid: patientState.uuid
                   }
@@ -740,22 +735,9 @@ export default class ProgramStatusController {
         this.$window.location.reload();
     }
 
-    dateWithoutTime(date) {
-        return moment(date).format('YYYY-MM-DD');
-    }
-
-    toUTCDate(dateString) {
-        let utcDate = null;
-        if (dateString) {
-            utcDate = new Date(dateString);
-            utcDate.setTime(utcDate.getTime() + utcDate.getTimezoneOffset() * 60 * 1000);
-        }
-        return utcDate;
-    }
-
     patientProgramComparator(patientProgram1, patientProgram2) {
-        const dateEnrolled1 = new Date(patientProgram1.value.dateEnrolled);
-        const dateEnrolled2 = new Date(patientProgram2.value.dateEnrolled);
+        const dateEnrolled1 = moment(patientProgram1.value.dateEnrolled);
+        const dateEnrolled2 = moment(patientProgram2.value.dateEnrolled);
 
         // first check enrollment dates
         if (dateEnrolled1 > dateEnrolled2) {
@@ -766,8 +748,8 @@ export default class ProgramStatusController {
         }
 
         // if enrollment dates are equal, check completion dates
-        const dateCompleted1 = patientProgram1.value.dateCompleted ? new Date(patientProgram1.value.dateCompleted) : null;
-        const dateCompleted2 = patientProgram2.value.dateCompleted ? new Date(patientProgram2.value.dateCompleted) : null;
+        const dateCompleted1 = patientProgram1.value.dateCompleted ? moment(patientProgram1.value.dateCompleted) : null;
+        const dateCompleted2 = patientProgram2.value.dateCompleted ? moment(patientProgram2.value.dateCompleted) : null;
 
         // "active" (no completion date) ranks higher
         // assumption: never should be two active programs (ie both date completed should not be null)
