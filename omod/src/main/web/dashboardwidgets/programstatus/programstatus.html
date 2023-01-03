@@ -135,7 +135,7 @@
                 <openmrs-datepicker ng-model="$ctrl.input.dateEnrolled"
                                     format="{{$ctrl.dateFormat}}"
                                     start-date="$ctrl.minEnrollmentDate"
-                                    end-date="$ctrl.input.dateCompleted ? $ctrl.input.dateCompleted : $ctrl.today"
+                                    end-date="$ctrl.calculateMaximumEnrollmentDate()"
                                     language="{{$ctrl.language}}"/>
             </p>
         </fieldset>
@@ -206,7 +206,7 @@
                 <p class="programstatus-field">
                     <openmrs-datepicker ng-model="$ctrl.input.changeToStateByWorkflow[workflow.uuid].date"
                                         format="{{$ctrl.dateFormat}}"
-                                        start-date="$ctrl.sortedStatesByWorkflow[workflow.uuid] ? $ctrl.sortedStatesByWorkflow[workflow.uuid][0].dayAfterStartDate : $ctrl.input.dateEnrolled"
+                                        start-date="$ctrl.calculateMinimumStateTransitionDate(workflow.uuid)"
                                         end-date="$ctrl.programIsCompleted() ? $ctrl.patientProgram.dateCompleted : $ctrl.today"
                                         language="{{$ctrl.language}}"/>
                 </p>
@@ -220,7 +220,7 @@
                 <tr ng-repeat="row in $ctrl.sortedStatesByWorkflow[workflow.uuid]" ng-show="$first || $ctrl.expanded.workflow[workflow.uuid]">
                     <td class="workflow-cell">
                         {{ row.startDate | date:$ctrl.dateFormat }}
-                        <span ng-show="!$first">{{'coreapps.to' | translate}} {{ row.endDate | date:$ctrl.dateFormat }} </span>
+                        <span ng-show="row.endDate">{{'coreapps.to' | translate}} {{ row.endDate | date:$ctrl.dateFormat }} </span>
                     </td>
                     <td class="workflow-cell" ng-class="{bold:$first}">
                         {{ row.state.concept.display }}

@@ -589,7 +589,7 @@ export default class ProgramStatusController {
                   var newEntry = {
                     startDate: moment(patientState.startDate).toDate(),
                     dayAfterStartDate: this.getNextDay(patientState.startDate),
-                    endDate: moment(patientState.endDate).toDate(),
+                    endDate: patientState.endDate ? moment(patientState.endDate).toDate() : null,
                     state: patientState.state,
                     uuid: patientState.uuid
                   }
@@ -600,18 +600,46 @@ export default class ProgramStatusController {
         }
     }
 
+    getEarliestStateChangeDate() {
+        let earliestStateChangeDate = null
+
+        angular.forEach(this.sortedStatesByWorkflow, (workflow) => {
+            if (workflow.length > 0) {
+                if (!earliestStateChangeDate || workflow[workflow.length - 1].startDate < earliestStateChangeDate){
+                    earliestStateChangeDate = workflow[workflow.length - 1].startDate
+                }
+            }
+        })
+
+        return earliestStateChangeDate;
+    }
+
     getMostRecentStateChangeDate() {
-        let mostRecentStateChangeDate = null
+        let mostRecentStateChangeDate = null;
 
         angular.forEach(this.sortedStatesByWorkflow, (workflow) => {
             if (workflow.length > 0) {
                 if (!mostRecentStateChangeDate || workflow[0].startDate > mostRecentStateChangeDate){
                     mostRecentStateChangeDate = workflow[0].startDate
                 }
+                if (workflow[0].endDate && workflow[0].endDate > mostRecentStateChangeDate) {
+                    mostRecentStateChangeDate = workflow[0].endDate
+                }
             }
         })
 
         return mostRecentStateChangeDate;
+    }
+
+    calculateMaximumEnrollmentDate() {
+        // enrollment date cannot be moved ahead of any state change date or the completion date of the program
+        let earliestStateChangeDate = this.getEarliestStateChangeDate();
+        return earliestStateChangeDate ? earliestStateChangeDate : this.input.dateCompleted ? this.input.dateCompleted : this.today;
+    }
+
+    calculateMinimumStateTransitionDate(workflowUuid) {
+        // transition date must not be before the end date of the most recent state, or, if no end date, the day after the start date of the most recent state, or, if no workflow states, must not be before enrollment date
+        return this.sortedStatesByWorkflow[workflowUuid] ? (this.sortedStatesByWorkflow[workflowUuid][0].endDate ?  this.sortedStatesByWorkflow[workflowUuid][0].endDate : this.sortedStatesByWorkflow[workflowUuid][0].dayAfterStartDate) : this.input.dateEnrolled;
     }
 
     update() {
