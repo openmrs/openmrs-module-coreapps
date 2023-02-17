@@ -101,7 +101,7 @@ public class CodedOrFreeTextAnswerListWidget implements Widget {
     }
 
     private String initialValueAsJson(List<CodedOrFreeTextAnswer> initialValue) {
-        if (initialValue == null || initialValue.size() == 0) {
+        if (initialValue == null || initialValue.isEmpty()) {
             return null;
         }
 
