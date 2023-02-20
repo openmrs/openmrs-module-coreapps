@@ -56,7 +56,7 @@ public class DashboardWidgetFragmentController {
         }
 
         appConfig.put("locale", Context.getLocale().toString());
-        appConfig.put("language", Context.getLocale().getLanguage().toString());
+        appConfig.put("language", Context.getLocale().getLanguage());
 
         Map<String, Object> appConfigMap = mapper.convertValue(appConfig, Map.class);
         config.merge(appConfigMap);
