@@ -70,7 +70,7 @@ public class MostRecentEncounterFragmentController {
 
         model.addAttribute("definitionUiResource", definitionUiResource);
 
-		if (encounters.size() > 0) {
+		if (!encounters.isEmpty()) {
             model.addAttribute("encounter", encounters.get(encounters.size() - 1));
 		} else {
 			model.addAttribute("encounter", null);

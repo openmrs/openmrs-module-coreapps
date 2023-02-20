@@ -57,7 +57,7 @@ public class MarkPatientDeadPageController {
         }
         List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
 
-        if (visits.size() > 0) {
+        if (!visits.isEmpty()) {
             //Current order of visits returned by getVisitsByPatient() of VisitService has first in list as last visit
             pageModel.put("lastVisitDate", visits.get(0).getStartDatetime());
         } else {

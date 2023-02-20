@@ -75,7 +75,7 @@ public class MergeVisitsPageController {
                     SimpleObject.create("patientId", patient.getId().toString()));
         }
 
-        if (mergeVisits != null && mergeVisits.size() > 0) {
+        if (mergeVisits != null && !mergeVisits.isEmpty()) {
             Visit mergedVisit = service.mergeConsecutiveVisits(mergeVisits, patient);
             if (mergedVisit != null) {
                 request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, ui.message("coreapps.task.mergeVisits.success"));
