@@ -108,7 +108,6 @@ public class PatientPageController {
         or
         hasMemberWithProperty(encounterTypes, 'uuid', 'uuid-for-the-encounter-type')
 
-
         VisitDomainWrapper activeVisit = null;
         if (visitLocation != null) {
             activeVisit = adtService.getActiveVisit(patient, visitLocation);
