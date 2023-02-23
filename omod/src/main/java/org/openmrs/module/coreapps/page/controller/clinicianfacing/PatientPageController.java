@@ -95,6 +95,20 @@ public class PatientPageController {
             // location does not support visits
         }
 
+        List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
+        List<Encounter> encounters = encounterService.getEncountersByPatient(patient);
+        for (Encounter encounter : encounters) {
+            encounterTypes.add(encounter.getEncounterType());
+        }
+
+        contextModel.put("encounterTypes", ConversionUtil.convertToRepresentation(encounterTypes, Representation.DEFAULT));
+
+        // show the form if the patient has an encounter of type 'INITIAL ENCOUNTER' or 'uuid-for-the-encounter-type'
+        hasMemberWithProperty(encounterTypes, 'name', 'INITIAL ENCOUNTER')
+        or
+        hasMemberWithProperty(encounterTypes, 'uuid', 'uuid-for-the-encounter-type')
+
+
         VisitDomainWrapper activeVisit = null;
         if (visitLocation != null) {
             activeVisit = adtService.getActiveVisit(patient, visitLocation);
