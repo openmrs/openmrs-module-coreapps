@@ -106,12 +106,17 @@ function PatientSearchWidget(configuration){
 
             jq.each(columnConfig, function(index, column) {
                 var columnValue = '';
+
                 if (column.type === 'identifier') {
                     if (!column.value || column.value === 'primary') {
                         columnValue = p.identifier || '';
                     }
                     else {
-                        columnValue = p[column.value] || '';
+                        _.each(column.value.split(','), function(identifierTypeUuid) {
+                          if (p[identifierTypeUuid]) {
+                            columnValue = columnValue + (columnValue !== '' ? ', ' : '') + p[identifierTypeUuid];
+                          }
+                      })
                     }
                 }
                 else if (column.type === 'name') {
@@ -165,7 +170,7 @@ function PatientSearchWidget(configuration){
     var customRep = 'custom:(patientId,uuid,' +
                     'patientIdentifier:(uuid,identifier),' +
                     'person:(gender,age,birthdate,birthdateEstimated,personName),' +
-                    'identifiers:(identifier,identifierType:(uuid,name)),' +
+                    'identifiers:(identifier,identifierType:(uuid,name),location:(display)),' +
                     'attributes:(value,attributeType:(name)))';
 
     var doSearch = function(query, currRequestCount, autoSelectIfExactIdentifierMatch){
@@ -307,12 +312,15 @@ function PatientSearchWidget(configuration){
                         else {
                             jq.each(patient.identifiers, function (index, patientIdentifier) {
                                 var identifierType = patientIdentifier.identifierType;
+                                var isMultipleIdentifierTypes = column.value && column.value.includes(',');
                                 if (identifierType != null && !patientIdentifier.voided &&
-                                    (column.value === identifierType.uuid)) {
+                                    column.value && column.value.includes(identifierType.uuid)) {
                                     if (patientIdentifier.identifier) {
-                                        columnValue = patientIdentifier.identifier;
+                                        columnValue = columnValue
+                                          + (columnValue !== '' ? ', ' : '')
+                                          + (isMultipleIdentifierTypes ? identifierType.name + ':' : '')  // if multiple possible types, display name as a label
+                                          + patientIdentifier.identifier;
                                     }
-                                    return false;
                                 }
                             });
                         }
@@ -352,6 +360,20 @@ function PatientSearchWidget(configuration){
                                     }
                                 }
                                 return false;
+                            }
+                        });
+                    }
+                    else if (column.type === 'identifierLocation') {
+                        jq.each(patient.identifiers, function (index, patientIdentifier) {
+                            var identifierType = patientIdentifier.identifierType;
+                            var identifierLocation = patientIdentifier.location;
+                            if (identifierType != null && !patientIdentifier.voided &&
+                                    column.value && column.value.includes(identifierType.uuid)) {
+                                    if (identifierLocation != null) {
+                                        columnValue = columnValue
+                                          + (columnValue !== '' ? ', ' : '') 
+                                          + identifierLocation.display;
+                                    }
                             }
                         });
                     }

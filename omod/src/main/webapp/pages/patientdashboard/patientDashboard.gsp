@@ -21,7 +21,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient))) }" ,
+        { label: "${ ui.encodeJavaScript(ui.encodeHtmlContent(ui.format(patient.patient))) }" ,
             link: '${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: patient.patient.id ] ) }'}
     ];
 
@@ -44,9 +44,8 @@
         // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
         def configs = [:];
         if(it.extensionParams.fragmentConfig != null){
-            configs = it.extensionParams.fragmentConfig;
+            configs.putAll(it.extensionParams.fragmentConfig);
         }
-
         configs.patient = patient;   // add the patient to the map %>
         ${ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs)}
     <%}

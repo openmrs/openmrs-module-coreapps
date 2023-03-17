@@ -1,17 +1,19 @@
 export default class ObsAcrossEncountersController {
-  constructor($q, $filter, openmrsRest, openmrsTranslate, widgetsCommons) {
+  constructor($scope, $q, $filter, openmrsRest, openmrsTranslate, widgetsCommons) {
     'ngInject';
 
-    Object.assign(this, {$q, $filter, openmrsRest, openmrsTranslate, widgetsCommons});
+    Object.assign(this, {$scope, $q, $filter, openmrsRest, openmrsTranslate, widgetsCommons});
   }
 
   $onInit() {
     this.sessionLocale = null;
     this.CONCEPT_CUSTOM_REP = 'custom:(uuid,display,names:(voided,locale,conceptNameType,localePreferred,name)';
     this.conceptsMap = {};  // a map of conceptUUID --> concept(REST response)
+    this.conceptKeys = [];
     this.simpleEncs = [];
     this.headers = [];
     this.openmrsRest.setBaseAppPath("/coreapps");
+    this.isArray = angular.isArray;
 
     this.output = {
       headers: [],
@@ -37,8 +39,8 @@ export default class ObsAcrossEncountersController {
   }
 
   fetchConcepts() {
-    let conceptKeys = this.config.concepts.split(",").map(c => c.trim());
-    return Promise.all(conceptKeys.map((key) => (
+    this.conceptKeys = this.config.concepts.split(",").map(c => c.trim());
+    return Promise.all(this.conceptKeys.map((key) => (
       this.openmrsRest.get("concept/" + key, {
         v: this.CONCEPT_CUSTOM_REP
       }).then((concept) => {
@@ -56,14 +58,13 @@ export default class ObsAcrossEncountersController {
 
     const encounterQueryParams = {
       patient: this.config.patientUuid,
-      v: 'custom:(uuid,encounterDatetime,encounterType:(name,description),obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
+      v: 'custom:(uuid,encounterDatetime,encounterProviders:(uuid,provider:(uuid,name)),encounterType:(name,description),obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
       limit: this.config.maxRecords || 4,
       fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge)
     };
     const encounterPromises = encounterTypes.length ? encounterTypes.map(e =>
       this.openmrsRest.get("encounter",
-          Object.assign({ encounterType: e }, encounterQueryParams)
-      ).then(response => response.results))
+          Object.assign({ encounterType: e }, encounterQueryParams)).then(response => response.results))
     : [this.openmrsRest.get("encounter",
           Object.assign({ encounterType: '' }, encounterQueryParams)  // `encounterType: ''` is required to prevent a 400 error
       ).then(response => response.results)];
@@ -79,34 +80,79 @@ export default class ObsAcrossEncountersController {
       if (this.config.showEncounterTypeName) {
         this.output.headers.push('coreapps.patientDashBoard.encounter');
       }
-      this.output.headers.push('coreapps.date');
-      for (const concept of Object.values(this.conceptsMap)) {
-        this.output.headers.push(concept.display);
+      if (this.config.showEncounterProviderName) {
+        this.output.headers.push('coreapps.patientDashBoard.provider');
       }
+      this.output.headers.push('coreapps.date');
+
+      this.conceptKeys.map(uuid => {
+        this.output.headers.push(this.conceptsMap[uuid].display);
+      });
     }
 
     this.output.rows = [];
-    const sortedEncs = this.simpleEncs.sort((a, b) => a.encounterDatetime - b.encounterDatetime);
+    let encounterDateToDisplay;
+    let providersNameToDisplay;
+    let sortedEncs = [];
+    if (this.config.sortOrder === 'desc') {
+      // sort obs by encounter datetime in descending order
+      sortedEncs = this.simpleEncs.sort((a, b) => (new Date(b.encounterDatetime)).getTime() - (new Date(a.encounterDatetime)).getTime());
+    } else {
+      //by default, sort obs by encounter datetime in ascending order(the oldest obs will be on top of the list)
+      sortedEncs = this.simpleEncs.sort((a, b) => (new Date(a.encounterDatetime)).getTime() - (new Date(b.encounterDatetime)).getTime());
+    }
     for (let i = 0; i < sortedEncs.length; i++) {
+      encounterDateToDisplay = "";
+      providersNameToDisplay = "";
       const encounter = sortedEncs[i]
       const row = [];
       this.output.rows.push(row);
       if (this.config.showEncounterTypeName) {
         row.push({ value: encounter.encounterType, translate: true });
       }
-      row.push({
-        value: this.widgetsCommons.formatDate(
-          encounter.encounterDatetime,
-          this.config.JSDateFormat,
-          this.config.language)
-      });
-      for (var uuid of Object.keys(this.conceptsMap)) {
-        row.push({
-          value: (encounter.obs[uuid] ? this.getObsValue(encounter.obs[uuid]) : '') || '',
-          className: this.isRetired(encounter.obs[uuid]) ? 'retiredConcept' : ''
+
+      if (this.config.showEncounterProviderName) {
+        encounter.encounterProviders.map((element , index) => {
+          providersNameToDisplay += element.provider.name;
+          if(index != (encounter.encounterProviders.length - 1)){
+            providersNameToDisplay +=  ", "
+          }
         });
+        row.push({ value: providersNameToDisplay , translate: false });
       }
+      if (this.config.showDateWithTime) {
+         encounterDateToDisplay = this.widgetsCommons.formatDateTime(
+            encounter.encounterDatetime,
+            this.config.JSDateTimeFormat,
+            this.config.language);
+      } else {
+        encounterDateToDisplay = this.widgetsCommons.formatDate(
+            encounter.encounterDatetime,
+            this.config.JSDateFormat,
+            this.config.language);
+      }
+        row.push({
+          value: encounterDateToDisplay
+        });
+
+      this.conceptKeys.map(uuid => {
+        let obsArray = [];
+        if (encounter.obs[uuid]) {
+          for (let obs of encounter.obs[uuid]) {
+            obsArray.push({
+              value: (obs ? this.getObsValue(obs) : '') || '',
+              className: this.isRetired(obs) ? 'retiredConcept' : ''
+            });
+          }
+        } else {
+          obsArray.push({
+            value: ''
+          });
+        }
+        row.push(obsArray);
+      });
     }
+    this.$scope.$apply();
   }
 
   isRetired(obs) {
@@ -127,33 +173,40 @@ export default class ObsAcrossEncountersController {
   addToSimpleEncs(encounters) {
     const resultPromises = []
     for (let encounter of encounters) {
-      const conceptKeys = Object.keys(this.conceptsMap);
       // all normal concepts will go in one row
       const foundObsByUuid = {};
       for (let obs of encounter.obs) {
         // if it's a group, add a row for each member matching one of the concepts
         if (obs.groupMembers) {
-          const foundMembers = obs.groupMembers.filter(member => conceptKeys.includes(member.concept.uuid));
+          const foundMembers = obs.groupMembers.filter(member => this.conceptKeys.includes(member.concept.uuid));
           if (foundMembers.length) {
             const foundMembersByUuid = {};
             for (let m of foundMembers) {
-              foundMembersByUuid[m.concept.uuid] = m;
+              if (!foundMembersByUuid[m.concept.uuid]) {
+                foundMembersByUuid[m.concept.uuid] = [];
+              }
+              foundMembersByUuid[m.concept.uuid].push(m);
             }
             this.simpleEncs.push({
               encounterType: encounter.encounterType.name,
               encounterDatetime: encounter.encounterDatetime,
+              encounterProviders: encounter.encounterProviders,
               obs: foundMembersByUuid
             });
           }
         } else // otherwise, add the obs value (if it matches one of our concepts)
-          if (conceptKeys.includes(obs.concept.uuid)) {
-          foundObsByUuid[obs.concept.uuid] = obs;
+          if (this.conceptKeys.includes(obs.concept.uuid)) {
+            if (!foundObsByUuid[obs.concept.uuid]) {
+              foundObsByUuid[obs.concept.uuid] = [];
+            }
+            foundObsByUuid[obs.concept.uuid].push(obs);
         }
       }
       if (Object.keys(foundObsByUuid).length > 0) {
         this.simpleEncs.push({
           encounterType: encounter.encounterType.name,
           encounterDatetime: encounter.encounterDatetime,
+          encounterProviders: encounter.encounterProviders,
           obs: foundObsByUuid
         });
       }
@@ -173,11 +226,13 @@ export default class ObsAcrossEncountersController {
   updateWithConceptShortNames(encounters) {
     const resultPromises = [];
     for (let encounter of encounters) {
-      for (let obs of Object.values(encounter.obs)) {
-        if (this.widgetsCommons.isDrug(obs.value)) {
-          resultPromises.push(this.updateWithShortName(obs.value.concept));
-        } else if (this.widgetsCommons.hasDatatypeCoded(obs.concept)) {
-          resultPromises.push(this.updateWithShortName(obs.value));
+      for (let obsArray of Object.values(encounter.obs)) {
+        for (let obs of obsArray) {
+          if (this.widgetsCommons.isDrug(obs.value)) {
+            resultPromises.push(this.updateWithShortName(obs.value.concept));
+          } else if (this.widgetsCommons.hasDatatypeCoded(obs.concept)) {
+            resultPromises.push(this.updateWithShortName(obs.value));
+          }
         }
       }
     }

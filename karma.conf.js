@@ -17,12 +17,25 @@ module.exports = function(config) {
 			FirefoxNoSandbox: {
 				base: 'Firefox',
 				flags: ['--no-sandbox']
+			},FirefoxHeadless: {
+				base: 'Firefox',
+				flags: [
+					'--no-sandbox',
+					'--headless'
+				]
 			}
 		},
         files: [
 			{ pattern: 'node_modules/babel-polyfill/browser.js', instrument: false},
             { pattern: pkg.config.sourceDir + '/karma.context.js' }
         ],
+        phantomjsLauncher: {
+        	options: {
+        		settings: {
+        			webSecurityEnabled: false
+        		}
+        	}
+        },
         frameworks: ['jasmine'],
         preprocessors: {
             '**/karma.context.js': ['webpack', 'sourcemap']

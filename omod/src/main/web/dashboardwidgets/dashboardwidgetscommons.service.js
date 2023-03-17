@@ -1,4 +1,5 @@
 import moment from 'moment';
+import angular from "angular";
 
 export default class WidgetsCommons {
 
@@ -23,8 +24,8 @@ export default class WidgetsCommons {
         if (date !== null) {
             let givenDate = new Date(date).setHours(0,0,0,0);
             let today = new Date().setHours(0,0,0,0);
-            let seconds = Math.floor((today - givenDate) / 1000);
-            days = Math.floor(seconds / 86400);
+            let seconds = Math.round((today - givenDate) / 1000);
+            days = Math.round(seconds / 86400);
         }
 
         return days;
@@ -33,8 +34,8 @@ export default class WidgetsCommons {
     // Method used to define days since given date
     dateToDaysAgo(date) {
         const time = new Date(date).getTime();
-        const seconds = Math.floor((new Date().getTime() - time) / 1000);
-        const interval = Math.floor(seconds / 86400);
+        const seconds = Math.round((new Date().getTime() - time) / 1000);
+        const interval = Math.round(seconds / 86400);
         let days = 0;
         if (interval > 0) {
             days = interval;
@@ -147,6 +148,23 @@ export default class WidgetsCommons {
     }
 
     /**
+     * Returns date and time translated according to preferred locale.
+     * Ex: Date: 02-Jan-2021 15:10 Format: DD.MMM.YYYY HH:mm Locale: fr --> Return: 02-janv.-2021 15:10
+     *
+     * @param {object} date Input Datetime
+     * @param {string} format Date Format
+     * @param {string} locale The preferred locale
+     */
+    formatDateTime(date, format, locale) {
+        try{
+            moment.locale(locale);
+            return moment(date).format(format);
+        } catch(err) {
+            return moment(date).format("DD.MMM.YYYY HH:mm");
+        }
+    }
+
+    /**
      * Return true if the user has the System Developer role
      *
      * @param user
@@ -154,5 +172,51 @@ export default class WidgetsCommons {
      */
     isSystemDeveloper(user){
         return user.roles.some( (p) => { return p.name === 'System Developer'; });
+    }
+
+    /**
+     * If ISO string, parse to return only date component
+     * If Date or Moment object, format as string with only Date component
+     *
+     * @param date (String or Date object)
+     * @returns String
+     */
+    dateWithoutTimeAsString(date) {
+        if (!date) {
+            return null;
+        }
+        // this is a string
+        if (typeof date === 'string' || date instanceof String) {
+            return date.split("T")[0];
+        }
+        // this is an existing Date or Moment object
+        else {
+            return moment(date).format('YYYY-MM-DD');
+        }
+    }
+
+    /**
+     * Iterates through a list of patient programs returned RESTfully and strips the time component off
+     * all enrollment dates, completion dates, and state start and end dates (though states start and end should
+     * not have time zones)
+     *
+     * This is hack for handling time zones; we always want to be manipulating *just dates* for program dates,
+     * so we chop off any time components we retrieve from the server, so we can parse the dates as midnight
+     * *local client time*. (Elsewhere in the code we make sure we use dateWithoutTimeAsString before submitting
+     * any data *back* to the server)
+     *
+     * See: programs.controllers.js and programstatuscontroller.js
+     *
+     * @param patientPrograms
+     */
+    stripTimeComponentFromProgramDates(patientPrograms) {
+        angular.forEach(patientPrograms, (patientProgram) => {
+            patientProgram.dateEnrolled = this.dateWithoutTimeAsString(patientProgram.dateEnrolled);
+            patientProgram.dateCompleted = this.dateWithoutTimeAsString(patientProgram.dateCompleted);
+            angular.forEach(patientProgram.states, (patientState) => {
+                patientState.startDate = this.dateWithoutTimeAsString(patientState.startDate)
+                patientState.endDate = this.dateWithoutTimeAsString(patientState.endDate)
+            })
+        })
     }
 }

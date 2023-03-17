@@ -76,7 +76,7 @@
     <% if (patient.patient.dead) { %>
         <div class="death-header col-12">
             <span class="death-message">
-                ${ ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath)) }
+                    ${ui.message("coreapps.deadPatient", ui.format(patient.patient.deathDate), ui.format(patient.patient.causeOfDeath))}
             </span>
             <span class="death-info-extension">
                 <%= ui.includeFragment("appui", "extensionPoint", [ id: "patientHeader.deathInfo", contextModel: appContextModel ]) %>
@@ -113,7 +113,12 @@
                     <% } else { %>
                         ${ui.message("coreapps.ageDays", patient.ageInDays)}
                     <% } %>
-                    (<% if (patient.birthdateEstimated) { %>~<% } %>${ ui.formatDatePretty(patient.birthdate) })
+                    (<% if (patient.birthdateEstimated) { %>~<% } %>
+                        <% if(ui.convertTimezones()) { %>
+                            ${ ui.formatDateWithoutTimezoneConversion(patient.birthdate) })
+                        <% } else { %>
+                            ${ ui.formatDatePretty(patient.birthdate) })
+                        <% } %>
                     <% } else { %>
                         ${ui.message("coreapps.unknownAge")}
                     <% } %>
@@ -161,27 +166,32 @@
                 <% def extraPatientIdentifiers = config.extraPatientIdentifiersMappedByType.get(extraPatientIdentifierType.patientIdentifierType) %>
 
                 <% if (extraPatientIdentifiers) { %>
+
                     <div class="float-sm-right">
                         <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
-
-                        <% if (extraPatientIdentifierType.editable) { %>
-                            <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
-                                <span>
+                        <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
+                        <%  def identifierLink = config.extraIdentifierLinks.get(extraPatientIdentifierType.patientIdentifierType)
+                            if (identifierLink) {
+                                def url = identifierLink.url.replace("{{identifier}}", extraPatientIdentifier.identifier) %>
+                                <a href="${url}" target="_blank">
+                                    <i class="${ identifierLink.icon ?: 'icon-external-link' }" title="${ ui.message(identifierLink.label) }"></i>
+                                </a>
+                            <% } %>
+                            <span>
+                                <% if (extraPatientIdentifierType.editable) { %>
                                     <a class="editPatientIdentifier"
-                                        data-patient-identifier-id="${extraPatientIdentifier.id}"
-                                        data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
-                                        data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}"
-                                        data-patient-identifier-value="${extraPatientIdentifier}"
-                                        href="#${extraPatientIdentifierType.patientIdentifierType.id}"
+                                       data-patient-identifier-id="${extraPatientIdentifier.id}"
+                                       data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
+                                       data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}"
+                                       data-patient-identifier-value="${extraPatientIdentifier}"
+                                       href="#${extraPatientIdentifierType.patientIdentifierType.id}"
                                     >
                                         ${extraPatientIdentifier}
                                     </a>
-                                </span>
-                            <% } %>
-                        <% } else {%>
-                            <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
-                                <span>${extraPatientIdentifier}</span>
-                            <% } %>
+                                <% } else { %>
+                                    ${extraPatientIdentifier}
+                                <% } %>
+                            </span>
                         <% } %>
                     </div>
                 <% } else if (extraPatientIdentifierType.editable) { %>
@@ -239,7 +249,7 @@
         <ul>
             <li class="info">
                 <span>${ui.message("coreapps.patient")}</span>
-                <h5>${ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.patient)))}</h5>
+                <h5>${ui.encodeJavaScript(ui.encodeHtmlContent(ui.format(patient.patient)))}</h5>
             </li>
             <li class="info">
                 <span id="identifierTypeNameSpan"></span>

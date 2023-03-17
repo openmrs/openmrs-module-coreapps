@@ -16,16 +16,16 @@
     <% if (showLastViewedPatients && !doInitialSearch) {
         lastViewedPatients.each { it -> %>
             var patientObj = {
-                uuid:"${ ui.escapeJs(ui.encodeHtmlContent(it.uuid)) }",
-                name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",
-                gender:"${ ui.escapeJs(ui.encodeHtmlContent(it.gender)) }",
+                uuid:"${ ui.encodeJavaScript(ui.encodeHtmlContent(it.uuid)) }",
+                name:"${ it.personName ? ui.encodeJavaScript(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",
+                gender:"${ ui.encodeJavaScript(ui.encodeHtmlContent(it.gender)) }",
                 // it.age is of type int (doesn't need sanitization)
                 age:"${ it.age ?: '' }",
-                birthdate:"${ it.birthdate ? ui.escapeJs(ui.encodeHtmlContent(dateFormatter.format(it.birthdate))) : '' }",
+                birthdate:"${ it.birthdate ? ui.encodeJavaScript(ui.encodeHtmlContent(dateFormatter.format(it.birthdate))) : '' }",
                 // it.birthdateEstimated is of type boolean (doesn't need sanitization)
                 birthdateEstimated: ${ it.birthdateEstimated },
-                identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }",
-                widgetBirthdate:"${ it.birthdate ? ui.escapeJs(ui.encodeHtmlContent(searchWidgetDateFormatter.format(it.birthdate))) : '' }",
+                identifier:"${ it.patientIdentifier ? ui.encodeJavaScript(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }",
+                widgetBirthdate:"${ it.birthdate ? ui.encodeJavaScript(ui.encodeHtmlContent(searchWidgetDateFormatter.format(it.birthdate))) : '' }",
                 patientDbId:"${ it.id ?: '' }"
             }
             <% listingAttributeTypeNames.each { attributeName -> %>
@@ -38,7 +38,7 @@
         <% }
     } %>
     function getPatientRowSelectionHandler() {
-    	var afterSelectedUrl = '${ ui.escapeJs(config.afterSelectedUrl) }';
+    	var afterSelectedUrl = '${ ui.encodeJavaScript(config.afterSelectedUrl) }';
         this.handle = function (row) {
             var uuid = row.uuid;
             var patientDbId = row.patientDbId;
@@ -59,10 +59,10 @@
     jq(function() {
         var widgetConfig = {
             initialPatients: lastViewedPatients,
-            doInitialSearch: ${ doInitialSearch ? "\"" + ui.escapeJs(doInitialSearch) + "\"" : "null" },
+            doInitialSearch: ${ doInitialSearch ? "\"" + ui.encodeJavaScript(doInitialSearch) + "\"" : "null" },
             minSearchCharacters: ${ minSearchCharacters ?: 3 },
-            afterSelectedUrl: '${ ui.escapeJs(config.afterSelectedUrl) }',
-            breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }',
+            afterSelectedUrl: '${ ui.encodeJavaScript(config.afterSelectedUrl) }',
+            breadcrumbOverride: '${ ui.encodeJavaScript(breadcrumbOverride) }',
             searchDelayShort: ${ searchDelayShort },
             searchDelayLong: ${ searchDelayLong },
             handleRowSelection: ${ config.rowSelectionHandler ?: "handlePatientRowSelection" },

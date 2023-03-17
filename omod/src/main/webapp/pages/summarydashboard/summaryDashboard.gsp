@@ -27,7 +27,7 @@
         // create a base map from the fragmentConfig if it exists, otherwise just create an empty map
         def configs = [:];
         if(it.extensionParams.fragmentConfig != null){
-            configs = it.extensionParams.fragmentConfig;
+            configs.putAll(it.extensionParams.fragmentConfig);
         }
  %>
 ${ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, configs)}
@@ -81,7 +81,7 @@ ${ui.includeFragment(it.extensionParams.provider, it.extensionParams.fragment, c
                     <%
                             actions.each { ext -> %>
                     <li class="float-left">
-                        <a href="${ ui.escapeJs(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
+                        <a href="${ ui.encodeJavaScript(ext.url("/" + ui.contextPath(), appContextModel, ui.thisUrl())) }" id="${ ext.id }" class="float-left">
                             <i class="${ ext.icon } float-left"></i>
                             ${ ui.message(ext.label) }
                         </a>

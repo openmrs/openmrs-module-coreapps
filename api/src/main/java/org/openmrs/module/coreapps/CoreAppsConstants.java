@@ -24,6 +24,7 @@ public class CoreAppsConstants {
    public static final String PRIVILEGE_PATIENT_DASHBOARD = "App: coreapps.patientDashboard";
    public static final String PRIVILEGE_SUMMARY_DASHBOARD = "App: coreapps.summaryDashboard";
    public static final String PRIVILEGE_PATIENT_VISITS = "App: coreapps.patientVisits";
+   public static final String PRIVILEGE_SYSTEM_ADMINISTRATOR = "App: coreapps.systemAdministration";
    public static final String PRIVILEGE_START_VISIT = "Task: coreapps.createVisit";
    public static final String PRIVILEGE_END_VISIT = "Task: coreapps.endVisit";
    public static final String PRIVILEGE_DELETE_PATIENT = "Task: coreapps.deletePatient";
@@ -57,4 +58,8 @@ public class CoreAppsConstants {
    public static final String GLOBAL_PROPERTY_CONDITIONS_CRITERIA = "coreapps.conditionListClasses";
 
    public static final String DEFAULT_CODING_SOURCE = "ICD-10-WHO";
+
+   public static final String GP_DECEASED_DATE_USING_TIME = "coreapps.deceasedDateUsingTime";
+
+   public static final String GP_ALLOW_CHANGING_VISIT_TIME = "coreapps.allowChangingVisitTime";
 }

@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Vector;
 
 @Resource(name = RestConstants.VERSION_1 + "/latestobs", order = 1, supportedClass = Obs.class, supportedOpenmrsVersions = {
-		"1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*", "2.4.*" })
+		"1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*", "2.4.*", "2.5.*", "2.6.*" })
 public class LatestObsResource extends ObsResource1_11 {
 
 	@Override
@@ -84,7 +84,7 @@ public class LatestObsResource extends ObsResource1_11 {
 				questions.add(concept);
 				
 				List<Obs> latestObs = obsService.getObservations(who, null, questions, null, null, null, sort, nLatestObs, null, null, null, false);
-				if (latestObs.size() > 0) {
+				if (!latestObs.isEmpty()) {
 					obsList.addAll(latestObs);
 				}
 			}

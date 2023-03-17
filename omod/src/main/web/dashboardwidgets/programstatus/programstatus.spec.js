@@ -1,6 +1,5 @@
 	import ProgramStatus from './';
 	import 'angular-mocks';
-	import { controllers } from 'chart.js';
 
 	describe('ProgramStatus', () => {
 		let $componentController;
@@ -421,8 +420,8 @@
 			var orderedStates = [
 				{
 					"uuid":"0c9257d8-9638-4286-adf3-c828dc995063",
-					"startDate":"2020-02-18T00:00:00.000-08:00",
-					"endDate":"2020-02-18T00:00:00.000-08:00",
+					"startDate":"2020-02-18",
+					"endDate":"2020-02-18",
 					"dateCreated":"2020-02-18T18:24:37.000-08:00",
 					"voided":false,
 					"state":{
@@ -434,8 +433,8 @@
 				},
 				{
 					"uuid":"d29928fd-e217-422c-b5db-c2236a15b5d5",
-					"startDate":"2020-02-18T00:00:00.000-08:00",
-					"endDate":"2020-02-18T00:00:00.000-08:00",
+					"startDate":"2020-02-18",
+					"endDate":"2020-02-18",
 					"dateCreated":"2020-02-18T18:24:53.000-08:00",
 					"voided":false,
 					"state":{
@@ -447,8 +446,8 @@
 				},
 				{
 					"uuid":"bbac6c72-83db-4a0a-8481-c29ddcbc7013",
-					"startDate":"2020-02-18T00:00:00.000-08:00",
-					"endDate":"2020-02-18T00:00:00.000-08:00",
+					"startDate":"2020-02-18",
+					"endDate":"2020-02-18",
 					"dateCreated":"2020-02-18T18:25:43.000-08:00",
 					"voided":false,
 					"state":{
@@ -460,8 +459,8 @@
 				},
 				{
 					"uuid":"4a0c1636-ae88-492d-9b3c-5658116e04e4",
-					"startDate":"2020-02-18T00:00:00.000-08:00",
-					"endDate":"2020-02-18T00:00:00.000-08:00",
+					"startDate":"2020-02-18",
+					"endDate":"2020-02-18",
 					"dateCreated":"2020-02-18T18:26:53.000-08:00",
 					"voided":false,
 					"state":{
@@ -473,8 +472,8 @@
 				},
 				{
 					"uuid":"c31d6c0e-a646-42a3-97d5-d7d282783155",
-					"startDate":"2020-02-18T00:00:00.000-08:00",
-					"endDate":"2020-02-19T00:00:00.000-08:00",
+					"startDate":"2020-02-18",
+					"endDate":"2020-02-19",
 					"dateCreated":"2020-02-18T18:27:43.000-08:00",
 					"voided":false,
 					"state":{
@@ -486,8 +485,8 @@
 				},
 				{
 					"uuid":"de5045ea-afe1-4581-b689-b8d0996838e0",
-					"startDate":"2020-02-19T00:00:00.000-08:00",
-					"endDate":"2020-02-20T00:00:00.000-08:00",
+					"startDate":"2020-02-19",
+					"endDate":"2020-02-20",
 					"dateCreated":"2020-02-19T16:45:03.000-08:00",
 					"voided":false,
 					"state":{
@@ -499,8 +498,8 @@
 				},
 				{
 					"uuid":"e872354b-9dd9-4625-b73a-7510d5be6911",
-					"startDate":"2020-02-20T00:00:00.000-08:00",
-					"endDate":"2020-02-20T00:00:00.000-08:00",
+					"startDate":"2020-02-20",
+					"endDate":"2020-02-20",
 					"dateCreated":"2020-02-20T20:41:03.000-08:00",
 					"voided":false,
 					"state":{
@@ -512,8 +511,8 @@
 				},
 				{
 					"uuid":"560db18b-9f4b-4dae-99ee-5a1e2f89f002",
-					"startDate":"2020-02-20T00:00:00.000-08:00",
-					"endDate":"2020-02-20T00:00:00.000-08:00",
+					"startDate":"2020-02-20",
+					"endDate":"2020-02-20",
 					"dateCreated":"2020-02-20T20:48:18.000-08:00",
 					"voided":false,
 					"state":{
@@ -525,8 +524,8 @@
 				},
 				{
 					"uuid":"6c8b0db3-9526-4452-b0ad-df1272d4921b",
-					"startDate":"2020-02-20T00:00:00.000-08:00",
-					"endDate":"2020-02-20T00:00:00.000-08:00",
+					"startDate":"2020-02-20",
+					"endDate":"2020-02-20",
 					"dateCreated":"2020-02-20T20:50:12.000-08:00",
 					"voided":false,
 					"state":{
@@ -538,7 +537,7 @@
 				},
 				{
 					"uuid":"85adeddd-7a44-4e5c-a52a-45de762c899f",
-					"startDate":"2020-02-20T00:00:00.000-08:00",
+					"startDate":"2020-02-20",
 					"endDate":null,
 					"dateCreated":"2020-02-20T21:05:28.000-08:00",
 					"voided":false,
@@ -551,7 +550,7 @@
 				},
 				{
 					"uuid":"4f4f9e91-b3d1-4f32-a660-18e9a2eb9be6",
-					"startDate":"2020-02-18T00:00:00.000-08:00",
+					"startDate":"2020-02-18",
 					"endDate":null,
 					"dateCreated":"2020-02-18T18:27:43.000-08:00",
 					"voided":false,
@@ -709,4 +708,470 @@
 
       $httpBackend.flush();
     });
+
+
+	it(' getEarliestStateChangeDate should return earliest state change across multiple workflows', () => {
+
+			var programEnrollmentResponse = {
+				"results":[
+					{
+						"uuid":"5fc06904-e759-4403-9414-eb97541c866d",
+						"program":{
+							"uuid":"222e229b-f011-45c5-940e-e5599383c967"
+						},
+						"dateEnrolled":"2020-02-18T18:24:31.000-0800",
+						"dateCompleted":null,
+						"outcome":null,
+						"location":{
+							"display":"Test Location",
+							"uuid":"8fe901fb-4f09-466e-a7ea-dd95e0f3048d"
+						},
+						"states":[
+							{
+								"uuid":"0c9257d8-9638-4286-adf3-c828dc995063",
+								"startDate":"2020-02-18T00:00:00.000-08:00",
+								"endDate":"2020-02-18T00:00:00.000-08:00",
+								"dateCreated":"2020-02-18T18:24:37.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"21e3314d-cfba-4b15-addf-149a62647f64",
+									"concept":{
+										"display":"EOS Closed Following Abandon"
+									}
+								}
+							},
+							{
+								"uuid":"85adeddd-7a44-4e5c-a52a-45de762c899f",
+								"startDate":"2020-02-17T00:00:00.000-08:00",
+								"endDate":null,
+								"dateCreated":"2020-02-20T21:05:28.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"74855097-fe8a-460e-b69b-e8ce06da0a7e",
+									"concept":{
+										"display":"Awaiting Follow Up"
+									}
+								}
+							},
+							{
+								"uuid":"bbac6c72-83db-4a0a-8481-c29ddcbc7013",
+								"startDate":"2020-02-19T00:00:00.000-08:00",
+								"endDate":"2020-02-18T00:00:00.000-08:00",
+								"dateCreated":"2020-02-18T18:25:43.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"24fa85e3-af4e-49a1-8a06-fbe70ad82bed",
+									"concept":{
+										"display":"Services Approved"
+									}
+								}
+							},
+
+						]
+					}
+				]
+			};
+
+			$httpBackend.whenGET('/ws/rest/v1/programenrollment?patient=919caaf7-122d-4001-8b53-ecdce347c8a5&v=custom:uuid,program:(uuid),dateEnrolled,dateCompleted,dateCreated,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,dateCreated,voided,state:(uuid,concept:(display)))').respond(programEnrollmentResponse);
+
+			let bindings = {
+				config: {
+					icon:"icon-stethoscope",
+					label:"statusWidget.label",
+					widget:"programstatus",
+					dateFormat:"dd MMM yyyy",
+					program:"222e229b-f011-45c5-940e-e5599383c967",
+					locationTag:"fb6f5fe0-904b-4a85-9806-d72ec139f9de",
+					enableProgramDashboards:true,
+					dashboardPage:"/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}&dashboard={{dashboard}}",
+					patientUuid:"919caaf7-122d-4001-8b53-ecdce347c8a5",
+					locale:"en_GB",
+					language:"en"
+				}
+			};
+			let ctrl = $componentController('programstatus', {$scope}, bindings);
+
+			ctrl.$onInit().then(function(){
+
+				expect(ctrl.patientProgram).not.toBeNull();
+				expect(ctrl.patientProgram.states).not.toBeNull();
+				expect(ctrl.getEarliestStateChangeDate().getFullYear()).toBe(2020);
+				expect(ctrl.getEarliestStateChangeDate().getMonth()).toBe(1);  // stupid month indexing starts at 0
+				expect(ctrl.getEarliestStateChangeDate().getDate()).toBe(17);
+			});
+
+			$httpBackend.flush();
+		});
+
+	it('getEarliestStateChangeDate should return earliest state change across multiple workflows', () => {
+
+			var programEnrollmentResponse = {
+				"results":[
+					{
+						"uuid":"5fc06904-e759-4403-9414-eb97541c866d",
+						"program":{
+							"uuid":"222e229b-f011-45c5-940e-e5599383c967"
+						},
+						"dateEnrolled":"2020-02-18T18:24:31.000-0800",
+						"dateCompleted":null,
+						"outcome":null,
+						"location":{
+							"display":"Test Location",
+							"uuid":"8fe901fb-4f09-466e-a7ea-dd95e0f3048d"
+						},
+						"states":[
+							{
+								"uuid":"0c9257d8-9638-4286-adf3-c828dc995063",
+								"startDate":"2020-02-18T00:00:00.000-08:00",
+								"endDate":"2020-02-18T00:00:00.000-08:00",
+								"dateCreated":"2020-02-18T18:24:37.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"21e3314d-cfba-4b15-addf-149a62647f64",
+									"concept":{
+										"display":"EOS Closed Following Abandon"
+									}
+								}
+							},
+							{
+								"uuid":"85adeddd-7a44-4e5c-a52a-45de762c899f",
+								"startDate":"2020-02-17T00:00:00.000-08:00",
+								"endDate":"2020-02-17T00:00:00.000-08:00",
+								"dateCreated":"2020-02-20T21:05:28.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"74855097-fe8a-460e-b69b-e8ce06da0a7e",
+									"concept":{
+										"display":"Awaiting Follow Up"
+									}
+								}
+							},
+							{
+								"uuid":"bbac6c72-83db-4a0a-8481-c29ddcbc7013",
+								"startDate":"2020-02-19T00:00:00.000-08:00",
+								"endDate":"2020-02-20T00:00:00.000-08:00",
+								"dateCreated":"2020-02-18T18:25:43.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"24fa85e3-af4e-49a1-8a06-fbe70ad82bed",
+									"concept":{
+										"display":"Services Approved"
+									}
+								}
+							},
+
+						]
+					}
+				]
+			};
+
+			$httpBackend.whenGET('/ws/rest/v1/programenrollment?patient=919caaf7-122d-4001-8b53-ecdce347c8a5&v=custom:uuid,program:(uuid),dateEnrolled,dateCompleted,dateCreated,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,dateCreated,voided,state:(uuid,concept:(display)))').respond(programEnrollmentResponse);
+
+			let bindings = {
+				config: {
+					icon:"icon-stethoscope",
+					label:"statusWidget.label",
+					widget:"programstatus",
+					dateFormat:"dd MMM yyyy",
+					program:"222e229b-f011-45c5-940e-e5599383c967",
+					locationTag:"fb6f5fe0-904b-4a85-9806-d72ec139f9de",
+					enableProgramDashboards:true,
+					dashboardPage:"/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}&dashboard={{dashboard}}",
+					patientUuid:"919caaf7-122d-4001-8b53-ecdce347c8a5",
+					locale:"en_GB",
+					language:"en"
+				}
+			};
+			let ctrl = $componentController('programstatus', {$scope}, bindings);
+
+			ctrl.$onInit().then(function(){
+
+				expect(ctrl.patientProgram).not.toBeNull();
+				expect(ctrl.patientProgram.states).not.toBeNull();
+				expect(ctrl.getEarliestStateChangeDate().getFullYear()).toBe(2020);
+				expect(ctrl.getEarliestStateChangeDate().getMonth()).toBe(1);  // stupid month indexing starts at 0
+				expect(ctrl.getEarliestStateChangeDate().getDate()).toBe(17);
+			});
+
+			$httpBackend.flush();
+		});
+
+	it('getMostRecentStateChangeDate should return most recent state change date including end dates', () => {
+
+			var programEnrollmentResponse = {
+				"results":[
+					{
+						"uuid":"5fc06904-e759-4403-9414-eb97541c866d",
+						"program":{
+							"uuid":"222e229b-f011-45c5-940e-e5599383c967"
+						},
+						"dateEnrolled":"2020-02-18T18:24:31.000-0800",
+						"dateCompleted":null,
+						"outcome":null,
+						"location":{
+							"display":"Test Location",
+							"uuid":"8fe901fb-4f09-466e-a7ea-dd95e0f3048d"
+						},
+						"states":[
+							{
+								"uuid":"0c9257d8-9638-4286-adf3-c828dc995063",
+								"startDate":"2020-02-18T00:00:00.000-08:00",
+								"endDate":"2020-02-18T00:00:00.000-08:00",
+								"dateCreated":"2020-02-18T18:24:37.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"21e3314d-cfba-4b15-addf-149a62647f64",
+									"concept":{
+										"display":"EOS Closed Following Abandon"
+									}
+								}
+							},
+							{
+								"uuid":"85adeddd-7a44-4e5c-a52a-45de762c899f",
+								"startDate":"2020-02-17T00:00:00.000-08:00",
+								"endDate":"2020-02-17T00:00:00.000-08:00",
+								"dateCreated":"2020-02-20T21:05:28.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"74855097-fe8a-460e-b69b-e8ce06da0a7e",
+									"concept":{
+										"display":"Awaiting Follow Up"
+									}
+								}
+							},
+							{
+								"uuid":"bbac6c72-83db-4a0a-8481-c29ddcbc7013",
+								"startDate":"2020-02-19T00:00:00.000-08:00",
+								"endDate":"2020-02-20T00:00:00.000-08:00",
+								"dateCreated":"2020-02-18T18:25:43.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"24fa85e3-af4e-49a1-8a06-fbe70ad82bed",
+									"concept":{
+										"display":"Services Approved"
+									}
+								}
+							},
+
+						]
+					}
+				]
+			};
+
+			$httpBackend.whenGET('/ws/rest/v1/programenrollment?patient=919caaf7-122d-4001-8b53-ecdce347c8a5&v=custom:uuid,program:(uuid),dateEnrolled,dateCompleted,dateCreated,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,dateCreated,voided,state:(uuid,concept:(display)))').respond(programEnrollmentResponse);
+
+			let bindings = {
+				config: {
+					icon:"icon-stethoscope",
+					label:"statusWidget.label",
+					widget:"programstatus",
+					dateFormat:"dd MMM yyyy",
+					program:"222e229b-f011-45c5-940e-e5599383c967",
+					locationTag:"fb6f5fe0-904b-4a85-9806-d72ec139f9de",
+					enableProgramDashboards:true,
+					dashboardPage:"/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}&dashboard={{dashboard}}",
+					patientUuid:"919caaf7-122d-4001-8b53-ecdce347c8a5",
+					locale:"en_GB",
+					language:"en"
+				}
+			};
+			let ctrl = $componentController('programstatus', {$scope}, bindings);
+
+			ctrl.$onInit().then(function(){
+
+				expect(ctrl.patientProgram).not.toBeNull();
+				expect(ctrl.patientProgram.states).not.toBeNull();
+				expect(ctrl.getMostRecentStateChangeDate().getFullYear()).toBe(2020);
+				expect(ctrl.getMostRecentStateChangeDate().getMonth()).toBe(1);  // stupid month indexing starts at 0
+				expect(ctrl.getMostRecentStateChangeDate().getDate()).toBe(20);
+			});
+
+			$httpBackend.flush();
+		});
+
+	it('calculateMinimumStateTransitionDate should return end date of most recent state', () => {
+
+			var programEnrollmentResponse = {
+				"results":[
+					{
+						"uuid":"5fc06904-e759-4403-9414-eb97541c866d",
+						"program":{
+							"uuid":"222e229b-f011-45c5-940e-e5599383c967"
+						},
+						"dateEnrolled":"2020-02-18T18:24:31.000-0800",
+						"dateCompleted":null,
+						"outcome":null,
+						"location":{
+							"display":"Test Location",
+							"uuid":"8fe901fb-4f09-466e-a7ea-dd95e0f3048d"
+						},
+						"states":[
+							{
+								"uuid":"0c9257d8-9638-4286-adf3-c828dc995063",
+								"startDate":"2020-02-18T00:00:00.000-08:00",
+								"endDate":"2020-02-18T00:00:00.000-08:00",
+								"dateCreated":"2020-02-18T18:24:37.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"21e3314d-cfba-4b15-addf-149a62647f64",
+									"concept":{
+										"display":"EOS Closed Following Abandon"
+									}
+								}
+							},
+							{
+								"uuid":"85adeddd-7a44-4e5c-a52a-45de762c899f",
+								"startDate":"2020-02-17T00:00:00.000-08:00",
+								"endDate":"2020-02-17T00:00:00.000-08:00",
+								"dateCreated":"2020-02-20T21:05:28.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"8083d683-e6a1-4149-a85d-5f3ab507751f",
+									"concept":{
+										"display":"Services Planned"
+									}
+								}
+							},
+							{
+								"uuid":"bbac6c72-83db-4a0a-8481-c29ddcbc7013",
+								"startDate":"2020-02-19T00:00:00.000-08:00",
+								"endDate":"2020-02-20T00:00:00.000-08:00",
+								"dateCreated":"2020-02-18T18:25:43.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"24fa85e3-af4e-49a1-8a06-fbe70ad82bed",
+									"concept":{
+										"display":"Services Approved"
+									}
+								}
+							},
+
+						]
+					}
+				]
+			};
+
+			$httpBackend.whenGET('/ws/rest/v1/programenrollment?patient=919caaf7-122d-4001-8b53-ecdce347c8a5&v=custom:uuid,program:(uuid),dateEnrolled,dateCompleted,dateCreated,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,dateCreated,voided,state:(uuid,concept:(display)))').respond(programEnrollmentResponse);
+
+			let bindings = {
+				config: {
+					icon:"icon-stethoscope",
+					label:"statusWidget.label",
+					widget:"programstatus",
+					dateFormat:"dd MMM yyyy",
+					program:"222e229b-f011-45c5-940e-e5599383c967",
+					locationTag:"fb6f5fe0-904b-4a85-9806-d72ec139f9de",
+					enableProgramDashboards:true,
+					dashboardPage:"/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}&dashboard={{dashboard}}",
+					patientUuid:"919caaf7-122d-4001-8b53-ecdce347c8a5",
+					locale:"en_GB",
+					language:"en"
+				}
+			};
+			let ctrl = $componentController('programstatus', {$scope}, bindings);
+
+			ctrl.$onInit().then(function(){
+
+				expect(ctrl.patientProgram).not.toBeNull();
+				expect(ctrl.patientProgram.states).not.toBeNull();
+				expect(ctrl.calculateMinimumStateTransitionDate("20696d25-8312-4e95-91cf-01da0a734b8b").getFullYear()).toBe(2020);
+				expect(ctrl.calculateMinimumStateTransitionDate("20696d25-8312-4e95-91cf-01da0a734b8b").getMonth()).toBe(1);  // stupid month indexing starts at 0
+				expect(ctrl.calculateMinimumStateTransitionDate("20696d25-8312-4e95-91cf-01da0a734b8b").getDate()).toBe(20);
+			});
+
+			$httpBackend.flush();
+		});
+
+	it('calculateMinimumStateTransitionDate should return day after start date of most recent state if most recent end date is null', () => {
+
+			var programEnrollmentResponse = {
+				"results":[
+					{
+						"uuid":"5fc06904-e759-4403-9414-eb97541c866d",
+						"program":{
+							"uuid":"222e229b-f011-45c5-940e-e5599383c967"
+						},
+						"dateEnrolled":"2020-02-18T18:24:31.000-0800",
+						"dateCompleted":null,
+						"outcome":null,
+						"location":{
+							"display":"Test Location",
+							"uuid":"8fe901fb-4f09-466e-a7ea-dd95e0f3048d"
+						},
+						"states":[
+							{
+								"uuid":"0c9257d8-9638-4286-adf3-c828dc995063",
+								"startDate":"2020-02-18T00:00:00.000-08:00",
+								"endDate":"2020-02-18T00:00:00.000-08:00",
+								"dateCreated":"2020-02-18T18:24:37.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"21e3314d-cfba-4b15-addf-149a62647f64",
+									"concept":{
+										"display":"EOS Closed Following Abandon"
+									}
+								}
+							},
+							{
+								"uuid":"85adeddd-7a44-4e5c-a52a-45de762c899f",
+								"startDate":"2020-02-17T00:00:00.000-08:00",
+								"endDate":"2020-02-17T00:00:00.000-08:00",
+								"dateCreated":"2020-02-20T21:05:28.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"8083d683-e6a1-4149-a85d-5f3ab507751f",
+									"concept":{
+										"display":"Services Planned"
+									}
+								}
+							},
+							{
+								"uuid":"bbac6c72-83db-4a0a-8481-c29ddcbc7013",
+								"startDate":"2020-02-19T00:00:00.000-08:00",
+								"endDate": null,
+								"dateCreated":"2020-02-18T18:25:43.000-08:00",
+								"voided":false,
+								"state":{
+									"uuid":"24fa85e3-af4e-49a1-8a06-fbe70ad82bed",
+									"concept":{
+										"display":"Services Approved"
+									}
+								}
+							},
+
+						]
+					}
+				]
+			};
+
+			$httpBackend.whenGET('/ws/rest/v1/programenrollment?patient=919caaf7-122d-4001-8b53-ecdce347c8a5&v=custom:uuid,program:(uuid),dateEnrolled,dateCompleted,dateCreated,outcome:(display),location:(display,uuid),dateCompleted,outcome,states:(uuid,startDate,endDate,dateCreated,voided,state:(uuid,concept:(display)))').respond(programEnrollmentResponse);
+
+			let bindings = {
+				config: {
+					icon:"icon-stethoscope",
+					label:"statusWidget.label",
+					widget:"programstatus",
+					dateFormat:"dd MMM yyyy",
+					program:"222e229b-f011-45c5-940e-e5599383c967",
+					locationTag:"fb6f5fe0-904b-4a85-9806-d72ec139f9de",
+					enableProgramDashboards:true,
+					dashboardPage:"/coreapps/clinicianfacing/patient.page?patientId={{patientUuid}}&dashboard={{dashboard}}",
+					patientUuid:"919caaf7-122d-4001-8b53-ecdce347c8a5",
+					locale:"en_GB",
+					language:"en"
+				}
+			};
+			let ctrl = $componentController('programstatus', {$scope}, bindings);
+
+			ctrl.$onInit().then(function(){
+
+				expect(ctrl.patientProgram).not.toBeNull();
+				expect(ctrl.patientProgram.states).not.toBeNull();
+				expect(ctrl.calculateMinimumStateTransitionDate("20696d25-8312-4e95-91cf-01da0a734b8b").getFullYear()).toBe(2020);
+				expect(ctrl.calculateMinimumStateTransitionDate("20696d25-8312-4e95-91cf-01da0a734b8b").getMonth()).toBe(1);  // stupid month indexing starts at 0
+				expect(ctrl.calculateMinimumStateTransitionDate("20696d25-8312-4e95-91cf-01da0a734b8b").getDate()).toBe(20);
+			});
+
+			$httpBackend.flush();
+		});
 });

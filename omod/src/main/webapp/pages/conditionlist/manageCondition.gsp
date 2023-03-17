@@ -5,6 +5,7 @@
     ui.includeJavascript("uicommons", "angular-ui/ui-bootstrap-tpls-0.11.2.min.js")
     ui.includeJavascript("uicommons", "angular-resource.min.js")
     ui.includeJavascript("uicommons", "angular-common.js")
+    ui.includeJavascript("uicommons", "angular-sanitize.min.js")
     ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
     ui.includeJavascript("uicommons", "services/conceptSearchService.js")
     ui.includeJavascript("uicommons", "directives/coded-or-free-text-answer.js")
@@ -25,7 +26,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
         {
-            label: "${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.familyName))) }, ${ ui.escapeJs(ui.encodeHtmlContent(ui.format(patient.givenName))) }",
+            label: "${ ui.encodeJavaScript(ui.encodeHtmlContent(ui.format(patient.familyName))) }, ${ ui.encodeJavaScript(ui.encodeHtmlContent(ui.format(patient.givenName))) }",
             link: '${ui.pageLink("coreapps", "clinicianfacing/patient", [patientId: patient.id])}'
         },
         {

@@ -17,6 +17,9 @@ import timezoneMock from 'timezone-mock';
 //     - uuid-text
 // Consult
 //   - uuid-numeric
+// Report
+//   - uuid-limb-text
+//   - uuid-limb-text
 const mockEncounters = [
     {
         "uuid": "1a742d56-6528-4eac-b3a5-b222f2120ffa",
@@ -264,6 +267,48 @@ const mockEncounters = [
                 "groupMembers": null
             }
         ]
+    },
+    {
+        "uuid": "a8b338cc-3978-43eb-99b5-f1c601ac7e76",
+        "encounterDatetime": "2021-06-01T09:00:00.000-0000",
+        "encounterType": {
+            "name": "Report",
+            "description": "Patient operation report"
+        },
+        "obs": [
+            {
+                "id": 60,
+                "uuid": "c098deb2-187c-4bfe-813a-cb2e1a4138db",
+                "display": "Affected limb, non-coded: Left arm",
+                "concept": {
+                    "id": 231,
+                    "uuid": "uuid-limb-text",
+                    "name": {
+                        "display": "Prescription instructions, non-coded"
+                    },
+                    "datatype": {
+                        "uuid": "8d4a4ab4-c2cc-11de-8d13-0010c6dffd0f"
+                    }
+                },
+                "value": "Left arm"
+            },
+            {
+                "id": 61,
+                "uuid": "c7ee73d9-9aaa-498f-a707-4b5ea8aaa076",
+                "display": "Affected limb, non-coded: Left leg",
+                "concept": {
+                    "id": 231,
+                    "uuid": "uuid-limb-text",
+                    "name": {
+                        "display": "Affected limb, non-coded"
+                    },
+                    "datatype": {
+                        "uuid": "8d4a4ab4-c2cc-11de-8d13-0010c6dffd0f"
+                    }
+                },
+                "value": "Left leg"
+            }
+        ]
     }
 ];
 
@@ -347,6 +392,19 @@ const mockConcepts = {
             }
         ]
     },
+    'uuid-limb-text': {
+        "uuid": "uuid-limb-text",
+        "display": "Affected limb, non-coded",
+        "names": [
+            {
+                "voided": false,
+                "locale": "en",
+                "conceptNameType": "FULLY_SPECIFIED",
+                "localePreferred": true,
+                "name": "Affected limb, non-coded"
+            }
+        ]
+    },
     'uuid-normal': {
         "uuid": "uuid-normal",
         "display": "Normal",
@@ -411,6 +469,8 @@ describe('ObsAcrossEncounters', () => {
         timezoneMock.register('US/Eastern');
 
         $httpBackend.expectGET('/module/uicommons/messages/messages.json?localeKey=en').respond({});
+
+        $httpBackend.when('GET', '/ws/rest/v1/session').respond({});
     });
 
     afterEach(() => {
@@ -491,14 +551,14 @@ describe('ObsAcrossEncounters', () => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Height (cm)', 'Foot examination results']);
             expect(ctrl.output.rows.length).toEqual(3);
             expect(ctrl.output.rows[0][0]).toEqual({ value: "2021-02-01T07:00:00-05:00"});
-            expect(ctrl.output.rows[0][1].value).toEqual(165);
-            expect(ctrl.output.rows[0][2].value).toEqual("");
+            expect(ctrl.output.rows[0][1][0].value).toEqual(165);
+            expect(ctrl.output.rows[0][2][0].value).toEqual("");
             expect(ctrl.output.rows[1][0]).toEqual({ value: "2021-03-04T07:02:00-05:00"});
-            expect(ctrl.output.rows[1][1].value).toEqual(170);
-            expect(ctrl.output.rows[1][2].value).toEqual("Normal");
+            expect(ctrl.output.rows[1][1][0].value).toEqual(170);
+            expect(ctrl.output.rows[1][2][0].value).toEqual("Normal");
             expect(ctrl.output.rows[2][0]).toEqual({ value: "2021-03-15T08:03:00-04:00"});
-            expect(ctrl.output.rows[2][1].value).toEqual(175);
-            expect(ctrl.output.rows[2][2].value).toEqual("");
+            expect(ctrl.output.rows[2][1][0].value).toEqual(175);
+            expect(ctrl.output.rows[2][2][0].value).toEqual("");
         });
     });
 
@@ -512,11 +572,11 @@ describe('ObsAcrossEncounters', () => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Foot examination results', 'Height (cm)']);
             expect(ctrl.output.rows.length).toEqual(2);
             expect(ctrl.output.rows[0][0]).toEqual({ value: "2021-03-04T07:02:00-05:00"});
-            expect(ctrl.output.rows[0][1].value).toEqual("Normal");
-            expect(ctrl.output.rows[0][2].value).toEqual(170);
+            expect(ctrl.output.rows[0][1][0].value).toEqual("Normal");
+            expect(ctrl.output.rows[0][2][0].value).toEqual(170);
             expect(ctrl.output.rows[1][0]).toEqual({ value: "2021-03-15T08:03:00-04:00"});
-            expect(ctrl.output.rows[1][1].value).toEqual("");
-            expect(ctrl.output.rows[1][2].value).toEqual(175);
+            expect(ctrl.output.rows[1][1][0].value).toEqual("");
+            expect(ctrl.output.rows[1][2][0].value).toEqual(175);
         });
     });
 
@@ -531,16 +591,16 @@ describe('ObsAcrossEncounters', () => {
             expect(ctrl.output.rows.length).toEqual(3);
             expect(ctrl.output.rows[0][0]).toEqual({ value: 'Registration', translate: true });
             expect(ctrl.output.rows[0][1]).toEqual({ value: "2021-02-01T07:00:00-05:00"});
-            expect(ctrl.output.rows[0][2].value).toEqual(165);
-            expect(ctrl.output.rows[0][3].value).toEqual("");
+            expect(ctrl.output.rows[0][2][0].value).toEqual(165);
+            expect(ctrl.output.rows[0][3][0].value).toEqual("");
             expect(ctrl.output.rows[1][0]).toEqual({ value: 'Consult', translate: true });
             expect(ctrl.output.rows[1][1]).toEqual({ value: "2021-03-04T07:02:00-05:00"});
-            expect(ctrl.output.rows[1][2].value).toEqual(170);
-            expect(ctrl.output.rows[1][3].value).toEqual("Normal");
+            expect(ctrl.output.rows[1][2][0].value).toEqual(170);
+            expect(ctrl.output.rows[1][3][0].value).toEqual("Normal");
             expect(ctrl.output.rows[2][0]).toEqual({ value: 'Consult', translate: true });
             expect(ctrl.output.rows[2][1]).toEqual({ value: "2021-03-15T08:03:00-04:00"});
-            expect(ctrl.output.rows[2][2].value).toEqual(175);
-            expect(ctrl.output.rows[2][3].value).toEqual("");
+            expect(ctrl.output.rows[2][2][0].value).toEqual(175);
+            expect(ctrl.output.rows[2][3][0].value).toEqual("");
         });
     });
 
@@ -553,7 +613,7 @@ describe('ObsAcrossEncounters', () => {
         return ctrl.$onInit().then(() => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Height (cm)', 'Foot examination results']);
             expect(ctrl.output.rows.length).toEqual(3);
-            expect(ctrl.output.rows[1][2].value).toEqual("nrml");
+            expect(ctrl.output.rows[1][2][0].value).toEqual("nrml");
         });
     });
 
@@ -566,7 +626,7 @@ describe('ObsAcrossEncounters', () => {
         return ctrl.$onInit().then(() => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Medication orders']);
             expect(ctrl.output.rows.length).toEqual(1);
-            expect(ctrl.output.rows[0][1].value).toEqual("Paracetamol");
+            expect(ctrl.output.rows[0][1][0].value).toEqual("Paracetamol");
         });
     });
 
@@ -580,12 +640,26 @@ describe('ObsAcrossEncounters', () => {
             expect(ctrl.output.headers).toEqual(['coreapps.date', 'Medication orders', 'Prescription instructions, non-coded']);
             expect(ctrl.output.rows.length).toEqual(2);
             expect(ctrl.output.rows[0][0]).toEqual({ value: "2021-03-04T07:02:00-05:00"});
-            expect(ctrl.output.rows[0][1].value).toEqual("Paracetamol 500mg - 10 tabletas");
-            expect(ctrl.output.rows[0][2].value).toEqual("Take with food");
+            expect(ctrl.output.rows[0][1][0].value).toEqual("Paracetamol 500mg - 10 tabletas");
+            expect(ctrl.output.rows[0][2][0].value).toEqual("Take with food");
             expect(ctrl.output.rows[1][0]).toEqual({ value: "2021-03-04T07:02:00-05:00"});
-            expect(ctrl.output.rows[1][1].value).toEqual("");
-            expect(ctrl.output.rows[1][2].value).toEqual("As needed");
+            expect(ctrl.output.rows[1][1][0].value).toEqual("");
+            expect(ctrl.output.rows[1][2][0].value).toEqual("As needed");
         });
     });
 
+    it('should show two obs values on same cell when they\'re answer to same concept within same form', () => {
+        let bindings = { config: { concepts: 'uuid-limb-text', patientUuid: 'some-patient-uuid', encounterTypes: 'Report' }};
+        let ctrl = $componentController('obsacrossencounters', {$scope}, bindings);
+
+        spyOn(ctrl.openmrsRest, "get").and.callFake(fakeGetFunction(mockEncounters));
+
+        return ctrl.$onInit().then(() => {
+            expect(ctrl.output.headers).toEqual(['coreapps.date', 'Affected limb, non-coded']);
+            expect(ctrl.output.rows.length).toEqual(1);
+            expect(ctrl.output.rows[0][0]).toEqual({ value: "2021-06-01T05:00:00-04:00"});
+            expect(ctrl.output.rows[0][1][0].value).toEqual("Left arm");
+            expect(ctrl.output.rows[0][1][1].value).toEqual("Left leg");
+        });
+    });
 });

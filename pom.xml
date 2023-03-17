@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>coreapps</artifactId>
-	<version>1.32.0-SNAPSHOT</version>
+	<version>1.39.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Core Apps Module</name>
 	<description>Provides apps for performing the common tasks</description>
@@ -38,8 +39,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <emrapiVersion>1.29.0</emrapiVersion>
-        <uiframeworkVersion>3.21.0-SNAPSHOT</uiframeworkVersion>
+        <emrapiVersion>1.32.0</emrapiVersion>
+        <uiframeworkVersion>3.22.0</uiframeworkVersion>
         <eventVersion>2.8.0</eventVersion>
         <htmlformentryVersion>3.3.0</htmlformentryVersion>
         <appuiVersion>1.7</appuiVersion>
@@ -326,7 +327,7 @@
 		<repository>
 			<id>openmrs-repo</id>
 			<name>OpenMRS Nexus Repository</name>
-			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+			<url>https://mavenrepo.openmrs.org/public</url>
 		</repository>
 	</repositories>
 
@@ -334,7 +335,7 @@
 		<pluginRepository>
 			<id>openmrs-repo</id>
 			<name>OpenMRS Nexus Repository</name>
-			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+			<url>https://mavenrepo.openmrs.org/public</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -345,12 +346,12 @@
 		<repository>
 			<id>openmrs-repo-modules</id>
 			<name>Modules</name>
-			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules</url>
+			<url>https://mavenrepo.openmrs.org/modules</url>
 		</repository>
         <snapshotRepository>
             <id>openmrs-repo-snapshots</id>
             <name>OpenMRS Snapshots</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
+            <url>https://mavenrepo.openmrs.org/snapshots</url>
         </snapshotRepository>
 	</distributionManagement>
 

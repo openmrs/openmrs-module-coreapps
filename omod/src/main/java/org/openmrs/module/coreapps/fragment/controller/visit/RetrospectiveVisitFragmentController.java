@@ -31,21 +31,24 @@ public class RetrospectiveVisitFragmentController {
                                        @RequestParam(value = "stopDate", required = false) Date stopDate,
                                        HttpServletRequest request, UiUtils ui) {
 
-        // if no stop date, set it to start date
-        if (stopDate == null) {
-            stopDate = startDate;
+        if (ui.convertTimezones()) {
+            //If stopDate is today, it cannot be today at 23:59:59, because that would be in the future.
+            stopDate = stopDate != null && stopDate.after(new Date()) ? new Date() : stopDate;
+        } else {
+            // set the startDate time component to the start of day
+            startDate = new DateTime(startDate).withTime(0,0,0,0).toDate();
+
+            // if stopDate is today, set stopDate to current datetime, otherwise set time component to end of date
+            if (stopDate != null) {
+                if (new DateTime().withTime(0, 0, 0, 0).equals(new DateTime(stopDate).withTime(0, 0, 0, 0))) {
+                    stopDate = new Date();
+                } else {
+                    stopDate = new DateTime(stopDate).withTime(23, 59, 59, 999).toDate();
+                }
+            }
         }
 
-        // set the startDate time component to the start of day
-        startDate = new DateTime(startDate).withTime(0,0,0,0).toDate();
 
-        // if stopDate is today, set stopDate to current datetime, otherwise set time component to end of date
-        if (new DateTime().withTime(0,0,0,0).equals(new DateTime(stopDate).withTime(0,0,0,0))) {
-            stopDate = new Date();
-        }
-        else {
-            stopDate = new DateTime(stopDate).withTime(23, 59, 59, 999).toDate();
-        }
 
         try {
             VisitDomainWrapper createdVisit = adtService.createRetrospectiveVisit(patient, location, startDate, stopDate);
@@ -64,9 +67,15 @@ public class RetrospectiveVisitFragmentController {
 
             if (visits != null) {
                 for (VisitDomainWrapper visit : visits) {
-                    simpleVisits.add(SimpleObject.create("startDate", ui.format(new DateTime(visit.getVisit().getStartDatetime()).toDateMidnight().toDate()),
-                            "stopDate", ui.format(new DateTime(visit.getVisit().getStopDatetime()).toDateMidnight().toDate()),
-                            "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));
+                    if(ui.convertTimezones()){
+                        simpleVisits.add(SimpleObject.create("startDate", ui.formatDateWithClientTimezone(new DateTime(visit.getVisit().getStartDatetime()).toDate()),
+                                "stopDate", ui.formatDateWithClientTimezone(new DateTime(visit.getVisit().getStopDatetime()).toDate()),
+                                "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));
+                    }else{
+                        simpleVisits.add(SimpleObject.create("startDate", ui.format(new DateTime(visit.getVisit().getStartDatetime()).toDateMidnight().toDate()),
+                                "stopDate", ui.format(new DateTime(visit.getVisit().getStopDatetime()).toDateMidnight().toDate()),
+                                "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));
+                    }
                 }
             }
 

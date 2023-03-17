@@ -13,9 +13,12 @@
  */
 package org.openmrs.module.coreapps.page.controller.patientdashboard;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
@@ -28,11 +31,14 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
+import org.openmrs.module.coreapps.contextmodel.PatientEncounterContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.event.ApplicationEventService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.module.webservices.rest.web.ConversionUtil;
+import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -83,10 +89,21 @@ public class PatientDashboardPageController {
             .getExtensionsForCurrentUser(CoreAppsConstants.ENCOUNTER_TEMPLATE_EXTENSION);
       model.addAttribute("encounterTemplateExtensions", encounterTemplateExtensions);
 
+      List<Encounter> encounters = Context.getEncounterService().getEncountersByPatient(patient);
 
       AppContextModel contextModel = sessionContext.generateAppContextModel();
       contextModel.put("patient", new PatientContextModel(patient));
       contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
+
+      List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
+      ArrayList<PatientEncounterContextModel> encountersModel = new ArrayList<PatientEncounterContextModel>();
+      for (Encounter encounter : encounters) {
+         encounterTypes.add(encounter.getEncounterType());
+         encountersModel.add(new PatientEncounterContextModel(encounter));
+      }
+      contextModel.put("encounterTypes", ConversionUtil.convertToRepresentation(encounterTypes, Representation.DEFAULT));
+      contextModel.put("encounters", encountersModel);
+
       model.addAttribute("appContextModel", contextModel);
 
       List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser("patientDashboard.overallActions", contextModel);
@@ -110,6 +127,8 @@ public class PatientDashboardPageController {
       applicationEventService.patientViewed(patient, sessionContext.getCurrentUser());
 
       model.addAttribute("userId", sessionContext.getCurrentUser().getUserId());
+
+      model.addAttribute("allowChangingVisitTime", Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_ALLOW_CHANGING_VISIT_TIME));
 
       return null;
    }

@@ -13,11 +13,11 @@
             lastViewedPatients.each { it -> %>
     lastViewedPatients.push({
         uuid:"${ it.uuid }",
-        name:"${ it.personName ? ui.escapeJs(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",
-        gender:"${ ui.escapeJs(ui.encodeHtmlContent(it.gender))}",
+        name:"${ it.personName ? ui.encodeJavaScript(ui.encodeHtmlContent(ui.format(it.personName))) : '' }",
+        gender:"${ ui.encodeJavaScript(ui.encodeHtmlContent(it.gender))}",
         age:"${ it.age ?: '' }", birthdate:"${ it.birthdate ? dateFormatter.format(it.birthdate) : '' }",
         birthdateEstimated: ${ it.birthdateEstimated },
-        identifier:"${ it.patientIdentifier ? ui.escapeJs(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }"});
+        identifier:"${ it.patientIdentifier ? ui.encodeJavaScript(ui.encodeHtmlContent(it.patientIdentifier.identifier)) : '' }"});
     <%      }
         }%>
 
@@ -27,8 +27,8 @@
         var widgetConfig = {
             initialPatients : lastViewedPatients,
             minSearchCharacters: ${ minSearchCharacters ?: 3 },
-            afterSelectedUrl: '${ ui.escapeJs(config.afterSelectedUrl) }',
-            breadcrumbOverride: '${ ui.escapeJs(breadcrumbOverride) }',
+            afterSelectedUrl: '${ ui.encodeJavaScript(config.afterSelectedUrl) }',
+            breadcrumbOverride: '${ ui.encodeJavaScript(breadcrumbOverride) }',
             searchDelayShort: ${ searchDelayShort },
             searchDelayLong: ${ searchDelayLong },
             handleRowSelection: handlePatientRowSelection,
