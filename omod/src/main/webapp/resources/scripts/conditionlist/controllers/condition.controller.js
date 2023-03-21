@@ -125,7 +125,7 @@
             var groups = document.getElementsByClassName("group");
             if ($scope.condition.status === INACTIVE_STATUS) {
                 groups[2].style.visibility = "visible";
-                if ($scope.condition.endDate !== null) {
+                if ($scope.condition.endDate) {
                     groups[2].getElementsByTagName("input")[0].value = CommonFunctions.formatDate($scope.condition.endDate);
                 }
             } else {
