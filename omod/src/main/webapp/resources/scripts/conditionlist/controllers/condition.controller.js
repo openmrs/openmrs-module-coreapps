@@ -8,7 +8,7 @@
         var onsetDatePicker;
         var startDateElement;
         var endDatePicker;
-        var endDateElement
+        var endDateElement;
         {
             startDateElement = document.querySelector('[name = "conditionStartDate"]');
             if (startDateElement) {
@@ -33,6 +33,7 @@
         $scope.condition = null;
         $scope.conditionUuid = null;
         $scope.title = '';
+
         const INACTIVE_STATUS = 'INACTIVE';
 
         // this is required inorder to initialize the Restangular service
@@ -62,7 +63,7 @@
                     console.log(emr.message("coreapps.conditionui.updateCondition.error"), error);
                 });
             }
-        }
+        };
 
         self.initCondition = self.initCondition || function () {
             var urlArguments = CommonFunctions.extractUrlArgs(window.location.search);
@@ -73,11 +74,11 @@
             // if we have a conditionUuid, we're editing an existing condition; otherwise, we're creating a new one
             if ($scope.conditionUuid) {
                 self.getCondition($scope.conditionUuid);
-                $scope.title = emr.message("coreapps.conditionui.editCondition")
+                $scope.title = emr.message("coreapps.conditionui.editCondition");
             } else {
-                $scope.title = emr.message("coreapps.conditionui.addNewCondition")
+                $scope.title = emr.message("coreapps.conditionui.addNewCondition");
             }
-        }
+        };
 
         self.getCondition = self.getCondition || function (conditionUuid) {
             if (conditionUuid === null || conditionUuid === undefined) {
@@ -96,7 +97,7 @@
                     console.log(emr.message("coreapps.conditionui.getCondition.failure"), error);
                 });
             }
-        }
+        };
 
         self.displayCondition = self.displayCondition || function () {
             $scope.concept = {
@@ -107,7 +108,7 @@
                 conceptName: {
                     display: $scope.condition.concept.name,
                 }
-            }
+            };
 
             if ($scope.condition.onSetDate) {
                 onsetDatePicker.datetimepicker('setUTCDate', new Date($scope.condition.onSetDate));
@@ -119,19 +120,19 @@
 
             document.getElementById('conceptId-input').disabled = true;
             self.showEndDate();
-        }
+        };
 
         self.showEndDate = self.showEndDate || function () {
             var groups = document.getElementsByClassName("group");
             if ($scope.condition.status === INACTIVE_STATUS) {
                 groups[2].style.visibility = "visible";
                 if ($scope.condition.endDate) {
-                    groups[2].getElementsByTagName("input")[0].value = CommonFunctions.formatDate($scope.condition.endDate);
+                    endDatePicker.datetimepicker('setUTCDate', new Date($scope.condition.endDate));
                 }
             } else {
                 groups[2].style.visibility = "hidden";
             }
-        }
+        };
 
         self.validateCondition = self.validateCondition || function () {
             var concept;
@@ -153,27 +154,35 @@
             }
 
             self.saveCondition();
-        }
+        };
 
         self.getSelectedDate = self.getSelectedDate || function () {
-            return startDateElement.value;
-        }
+            return startDateElement.value ? self.toUTCDate(startDateElement.value) : null;
+        };
 
         self.getEndDate = self.getEndDate || function () {
-            return endDateElement.value;
-        }
+            return endDateElement.value ? self.toUTCDate(endDateElement.value) : null;
+        };
+
+        self.toUTCDate = function(dateString) {
+            var utcDate = null;
+            if (dateString) {
+                utcDate = new Date(dateString);
+                utcDate.setTime(utcDate.getTime() + utcDate.getTimezoneOffset() * 60 * 1000);
+            }
+            return utcDate;
+        };
 
         self.initCondition();
 
         $scope.validateCondition = self.validateCondition;
         $scope.showEndDate = self.showEndDate;
         $scope.getEndDate = self.getEndDate;
-        $scope.formatDate = CommonFunctions.formatDate;
         $scope.getCondition = self.getCondition;
         $scope.displayCondition = self.displayCondition;
     }
 
-    ConditionController.$inject = ['$scope', 'RestfulService', 'CommonFunctions']
+    ConditionController.$inject = ['$scope', 'RestfulService', 'CommonFunctions'];
 
     app.controller('ConditionController', ConditionController);
 })(window.emr);

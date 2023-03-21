@@ -10,6 +10,7 @@
         $scope.conditions = [];
         $scope.conditionToBeRemoved = null;
         $scope.tabs = ["ACTIVE", "INACTIVE"];
+        $scope.config = {};
 
         // this is required inorder to initialize the RestfulService
         RestfulService.setBaseUrl('/' + OPENMRS_CONTEXT_PATH + '/ws/rest/emrapi');
@@ -34,46 +35,46 @@
                                 return condition.voided === false;
                             });
                         }
-                    })
+                    });
 
                 }, function (error) {
                     console.log(emr.message("coreapps.conditionui.getCondition.failure"), error);
                 });
             }
-        }
+        };
 
         self.activateCondition = self.activateCondition || function (condition) {
             condition.status = "ACTIVE";
             self.saveCondition(condition);
-        }
+        };
 
         self.deactivateCondition = self.deactivateCondition || function (condition) {
             condition.status = "INACTIVE";
             self.saveCondition(condition);
-        }
+        };
 
         self.removeCondition = self.removeCondition || function () {
             var condition = $scope.conditionToBeRemoved;
             condition.voided = true;
             self.saveCondition(condition);
             dialog.style.display = "none";
-        }
+        };
 
         self.redirectToEditCondition = self.redirectToEditCondition || function (baselink, condition) {
             window.location = baselink + 'conditionUuid=' + encodeURIComponent(String(condition.uuid));
-        }
+        };
 
         self.conditionConfirmation = self.conditionConfirmation || function (condition) {
             $scope.conditionToBeRemoved = condition;
             removeConditionMessage.innerHTML = emr.message("coreapps.conditionui.removeCondition.message").replace(
                 "\{0\}", "<b>" + condition.concept.name +  "</b>");
             dialog.style.display = "block";
-        }
+        };
 
         self.cancelDeletion = self.cancelDeletion || function () {
             $scope.conditionToBeRemoved = null;
             dialog.style.display = "none";
-        }
+        };
 
         self.saveCondition = self.saveCondition || function (condition) {
             var idx = $scope.conditions.indexOf(condition);
@@ -94,16 +95,24 @@
                 emr.errorAlert("coreapps.conditionui.updateCondition.failure");
                 console.log(emr.message("coreapps.conditionui.updateCondition.failure"), error);
             });
-        }
+        };
+
+        self.formatDate = self.formatDate || function(date) {
+            if (typeof date !== 'undefined' && date !== null) {
+                var locale = $scope.config.locale ? $scope.config.locale : 'en';
+                var format = $scope.config.format ? $scope.config.format : 'DD MMM YYYY';
+                return moment(date).locale(locale).format(format);
+            }
+        };
 
         // bind functions to scope
         $scope.removeCondition = self.removeCondition;
         $scope.cancelDeletion = self.cancelDeletion;
         $scope.activateCondition = self.activateCondition;
         $scope.deactivateCondition = self.deactivateCondition;
-        $scope.formatDate = CommonFunctions.formatDate;
+        $scope.formatDate = self.formatDate;
         $scope.getConditions = self.getConditions;
-        $scope.conditionConfirmation = self.conditionConfirmation
+        $scope.conditionConfirmation = self.conditionConfirmation;
         $scope.redirectToEditCondition = self.redirectToEditCondition;
     }
 

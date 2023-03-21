@@ -6,6 +6,7 @@
     ui.includeJavascript("uicommons", "angular-resource.min.js")
     ui.includeJavascript("uicommons", "angular-common.js")
     ui.includeJavascript("uicommons", "underscore-min.js")
+    ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 
     ui.includeJavascript("coreapps", "conditionlist/lib/polyfills.js")
     ui.includeJavascript("coreapps", "conditionlist/restful-services/restful-service.js");
@@ -40,7 +41,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
 <h2>${ui.message("coreapps.conditionui.manageConditions")}</h2>
 
 <div id="condition" ng-app="conditionsApp" ng-controller="ConditionsController"
-     ng-init="conditions = getConditions('${patient.uuid}')">
+     ng-init="conditions = getConditions('${patient.uuid}'); config = { dateFormat: '${ ui.getJSDateFormat() }', locale: '${ ui.getLocale().getLanguage() }'};">
     <div id="tabs">
         <ul>
             <li>
