@@ -6,11 +6,9 @@
     CommonFunctions.$inject = ['$filter'];
 
     function CommonFunctions($filter) {
-        var format = 'yyyy-MM-dd';
 
         return {
-            extractUrlArgs: extractUrlArgs,
-            formatDate: formatDate
+            extractUrlArgs: extractUrlArgs
         };
 
         function extractUrlArgs(urlArgs) {
@@ -41,12 +39,6 @@
             }
 
             return urlParams;
-        }
-
-        function formatDate(date) {
-            if (typeof date !== 'undefined' && date !== null) {
-                return ($filter('date')(new Date(date), format));
-            }
         }
     }
 })();
