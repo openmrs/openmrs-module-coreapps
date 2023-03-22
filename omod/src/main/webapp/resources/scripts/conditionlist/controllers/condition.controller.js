@@ -100,13 +100,21 @@
         };
 
         self.displayCondition = self.displayCondition || function () {
-            $scope.concept = {
-                display: $scope.condition.concept.name,
-                concept: {
+            if ($scope.condition.conditionNonCoded) {
+                $scope.concept = {
+                    word: $scope.condition.conditionNonCoded
+                };
+            }
+            else {
+                $scope.concept = {
                     display: $scope.condition.concept.name,
-                },
-                conceptName: {
-                    display: $scope.condition.concept.name,
+                    concept: {
+                        uuid: $scope.condition.concept.uuid,
+                        display: $scope.condition.concept.name,
+                    },
+                    conceptName: {
+                        display: $scope.condition.concept.name,
+                    }
                 }
             };
 
@@ -142,10 +150,10 @@
                 concept = $scope.condition.concept;
             }
 
-            if (concept !== null) {
+            if (concept) {
                 $scope.condition.concept = {uuid: concept.uuid, name: concept.display};
             } else {
-                $scope.condition.conditionNonCoded = "NON_CODED:" + $scope.concept.word;
+                $scope.condition.conditionNonCoded = $scope.concept.word;
             }
 
             $scope.condition.onSetDate = self.getSelectedDate();
