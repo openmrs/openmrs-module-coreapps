@@ -45,6 +45,7 @@
 
         self.activateCondition = self.activateCondition || function (condition) {
             condition.status = "ACTIVE";
+            condition.endDate = null;
             self.saveCondition(condition);
         };
 
