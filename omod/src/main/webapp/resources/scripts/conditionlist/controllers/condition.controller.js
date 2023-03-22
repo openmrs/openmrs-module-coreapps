@@ -78,6 +78,9 @@
             } else {
                 $scope.title = emr.message("coreapps.conditionui.addNewCondition");
             }
+
+            // initial status should default to active
+            self.showEndDate();
         };
 
         self.getCondition = self.getCondition || function (conditionUuid) {
@@ -138,6 +141,7 @@
                     endDatePicker.datetimepicker('setUTCDate', new Date($scope.condition.endDate));
                 }
             } else {
+                $scope.condition.endDate = null;
                 groups[2].style.visibility = "hidden";
             }
         };
