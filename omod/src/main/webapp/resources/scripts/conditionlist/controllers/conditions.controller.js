@@ -105,12 +105,20 @@
             }
         };
 
+        self.formatCondition = self.formatCondition || function(condition) {
+            if (condition.conditionNonCoded) {
+                return '"' + condition.conditionNonCoded + '"';
+            }
+            return condition.concept.name;
+        };
+
         // bind functions to scope
         $scope.removeCondition = self.removeCondition;
         $scope.cancelDeletion = self.cancelDeletion;
         $scope.activateCondition = self.activateCondition;
         $scope.deactivateCondition = self.deactivateCondition;
         $scope.formatDate = self.formatDate;
+        $scope.formatCondition = self.formatCondition;
         $scope.getConditions = self.getConditions;
         $scope.conditionConfirmation = self.conditionConfirmation;
         $scope.redirectToEditCondition = self.redirectToEditCondition;

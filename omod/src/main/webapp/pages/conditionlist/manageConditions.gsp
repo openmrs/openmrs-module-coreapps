@@ -74,7 +74,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                         </td>
                     </tr>
                     <tr class="clickable-tr" ng-repeat="condition in conditions track by condition.uuid" ng-if="condition.status === tab">
-                        <td>{{condition.concept.name}}</td>
+                        <td>{{formatCondition(condition)}}</td>
                         <td>{{formatDate(condition.onSetDate)}}</td>
                         <td ng-if="tab === 'INACTIVE'">{{formatDate(condition.endDate)}}</td>
                         <td ng-if="'${hasModifyConditionsPrivilege}'">
