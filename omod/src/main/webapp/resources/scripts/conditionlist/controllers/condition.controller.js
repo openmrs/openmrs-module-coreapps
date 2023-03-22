@@ -79,7 +79,7 @@
                 $scope.title = emr.message("coreapps.conditionui.addNewCondition");
             }
 
-            // initial status should default to active
+            // toggle whether the end date should show based on initial status
             self.showEndDate();
         };
 
