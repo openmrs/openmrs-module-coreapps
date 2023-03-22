@@ -83,9 +83,9 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                             <i class="icon-remove delete-action" title="${ui.message("coreapps.delete")}"
                                ng-click="conditionConfirmation(condition)" ng-if="condition.voided === false"></i>
                             <button style="background-color: #cccccc;border: none; color: black; padding: 5px;font-size: 10px; margin: 2px 2px; border-radius: 4px;"
-                                  ng-click="activateCondition(condition)" ng-if="condition.status === 'INACTIVE'">Set Active</button>
+                                  ng-click="activateCondition(condition)" ng-if="condition.status === 'INACTIVE'">${ ui.message("coreapps.conditionui.setActive") }</button>
                             <button style="background-color: #cccccc;border: none; color: black; padding: 5px;font-size: 10px; margin: 2px 2px; border-radius: 4px;"
-                                 ng-click="deactivateCondition(condition)" ng-if="condition.status === 'ACTIVE'">Set Inactive</button>
+                                 ng-click="deactivateCondition(condition)" ng-if="condition.status === 'ACTIVE'">${ ui.message("coreapps.conditionui.setInactive") }</button>
                         </td>
                     </tr>
                     </tbody>
