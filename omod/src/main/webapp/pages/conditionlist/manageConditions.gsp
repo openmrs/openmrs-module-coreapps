@@ -67,7 +67,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-if="conditions.size() == 0">
+                    <tr ng-if="conditions.length === 0">
                         <td colspan="6" align="center">
                             ${ui.message("coreapps.conditionui.noKnownConditions")}
                         </td>
