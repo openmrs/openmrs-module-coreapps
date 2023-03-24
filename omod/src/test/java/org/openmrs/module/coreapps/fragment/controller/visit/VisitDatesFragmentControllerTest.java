@@ -7,8 +7,10 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.appui.AppUiConstants;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.ui.framework.UiUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +27,7 @@ import static uk.co.it.modular.hamcrest.date.DateMatchers.sameInstant;
 public class VisitDatesFragmentControllerTest {
     private VisitDatesFragmentController controller;
     private VisitService visitService;
+    private AdministrationService administrationService;
     private HttpServletRequest request;
     private HttpSession session;
 
@@ -35,6 +38,8 @@ public class VisitDatesFragmentControllerTest {
 
         controller = new VisitDatesFragmentController();
         visitService = mock(VisitService.class);
+        administrationService = mock(AdministrationService.class);
+        when(administrationService.getGlobalProperty(CoreAppsConstants.GP_ALLOW_CHANGING_VISIT_TIME)).thenReturn("false");
 
         request = mock(HttpServletRequest.class);
         session = mock(HttpSession.class);
@@ -50,7 +55,7 @@ public class VisitDatesFragmentControllerTest {
         visit.setPatient(new Patient(1));
         visit.setStartDatetime(new Date());
         visit.setStopDatetime(new Date());
-        controller.setDuration(visitService, visit, new Date(), new Date(), request, ui);
+        controller.setDuration(visitService, administrationService, visit, new Date(), new Date(), request, ui);
 
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "message");
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
@@ -69,7 +74,7 @@ public class VisitDatesFragmentControllerTest {
         visit.setStopDatetime(new Date());
         visit.setPatient(new Patient(1));
 
-        controller.setDuration(visitService, visit, startDate, stopDate, request, mock(UiUtils.class));
+        controller.setDuration(visitService, administrationService, visit, startDate, stopDate, request, mock(UiUtils.class));
 
         Visit actualVisit = savedVisit();
         assertThat(actualVisit.getStartDatetime(), is(expectedStartDate));
@@ -87,7 +92,7 @@ public class VisitDatesFragmentControllerTest {
         Date stopDate = (new DateTime(2013, 6, 26, 17, 12, 32)).toDate();
         visit.setStopDatetime(stopDate);
 
-        controller.setDuration(visitService, visit, (new DateTime(2013, 6, 24, 0, 0, 0)).toDate(), (new DateTime(2013, 6, 26, 0, 0, 0)).toDate(), request, mock(UiUtils.class));
+        controller.setDuration(visitService, administrationService, visit, (new DateTime(2013, 6, 24, 0, 0, 0)).toDate(), (new DateTime(2013, 6, 26, 0, 0, 0)).toDate(), request, mock(UiUtils.class));
 
         Visit actualVisit = savedVisit();
         assertThat(actualVisit.getStartDatetime(), is(startDate));
@@ -106,7 +111,7 @@ public class VisitDatesFragmentControllerTest {
         visit.setStopDatetime(stopDate);
 
         Date today = new DateTime().toDate();
-        controller.setDuration(visitService, visit, startDate, today, request, mock(UiUtils.class));
+        controller.setDuration(visitService, administrationService, visit, startDate, today, request, mock(UiUtils.class));
 
         assertThat(savedVisit().getStopDatetime(), sameInstant(today));
     }
@@ -122,7 +127,7 @@ public class VisitDatesFragmentControllerTest {
         Date stopDate = new DateTime().plusHours(-1).toDate();
         visit.setStopDatetime(stopDate);
 
-        controller.setDuration(visitService, visit, startDate, new DateTime().toDate(), request, mock(UiUtils.class));
+        controller.setDuration(visitService, administrationService, visit, startDate, new DateTime().toDate(), request, mock(UiUtils.class));
 
         assertThat(savedVisit().getStopDatetime(), is(stopDate));
     }

@@ -169,20 +169,11 @@
         };
 
         self.getSelectedDate = self.getSelectedDate || function () {
-            return startDateElement.value ? self.toUTCDate(startDateElement.value) : null;
+            return startDateElement.value;
         };
 
         self.getEndDate = self.getEndDate || function () {
-            return endDateElement.value ? self.toUTCDate(endDateElement.value) : null;
-        };
-
-        self.toUTCDate = function(dateString) {
-            var utcDate = null;
-            if (dateString) {
-                utcDate = new Date(dateString);
-                utcDate.setTime(utcDate.getTime() + utcDate.getTimezoneOffset() * 60 * 1000);
-            }
-            return utcDate;
+            return endDateElement.value;
         };
 
         self.initCondition();

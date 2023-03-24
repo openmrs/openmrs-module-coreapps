@@ -16,8 +16,8 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.openmrs.Visit;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.VisitService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.ui.framework.SimpleObject;
@@ -35,12 +35,13 @@ import static org.apache.commons.lang.time.DateUtils.isSameDay;
 public class VisitDatesFragmentController {
 
     public SimpleObject setDuration(@SpringBean("visitService") VisitService visitService,
+                                            @SpringBean("adminService") AdministrationService administrationService,
                                             @RequestParam("visitId") Visit visit,
                                             @RequestParam("startDate") Date startDate,
                                             @RequestParam(value="stopDate", required = false) Date stopDate,
                                             HttpServletRequest request, UiUtils ui) {
 
-        boolean allowChangingVisitTime = BooleanUtils.toBoolean(Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_ALLOW_CHANGING_VISIT_TIME));
+        boolean allowChangingVisitTime = BooleanUtils.toBoolean(administrationService.getGlobalProperty(CoreAppsConstants.GP_ALLOW_CHANGING_VISIT_TIME));
 
         if (!isSameDay(startDate, visit.getStartDatetime())) {
             if(!allowChangingVisitTime){
