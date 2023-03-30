@@ -102,7 +102,7 @@
             if (typeof date !== 'undefined' && date !== null) {
                 var locale = $scope.config.locale ? $scope.config.locale : 'en';
                 var format = $scope.config.format ? $scope.config.format : 'DD MMM YYYY';
-                return moment(date).locale(locale).format(format);
+                return moment(date.substring(0, 10)).locale(locale).format(format);
             }
         };
 
