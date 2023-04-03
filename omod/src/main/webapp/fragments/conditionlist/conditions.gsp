@@ -28,7 +28,7 @@
 
     <div class="info-body">
         <ul ng-repeat="condition in conditions track by condition.uuid" ng-if="conditions.length > 0 && condition.status === 'ACTIVE' && condition.voided === false">
-            <li class="conditionStatus">{{condition.concept.name}}</li>
+            <li class="conditionStatus">{{formatCondition(condition)}}</li>
         </ul>
        <p ng-if="conditions.length === 0">
            ${ui.message("coreapps.none")}
