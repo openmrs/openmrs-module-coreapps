@@ -1,8 +1,10 @@
 package org.openmrs.module.coreapps.page.controller.adt;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
@@ -85,16 +87,16 @@ public class AwaitingAdmissionPageController {
                 libraries.getDefinition(VisitDataDefinition.class, "emrapi.visitDataDefinition.mostRecentAdmissionRequest"),
                 "", new MapElementConverter("diagnoses", new AwaitingAdmissionDiagnosisFormatter()));
 
-
+        model.addAttribute("paperRecordIdentifierDefinitionAvailable", false);
+        String gpPaperRecordIdDef = Context.getAdministrationService().getGlobalProperty("emr.paperRecordIdentifierType");
         // add the paper record identifier, if the definition is available (provided by the paper record module)
-        PatientDataDefinition paperRecordIdentifierDefinition =  libraries.getDefinition(PatientDataDefinition.class, "paperrecord.patientDataDefinition.paperRecordIdentifier");
-        if (paperRecordIdentifierDefinition != null) {
-            model.addAttribute("paperRecordIdentifierDefinitionAvailable", true);
-            dsd.addColumn("paperRecordIdentifier", paperRecordIdentifierDefinition, "",
-                    new PropertyConverter(String.class, "identifier"));
-        }
-        else {
-            model.addAttribute("paperRecordIdentifierDefinitionAvailable", false);
+        if (StringUtils.isNotBlank(gpPaperRecordIdDef)) {
+            PatientDataDefinition paperRecordIdentifierDefinition =  libraries.getDefinition(PatientDataDefinition.class, "paperrecord.patientDataDefinition.paperRecordIdentifier");
+            if (paperRecordIdentifierDefinition != null) {
+                model.addAttribute("paperRecordIdentifierDefinitionAvailable", true);
+                dsd.addColumn("paperRecordIdentifier", paperRecordIdentifierDefinition, "",
+                        new PropertyConverter(String.class, "identifier"));
+            }
         }
 
         dsd.addSortCriteria("mostRecentAdmissionRequestDatetime", SortCriteria.SortDirection.ASC);
