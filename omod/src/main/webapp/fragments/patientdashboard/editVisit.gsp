@@ -1,7 +1,7 @@
 <%
     ui.includeCss("coreapps", "visit/visits.css")
 %>
-<% if (visitTypes.size > 1) { %>
+<% if (visitTypes.size() > 1) { %>
 <div id="edit-visit-dialog-${ config.visit.id }" class="dialog" style="display: none">
     <div class="dialog-header">
         <i class="icon-check-in"></i>

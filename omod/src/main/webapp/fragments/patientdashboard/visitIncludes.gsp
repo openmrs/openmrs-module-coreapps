@@ -161,7 +161,7 @@
                     jq("#start-visit-with-visittype-confirm").removeClass("disabled");
                 </script>
 
-                <% if (visitTypes.size > 1) { %>
+                <% if (visitTypes.size() > 1) { %>
 	                <table class="left-aligned-th">
 	                    <tr>
 	                        <td><label>${ ui.message("coreapps.task.visitType.label") }:</label></td>
