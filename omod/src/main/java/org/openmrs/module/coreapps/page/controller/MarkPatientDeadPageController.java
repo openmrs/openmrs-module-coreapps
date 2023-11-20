@@ -52,9 +52,12 @@ public class MarkPatientDeadPageController {
         pageModel.put("includesTime", Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_DECEASED_DATE_USING_TIME , "false"));
         String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
 
+        Collection<ConceptAnswer> conceptAnswers = null; 
         if (conceptId != null) {
-            pageModel.put("conceptAnswers", getConceptAnswers(conceptId));
+        	conceptAnswers = getConceptAnswers(conceptId);
         }
+        pageModel.put("conceptAnswers", conceptAnswers);
+        
         List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
 
         if (!visits.isEmpty()) {
