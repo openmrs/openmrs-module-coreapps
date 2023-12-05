@@ -18,8 +18,8 @@
 <ul>
     <li ng-show="$ctrl.patientPrograms.length != 0" ng-repeat="patientProgram in $ctrl.patientPrograms | orderBy: '-dateEnrolled'">
         <!-- href="#" included so bootstrap will style this as a link -->
-        <a href="#" ng-click="$ctrl.gotoProgramDashboard($event, patientProgram.program.uuid)">
-            {{ patientProgram.program.display }}
+        <a href="#" ng-click="$ctrl.gotoProgramDashboard($event, patientProgram.program.uuid)" title="{{ patientProgram.program.display }}">
+            {{ patientProgram.program.display | limitTo: 20 }}{{patientProgram.program.display.length > 20 ? '...' : ''}}
         </a>
 
         <div ng-show="!patientProgram.dateCompleted" class="tag">{{ $ctrl.widgetsCommons.formatDate(patientProgram.dateEnrolled,$ctrl.config.JSDateFormat,$ctrl.config.language) }} - {{'coreapps.dashboardwidgets.programs.current' | translate }}</div>
