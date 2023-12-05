@@ -15,6 +15,8 @@
 package org.openmrs.module.coreapps.page.controller.datamanagement;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
@@ -36,6 +38,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MergePatientsPageController {
+
+    protected final Log log = LogFactory.getLog(this.getClass());
 
     public String get(@RequestParam(required = false, value = "patient1") Patient patient1,
                     @RequestParam(required = false, value = "patient2") Patient patient2,
@@ -104,9 +108,7 @@ public class MergePatientsPageController {
             preferredWrapper.setPatient(patient1);
             notPreferredWrapper.setPatient(patient2);
 
-
             Map<String, Object> params = new HashMap<String, Object>();
-
 			params.put("app", "coreapps.mergePatients");
             params.put("patient1", preferred);
             params.put("patient2", notPreferred);
@@ -115,25 +117,35 @@ public class MergePatientsPageController {
             return "redirect:" + ui.pageLink("coreapps","datamanagement/mergePatients", params);
         }
 
-        adtService.mergePatients(preferred, notPreferred);
-
-        request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "coreapps.mergePatients.success");
-        request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
-        String provider = "coreapps";
-        String fragment = "patientdashboard/patientDashboard";
-        String returnUrl = null;
-        if (app.getConfig() != null && app.getConfig().get("dashboardUrl") != null ) {
-            returnUrl = app.getConfig().get("dashboardUrl").getTextValue();
+        try {
+            adtService.mergePatients(preferred, notPreferred);
+            request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "coreapps.mergePatients.success");
+            request.getSession().setAttribute(AppUiConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+            String provider = "coreapps";
+            String fragment = "patientdashboard/patientDashboard";
+            String returnUrl = null;
+            if (app.getConfig() != null && app.getConfig().get("dashboardUrl") != null ) {
+                returnUrl = app.getConfig().get("dashboardUrl").getTextValue();
+            }
+            if (StringUtils.isNotBlank(returnUrl)) {
+                AppContextModel contextModel = sessionContext.generateAppContextModel();
+                contextModel.put("patientId", preferred.getId());
+                returnUrl = templateFactory.handlebars(returnUrl, contextModel);
+            } else {
+                returnUrl = ui.pageLink(provider, fragment, SimpleObject.create("patientId", preferred.getId()));
+            }
+            return "redirect:" + returnUrl;
         }
-
-        if (StringUtils.isNotBlank(returnUrl)) {
-            AppContextModel contextModel = sessionContext.generateAppContextModel();
-            contextModel.put("patientId", preferred.getId());
-            returnUrl = templateFactory.handlebars(returnUrl, contextModel);
-        } else {
-            returnUrl = ui.pageLink(provider, fragment, SimpleObject.create("patientId", preferred.getId()));
+        catch (Exception e) {
+            log.error("An error occurred merging patients", e);
+            request.getSession().setAttribute("emr.errorMessage", e.getMessage());
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("app", "coreapps.mergePatients");
+            params.put("patient1", preferred);
+            params.put("patient2", notPreferred);
+            params.put("isUnknownPatient", isUnknownPatient);
+            return "redirect:" + ui.pageLink("coreapps","datamanagement/mergePatients", params);
         }
-        return "redirect:" + returnUrl;
     }
 
 }
