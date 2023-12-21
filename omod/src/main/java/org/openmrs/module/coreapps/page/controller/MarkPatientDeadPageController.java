@@ -96,7 +96,7 @@ public class MarkPatientDeadPageController {
         } catch (APIException e) {
             log.error(e.getMessage(), e);
             request.getSession().setAttribute(org.openmrs.module.uicommons.UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE,
-                    messageSourceService.getMessage(e.getMessage(), new Object[]{e.getMessage()}, Context.getLocale()));
+                    messageSourceService.getMessage("Unable to mark patient as deceased: " + e.getMessage(), new Object[]{e.getMessage()}, Context.getLocale()));
             return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "dashboard", returnDashboard, "returnUrl", returnUrl));
         }
     }
