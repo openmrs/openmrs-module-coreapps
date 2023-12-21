@@ -11,6 +11,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.exitfromcare.ExitFromCareService;
@@ -20,6 +21,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -73,12 +75,14 @@ public class MarkPatientDeadPageController {
                        @SpringBean("exitFromCareService")
                        ExitFromCareService exitFromCareService,
                        @SpringBean("conceptService") ConceptService conceptService,
+                       @SpringBean("messageSourceService") MessageSourceService messageSourceService,
                        @RequestParam(value = "causeOfDeath", required = false) String causeOfDeath,
                        @RequestParam(value = "dead", required = false) Boolean dead,
                        @RequestParam(value = "deathDate", required = false) Date deathDate,
                        @RequestParam("patientId") Patient patient, UiUtils ui,
                        @RequestParam(value = "returnUrl", required = false) String returnUrl,  // does this even work, and, if so, how?
-                       @RequestParam(value = "returnDashboard", required = false) String returnDashboard) {
+                       @RequestParam(value = "returnDashboard", required = false) String returnDashboard,
+                       HttpServletRequest request) {
         try {
             Date date = new Date();
             if (dead != null && StringUtils.isNotBlank(causeOfDeath) && deathDate != null && !deathDate.before(patient.getBirthdate()) && !deathDate.after(date)) {
@@ -91,6 +95,8 @@ public class MarkPatientDeadPageController {
             return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "dashboard", returnDashboard, "returnUrl", returnUrl));
         } catch (APIException e) {
             log.error(e.getMessage(), e);
+            request.getSession().setAttribute(org.openmrs.module.uicommons.UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE,
+                    messageSourceService.getMessage("Unable to mark patient as deceased: " + e.getMessage(), new Object[]{e.getMessage()}, Context.getLocale()));
             return "redirect:" + ui.pageLink("coreapps", "clinicianfacing/patient", SimpleObject.create("patientId", patient.getId(), "dashboard", returnDashboard, "returnUrl", returnUrl));
         }
     }
