@@ -139,12 +139,16 @@ visit.createRetrospectiveVisitExistingVisitsDialog = function() {
 /**
  * Functions used to edit visit dates (uses VisitDatesFragmentController)
  */
-visit.showEditVisitDateDialog = function(visitId) {
+visit.showEditVisitDateDialog = function(visitId, convertTimezones) {
     if (!editVisitDialogs[visitId]) {
         editVisitDialogs[visitId] = emr.setupConfirmationDialog({
             selector: '#edit-visit-dates-dialog-' + visitId,
             actions: {
                 confirm: function() {
+                    if (convertTimezones) {
+                        var startDate = new Date(jq('#startDate' + visitId + '-field').val());
+                        jq('#startDate' + visitId + '-field').val(startDate.toISOString());
+                    }
                     var url = emr.fragmentActionLink("coreapps", "visit/visitDates", "setDuration");
                     $.getJSON(url, $('#edit-visit-dates-dialog-form-' + visitId).serialize()).done(function(data) {
                             if (data.success) {

@@ -23,10 +23,14 @@ import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
+import org.openmrs.util.OpenmrsUtil;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import static org.apache.commons.lang.time.DateUtils.isSameDay;
@@ -51,18 +55,20 @@ public class VisitDatesFragmentController {
             }
         }
 
-
         if ( (stopDate!=null) && !isSameDay(stopDate, visit.getStopDatetime())) {
             Date now = new DateTime().toDate();
             if (isSameDay(stopDate, now)) {
                 visit.setStopDatetime(now);
             } else {
-                visit.setStopDatetime(new DateTime(stopDate)
-                        .withHourOfDay(23)
-                        .withMinuteOfHour(59)
-                        .withSecondOfMinute(59)
-                        .withMillisOfSecond(999)
-                        .toDate());
+                Date lastMomentOfDay = OpenmrsUtil.getLastMomentOfDay(stopDate);
+                if (ui.convertTimezones() && ui.getClientTimezone() != null) {
+                    LocalDateTime lastMomentOfDayLocal = lastMomentOfDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    ZoneId clientTimeZone = ZoneId.of(ui.getClientTimezone());
+                    ZonedDateTime lastMomentOfDayClientTz = lastMomentOfDayLocal.atZone(clientTimeZone);
+                    visit.setStopDatetime(Date.from(lastMomentOfDayClientTz.toInstant()));
+                } else {
+                    visit.setStopDatetime(lastMomentOfDay);
+                }
             }
         }
 
@@ -74,5 +80,4 @@ public class VisitDatesFragmentController {
         return SimpleObject.create("success", true, "search", "?patientId=" + visit.getPatient().getId() + "&visitId=" + visit.getId());
 
     }
-
 }

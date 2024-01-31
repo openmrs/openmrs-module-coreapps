@@ -56,7 +56,7 @@
         <% if (param.encounterCount != null) { %>
             encounterCount = ${ param.encounterCount }; // This variable is defined in patientdashboard/patientDashboard.gsp
         <% } %>
-        loadTemplates(visitId, ${ patient.id }, fromEncounter, encounterCount, ${userId});
+        loadTemplates(visitId, ${ patient.id }, fromEncounter, encounterCount, ${userId}, ${ui.convertTimezones()});
         <%
             if ( activeVisit != null){
                 if(activeVisit.hasEncounters() && activeVisit.getVisit().getEncounters().size() < 20){ %>

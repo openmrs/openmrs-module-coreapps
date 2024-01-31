@@ -1,4 +1,4 @@
-function loadTemplates (visitId, patientId, fromEncounter, encounterCount, currentUserId) {
+function loadTemplates (visitId, patientId, fromEncounter, encounterCount, currentUserId, convertTimezones) {
     function loadVisit(visitElement) {
         var localVisitId = visitElement.data('visit-id');
 
@@ -17,7 +17,7 @@ function loadTemplates (visitId, patientId, fromEncounter, encounterCount, curre
                 visitDetailsSection.show();
 
                 $('#editVisitDatesLink').click(function() {
-                    visit.showEditVisitDateDialog($(this).data('visit-id'));
+                    visit.showEditVisitDateDialog($(this).data('visit-id'), convertTimezones);
                     return false;
                 });
                 $('#deleteVisitLink').click(function() {
