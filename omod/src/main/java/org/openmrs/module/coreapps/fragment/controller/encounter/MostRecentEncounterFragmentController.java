@@ -13,7 +13,12 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.encounter;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -39,8 +44,9 @@ public class MostRecentEncounterFragmentController {
 						   @FragmentParam("app") AppDescriptor app,
 	                       @SpringBean("encounterService") EncounterService encounterService) {
 
-		if (app.getConfig().path("encounterTypeUuid").isMissingNode()) {
-			throw new IllegalStateException("encounterTypeUuid app config parameter required");
+		// The widget requires at least one of the config parameters, encounterTypeUuid or encounterTypes to have a value
+		if (app.getConfig().path("encounterTypeUuid").isMissingNode() && app.getConfig().path("encounterTypes").isMissingNode()) {
+			throw new IllegalStateException("encounterTypeUuid or encounterTypes app config parameter are required");
 		}
 
 		if (app.getConfig().path("encounterDateLabel").isMissingNode()) {
@@ -48,17 +54,61 @@ public class MostRecentEncounterFragmentController {
 		}
 
 		List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
-		EncounterType encounterType = encounterService.getEncounterTypeByUuid((app.getConfig().get("encounterTypeUuid").getTextValue()));
-
-		if (encounterType == null) {
-			throw new IllegalStateException("No encounter type with uuid " + app.getConfig().get("encounterTypeUuid").getTextValue());
+		Map<String, String> encounterTypeToForms = new HashMap<String, String>();
+		String uuid = null;
+		if (app.getConfig().get("encounterTypeUuid") != null) {
+			uuid = app.getConfig().get("encounterTypeUuid").getTextValue();
 		}
-
-		encounterTypes.add(encounterType);
+		if (StringUtils.isNotBlank(uuid)) {
+			// first try to find the EncounterType specified via the encounterTypeUuid config parameter
+			EncounterType encounterType = encounterService.getEncounterTypeByUuid(uuid);
+			if (encounterType == null) {
+				throw new IllegalStateException("No encounter type with uuid " + uuid);
+			}
+			encounterTypes.add(encounterType);
+		} else {
+			// if the encounterTypeUuid config parameter was not specified or empty, then parse the encounterTypes config parameter
+			JsonNode node = app.getConfig().get("encounterTypes");
+			if ( node == null){
+				throw new IllegalStateException("Missing configuration encounterTypes on widget");
+			}
+			if (node instanceof ArrayNode) {
+				ArrayNode arrayNode = (ArrayNode) node;
+				for (Iterator<JsonNode> iter = arrayNode.getElements(); iter.hasNext();) {
+					JsonNode encTypeNode = iter.next();
+					if (encTypeNode == null ) {
+						throw new IllegalStateException("Missing configuration encounterTypes on widget");
+					}
+					for (Iterator<Map.Entry<String, JsonNode>> field = encTypeNode.getFields(); field.hasNext();){
+						Map.Entry<String, JsonNode> encTypeField = field.next();
+						String encTypeUuid = encTypeField.getKey();
+						String formName = encTypeField.getValue().getTextValue();
+						if (StringUtils.isNotBlank(encTypeUuid) && StringUtils.isNotBlank(formName)) {
+							EncounterType encounterType = encounterService.getEncounterTypeByUuid(encTypeUuid);
+							if (encounterType == null) {
+								throw new IllegalStateException("No encounter type with uuid " + encTypeUuid);
+							}
+							encounterTypes.add(encounterType);
+							encounterTypeToForms.put(encTypeUuid, formName);
+						}
+					}
+				}
+			}
+		}
+		if ( encounterTypes.isEmpty()) {
+			throw new IllegalStateException("No valid EncounterType was found");
+		}
 
 		EncounterServiceCompatibility service = Context.getRegisteredComponent("coreapps.EncounterServiceCompatibility", EncounterServiceCompatibility.class);
 		List<Encounter> encounters = service.getEncounters(Context.getEncounterService(), patient, null, null, null, null, encounterTypes, null,
 		    null, null, false);
+		Encounter mostRecentEncounter = null;
+		if (!encounters.isEmpty()) {
+			mostRecentEncounter = encounters.get(encounters.size() - 1);
+			model.addAttribute("encounter", mostRecentEncounter);
+		} else {
+			model.addAttribute("encounter", null);
+		}
 
 		model.addAttribute("app", app);
         model.addAttribute("patient", patient);
@@ -66,15 +116,10 @@ public class MostRecentEncounterFragmentController {
         String definitionUiResource = "";
         if (!app.getConfig().path("definitionUiResource").isMissingNode()) {
             definitionUiResource = app.getConfig().get("definitionUiResource").getTextValue();
-        }
-
-        model.addAttribute("definitionUiResource", definitionUiResource);
-
-		if (!encounters.isEmpty()) {
-            model.addAttribute("encounter", encounters.get(encounters.size() - 1));
-		} else {
-			model.addAttribute("encounter", null);
+        } else if (mostRecentEncounter != null && !encounterTypeToForms.isEmpty()){
+			definitionUiResource = encounterTypeToForms.get(mostRecentEncounter.getEncounterType().getUuid());
 		}
+        model.addAttribute("definitionUiResource", definitionUiResource);
 
         model.addAttribute("creatable", app.getConfig().get("creatable") != null ? app.getConfig().get("creatable").getBooleanValue() : false);
         model.addAttribute("createIcon", app.getConfig().get("create-icon") != null ? app.getConfig().get("create-icon").getTextValue() : null);
