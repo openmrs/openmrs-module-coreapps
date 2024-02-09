@@ -96,7 +96,7 @@ public class MostRecentEncounterFragmentController {
 			}
 		}
 		if ( encounterTypes.isEmpty()) {
-			throw new IllegalStateException("No valid EnncounterType was found");
+			throw new IllegalStateException("No valid EncounterType was found");
 		}
 
 		EncounterServiceCompatibility service = Context.getRegisteredComponent("coreapps.EncounterServiceCompatibility", EncounterServiceCompatibility.class);
