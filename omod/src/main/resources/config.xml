@@ -303,6 +303,14 @@
     </globalProperty>
 
     <globalProperty>
+        <property>coreapps.deceasedDateUsingTimeMinuteStep</property>
+        <defaultValue>5</defaultValue>
+        <description>
+            When using deceased date with time, the minute step for the time picker.
+        </description>
+    </globalProperty>
+
+    <globalProperty>
         <property>coreapps.allowChangingVisitTime</property>
         <defaultValue>false</defaultValue>
         <description>
