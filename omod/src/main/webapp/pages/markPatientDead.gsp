@@ -134,6 +134,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                         endDate      : new Date(),
                         minYear      : minAgeYear,
                         maxYear      : maxAgeYear,
+                        minuteStep   : minuteStep,
                         id           : 'death-date'
                 ])}
             </span>
