@@ -51,15 +51,15 @@ public class MarkPatientDeadPageController {
         pageModel.put("defaultDeathDate", defaultDeathDate);
         // if the getPatientDied property is configured, the ExitFromCare service will close/reopen patient programs when marking a patient dead/not dead
         pageModel.put("renderProgramWarning", emrApiProperties.getPatientDiedConcept() != null);
-        pageModel.put("includesTime", Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_DECEASED_DATE_USING_TIME , "false"));
+        pageModel.put("includesTime", Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_DECEASED_DATE_USING_TIME, "false"));
         String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
 
-        Collection<ConceptAnswer> conceptAnswers = null; 
+        Collection<ConceptAnswer> conceptAnswers = null;
         if (conceptId != null) {
-        	conceptAnswers = getConceptAnswers(conceptId);
+            conceptAnswers = getConceptAnswers(conceptId);
         }
         pageModel.put("conceptAnswers", conceptAnswers);
-        
+
         List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
 
         if (!visits.isEmpty()) {
@@ -101,13 +101,12 @@ public class MarkPatientDeadPageController {
         }
     }
 
-    private Collection<ConceptAnswer> getConceptAnswers(String conceptId) {
+    private Collection<ConceptAnswer> getConceptAnswers(String conceptIdOrNameOrUuid) {
         Collection<ConceptAnswer> conceptAnswers = null;
         Concept concept;
-        try {
-            concept = Context.getConceptService().getConcept(Integer.parseInt(conceptId));
-        } catch (NumberFormatException exception) {
-            concept = Context.getConceptService().getConceptByUuid(conceptId);
+        concept = Context.getConceptService().getConcept(conceptIdOrNameOrUuid);
+        if (concept == null) {
+            concept = Context.getConceptService().getConceptByUuid(conceptIdOrNameOrUuid);
         }
         if (concept != null) {
             conceptAnswers = concept.getAnswers();
