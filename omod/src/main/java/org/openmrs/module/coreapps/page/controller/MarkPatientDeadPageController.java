@@ -51,15 +51,16 @@ public class MarkPatientDeadPageController {
         pageModel.put("defaultDeathDate", defaultDeathDate);
         // if the getPatientDied property is configured, the ExitFromCare service will close/reopen patient programs when marking a patient dead/not dead
         pageModel.put("renderProgramWarning", emrApiProperties.getPatientDiedConcept() != null);
-        pageModel.put("includesTime", Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_DECEASED_DATE_USING_TIME, "false"));
+        pageModel.put("includesTime", Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_DECEASED_DATE_USING_TIME , "false"));
+        pageModel.put("minuteStep", Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_DECEASED_DATE_USING_TIME_MINUTE_STEP, "5"));
         String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
 
-        Collection<ConceptAnswer> conceptAnswers = null;
+        Collection<ConceptAnswer> conceptAnswers = null; 
         if (conceptId != null) {
-            conceptAnswers = getConceptAnswers(conceptId);
+        	conceptAnswers = getConceptAnswers(conceptId);
         }
         pageModel.put("conceptAnswers", conceptAnswers);
-
+        
         List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
 
         if (!visits.isEmpty()) {
