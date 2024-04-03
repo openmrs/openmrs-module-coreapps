@@ -102,13 +102,12 @@ public class MarkPatientDeadPageController {
         }
     }
 
-    private Collection<ConceptAnswer> getConceptAnswers(String conceptId) {
+    private Collection<ConceptAnswer> getConceptAnswers(String conceptIdOrNameOrUuid) {
         Collection<ConceptAnswer> conceptAnswers = null;
         Concept concept;
-        try {
-            concept = Context.getConceptService().getConcept(Integer.parseInt(conceptId));
-        } catch (NumberFormatException exception) {
-            concept = Context.getConceptService().getConceptByUuid(conceptId);
+        concept = Context.getConceptService().getConcept(conceptIdOrNameOrUuid);
+        if (concept == null) {
+            concept = Context.getConceptService().getConceptByUuid(conceptIdOrNameOrUuid);
         }
         if (concept != null) {
             conceptAnswers = concept.getAnswers();
