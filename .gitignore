@@ -17,6 +17,7 @@ target
 *.ear
 
 *.css
+*.css.map
 
 omod/node
 omod/node_modules
