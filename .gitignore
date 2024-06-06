@@ -16,12 +16,12 @@ target
 *.war
 *.ear
 
-*.css
-omod/src/main/compass/sass-external/*
+omod/src/main/webapp/resources/styles/**/*.css
+omod/src/main/webapp/resources/styles/**/*.css.map
+omod/src/main/webapp/resources/styles/lib
 
-# Rubygems build directories #
-omod/.rubygems
-omod/.rubygems-provided
+omod/node
+omod/node_modules
 
 # JS
 node

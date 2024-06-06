@@ -12,10 +12,7 @@
 	<name>Core Apps Module OMOD</name>
 	<description>OMOD project for CoreApps</description>
 
-    <!-- by default rubygems are installed in the target directory, which we don't want, because then they'd need to be reinstalled after every clean -->
     <properties>
-        <gem.home>${basedir}/.rubygems</gem.home>
-        <gem.path>${basedir}/.rubygems</gem.path>
 		<javaxVersion>4.0.1</javaxVersion>
     </properties>
 
@@ -123,23 +120,6 @@
 			<version>${javaxVersion}</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was giving us issues,
-			can probably remove this after next sass release -->
-		<dependency>
-			<groupId>rubygems</groupId>
-			<artifactId>sass</artifactId>
-			<version>3.2.10</version>
-			<type>gem</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>rubygems</groupId>
-			<artifactId>compass</artifactId>
-			<version>0.11.7</version>
-			<type>gem</type>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -176,12 +156,6 @@
 
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>com.github.eirslett</groupId>
-					<artifactId>frontend-maven-plugin</artifactId>
-					<version>1.11.3</version>
-				</plugin>
-			
 				<plugin>
 					<artifactId>maven-resources-plugin</artifactId>
 					<configuration>
@@ -253,27 +227,25 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.11.3</version>
+				<configuration>
+					<nodeVersion>v14.17.0</nodeVersion>
+					<npmVersion>7.6.2</npmVersion>
+				</configuration>
 				<executions>
 					<execution>
 						<id>install node and npm</id>
 						<goals>
 							<goal>install-node-and-npm</goal>
 						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<nodeVersion>v6.10.0</nodeVersion>
-							<installDirectory>../</installDirectory>
-						</configuration>
 					</execution>
 					<execution>
 						<id>npm install</id>
 						<goals>
 							<goal>npm</goal>
 						</goals>
-						<phase>generate-resources</phase>
 						<configuration>
-							<arguments>install --no-optional</arguments>
-							<workingDirectory>../</workingDirectory>
+							<arguments>ci --no-optional</arguments>
 						</configuration>
 					</execution>
 					<execution>
@@ -281,10 +253,8 @@
 						<goals>
 							<goal>npm</goal>
 						</goals>
-						<phase>generate-resources</phase>
 						<configuration>
 							<arguments>run build</arguments>
-							<workingDirectory>../</workingDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -295,7 +265,6 @@
 						<phase>test</phase>
 						<configuration>
 							<arguments>run test</arguments>
-							<workingDirectory>../</workingDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -354,7 +323,7 @@
                                     <version>${uicommonsVersion}</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>src/main/compass/sass-external</outputDirectory>
+                                    <outputDirectory>src/main/webapp/resources/styles/lib</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -362,90 +331,44 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>de.saumya.mojo</groupId>
-                <artifactId>gem-maven-plugin</artifactId>
-		<version>1.1.8</version>
-                <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jrubyVersion>1.7.10</jrubyVersion>
-                    <execArgs>${gem.home}/bin/compass compile ${basedir}/src/main/compass</execArgs>
-                </configuration>
-            </plugin>
-
-            <plugin>
-              <groupId>com.github.searls</groupId>
-              <artifactId>jasmine-maven-plugin</artifactId>
-              <version>1.2.0.0</version>
-              <extensions>true</extensions>
-              <executions>
-                <execution>
-                  <goals>
-                    <goal>test</goal>
-                  </goals>
-                </execution>
-              </executions>
-              <configuration>
-                <jsSrcDir>${project.basedir}/src/main/webapp/resources/scripts</jsSrcDir>
-                <jsTestSrcDir>${project.basedir}/src/test/webapp/resources/scripts</jsTestSrcDir>
-                <preloadSources>
-                  <source>${project.basedir}/src/test/webapp/provided/scripts/angular.min.js</source>
-                  <source>${project.basedir}/src/test/webapp/provided/scripts/jquery-1.12.4.min.js</source>
-                  <source>${project.basedir}/src/test/webapp/provided/scripts/underscore-min.js</source>
-                  <source>${project.basedir}/src/test/webapp/provided/scripts/knockout-2.2.1.js</source>
-                </preloadSources>
-                <!-- Excluding until we fix it -->
-                <sourceExcludes>
-                  <sourceExclude>
-                   **/openmrs-contrib-uicommons.bundle.min.js
-                 </sourceExclude>
-                 <sourceExclude>
-                   **/dashboardWidgetsCommons.service.js
-                 </sourceExclude>
-                 <sourceExclude>
-                   **/dashboardwidgets/**/*.js
-                 </sourceExclude>
-               </sourceExcludes>
-               <serverPort>7234</serverPort>
-               <skipTests>false</skipTests>
-             </configuration>
-           </plugin>
-          </plugins>
+			<plugin>
+				<groupId>com.github.searls</groupId>
+				<artifactId>jasmine-maven-plugin</artifactId>
+				<version>1.2.0.0</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<jsSrcDir>${project.basedir}/src/main/webapp/resources/scripts</jsSrcDir>
+					<jsTestSrcDir>${project.basedir}/src/test/webapp/resources/scripts</jsTestSrcDir>
+					<preloadSources>
+						<source>${project.basedir}/src/test/webapp/provided/scripts/angular.min.js</source>
+						<source>${project.basedir}/src/test/webapp/provided/scripts/jquery-1.12.4.min.js</source>
+						<source>${project.basedir}/src/test/webapp/provided/scripts/underscore-min.js</source>
+						<source>${project.basedir}/src/test/webapp/provided/scripts/knockout-2.2.1.js</source>
+					</preloadSources>
+					<!-- Excluding until we fix it -->
+					<sourceExcludes>
+						<sourceExclude>
+							**/openmrs-contrib-uicommons.bundle.min.js
+						</sourceExclude>
+						<sourceExclude>
+							**/dashboardWidgetsCommons.service.js
+						</sourceExclude>
+						<sourceExclude>
+							**/dashboardwidgets/**/*.js
+						</sourceExclude>
+					</sourceExcludes>
+					<serverPort>7234</serverPort>
+					<skipTests>false</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
-
-    <profiles>
-        <profile>
-            <id>watch-sass</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>de.saumya.mojo</groupId>
-                        <artifactId>gem-maven-plugin</artifactId>
-                        <extensions>true</extensions>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <jrubyVersion>1.7.10</jrubyVersion>
-                            <execArgs>${gem.home}/bin/compass watch ${basedir}/src/main/compass</execArgs>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
