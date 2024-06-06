@@ -16,8 +16,8 @@ package org.openmrs.module.coreapps.fragment.controller;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openmrs.PersonAddress;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.coreapps.AddressSupportCompatibility;
+import org.openmrs.layout.address.AddressSupport;
+import org.openmrs.layout.address.AddressTemplate;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
@@ -35,7 +35,7 @@ public class FormatAddressFragmentController {
         config.require("address");
         PersonAddress address = (PersonAddress) config.getAttribute("address");
 
-        AddressSupportCompatibility addressSupport = Context.getRegisteredComponent("coreapps.AddressSupportCompatibility", AddressSupportCompatibility.class);
+        AddressTemplate addressSupport = AddressSupport.getInstance().getDefaultLayoutTemplate();
         Set<String> tokens = addressSupport.getNameMappings().keySet();
 
         List<String> formattedLines = new ArrayList<String>();

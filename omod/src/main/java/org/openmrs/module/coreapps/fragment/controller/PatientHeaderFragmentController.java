@@ -24,12 +24,13 @@ import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.layout.name.NameSupport;
+import org.openmrs.layout.name.NameTemplate;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
-import org.openmrs.module.coreapps.NameSupportCompatibility;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -117,13 +118,13 @@ public class PatientHeaderFragmentController {
 
     private Map<String,String> getNames(PersonName personName) {
 
-    	NameSupportCompatibility nameSupport = Context.getRegisteredComponent("coreapps.NameSupportCompatibility", NameSupportCompatibility.class);
-    	
+        NameTemplate nameSupport = NameSupport.getInstance().getDefaultLayoutTemplate();
+
         Map<String, String> nameFields = new LinkedHashMap<String, String>();
         List<List<Map<String, String>>> lines = nameSupport.getLines();
         String layoutToken = nameSupport.getLayoutToken();
 
-        // note that the assumption is one one field per "line", otherwise the labels that appear under each field may not render properly
+        // note that the assumption is one field per "line", otherwise the labels that appear under each field may not render properly
         try {
             for (List<Map<String, String>> line : lines) {
                 String nameLabel = "";

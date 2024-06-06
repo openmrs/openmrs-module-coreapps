@@ -59,7 +59,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         Set<Obs> exisitingDispositionObsGroup = null;
         if (session.getContext().getExistingEncounter() != null && session.getContext().getExistingObsInGroups() != null) {
             exisitingDispositionObsGroup = getObsGroupByGroupingConcept(session.getContext().getExistingObsInGroups(),
-                    HtmlFormEntryUtil.getConcept(EmrApiConstants.EMR_CONCEPT_SOURCE_NAME + ": " + EmrApiConstants.CONCEPT_CODE_DISPOSITION_CONCEPT_SET));
+                    HtmlFormEntryUtil.getConcept(EmrApiConstants.EMR_CONCEPT_SOURCE_NAME + ":" + EmrApiConstants.CONCEPT_CODE_DISPOSITION_CONCEPT_SET));
         }
 
         List<Disposition> dispositions;

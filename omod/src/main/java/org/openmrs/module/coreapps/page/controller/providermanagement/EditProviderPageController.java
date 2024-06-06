@@ -20,7 +20,7 @@ import org.openmrs.module.emrapi.account.AccountDomainWrapper;
 import org.openmrs.module.emrapi.account.AccountService;
 import org.openmrs.module.emrapi.account.AccountValidator;
 import org.openmrs.module.emrapi.domainwrapper.DomainWrapperFactory;
-import org.openmrs.module.providermanagement.Provider;
+import org.openmrs.Provider;
 import org.openmrs.module.providermanagement.ProviderManagementUtils;
 import org.openmrs.module.providermanagement.relationship.ProviderPersonRelationship;
 import org.openmrs.module.providermanagement.ProviderRole;
@@ -87,14 +87,14 @@ public class EditProviderPageController {
         boolean isSupervisor = false;
 
         Provider provider = account.getProvider();
+        ProviderRole providerRole = getProviderRole(provider);
         if (provider != null ) {
-            if ( !provider.getProviderRole().getSuperviseeProviderRoles().isEmpty() ) {
+            if ( providerRole != null && !providerRole.getSuperviseeProviderRoles().isEmpty() ) {
                 isSupervisor = true;
             }
-            supervisorsForProvider = ProviderManagementUtils.getSupervisors(provider);
-            superviseesForSupervisor = ProviderManagementUtils.getSupervisees(provider);
+            supervisorsForProvider = getSupervisorsForProvider(provider);
+            superviseesForSupervisor = getSuperviseesForSupervisor(provider);
 
-            ProviderRole providerRole = provider.getProviderRole();
             if (providerRole != null && providerRole.getRelationshipTypes() != null) {
                 providerAttributeTypes = providerRole.getProviderAttributeTypes();
                 Set<ProviderAttribute> attributes = provider.getAttributes();
@@ -102,16 +102,16 @@ public class EditProviderPageController {
                     // remove from the list of Attribute Types the ones that are already entered for this provider
                     providerAttributeTypes.remove(attribute.getAttributeType());
                 }
-                for (RelationshipType relationshipType : provider.getProviderRole().getRelationshipTypes() ) {
+                for (RelationshipType relationshipType : providerRole.getRelationshipTypes() ) {
                     if (!relationshipType.isRetired()) {
                         relationshipTypes.add(relationshipType);
                     }
                 }
-                patientsList= ProviderManagementUtils.getAssignedPatients(provider);
+                patientsList= getAssignedPatients(provider);
             }
         } else {
-            for (ProviderRole providerRole : allProviderRoles) {
-                providerAttributeTypes.addAll(providerRole.getProviderAttributeTypes());
+            for (ProviderRole r : allProviderRoles) {
+                providerAttributeTypes.addAll(r.getProviderAttributeTypes());
             }
         }
 
@@ -262,5 +262,33 @@ public class EditProviderPageController {
             }
         }
         return message;
+    }
+
+    private ProviderRole getProviderRole(Provider provider) {
+        if (provider instanceof org.openmrs.module.providermanagement.Provider) {
+            return ((org.openmrs.module.providermanagement.Provider)provider).getProviderRole();
+        }
+        return null;
+    }
+
+    private List<ProviderPersonRelationship> getSupervisorsForProvider(Provider provider) throws PersonIsNotProviderException {
+        if (provider instanceof org.openmrs.module.providermanagement.Provider) {
+            return ProviderManagementUtils.getSupervisors((org.openmrs.module.providermanagement.Provider)provider);
+        }
+        return new ArrayList<>();
+    }
+
+    private List<ProviderPersonRelationship> getSuperviseesForSupervisor(Provider provider) throws PersonIsNotProviderException {
+        if (provider instanceof org.openmrs.module.providermanagement.Provider) {
+            return ProviderManagementUtils.getSupervisees((org.openmrs.module.providermanagement.Provider)provider);
+        }
+        return new ArrayList<>();
+    }
+
+    private List<ProviderPersonRelationship> getAssignedPatients(Provider provider) throws PersonIsNotProviderException, InvalidRelationshipTypeException {
+        if (provider instanceof org.openmrs.module.providermanagement.Provider) {
+            return ProviderManagementUtils.getAssignedPatients((org.openmrs.module.providermanagement.Provider)provider);
+        }
+        return new ArrayList<>();
     }
 }

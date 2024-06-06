@@ -4,7 +4,6 @@
     Provider: <encounterProvider role="Provider"/>
 
     Disposition: <encounterDisposition/>
-    Encounter Type: <encounterType />
 
     <submit/>
 </htmlform>

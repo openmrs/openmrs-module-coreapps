@@ -77,7 +77,6 @@ import org.openmrs.module.htmlformentry.RegressionTestHelper;
 import org.openmrs.ui.framework.Model;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
-import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -148,6 +147,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         encounterDiagnosesTagHandler = CoreAppsActivator.setupEncounterDiagnosesTagHandler(conceptService, adtService, Context.getRegisteredComponent("emrApiProperties", EmrApiProperties.class), null);
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DIAGNOSES_TAG_NAME, encounterDiagnosesTagHandler);
         encounterDiagnosesTagHandler.setUiUtils(uiUtils);
+        Context.getService(HtmlFormEntryService.class).clearConceptMappingCache();
 
         // Setting up diagnosis sets
         {
@@ -252,7 +252,7 @@ public class EncounterDiagnosesTagHandlerComponentTest extends BaseModuleWebCont
         final Concept malaria = conceptService.getConcept(11);
         final Patient patient = patientService.getPatient(8);
         final Encounter existingEncounter = new Encounter();
-        existingEncounter.setEncounterType(new EncounterType(1));
+        existingEncounter.setEncounterType(encounterService.getEncounterType(1));
         existingEncounter.setPatient(patient);
         existingEncounter.setEncounterDatetime(date);
         existingEncounter.setLocation(locationService.getLocation(2));

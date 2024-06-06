@@ -14,7 +14,7 @@
 		${project.parent.description}
 	</description>
 	<updateURL>https://dev.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
-	<require_version>1.9.3</require_version>
+	<require_version>${openMRSVersion}</require_version>
 	<!-- / Module Properties -->
 	
 	<!-- Required Modules -->
@@ -49,42 +49,24 @@
         </require_module>
 
     </require_modules>
-	<!-- / Required Modules -->
-
-	<!-- Conditional Resources -->
-	<conditionalResources>
-		<conditionalResource>
-			<path>/lib/coreapps-api-2.2-${project.parent.version}.jar</path>
-			<openmrsVersion>2.2.0</openmrsVersion>
-		</conditionalResource>
-
-		<conditionalResource>
-			<path>/lib/coreapps-api-pre2.2-${project.parent.version}.jar</path>
-			<openmrsVersion>1.9.* - 2.1.*</openmrsVersion>
-		</conditionalResource>
-	</conditionalResources>
-	<!-- / Conditional Resources -->
 
     <aware_of_modules>
         <aware_of_module version="${addresshierarchyVersion}">
             org.openmrs.module.addresshierarchy
         </aware_of_module>
+        <aware_of_module>
+            org.openmrs.module.appointments
+        </aware_of_module>
         <aware_of_module version="${htmlformentryVersion}">
             org.openmrs.module.htmlformentry
         </aware_of_module>
-        <aware_of_module >
-            org.openmrs.module.appointments
+        <aware_of_module>
+            org.openmrs.module.legacyui
         </aware_of_module>
     </aware_of_modules>
 
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.CoreAppsActivator</activator>
-	
-	
-	<!-- Maps hibernate file's, if present -->
-	<mappingFiles>
-				
-	</mappingFiles>
 
     <filter>
         <filter-name>${project.parent.artifactId}AdminAuthorisationFilter</filter-name>

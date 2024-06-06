@@ -13,9 +13,6 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.encounter;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
@@ -24,9 +21,9 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
-import org.openmrs.module.coreapps.EncounterServiceCompatibility;
+import org.openmrs.parameter.EncounterSearchCriteria;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
@@ -35,7 +32,10 @@ import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class MostRecentEncounterFragmentController {
 
@@ -99,9 +99,12 @@ public class MostRecentEncounterFragmentController {
 			throw new IllegalStateException("No valid EncounterType was found");
 		}
 
-		EncounterServiceCompatibility service = Context.getRegisteredComponent("coreapps.EncounterServiceCompatibility", EncounterServiceCompatibility.class);
-		List<Encounter> encounters = service.getEncounters(Context.getEncounterService(), patient, null, null, null, null, encounterTypes, null,
-		    null, null, false);
+		EncounterSearchCriteria encounterSearchCriteria = new EncounterSearchCriteriaBuilder()
+				.setPatient(patient)
+				.setEncounterTypes(encounterTypes)
+				.setIncludeVoided(false)
+				.createEncounterSearchCriteria();
+		List<Encounter> encounters = encounterService.getEncounters(encounterSearchCriteria);
 		Encounter mostRecentEncounter = null;
 		if (!encounters.isEmpty()) {
 			mostRecentEncounter = encounters.get(encounters.size() - 1);

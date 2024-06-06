@@ -13,9 +13,10 @@ package org.openmrs.module.coreapps.htmlformentry;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,9 +30,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.openmrs.CodedOrFreeText;
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
+import org.openmrs.ConditionVerificationStatus;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Visit;
@@ -41,15 +45,13 @@ import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
-import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.DispositionType;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.module.htmlformentry.CustomFormSubmissionAction;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
-import org.openmrs.module.htmlformentry.FormSubmissionActions;
 import org.openmrs.module.htmlformentry.FormSubmissionError;
 import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
-import org.openmrs.module.htmlformentry.InvalidActionException;
 import org.openmrs.module.htmlformentry.action.FormSubmissionControllerAction;
 import org.openmrs.module.htmlformentry.element.HtmlGeneratorElement;
 import org.openmrs.module.htmlformentry.widget.ErrorWidget;
@@ -57,26 +59,23 @@ import org.openmrs.module.htmlformentry.widget.HiddenFieldWidget;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
 
-/**
- * TODO: this is identical to EncounterDiagnosesByObsElement, but I couldn't figure out how to get around it without cyclic dependencies
- */
-public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubmissionControllerAction {
+public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubmissionControllerAction, CustomFormSubmissionAction {
 
     private boolean required = false;
     private UiUtils uiUtils;
     private String selectedDiagnosesTarget;
 
+    private String diagnosisSets;
+
+    private String diagnosisConceptSources;
+
     private String preferredCodingSource;
+    
+    private String diagnosisConceptClasses;
 
     private EmrApiProperties emrApiProperties;
 
     private ConceptService conceptService;
-
-    private String diagnosisSets;
-
-    private String diagnosisConceptSources;
-    
-    private String diagnosisConceptClasses;
 
     private AdtService adtService;
 
@@ -86,17 +85,45 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     private HiddenFieldWidget hiddenDiagnoses;
     private ErrorWidget errorWidget;
 
+    private static final Integer DIAGNOSIS_RANK_PRIMARY = 1;
+    private static final Integer DIAGNOSIS_RANK_SECONDARY = 2;
+
     public EncounterDiagnosesElement() {
+    }
+
+    /**
+     * Method to convert the core diagnosis object into a list of diagnoses compatible with the diagnosis object in the emrapi module
+     * @return diagnoses
+     * */
+    private List<Diagnosis> convert(List<org.openmrs.Diagnosis> coreDiagnoses) {
+        List<Diagnosis> diagnoses = new ArrayList<Diagnosis>();
+        for (org.openmrs.Diagnosis coreDiagnosis : coreDiagnoses) {
+            Diagnosis diagnosis = new Diagnosis();
+            CodedOrFreeText coded = coreDiagnosis.getDiagnosis();
+            diagnosis.setDiagnosis(new CodedOrFreeTextAnswer(coded.getCoded(), coded.getSpecificName(), coded.getNonCoded()));
+            diagnosis.setCertainty(coreDiagnosis.getCertainty() == ConditionVerificationStatus.CONFIRMED ? Diagnosis.Certainty.CONFIRMED : Diagnosis.Certainty.PRESUMED);
+            diagnosis.setOrder(coreDiagnosis.getRank() == DIAGNOSIS_RANK_PRIMARY ? Diagnosis.Order.PRIMARY : Diagnosis.Order.SECONDARY);
+            diagnosis.setExistingDiagnosis(coreDiagnosis.getDiagnosisId());
+            diagnoses.add(diagnosis);
+        }
+        return diagnoses;
     }
 
     @Override
     public String generateHtml(FormEntryContext context) {
-        List<Diagnosis> existingDiagnoses = getExistingDiagnoses(context, emrApiProperties.getDiagnosisMetadata());
-
+        List<Diagnosis> existingDiagnoses = convert(new ArrayList<org.openmrs.Diagnosis>(getExistingDiagnoses(context)));
+        
         if (FormEntryContext.Mode.VIEW == context.getMode()) {
             StringBuilder sb = new StringBuilder();
             if (existingDiagnoses != null) {
-                List<ConceptSource> conceptSourcesForDiagnosisSearch = emrApiProperties.getConceptSourcesForDiagnosisSearch();
+            	List<ConceptSource> conceptSourcesForDiagnosisSearch;
+            	if (preferredCodingSource != null) {
+            		ConceptSource preferredSource = Context.getConceptService().getConceptSourceByName(preferredCodingSource);
+            		conceptSourcesForDiagnosisSearch = Arrays.asList(preferredSource);
+            	} 
+            	else {
+            		conceptSourcesForDiagnosisSearch = emrApiProperties.getConceptSourcesForDiagnosisSearch();
+            	}
                 for (Diagnosis diagnosis : existingDiagnoses) {
                     sb.append("<p><small>");
                     // question (e.g. "Primary diagnosis")
@@ -122,7 +149,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 Map<String, Object> fragmentConfig = new HashMap<String, Object>();
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
-                // Parse '0' to config attribute if specified such that null value can be used during the search in 'DiagnosesFragmentController' class
+                // Parse '0' to config attribute if specified such that null value can be used during the search in 'DiagnosesFragmentController' class  
                 fragmentConfig.put("diagnosisSets", "0".equals(diagnosisSets) ? "0" : validateAndFormat(diagnosisSets));
                 
                 fragmentConfig.put("preferredCodingSource", preferredCodingSource);
@@ -157,7 +184,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     }
     
     /**
-     * This method receives a comma-separated list of diagnosis sets identifiers (ID, UUID, ... etc)
+     * This method receives a comma-separated list of diagnosis sets 'identifiers'
      * and returns as comma-separated list of their uuids.
      *
      * @param diagnosisSetIds Either concepts UUIDS, mappings or internal IDs.
@@ -197,7 +224,10 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         }
 
         try {
-            List<Diagnosis> diagnoses = parseDiagnoses(submitted, null);
+
+            JsonNode submittedList = new ObjectMapper().readTree(submitted);
+
+            List<Diagnosis> diagnoses = parseDiagnoses(submittedList, null);
             if (diagnoses.isEmpty() && required) {
                 return Collections.singleton(new FormSubmissionError(hiddenDiagnoses, "Required"));
             }
@@ -220,16 +250,21 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         return null;
     }
 
-    private List<Diagnosis> parseDiagnoses(String jsonList, Map<Integer, Obs> existingDiagnosisObs) throws IOException {
+    private List<Diagnosis> parseDiagnoses(JsonNode list, Map<Integer, Obs> existingDiagnosisObs) throws IOException {
         // low-priority: refactor this so that a Diagnosis can parse itself via jackson.
         // requires changing org.openmrs.module.emrapi.diagnosis.ConceptCodeDeserializer to also handle parse by id.
         List<Diagnosis> parsed = new ArrayList<Diagnosis>();
-        JsonNode list = new ObjectMapper().readTree(jsonList);
+
         for (JsonNode node : list) {
             CodedOrFreeTextAnswer answer = new CodedOrFreeTextAnswer(node.get("diagnosis").getTextValue(), conceptService);
             Diagnosis.Order diagnosisOrder = Diagnosis.Order.valueOf(node.get("order").getTextValue());
             Diagnosis.Certainty certainty = Diagnosis.Certainty.valueOf(node.get("certainty").getTextValue());
             Obs existingObs = null;
+            Integer existingDiagnosis = null;
+
+            if (node.path("existingDiagnosis").getNumberValue() != null) {
+                existingDiagnosis = node.get("existingDiagnosis").getIntValue();
+            }
             if (existingDiagnosisObs != null && node.path("existingObs").getNumberValue() != null) {
                 existingObs = existingDiagnosisObs.get(node.get("existingObs").getNumberValue());
             }
@@ -237,6 +272,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
             Diagnosis diagnosis = new Diagnosis(answer, diagnosisOrder);
             diagnosis.setCertainty(certainty);
             diagnosis.setExistingObs(existingObs);
+            diagnosis.setExistingDiagnosis(existingDiagnosis);
             parsed.add(diagnosis);
         }
         return parsed;
@@ -244,89 +280,126 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     @Override
     public void handleSubmission(FormEntrySession formEntrySession, HttpServletRequest request) {
-        DiagnosisMetadata diagnosisMetadata = emrApiProperties.getDiagnosisMetadata();
-        String submitted = request.getParameter("encounterDiagnoses");
-
-        // if we are in edit mode, we need to map the submitted diagnoses to their existing obs
-        Map<Integer, Obs> existingDiagnosisObs = getExistingDiagnosisObs(formEntrySession.getContext(), diagnosisMetadata);
-
-        FormSubmissionActions submissionActions = formEntrySession.getSubmissionActions();
-        try {
-            Set<Integer> resubmittedObs = new HashSet<Integer>(); // we need to void any existing that isn't resubmitted
-
-            List<Diagnosis> diagnoses = parseDiagnoses(submitted, existingDiagnosisObs);
-            for (Diagnosis diagnosis : diagnoses) {
-                if (diagnosis.getExistingObs() != null) {
-                    resubmittedObs.add(diagnosis.getExistingObs().getId());
-                }
-                Obs obsGroup = diagnosisMetadata.buildDiagnosisObsGroup(diagnosis);
-                createObsGroup(submissionActions, obsGroup);
-            }
-
-            if (formEntrySession.getContext().getMode().equals(FormEntryContext.Mode.EDIT)) {
-                // void any diagnosis that wasn't resubmitted
-                Collection<Integer> obsToVoid = CollectionUtils.subtract(existingDiagnosisObs.keySet(), resubmittedObs);
-                for (Integer obsId : obsToVoid) {
-                    submissionActions.modifyObs(existingDiagnosisObs.get(obsId), null, null, null, null, null);
-                }
-            }
-        }
-        catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        catch (InvalidActionException e) {
-            throw new IllegalStateException(e);
-        }
+    	// Register this as CustomFormSubmissionAction handler, to be used at the post submission 
+    	// because of https://issues.openmrs.org/browse/RA-1705
+    	// refer to EncounterDiagnosesElement#applyAction(FormEntrySession formEntrySession)
+    	formEntrySession.getSubmissionActions().addCustomFormSubmissionAction(this);
     }
+    
+    
+    /**
+     * Since 1.27.0
+     * 
+     * @param formEntrySession provides the saved encounter and submitted parameters details
+     */
+    @Override
+	public void applyAction(FormEntrySession formEntrySession) {
+    	
+    	HttpServletRequest request = formEntrySession.getSubmissionController().getLastSubmission();
+    	try {
+            String jsonList = request.getParameter("encounterDiagnoses");
 
-    private Map<Integer, Obs> getExistingDiagnosisObs(FormEntryContext context, DiagnosisMetadata diagnosisMetadata) {
-        Map<Integer, Obs> existingDiagnosisObs = null;
-        FormEntryContext.Mode mode = context.getMode();
-        if (mode == FormEntryContext.Mode.EDIT || mode == FormEntryContext.Mode.VIEW) {
-            existingDiagnosisObs = new HashMap<Integer, Obs>();
-            Encounter encounter = context.getExistingEncounter();
-            if (encounter == null) {
-                // this situation happens during unit tests when viewing the form with a Person. (I don't know if this a
-                // real use case though.
-                return null;
-            }
-            for (Obs candidate : encounter.getObsAtTopLevel(false)) {
-                if (diagnosisMetadata.isDiagnosis(candidate)) {
-                    existingDiagnosisObs.put(candidate.getObsId(), candidate);
+            JsonNode list = new ObjectMapper().readTree(jsonList);
+
+            Set<org.openmrs.Diagnosis> existingDiagnoses = getExistingDiagnoses(formEntrySession.getContext());
+            Set<org.openmrs.Diagnosis> resubmittedDiagnoses = new HashSet<org.openmrs.Diagnosis>();
+
+            for (JsonNode node : list) {
+                CodedOrFreeTextAnswer answer = new CodedOrFreeTextAnswer(node.get("diagnosis").getTextValue(), conceptService);
+                Diagnosis.Order diagnosisOrder = Diagnosis.Order.valueOf(node.get("order").getTextValue());
+                Diagnosis.Certainty certainty = Diagnosis.Certainty.valueOf(node.get("certainty").getTextValue());
+                Integer existingDiagnosis = null;
+
+                if (node.path("existingObs").getNumberValue() != null) {
+                    JsonNode nd = node.get("existingObs");
+                    System.out.println(nd);
                 }
+
+                if (node.path("existingDiagnosis").getNumberValue() != null) {
+                    existingDiagnosis = node.get("existingDiagnosis").getIntValue();
+                }
+
+                org.openmrs.Diagnosis diagnosis;
+
+                Integer rank = diagnosisOrder == Diagnosis.Order.PRIMARY ? DIAGNOSIS_RANK_PRIMARY : DIAGNOSIS_RANK_SECONDARY;
+                ConditionVerificationStatus certaintyStatus = certainty == Diagnosis.Certainty.CONFIRMED ? ConditionVerificationStatus.CONFIRMED : ConditionVerificationStatus.PROVISIONAL;
+
+                if (existingDiagnosis !=null) {
+
+                    diagnosis = Context.getDiagnosisService().getDiagnosis(existingDiagnosis);
+                    resubmittedDiagnoses.add(diagnosis);
+
+                    if (!diagnosis.getRank().equals(rank) || !diagnosis.getCertainty().equals(certaintyStatus)) {
+                        diagnosis.setRank(rank);
+                        diagnosis.setCertainty(certaintyStatus);
+                        diagnosis.setDateChanged(new Date());
+                        diagnosis.setChangedBy(Context.getAuthenticatedUser());
+                        Context.getDiagnosisService().save(diagnosis);
+                        Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
+                    }
+
+                } else {
+                    diagnosis = new org.openmrs.Diagnosis();
+                    diagnosis.setDiagnosis(new CodedOrFreeText(answer.getCodedAnswer(), answer.getSpecificCodedAnswer(), answer.getNonCodedAnswer()));
+                    diagnosis.setEncounter(formEntrySession.getEncounter());
+                    diagnosis.setCertainty(certaintyStatus);
+                    diagnosis.setRank(rank);
+                    diagnosis.setPatient(formEntrySession.getPatient());
+
+                    if (diagnosis.getEncounter().getEncounterType() == null) {
+                        diagnosis.getEncounter().setEncounterType(formEntrySession.getForm().getEncounterType());
+                    }
+                    Set<org.openmrs.Diagnosis> encounterDiagnoses = formEntrySession.getEncounter().getDiagnoses();
+                    if (encounterDiagnoses == null) {
+                        encounterDiagnoses = new HashSet<>();
+                        formEntrySession.getEncounter().setDiagnoses(encounterDiagnoses);
+                    }
+                    encounterDiagnoses.add(diagnosis);
+                    Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
+                }
+
             }
 
-            // remove any diagnoses found from existingObsInGroups
-            // TODO do we need to remove from existingObs as well?
-            for (Obs existingDiagnosis : existingDiagnosisObs.values()) {
-                context.getExistingObsInGroups().remove(existingDiagnosis);
-            }
+            // Remove Diagnoses that were not resubmitted
+            Collection<org.openmrs.Diagnosis> diagnosesToVoid = CollectionUtils
+                    .subtract(existingDiagnoses, resubmittedDiagnoses);
 
+            for (org.openmrs.Diagnosis diagnosisToVoid : diagnosesToVoid) {
+                Context.getDiagnosisService().voidDiagnosis(diagnosisToVoid, "Deleted Diagnosis");
+            }
         }
-        return existingDiagnosisObs;
-    }
+        catch (JsonProcessingException ex) {
+            ex.printStackTrace();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+	}
 
     /**
-     * only visible for testing
+     * Gets existing Diagnoses within the current Encounter
+     * 
      * @param context
-     * @param diagnosisMetadata
      * @return
      */
-    List<Diagnosis> getExistingDiagnoses(FormEntryContext context, DiagnosisMetadata diagnosisMetadata) {
-        List<Diagnosis> diagnoses = new ArrayList<Diagnosis>();
-        Map<Integer, Obs> existing = getExistingDiagnosisObs(context, diagnosisMetadata);
-        if (existing != null) {
-            for (Obs group : existing.values()) {
-                diagnoses.add(diagnosisMetadata.toDiagnosis(group));
+    public Set<org.openmrs.Diagnosis> getExistingDiagnoses(FormEntryContext context) {
+        FormEntryContext.Mode mode = context.getMode();
+        if (mode == FormEntryContext.Mode.EDIT || mode == FormEntryContext.Mode.VIEW) {
+            Encounter existingEncounter = context.getExistingEncounter();
+            if (existingEncounter != null) {
+                Set<org.openmrs.Diagnosis> nonVoidedDiagnoses = new HashSet<org.openmrs.Diagnosis>();
+                if (existingEncounter.getDiagnoses() != null) {
+                    for (org.openmrs.Diagnosis diagnosis : existingEncounter.getDiagnoses()) {
+                        if (!diagnosis.getVoided()) {
+                            nonVoidedDiagnoses.add(diagnosis);
+                        }
+                    }
+                }
+                return nonVoidedDiagnoses;
             }
         }
-        Collections.sort(diagnoses, new Comparator<Diagnosis>() {
-            @Override
-            public int compare(Diagnosis left, Diagnosis right) {
-                return left.getOrder().compareTo(right.getOrder());
-            }
-        });
-        return diagnoses;
+
+        return new HashSet<org.openmrs.Diagnosis>();
     }
 
     private List<Diagnosis> getPriorDiagnoses(FormEntryContext context, DispositionType dispositionType) {
@@ -348,11 +421,6 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
         return diagnoses;
     }
 
-    private void createObsGroup(FormSubmissionActions actions, Obs obsGroup) throws InvalidActionException {
-        actions.beginObsGroup(obsGroup);
-        actions.endObsGroup();
-    }
-
     public void setRequired(boolean required) {
         this.required = required;
     }
@@ -360,7 +428,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     public boolean getRequired() {
         return required;
     }
-    
+
     public void setDiagnosisSets(String diagnosisSets) {
         this.diagnosisSets = diagnosisSets;
     }
@@ -426,7 +494,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
     }
 
     /**
-     * In case you are viewing a form with this element on it from the legacy UI, don't use UiUtils to format
+     * In case you are viewing a form with this elementon it from the legacy UI, don't use UiUtils to format
      * @param code
      * @return
      */
