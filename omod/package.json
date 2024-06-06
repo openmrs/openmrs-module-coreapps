@@ -67,6 +67,7 @@
     "clean": "rimraf %npm_package_config_targetDir% && rimraf $npm_package_config_targetDir",
     "build:dev": "webpack --progress --colors --env=dev",
     "build:prod": "webpack --progress --colors --env=prod",
+    "sass": "sass src/main/webapp/resources/styles/ -Isrc/main/webapp/resources/styles -Isrc/main/webapp/resources/styles/lib/uicommons-scss -Inode_modules/compass-mixins/lib",
     "build": "rimraf %npm_package_config_targetDir% && rimraf $npm_package_config_targetDir && webpack --progress --colors --env=prod",
     "watch": "webpack --progress --colors --watch --env=dev",
     "test": "karma start --browsers ChromeHeadless",
