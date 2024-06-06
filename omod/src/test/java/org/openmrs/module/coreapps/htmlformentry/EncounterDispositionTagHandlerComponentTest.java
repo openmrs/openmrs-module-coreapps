@@ -111,7 +111,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
 
         final Date date = new Date();
         final DispositionDescriptor dispositionDescriptor = dispositionService.getDispositionDescriptor();
-        final Concept admissionDisposition = HtmlFormEntryUtil.getConcept("org.openmrs.module.emrapi:Admit to hospital");
+        final Concept admissionDisposition = HtmlFormEntryUtil.getConcept("org.openmrs.module.emrapi: Admit to hospital");
 
         new RegressionTestHelper() {
 
@@ -167,7 +167,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
 
         final Date date = new Date();
         final DispositionDescriptor dispositionDescriptor = dispositionService.getDispositionDescriptor();
-        final Concept admissionDisposition = HtmlFormEntryUtil.getConcept("org.openmrs.module.emrapi:Admit to hospital");
+        final Concept admissionDisposition = HtmlFormEntryUtil.getConcept("org.openmrs.module.emrapi: Admit to hospital");
 
         new RegressionTestHelper() {
 
@@ -222,7 +222,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
 
         final Date date = new Date();
         final DispositionDescriptor dispositionDescriptor = dispositionService.getDispositionDescriptor();
-        final Concept dischargeDisposition = HtmlFormEntryUtil.getConcept("org.openmrs.module.emrapi:Discharged");
+        final Concept dischargeDisposition = HtmlFormEntryUtil.getConcept("org.openmrs.module.emrapi: Discharged");
 
         new RegressionTestHelper() {
 

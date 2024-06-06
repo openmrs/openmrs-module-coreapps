@@ -324,12 +324,12 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                 Integer rank = diagnosisOrder == Diagnosis.Order.PRIMARY ? DIAGNOSIS_RANK_PRIMARY : DIAGNOSIS_RANK_SECONDARY;
                 ConditionVerificationStatus certaintyStatus = certainty == Diagnosis.Certainty.CONFIRMED ? ConditionVerificationStatus.CONFIRMED : ConditionVerificationStatus.PROVISIONAL;
 
-                if (existingDiagnosis !=null) {
+                if(existingDiagnosis !=null){
 
                     diagnosis = Context.getDiagnosisService().getDiagnosis(existingDiagnosis);
                     resubmittedDiagnoses.add(diagnosis);
 
-                    if (!diagnosis.getRank().equals(rank) || !diagnosis.getCertainty().equals(certaintyStatus)) {
+                    if(!diagnosis.getRank().equals(rank) || !diagnosis.getCertainty().equals(certaintyStatus)){
                         diagnosis.setRank(rank);
                         diagnosis.setCertainty(certaintyStatus);
                         diagnosis.setDateChanged(new Date());
@@ -337,7 +337,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                         Context.getDiagnosisService().save(diagnosis);
                     }
 
-                } else {
+                }else{
                     diagnosis = new org.openmrs.Diagnosis();
                     diagnosis.setDiagnosis(new CodedOrFreeText(answer.getCodedAnswer(), answer.getSpecificCodedAnswer(), answer.getNonCodedAnswer()));
                     diagnosis.setEncounter(formEntrySession.getEncounter());

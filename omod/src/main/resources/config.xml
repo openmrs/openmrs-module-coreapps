@@ -57,7 +57,7 @@
         <aware_of_module>
             org.openmrs.module.appointments
         </aware_of_module>
-        <aware_of_module version="${htmlformentryVersion}">
+        <aware_of_module>
             org.openmrs.module.htmlformentry
         </aware_of_module>
         <aware_of_module>
