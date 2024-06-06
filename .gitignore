@@ -17,11 +17,9 @@ target
 *.ear
 
 *.css
-omod/src/main/compass/sass-external/*
 
-# Rubygems build directories #
-omod/.rubygems
-omod/.rubygems-provided
+omod/node
+omod/node_modules
 
 # JS
 node
