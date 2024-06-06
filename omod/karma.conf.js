@@ -1,3 +1,5 @@
+process.env.CHROME_BIN = require('puppeteer').executablePath()
+
 module.exports = function(config) {
 	var pkg = require("./package.json");
 	var webpackConfig = require('./webpack.config');
