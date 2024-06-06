@@ -12,9 +12,9 @@
 	<name>Core Apps Module OMOD</name>
 	<description>OMOD project for CoreApps</description>
 
-    <properties>
+	<properties>
 		<javaxVersion>4.0.1</javaxVersion>
-    </properties>
+	</properties>
 
 	<dependencies>
 
@@ -162,7 +162,7 @@
 						<includeEmptyDirs>true</includeEmptyDirs>
 					</configuration>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -197,25 +197,6 @@
 										<ignore />
 									</action>
 								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											de.saumya.mojo
-										</groupId>
-										<artifactId>
-											gem-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.0.0-beta,)
-										</versionRange>
-										<goals>
-											<goal>exec</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
@@ -224,61 +205,6 @@
 		</pluginManagement>
 
 		<plugins>
-			<plugin>
-				<groupId>com.github.eirslett</groupId>
-				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.11.3</version>
-				<configuration>
-					<nodeVersion>v14.17.0</nodeVersion>
-					<npmVersion>7.6.2</npmVersion>
-				</configuration>
-				<executions>
-					<execution>
-						<id>install node and npm</id>
-						<goals>
-							<goal>install-node-and-npm</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>npm install</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<configuration>
-							<arguments>ci --no-optional</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>npm run sass</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<configuration>
-							<arguments>run sass</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>npm run build</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<configuration>
-							<arguments>run build</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>npm run test</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<phase>test</phase>
-						<configuration>
-							<arguments>run test</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
 			<plugin>
 				<groupId>org.openmrs.maven.plugins</groupId>
 				<artifactId>maven-openmrs-plugin</artifactId>
@@ -318,28 +244,85 @@
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 						</configuration>
 					</execution>
-                    <execution>
-                        <id>Fetch SASS sources from uicommons</id>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.openmrs.module</groupId>
-                                    <artifactId>uicommons-scss</artifactId>
-                                    <version>${uicommonsVersion}</version>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>src/main/webapp/resources/styles/lib</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
+					<execution>
+						<id>Fetch SASS sources from uicommons</id>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<phase>generate-resources</phase>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.openmrs.module</groupId>
+									<artifactId>uicommons-scss</artifactId>
+									<version>${uicommonsVersion}</version>
+									<type>zip</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${project.build.directory}/classes/web/module/resources/styles/lib</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.11.3</version>
+				<configuration>
+					<nodeVersion>v14.17.0</nodeVersion>
+					<npmVersion>7.6.2</npmVersion>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<phase>compile</phase>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>compile</phase>
+						<configuration>
+							<arguments>ci --no-optional</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm run sass</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>compile</phase>
+						<configuration>
+							<arguments>run sass</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm run build</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>compile</phase>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm run test</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>test</phase>
+						<configuration>
+							<arguments>run test</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>com.github.searls</groupId>
 				<artifactId>jasmine-maven-plugin</artifactId>
