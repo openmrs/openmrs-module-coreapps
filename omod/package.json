@@ -70,9 +70,9 @@
     "build:prod": "webpack --progress --colors --env=prod",
     "build": "rimraf %npm_package_config_targetDir% && rimraf $npm_package_config_targetDir && webpack --progress --colors --env=prod",
     "watch": "webpack --progress --colors --watch --env=dev",
-    "test": "karma start karma.conf.js --browsers ChromeHeadless",
-    "test-docker": "karma start karma.conf.js --browsers ChromeHeadlessDocker",
-    "test:dev": "karma start karma.conf.js --browsers ChromeHeadless --singleRun=false",
+    "test": "karma start --browsers ChromeHeadless",
+    "test-docker": "karma start --browsers ChromeHeadlessDocker",
+    "test:dev": "karma start --browsers ChromeHeadless --singleRun=false",
     "lint": "eslint ./",
     "lint:fix": "eslint --fix ./"
   },
