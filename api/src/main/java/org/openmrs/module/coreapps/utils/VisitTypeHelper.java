@@ -1,13 +1,5 @@
 package org.openmrs.module.coreapps.utils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,21 +8,21 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
-import org.openmrs.Location;
-import org.openmrs.Patient;
-import org.openmrs.Person;
-import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Perform common {@link VisitType} functionality
@@ -188,77 +180,5 @@ public class VisitTypeHelper {
 			visitsWithAttr.put(visit.getVisitId(), visitColorAndShortName);
 		}
 		return visitsWithAttr;
-	}
-
-	/**
-	 * Sets encounters based on visit type and login location
-	 *
-	 * @param visit
-	 * @param loginLocation
-	 */
-	public void setEncounterBasedOnVisitType(Visit visit, Location loginLocation) {
-		setEncounterBasedOnVisitType(visit, loginLocation, null);
-	}
-
-	/**
-	 * Create encounters based on visit type
-	 *
-	 * @param visit
-	 * @param loginLocation
-	 * @param previousType
-	 */
-	public void setEncounterBasedOnVisitType(Visit visit, Location loginLocation, VisitType previousType) {
-
-		// all types are transfer type
-		boolean isTransferType = true;
-
-		if (visit.getVisitType() == previousType) {
-			// visit type is not changed: do nothing
-			return;
-		}
-
-		EncounterService es = Context.getEncounterService();
-		VisitService vs = Context.getVisitService();
-		Patient patient = visit.getPatient();
-		Person person = Context.getUserContext().getAuthenticatedUser().getPerson();
-		Encounter encounter = new Encounter();
-
-		setTransferEncounter(visit, vs, es, encounter, patient, person, loginLocation, previousType, isTransferType);
-	}
-
-
-	/**
-	 *
-	 * Creates a transfer encounter when visit type is changed
-	 *
-	 * @param visit
-	 * @param vs
-	 * @param es
-	 * @param encounter
-	 * @param patient
-	 * @param person
-	 * @param loginLocation
-	 * @param previousType
-	 * @param isTransferType
-	 */
-	protected void setTransferEncounter(Visit visit, VisitService vs, EncounterService es, Encounter encounter, Patient patient, Person person, Location loginLocation,
-			VisitType previousType, boolean isTransferType) {
-
-		AdministrationService adminService = Context.getAdministrationService();
-		String transferEncounterUuid = adminService.getGlobalProperty(CoreAppsConstants.TRANSFER_ENCOUNTER_TYPE_UUID);
-		EncounterType transferEncounterType = es
-				.getEncounterTypeByUuid(transferEncounterUuid);
-
-		if ( previousType != null && isTransferType) {
-			// add Transfer encounter
-			encounter.setEncounterType(transferEncounterType);
-			encounter.setPatient(patient);
-			encounter.setEncounterDatetime(new Date());
-			encounter.setProvider(person);
-			encounter.setLocation(loginLocation);
-			es.saveEncounter(encounter);
-			visit.addEncounter(encounter);
-			vs.saveVisit(visit);
-		}
 	}
 }

@@ -13,16 +13,20 @@
  */
 package org.openmrs.module.coreapps.fragment.controller.visit;
 
+import org.openmrs.Concept;
+import org.openmrs.ConceptAnswer;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.VisitAttribute;
-import org.openmrs.VisitType;
 import org.openmrs.VisitAttributeType;
-import org.openmrs.Concept;
-import org.openmrs.ConceptAnswer;
+import org.openmrs.VisitType;
 import org.openmrs.api.APIException;
 import org.openmrs.api.VisitService;
+import org.openmrs.attribute.AttributeType;
+import org.openmrs.attribute.BaseAttribute;
+import org.openmrs.customdatatype.Customizable;
+import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -34,15 +38,14 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.ObjectResult;
-import org.openmrs.web.attribute.WebAttributeUtil;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 public class QuickVisitFragmentController {
 	
@@ -69,7 +72,7 @@ public class QuickVisitFragmentController {
 
 			// manually handle the attribute parameters
 			List<VisitAttributeType> attributeTypes = visitService.getAllVisitAttributeTypes();
-			WebAttributeUtil.handleSubmittedAttributesForType(visit, bindingResult, VisitAttribute.class, request, attributeTypes);
+			handleSubmittedAttributesForType(visit, bindingResult, VisitAttribute.class, request, attributeTypes);
 			try {
 				visitService.saveVisit(visit);
 			}
@@ -101,7 +104,7 @@ public class QuickVisitFragmentController {
 		if(request.getParameterNames() != null
 				&& request.getParameterNames().hasMoreElements()) {
 			List<VisitAttributeType> attributeTypes = visitService.getAllVisitAttributeTypes();
-			WebAttributeUtil.handleSubmittedAttributesForType(visit, bindingResult, VisitAttribute.class, request, attributeTypes);
+			handleSubmittedAttributesForType(visit, bindingResult, VisitAttribute.class, request, attributeTypes);
 		}
 
 		try {
@@ -131,5 +134,27 @@ public class QuickVisitFragmentController {
 		results.put("results", values);
 
 		return results;
+	}
+
+	private <AttributeClass extends BaseAttribute,
+			CustomizableClass extends Customizable<AttributeClass>,
+			AttributeTypeClass extends AttributeType<CustomizableClass>
+			> void handleSubmittedAttributesForType (
+				CustomizableClass owner,
+				BindingResult errors,
+				Class<AttributeClass> attributeClass,
+				HttpServletRequest request,
+				List<AttributeTypeClass> attributeTypes) {
+
+		if (isLegacyUiModuleStarted()) {
+			org.openmrs.web.attribute.WebAttributeUtil.handleSubmittedAttributesForType(owner, errors, attributeClass, request, attributeTypes);
+		}
+		else {
+			throw new IllegalStateException("Unable to perform operation as legacyui module is not installed");
+		}
+	}
+
+	protected boolean isLegacyUiModuleStarted() {
+		return ModuleFactory.isModuleStarted("legacyui");
 	}
 }

@@ -1,4 +1,4 @@
-package org.openmrs.module.htmlformentry;
+package org.openmrs.module.coreapps.htmlformentry;
 
 import static org.mockito.Mockito.when;
 
@@ -25,9 +25,9 @@ import org.openmrs.Diagnosis;
 import org.openmrs.Encounter;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.coreapps.htmlformentry.EncounterDiagnosesElement;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntryContext.Mode;
 import org.openmrs.ui.framework.UiUtils;
 import org.powermock.api.mockito.PowerMockito;

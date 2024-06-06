@@ -56,7 +56,12 @@ public class QuickVisitFragmentControllerTest {
 
     @Before
 	public void setUp() {
-		controller = new QuickVisitFragmentController();
+		controller = new QuickVisitFragmentController() {
+			@Override
+			protected boolean isLegacyUiModuleStarted() {
+				return true;
+			}
+		};
 		uiUtils = mock(UiUtils.class);
 		emrContext = mock(UiSessionContext.class);
 		adtService = mock(AdtService.class);

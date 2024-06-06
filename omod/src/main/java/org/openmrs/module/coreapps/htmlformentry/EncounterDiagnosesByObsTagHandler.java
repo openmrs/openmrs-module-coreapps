@@ -18,10 +18,10 @@ import java.util.Map;
  * Renders a autocomplete for searching for diagnoses; allows selecting multiple diagnoses, marking as presumed/confirmed and/or primary/secondary
  *
  * In enter/edit mode, includes the diagnosis/encounterDiagnoses fragment.
- * Currently this is hardcoded to use specific ids and names, and can only be included once on a form
+ * Currently, this is hardcoded to use specific ids and names, and can only be included once on a form
  *
  * Example usage:
- * <encounterDiagnoses required="true" selectedDiagnosesTarget="#encounter-diagnoses-target" includePriorDiagnosesFromMostRecentEncounterWithDispositionOfType="ADMIT"/>)
+ * <encounterDiagnosesByObs required="true" selectedDiagnosesTarget="#encounter-diagnoses-target" includePriorDiagnosesFromMostRecentEncounterWithDispositionOfType="ADMIT"/>)
  *
  */
 public class EncounterDiagnosesByObsTagHandler extends SubstitutionTagHandler {

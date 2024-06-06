@@ -13,7 +13,6 @@ import org.openmrs.module.appui.TestUiUtils;
 import org.openmrs.module.coreapps.CoreAppsActivator;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
-import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.emrapi.domainwrapper.DomainWrapperFactory;
@@ -59,6 +58,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
         EncounterDispositionTagHandler tagHandler = CoreAppsActivator.setupEncounterDispositionTagHandler(emrApiProperties, dispositionService, domainWrapperFactory);
         Context.getService(HtmlFormEntryService.class).addHandler(CoreAppsConstants.HTMLFORMENTRY_ENCOUNTER_DISPOSITION_TAG_NAME, tagHandler);
         dispositionService.setDispositionConfig("coreappsTestDispositionConfig.json");  // we use a custom name so as to not clash with the test one in the emr-api module
+        Context.getService(HtmlFormEntryService.class).clearConceptMappingCache();
     }
 
     @Test
@@ -98,7 +98,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:", "Disposition:", "Encounter Type:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Disposition:" };
             }
 
 
@@ -134,7 +134,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:", "Disposition:", "Encounter Type:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Disposition:" };
             }
 
             @Override
@@ -142,8 +142,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
                 request.setParameter(widgets.get("Date:"), dateAsString(date));
                 request.setParameter(widgets.get("Location:"), "2");
                 request.setParameter(widgets.get("Provider:"), "1");
-                request.setParameter(widgets.get("Encounter Type:"), "1");
-                request.setParameter(widgets.get("Disposition:"), admissionDisposition.toString());
+                request.setParameter(widgets.get("Disposition:"), admissionDisposition.getConceptId().toString());
                 request.setParameter("w10", "1");    // hack, manually reference the widget the location
             }
 
@@ -153,7 +152,6 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
                 results.assertEncounterCreated();
                 results.assertProvider(1);
                 results.assertLocation(2);
-                results.assertEncounterType(1);
                 results.assertObsGroupCreatedCount(1);
                 results.assertObsGroupCreated(dispositionDescriptor.getDispositionSetConcept().getConceptId(),
                         dispositionDescriptor.getDispositionConcept().getId(), admissionDisposition,
@@ -192,7 +190,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:", "Disposition:", "Encounter Type:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Disposition:" };
             }
 
             @Override
@@ -200,8 +198,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
                 request.setParameter(widgets.get("Date:"), dateAsString(date));
                 request.setParameter(widgets.get("Location:"), "2");
                 request.setParameter(widgets.get("Provider:"), "1");
-                request.setParameter(widgets.get("Encounter Type:"), "1");
-                request.setParameter(widgets.get("Disposition:"), admissionDisposition.toString());
+                request.setParameter(widgets.get("Disposition:"), admissionDisposition.getConceptId().toString());
                 request.setParameter("w10", "1");    // hack, manually reference the widget the location
             }
 
@@ -248,7 +245,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
 
             @Override
             public String[] widgetLabels() {
-                return new String[] { "Date:", "Location:", "Provider:", "Disposition:", "Encounter Type:" };
+                return new String[] { "Date:", "Location:", "Provider:", "Disposition:" };
             }
 
             @Override
@@ -256,8 +253,7 @@ public class EncounterDispositionTagHandlerComponentTest extends BaseModuleWebCo
                 request.setParameter(widgets.get("Date:"), dateAsString(date));
                 request.setParameter(widgets.get("Location:"), "2");
                 request.setParameter(widgets.get("Provider:"), "1");
-                request.setParameter(widgets.get("Encounter Type:"), "1");
-                request.setParameter(widgets.get("Disposition:"), dischargeDisposition.toString());
+                request.setParameter(widgets.get("Disposition:"), dischargeDisposition.getConceptId().toString());
             }
 
             @Override
