@@ -335,7 +335,6 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                         diagnosis.setDateChanged(new Date());
                         diagnosis.setChangedBy(Context.getAuthenticatedUser());
                         Context.getDiagnosisService().save(diagnosis);
-                        Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
                     }
 
                 } else {
@@ -349,13 +348,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
                     if (diagnosis.getEncounter().getEncounterType() == null) {
                         diagnosis.getEncounter().setEncounterType(formEntrySession.getForm().getEncounterType());
                     }
-                    Set<org.openmrs.Diagnosis> encounterDiagnoses = formEntrySession.getEncounter().getDiagnoses();
-                    if (encounterDiagnoses == null) {
-                        encounterDiagnoses = new HashSet<>();
-                        formEntrySession.getEncounter().setDiagnoses(encounterDiagnoses);
-                    }
-                    encounterDiagnoses.add(diagnosis);
-                    Context.getEncounterService().saveEncounter(diagnosis.getEncounter());
+                    Context.getDiagnosisService().save(diagnosis);
                 }
 
             }
@@ -388,11 +381,9 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
             Encounter existingEncounter = context.getExistingEncounter();
             if (existingEncounter != null) {
                 Set<org.openmrs.Diagnosis> nonVoidedDiagnoses = new HashSet<org.openmrs.Diagnosis>();
-                if (existingEncounter.getDiagnoses() != null) {
-                    for (org.openmrs.Diagnosis diagnosis : existingEncounter.getDiagnoses()) {
-                        if (!diagnosis.getVoided()) {
-                            nonVoidedDiagnoses.add(diagnosis);
-                        }
+                for (org.openmrs.Diagnosis diagnosis : existingEncounter.getDiagnoses()) {
+                    if (!diagnosis.getVoided()) {
+                        nonVoidedDiagnoses.add(diagnosis);
                     }
                 }
                 return nonVoidedDiagnoses;

@@ -228,6 +228,7 @@
 				    <version>2.22.1</version>
 				    <configuration>
 				    	<argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+						<argLine>-Duser.timezone=UTC</argLine>
 				    </configuration>
 				</plugin>
             </plugins>
