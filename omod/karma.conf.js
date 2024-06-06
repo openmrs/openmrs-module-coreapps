@@ -8,20 +8,15 @@ module.exports = function(config) {
 	webpackConfig.plugins.splice(commonsChunkPluginIndex, 1);
 	
     var karmaConfig = {
-        browsers: ['PhantomJS'],
+		browsers: ['ChromeHeadless'],
 		customLaunchers: {
-			ChromeWithoutSecurity: {
-				base: 'Chrome',
-				flags: ['--disable-web-security']
-			},
-			FirefoxNoSandbox: {
-				base: 'Firefox',
-				flags: ['--no-sandbox']
-			},FirefoxHeadless: {
-				base: 'Firefox',
+			ChromeHeadlessDocker: {
+				base: 'ChromeHeadless',
 				flags: [
-					'--no-sandbox',
-					'--headless'
+					"--disable-gpu",
+					"--disable-dev-shm-usage",
+					"--disable-setuid-sandbox",
+					"--no-sandbox",
 				]
 			}
 		},
@@ -29,14 +24,7 @@ module.exports = function(config) {
 			{ pattern: 'node_modules/babel-polyfill/browser.js', instrument: false},
             { pattern: pkg.config.sourceDir + '/karma.context.js' }
         ],
-        phantomjsLauncher: {
-        	options: {
-        		settings: {
-        			webSecurityEnabled: false
-        		}
-        	}
-        },
-        frameworks: ['jasmine'],
+		frameworks: ['jasmine'],
         preprocessors: {
             '**/karma.context.js': ['webpack', 'sourcemap']
         },
@@ -52,10 +40,6 @@ module.exports = function(config) {
 		concurrency: Infinity,
 		singleRun: true
     };
-	
-	if (process.env.TRAVIS) {
-		karmaConfig.browsers = ['FirefoxNoSandbox'];
-	}
 	
 	config.set(karmaConfig);
 };
