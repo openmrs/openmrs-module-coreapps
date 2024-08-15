@@ -20,6 +20,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
+import org.openmrs.PatientState;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Program;
@@ -30,24 +31,25 @@ import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
-import org.openmrs.module.coreapps.contextmodel.PatientEncounterContextModel;
-import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
+import org.openmrs.module.coreapps.contextmodel.PatientEncounterContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.event.ApplicationEventService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
+import org.openmrs.module.webservices.rest.web.ConversionUtil;
+import org.openmrs.module.webservices.rest.web.representation.Representation;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.Redirect;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.openmrs.module.webservices.rest.web.representation.Representation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,10 +120,28 @@ public class PatientPageController {
 
         List<Program> programs = new ArrayList<Program>();
         List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(patient, null, null, null, null, null, false);
+        List<SimpleObject> activePrograms = new ArrayList<>();
+        List<SimpleObject> activeProgramStates = new ArrayList<>();
         for (PatientProgram patientProgram : patientPrograms) {
-         programs.add(patientProgram.getProgram());
+            programs.add(patientProgram.getProgram());
+            if (patientProgram.getActive()) {
+                SimpleObject activeProgram = new SimpleObject();
+                activeProgram.put("programUuid", patientProgram.getProgram().getUuid());
+                activeProgram.put("dateEnrolled", patientProgram.getDateEnrolled());
+                activePrograms.add(activeProgram);
+                for (PatientState ps : patientProgram.getCurrentStates()) {
+                    SimpleObject activeState = new SimpleObject();
+                    activeState.put("stateUuid", ps.getState().getUuid());
+                    activeState.put("workflowUuid", ps.getState().getProgramWorkflow().getUuid());
+                    activeState.put("programUuid", ps.getState().getProgramWorkflow().getProgram().getUuid());
+                    activeState.put("startDate", ps.getStartDate());
+                    activeProgramStates.add(activeState);
+                }
+            }
         }
         contextModel.put("patientPrograms", ConversionUtil.convertToRepresentation(programs, Representation.DEFAULT));
+        contextModel.put("activePrograms", ConversionUtil.convertToRepresentation(activePrograms, Representation.DEFAULT));
+        contextModel.put("activeProgramStates", ConversionUtil.convertToRepresentation(activeProgramStates, Representation.DEFAULT));
 
         model.addAttribute("appContextModel", contextModel);
 
