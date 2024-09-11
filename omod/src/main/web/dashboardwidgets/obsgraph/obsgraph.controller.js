@@ -13,7 +13,11 @@ export default class ObsGraphController {
         this.maxAgeInDays = undefined;
         this.conceptRep = "custom:(uuid,display,name:(display),datatype:(uuid,display))";
         this.customRep="custom:(uuid,display,obsDatetime,value,encounter:(encounterType),concept:(uuid,display,name:(display),datatype:(uuid,display)))";
-
+        this.patientProgramRep = 'custom:(uuid,display,program:(uuid,display),dateEnrolled,dateCompleted,dateCreated,outcome:(display),location:(display,uuid))';
+      
+        this.programDateEnrolled = null;
+        this.duringCurrentEnrollmentInProgram = null;
+      
         // Chart data
         this.series = [];
         this.labels = [];
@@ -125,7 +129,7 @@ export default class ObsGraphController {
               for (let j=0; j < this.conceptArray.length; j++) {
                 let concept = this.conceptArray[j];
                 if( this.hideConcepts !== undefined && this.hideConcepts.length && this.hideConcepts.includes(concept.uuid)) {
-                  //if it was indicated that this concept should not be plotted, than skip to the next concept
+                  //if it was indicated that this concept should not be plotted, then skip to the next concept
                   continue;
                 }
                 if (concept.legend === true) {
@@ -160,7 +164,39 @@ export default class ObsGraphController {
           }
 
         };
-
+        
+        this.getProgramEnrollmentDate = function() {
+          let promises = [];
+          if (this.duringCurrentEnrollmentInProgram) {
+            let promisedObs = this.openmrsRest.get('programenrollment', {
+              patient: this.config.patientUuid,
+              v: this.patientProgramRep
+            }).then(function (enrollment) {
+              return enrollment;
+            });
+            promises.push(promisedObs);
+          }
+          
+          return this.$q.all(promises).then(function(enrollments) {
+            for (let i=0; i < enrollments.length; i++) {
+              let results = enrollments[i].results;
+              if (results && results.length > 0) {
+                for (let j = 0; j < results.length; j++) {
+                  let prgEnrollment = results[j];
+                  if (prgEnrollment.program.uuid == self.duringCurrentEnrollmentInProgram) {
+                    //we found the program whose data needs to be included in this graph
+                    if ( (prgEnrollment.dateEnrolled != null) && (prgEnrollment.dateCompleted == null) ) {
+                      //this is an active/open enrollment
+                      self.programDateEnrolled = prgEnrollment.dateEnrolled;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
+        
         this.getConceptNames = function() {
           let promises = [];
           if (this.conceptArray !== null && this.conceptArray.length > 0) {
@@ -234,7 +270,12 @@ export default class ObsGraphController {
                   if (isEncounterTypeNotAllowed(getEncounterType(obs))) {
                     continue;
                   }
-
+                  //if duringCurrentEnrollmentInProgram config parameter is defined, then display only the obs from the current/active program enrollment
+                  if (self.programDateEnrolled && ( (new Date(self.programDateEnrolled)) > new Date(obs.obsDatetime))) {
+                    //the obs was taken prior to the current program enrollment date
+                    continue;
+                  }
+                  
                   if (obs.concept.datatype.display == 'Numeric') {
                     // Don't add obs older than maxAge
                     let xValue = self.widgetsCommons.daysSinceDate(obs.obsDatetime);
@@ -255,10 +296,11 @@ export default class ObsGraphController {
 
       this.getConfig();
 
+      const getProgramEnrollmentDatePromise = this.getProgramEnrollmentDate();
       const getConceptNamesPromise = this.getConceptNames();
       const getAllObsPromise = this.getAllObs();
 
-      this.$q.all([getConceptNamesPromise, getAllObsPromise]).then(function(){
+      this.$q.all([getProgramEnrollmentDatePromise, getConceptNamesPromise, getAllObsPromise]).then(function(){
         self.updateChartData();
       });
     }
@@ -273,7 +315,11 @@ export default class ObsGraphController {
       if(angular.isDefined(this.config.encounterTypes)) {
         this.encounterTypes = this.config.encounterTypes.replace(/ /gi, "").split(",");
       }
-
+      
+      if (angular.isDefined(this.config.duringCurrentEnrollmentInProgram)) {
+        this.duringCurrentEnrollmentInProgram = this.config.duringCurrentEnrollmentInProgram;
+      }
+      
       // Set default showLegend to true if not defined
       if (angular.isUndefined(this.config.showLegend)) {
         this.config.showLegend = true;
