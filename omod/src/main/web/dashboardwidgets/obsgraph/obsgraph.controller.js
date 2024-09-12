@@ -271,8 +271,10 @@ export default class ObsGraphController {
                     continue;
                   }
                   //if duringCurrentEnrollmentInProgram config parameter is defined, then display only the obs from the current/active program enrollment
-                  if (self.programDateEnrolled && ( (new Date(self.programDateEnrolled)) > new Date(obs.obsDatetime))) {
-                    //the obs was taken prior to the current program enrollment date
+                  if ( (self.duringCurrentEnrollmentInProgram && (self.programDateEnrolled == null)) ||
+                      (self.programDateEnrolled && ( (new Date(self.programDateEnrolled)) > new Date(obs.obsDatetime)))) {
+                    // there is no current open enrollment in the program specified or
+                    // the obs was taken prior to the current program enrollment date
                     continue;
                   }
                   
