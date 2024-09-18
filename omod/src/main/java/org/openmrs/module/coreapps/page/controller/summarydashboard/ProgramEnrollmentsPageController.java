@@ -68,10 +68,6 @@ public class ProgramEnrollmentsPageController {
                 Date today = Calendar.getInstance().getTime();
                 // retrieve all program enrollments still active as now
                 List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(null, program, null, today, today, null, false);
-                for (PatientProgram patientProgram : patientPrograms) {
-                    patientProgram.getDateEnrolled();
-                    patientProgram.getDateCompleted();
-                }
                 model.addAttribute("programEnrollments", patientPrograms);
             }
         }
