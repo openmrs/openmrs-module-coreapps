@@ -64,14 +64,10 @@
 			<% programEnrollments.each { e ->
 			%>
 			<tr>
-			<td class="name-link"><a href="${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: e.patient.patientId ]) }">${ ui.format(e.patient.personName)}</a></td>
-				<td>${ e.patient.getPatientIdentifier(primaryIdentifierType.id) }</td>
+			<td class="name-link"><a href="${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: e.patientId ]) }">${ ui.format(e.personName)}</a></td>
+				<td>${ e.emrId }</td>
 				<td>${ ui.format(e.dateEnrolled)}</td>
-				<td>
-					<% e.currentStates.eachWithIndex { state, index -> %>
-						${ ui.format(state.state.concept) }${ e.currentStates.size() - index > 1 ? ", " : ""}
-					<% } %>
-				</td>
+				<td>${ e.treatmentState }</td>
 			</tr>
 			<% } %>
 		</tbody>

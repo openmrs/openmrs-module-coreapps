@@ -3,8 +3,11 @@ package org.openmrs.module.coreapps.page.controller.summarydashboard;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
+import org.openmrs.PatientState;
 import org.openmrs.Program;
+import org.openmrs.ProgramWorkflow;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
@@ -14,17 +17,20 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.Redirect;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ProgramEnrollmentsPageController {
 
@@ -44,10 +50,6 @@ public class ProgramEnrollmentsPageController {
         AppContextModel contextModel = sessionContext.generateAppContextModel();
         model.addAttribute("appContextModel", contextModel);
 
-        List<Extension> includeFragments = appFrameworkService.getExtensionsForCurrentUser(app.getId() + ".includeFragments", contextModel);
-        Collections.sort(includeFragments);
-        model.addAttribute("includeFragments", includeFragments);
-
         List<Extension> firstColumnFragments = appFrameworkService.getExtensionsForCurrentUser(app.getId() + ".firstColumnFragments", contextModel);
         Collections.sort(firstColumnFragments);
         model.addAttribute("firstColumnFragments", firstColumnFragments);
@@ -62,17 +64,34 @@ public class ProgramEnrollmentsPageController {
                 }
             }
         }
+        List<SimpleObject> simpleObjects = new ArrayList<>();
         if (programUuid != null ) {
             Program program = Context.getProgramWorkflowService().getProgramByUuid(programUuid);
+            Set<ProgramWorkflow> workflows = program.getWorkflows();
             if (program != null ) {
                 Date today = Calendar.getInstance().getTime();
                 // retrieve all program enrollments still active as now
                 List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(null, program, null, today, today, null, false);
-                model.addAttribute("programEnrollments", patientPrograms);
+                for (PatientProgram patientProgram : patientPrograms) {
+                    Patient patient = patientProgram.getPatient();
+                    for(ProgramWorkflow workflow : workflows) {
+                        PatientState currentState = patientProgram.getCurrentState(workflow);
+                        simpleObjects.add(SimpleObject.create(
+                                "patientUuid", patient.getUuid(),
+                                "patientId", patient.getPatientId(),
+                                "personName", patient.getPersonName().getFamilyName() + ", " + patient.getPersonName().getGivenName(),
+                                "emrId", patient.getPatientIdentifier(emrApiProperties.getPrimaryIdentifierType()),
+                                "dateEnrolled", patientProgram.getDateEnrolled(),
+                                "dateCompleted", patientProgram.getDateCompleted(),
+                                "treatmentState", (currentState != null) ? currentState.getState().getConcept().getName(Context.getLocale()) : ""
+                        ));
+                    }
+                }
+                model.addAttribute("programEnrollments", simpleObjects);
             }
         }
         model.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
-        model.addAttribute("primaryIdentifierType", emrApiProperties.getPrimaryIdentifierType());
+
         return null;
     }
 }
