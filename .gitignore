@@ -6,6 +6,8 @@
 .classpath
 *.sass-cache
 target
+*.rubygems-provided
+*.rubygems
 
 .DS_Store
 
@@ -22,6 +24,7 @@ omod/src/main/webapp/resources/styles/lib
 
 omod/node
 omod/node_modules
+omod/src/main/compass
 
 # JS
 node
