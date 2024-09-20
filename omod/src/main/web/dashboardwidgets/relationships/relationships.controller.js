@@ -215,7 +215,7 @@ export default class RelationshipsController  {
 
     getMaxRecords() {
         if(this.config.maxRecords == '' || angular.isUndefined(this.config.maxRecords)){
-            return 6;
+            return null;
         } else {
             return this.config.maxRecords;
         }
