@@ -64,32 +64,35 @@ public class ProgramEnrollmentsPageController {
                 }
             }
         }
+        Set<ProgramWorkflow> workflows = null;
         List<SimpleObject> simpleObjects = new ArrayList<>();
         if (programUuid != null ) {
             Program program = Context.getProgramWorkflowService().getProgramByUuid(programUuid);
-            Set<ProgramWorkflow> workflows = program.getWorkflows();
+            workflows = program.getWorkflows();
             if (program != null ) {
                 Date today = Calendar.getInstance().getTime();
                 // retrieve all program enrollments still active as now
                 List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(null, program, null, today, today, null, false);
                 for (PatientProgram patientProgram : patientPrograms) {
                     Patient patient = patientProgram.getPatient();
+                    SimpleObject prgObject = SimpleObject.create(
+                            "patientUuid", patient.getUuid(),
+                            "patientId", patient.getPatientId(),
+                            "personName", patient.getPersonName().getFamilyName() + ", " + patient.getPersonName().getGivenName(),
+                            "emrId", patient.getPatientIdentifier(emrApiProperties.getPrimaryIdentifierType()),
+                            "dateEnrolled", patientProgram.getDateEnrolled(),
+                            "dateCompleted", patientProgram.getDateCompleted()
+                    );
                     for(ProgramWorkflow workflow : workflows) {
                         PatientState currentState = patientProgram.getCurrentState(workflow);
-                        simpleObjects.add(SimpleObject.create(
-                                "patientUuid", patient.getUuid(),
-                                "patientId", patient.getPatientId(),
-                                "personName", patient.getPersonName().getFamilyName() + ", " + patient.getPersonName().getGivenName(),
-                                "emrId", patient.getPatientIdentifier(emrApiProperties.getPrimaryIdentifierType()),
-                                "dateEnrolled", patientProgram.getDateEnrolled(),
-                                "dateCompleted", patientProgram.getDateCompleted(),
-                                "treatmentState", (currentState != null) ? currentState.getState().getConcept().getName(Context.getLocale()) : ""
-                        ));
+                        prgObject.put(workflow.getUuid(), (currentState != null) ? currentState.getState().getConcept().getName(Context.getLocale()) : "");
                     }
+                    simpleObjects.add(prgObject);
                 }
                 model.addAttribute("programEnrollments", simpleObjects);
             }
         }
+        model.addAttribute("programWorkflows", workflows);
         model.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
 
         return null;

@@ -57,7 +57,9 @@
 				<th>${ ui.message("Patient.name") }</th>
 				<th>${ ui.message("coreapps.emr.id") }</th>
 				<th>${ ui.message("coreapps.enrollment.startDate") }</th>
-				<th>${ ui.message("coreapps.treatment.state") }</th>
+				<% programWorkflows.each { w -> %>
+					<th>${ ui.format(w) }</th>
+				<% } %>
 			</tr>
 		</thead>
 		<tbody>
@@ -67,7 +69,9 @@
 			<td class="name-link"><a href="${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: e.patientId ]) }">${ ui.format(e.personName)}</a></td>
 				<td>${ e.emrId }</td>
 				<td>${ ui.format(e.dateEnrolled)}</td>
-				<td>${ e.treatmentState }</td>
+				<% programWorkflows.each { w -> %>
+					<th>${ ui.format(e[w.uuid]) }</th>
+				<% } %>
 			</tr>
 			<% } %>
 		</tbody>
