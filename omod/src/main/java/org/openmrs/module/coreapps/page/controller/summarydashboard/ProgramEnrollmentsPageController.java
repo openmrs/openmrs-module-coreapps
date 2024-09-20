@@ -78,7 +78,7 @@ public class ProgramEnrollmentsPageController {
                     SimpleObject prgObject = SimpleObject.create(
                             "patientUuid", patient.getUuid(),
                             "patientId", patient.getPatientId(),
-                            "personName", patient.getPersonName().getFamilyName() + ", " + patient.getPersonName().getGivenName(),
+                            "personName", (patient.getPersonName() != null) ? (patient.getPersonName().getFamilyName() + ", " + patient.getPersonName().getGivenName()) : "",
                             "emrId", patient.getPatientIdentifier(emrApiProperties.getPrimaryIdentifierType()),
                             "dateEnrolled", patientProgram.getDateEnrolled(),
                             "dateCompleted", patientProgram.getDateCompleted()

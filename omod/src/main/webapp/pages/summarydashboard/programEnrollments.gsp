@@ -58,7 +58,7 @@
 				<th>${ ui.message("coreapps.emr.id") }</th>
 				<th>${ ui.message("coreapps.enrollment.startDate") }</th>
 				<% programWorkflows.each { w -> %>
-					<th>${ ui.format(w) }</th>
+					<th>${ ui.format(w.concept) }</th>
 				<% } %>
 			</tr>
 		</thead>
