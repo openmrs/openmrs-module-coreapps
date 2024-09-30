@@ -50,7 +50,7 @@ function PatientSearchWidget(configuration){
     });
     tableHtml += '</tr></thead><tbody></tbody></table>';
 
-    var spinnerImage = '<span><img class="search-spinner" src="'+emr.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>';
+    var spinnerImage = '<span id="spinner-image"><img class="search-spinner" src="'+emr.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>';
 
     jq('#'+config.searchResultsDivId).addClass("table-responsive").append(tableHtml);
     var input = jq('#'+config.searchInputId);
@@ -210,6 +210,7 @@ function PatientSearchWidget(configuration){
                 .then(function (data) {
                     if (data && data.results && data.results.length > 0) {
                         updateSearchResults(data.results);
+                        jq('#spinner-image').remove();
                     }
                 })
             deferredList.push(deferred);
@@ -220,13 +221,16 @@ function PatientSearchWidget(configuration){
             .done(function () {
                 if (searchResultsData.length == 0) {
                     displayNoMatchesFound();
+                    jq('#spinner-image').remove();
                 }
                 else if (searchResultsData.length == 1) {
                     selectRow(0);  // auto-select if one match, may want to make this configurable
+                    jq('#spinner-image').remove();
                 }
             })
             .fail(function (jqXHR) {
                 failSearch();   // TODO is this what we want here?
+                jq('#spinner-image').remove();
             });
 
     }
@@ -791,6 +795,7 @@ function PatientSearchWidget(configuration){
     jq('#patient-search-form').on('search:no-matches', function(event, identifier) {
         clearSearch();
         displayNoMatchesFound();
+        jq('#spinner-image').remove();
     })
 
     jq('#patient-search-form').on('search:placeholder', function(event, placeholder) {
@@ -804,4 +809,27 @@ function PatientSearchWidget(configuration){
         // For some reason without this the cursor is at position 0 of the input, i.e. before the initial value
         input[0].selectionStart = input.val().length;
     }
+
+
+    // Store the original XMLHttpRequest open function to preserve its functionality
+    const originalXHR = window.XMLHttpRequest.prototype.open;
+
+    // Override the XMLHttpRequest open function to intercept specific requests
+    window.XMLHttpRequest.prototype.open = function (method, url) {
+
+        // Check if the requested URL contains '/openmrs/registrationapp/biometrics/biometrics/search.action'
+        if (url.includes('/openmrs/registrationapp/biometrics/biometrics/search.action')) {
+
+            jq('#patient-search-form').after(spinnerImage);
+
+            // Apply CSS styles to position the spinner
+            jq("#spinner-image").css({
+                'position': 'absolute',
+                'right': '180px',
+                'top': '50%',
+                'transform': 'translateY(-50%)'
+            });
+        }
+        return originalXHR.apply(this, arguments);
+    };
 }
