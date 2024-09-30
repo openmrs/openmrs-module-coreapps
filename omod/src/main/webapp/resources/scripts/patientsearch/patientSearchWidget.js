@@ -351,7 +351,7 @@ function PatientSearchWidget(configuration){
                     else if (column.type === 'attribute') {
                         jq.each(patient.attributes, function(index, attribute) {
                             var attrType = attribute.attributeType;
-                            if (attrType != null && !attribute.voided && attrType.name === attrType.name) {
+                            if (attrType != null && !attribute.voided && attrType.name === column.value) {
                                 if(attribute.value != null) {
                                     if(!attribute.value.display) {
                                         columnValue = attribute.value;
