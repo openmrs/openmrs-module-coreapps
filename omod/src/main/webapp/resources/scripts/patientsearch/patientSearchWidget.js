@@ -774,7 +774,6 @@ function PatientSearchWidget(configuration){
     // see https://issues.openmrs.org/browse/RA-1404 for potential use cases
     jq('#patient-search-form').on('search:clear', function() {
         clearSearch();
-        jq('#patient-search-form').after(spinnerImage);
     })
 
     jq('#patient-search-form').on('search:disable', function() {
@@ -801,6 +800,10 @@ function PatientSearchWidget(configuration){
 
     jq('#patient-search-form').on('search:placeholder', function(event, placeholder) {
         jq('#patient-search').attr('placeholder', placeholder);
+    })
+
+    jq('#patient-search-form').on('search:start', function() {
+        jq('#patient-search-form').after(spinnerImage);
     })
 
     /***************** Do initial search if one is specified **************/
