@@ -774,6 +774,7 @@ function PatientSearchWidget(configuration){
     // see https://issues.openmrs.org/browse/RA-1404 for potential use cases
     jq('#patient-search-form').on('search:clear', function() {
         clearSearch();
+        jq('#patient-search-form').after(spinnerImage);
     })
 
     jq('#patient-search-form').on('search:disable', function() {
@@ -809,27 +810,4 @@ function PatientSearchWidget(configuration){
         // For some reason without this the cursor is at position 0 of the input, i.e. before the initial value
         input[0].selectionStart = input.val().length;
     }
-
-
-    // Store the original XMLHttpRequest open function to preserve its functionality
-    const originalXHR = window.XMLHttpRequest.prototype.open;
-
-    // Override the XMLHttpRequest open function to intercept specific requests
-    window.XMLHttpRequest.prototype.open = function (method, url) {
-
-        // Check if the requested URL contains '/openmrs/registrationapp/biometrics/biometrics/search.action'
-        if (url.includes('/openmrs/registrationapp/biometrics/biometrics/search.action')) {
-
-            jq('#patient-search-form').after(spinnerImage);
-
-            // Apply CSS styles to position the spinner
-            jq("#spinner-image").css({
-                'position': 'absolute',
-                'right': '180px',
-                'top': '50%',
-                'transform': 'translateY(-50%)'
-            });
-        }
-        return originalXHR.apply(this, arguments);
-    };
 }
