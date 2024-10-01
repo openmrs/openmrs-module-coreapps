@@ -50,7 +50,7 @@ function PatientSearchWidget(configuration){
     });
     tableHtml += '</tr></thead><tbody></tbody></table>';
 
-    var spinnerImage = '<span><img class="search-spinner" src="'+emr.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>';
+    var spinnerImage = '<span id="spinner-image"><img class="search-spinner" src="'+emr.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>';
 
     jq('#'+config.searchResultsDivId).addClass("table-responsive").append(tableHtml);
     var input = jq('#'+config.searchInputId);
@@ -210,6 +210,7 @@ function PatientSearchWidget(configuration){
                 .then(function (data) {
                     if (data && data.results && data.results.length > 0) {
                         updateSearchResults(data.results);
+                        jq('#spinner-image').remove();
                     }
                 })
             deferredList.push(deferred);
@@ -220,13 +221,16 @@ function PatientSearchWidget(configuration){
             .done(function () {
                 if (searchResultsData.length == 0) {
                     displayNoMatchesFound();
+                    jq('#spinner-image').remove();
                 }
                 else if (searchResultsData.length == 1) {
                     selectRow(0);  // auto-select if one match, may want to make this configurable
+                    jq('#spinner-image').remove();
                 }
             })
             .fail(function (jqXHR) {
                 failSearch();   // TODO is this what we want here?
+                jq('#spinner-image').remove();
             });
 
     }
@@ -791,10 +795,15 @@ function PatientSearchWidget(configuration){
     jq('#patient-search-form').on('search:no-matches', function(event, identifier) {
         clearSearch();
         displayNoMatchesFound();
+        jq('#spinner-image').remove();
     })
 
     jq('#patient-search-form').on('search:placeholder', function(event, placeholder) {
         jq('#patient-search').attr('placeholder', placeholder);
+    })
+
+    jq('#patient-search-form').on('search:start', function() {
+        jq('#patient-search-form').after(spinnerImage);
     })
 
     /***************** Do initial search if one is specified **************/
