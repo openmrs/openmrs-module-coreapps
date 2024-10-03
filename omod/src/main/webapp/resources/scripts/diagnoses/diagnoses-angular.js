@@ -19,7 +19,7 @@ var app = angular.module('diagnoses', [])
                             items.splice(i, 1);
                         }
                     }
-                    if (!exactMatch) {
+                    if (!exactMatch && scope.allowNonCoded) {
                         items.push(diagnoses.CodedOrFreeTextConceptAnswer(element.val()))
                     }
                 },
@@ -42,9 +42,10 @@ var app = angular.module('diagnoses', [])
         }
     })
 
-    .controller('DiagnosesController', [ '$scope',
-        function DiagnosesController($scope) {
+    .controller('DiagnosesController', [ '$scope', 'allowNonCoded',
+        function DiagnosesController($scope, allowNonCoded) {
 
+            $scope.allowNonCoded = allowNonCoded ? "TRUE" === allowNonCoded.toUpperCase() : true;
             $scope.encounterDiagnoses = diagnoses.EncounterDiagnoses();
             $scope.priorDiagnoses = diagnoses.EncounterDiagnoses();
 

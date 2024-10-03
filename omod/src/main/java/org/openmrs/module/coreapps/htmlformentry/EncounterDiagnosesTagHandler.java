@@ -82,6 +82,9 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
         element.setDiagnosisConceptClasses(attributes.get("diagnosisConceptClasses"));
         element.setDiagnosisConceptSources(attributes.get("diagnosisConceptSources"));
         element.setPreferredCodingSource(attributes.get("preferredCodingSource") != null ? attributes.get("preferredCodingSource"): CoreAppsConstants.DEFAULT_CODING_SOURCE);
+        if (attributes.get("allowNonCoded") != null) {
+            element.setAllowNonCoded("true".equalsIgnoreCase(attributes.get("allowNonCoded")));
+        }
 
         /**
          *  Handle the attribute to specify loading any prior diagnoses from the most recent encounter with a specific disposition

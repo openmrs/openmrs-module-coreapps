@@ -103,6 +103,9 @@
 </div>
 
 <script type="text/javascript">
+
+    angular.module('diagnoses')
+        .value('allowNonCoded', '${ config.allowNonCoded }')
     // manually bootstrap, in case there are multiple angular apps on a page
     angular.bootstrap('#encounter-diagnoses-app', ['diagnoses']);
 
