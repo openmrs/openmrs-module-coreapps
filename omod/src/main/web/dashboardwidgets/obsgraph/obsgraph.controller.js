@@ -297,12 +297,12 @@ export default class ObsGraphController {
       };
 
       this.getConfig();
-
-      const getProgramEnrollmentDatePromise = this.getProgramEnrollmentDate();
-      const getConceptNamesPromise = this.getConceptNames();
-      const getAllObsPromise = this.getAllObs();
-
-      this.$q.all([getProgramEnrollmentDatePromise, getConceptNamesPromise, getAllObsPromise]).then(function(){
+      // chaining the promises sequentially
+      this.getProgramEnrollmentDate().then(function(){
+        return self.getConceptNames();
+      }).then(function() {
+        return self.getAllObs();
+      }).then(function(){
         self.updateChartData();
       });
     }
