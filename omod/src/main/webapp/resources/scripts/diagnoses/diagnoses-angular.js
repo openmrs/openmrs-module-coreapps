@@ -19,7 +19,7 @@ var app = angular.module('diagnoses', [])
                             items.splice(i, 1);
                         }
                     }
-                    if (!exactMatch && scope.allowNonCoded && /\S/.test(element.val())) {  // regex makes sure input is not all whitespace
+                    if (!exactMatch && scope.allowNonCoded && /\S/.test(element.val())) {  // regex tests input is not all whitespace
                         items.push(diagnoses.CodedOrFreeTextConceptAnswer(element.val()))
                     }
                 },
