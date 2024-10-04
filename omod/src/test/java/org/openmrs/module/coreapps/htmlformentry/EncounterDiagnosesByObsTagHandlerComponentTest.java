@@ -555,6 +555,20 @@ public class EncounterDiagnosesByObsTagHandlerComponentTest extends BaseModuleWe
         assertFalse(StringUtils.contains(generatedHtml, "diagnosisConceptClasses"));
     }
 
+    @Test
+    public void getSubstitution_shouldSetAllowNonCodedToFalse() throws Exception {
+        // setup
+        Map<String,String> attributes = new HashMap<String, String>();
+        attributes.put("allowNonCoded", "false");
+
+        // replay
+        attributes.put("diagnosisConceptClasses", null);
+        String generatedHtml = encounterDiagnosesTagHandler.getSubstitution(formEntrySession, formSubmissionController, attributes);
+
+        // verify
+        assertTrue(StringUtils.contains(generatedHtml, "value('allowNonCoded', 'false')"));
+    }
+
     private String renderFragmentHtml(Map<String, Object> fragmentConfig) throws Exception {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("web/module/fragments/diagnosis/encounterDiagnoses.gsp");
         String string = IOUtils.toString(inputStream, UTF_8.toString());

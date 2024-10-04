@@ -62,6 +62,7 @@ import org.openmrs.ui.framework.page.PageAction;
 public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubmissionControllerAction, CustomFormSubmissionAction {
 
     private boolean required = false;
+    private boolean allowNonCoded = true;
     private UiUtils uiUtils;
     private String selectedDiagnosesTarget;
 
@@ -148,6 +149,7 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
             try {
                 Map<String, Object> fragmentConfig = new HashMap<String, Object>();
                 fragmentConfig.put("formFieldName", "encounterDiagnoses");
+                fragmentConfig.put("allowNonCoded", allowNonCoded);
                 fragmentConfig.put("existingDiagnoses", existingDiagnoses);
                 // Parse '0' to config attribute if specified such that null value can be used during the search in 'DiagnosesFragmentController' class  
                 fragmentConfig.put("diagnosisSets", "0".equals(diagnosisSets) ? "0" : validateAndFormat(diagnosisSets));
@@ -418,6 +420,14 @@ public class EncounterDiagnosesElement implements HtmlGeneratorElement, FormSubm
 
     public boolean getRequired() {
         return required;
+    }
+
+    public boolean isAllowNonCoded() {
+        return allowNonCoded;
+    }
+
+    public void setAllowNonCoded(boolean allowNonCoded) {
+        this.allowNonCoded = allowNonCoded;
     }
 
     public void setDiagnosisSets(String diagnosisSets) {

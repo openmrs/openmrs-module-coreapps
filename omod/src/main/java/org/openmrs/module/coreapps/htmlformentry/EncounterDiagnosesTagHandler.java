@@ -73,7 +73,7 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
 
         EncounterDiagnosesElement element = new EncounterDiagnosesElement();
         element.setUiUtils(session.getAttribute("uiUtils") != null ? (UiUtils) session.getAttribute("uiUtils") : uiUtils);  // pull from the session if available, otherwise fall back to basic ui utils
-        element.setRequired("true".equals(attributes.get("required")));
+        element.setRequired(Boolean.parseBoolean(attributes.get("required")));
         element.setSelectedDiagnosesTarget(attributes.get("selectedDiagnosesTarget"));
         element.setEmrApiProperties(emrApiProperties);
         element.setConceptService(conceptService);
@@ -82,6 +82,9 @@ public class EncounterDiagnosesTagHandler extends SubstitutionTagHandler {
         element.setDiagnosisConceptClasses(attributes.get("diagnosisConceptClasses"));
         element.setDiagnosisConceptSources(attributes.get("diagnosisConceptSources"));
         element.setPreferredCodingSource(attributes.get("preferredCodingSource") != null ? attributes.get("preferredCodingSource"): CoreAppsConstants.DEFAULT_CODING_SOURCE);
+        if (attributes.get("allowNonCoded") != null) {
+            element.setAllowNonCoded(Boolean.parseBoolean(attributes.get("allowNonCoded")));
+        }
 
         /**
          *  Handle the attribute to specify loading any prior diagnoses from the most recent encounter with a specific disposition
