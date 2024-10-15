@@ -288,7 +288,7 @@
 						</goals>
 						<phase>compile</phase>
 						<configuration>
-							<arguments>ci --no-optional</arguments>
+							<arguments>ci</arguments>
 						</configuration>
 					</execution>
 					<execution>
