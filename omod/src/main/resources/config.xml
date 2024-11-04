@@ -224,6 +224,14 @@
     </globalProperty>
 
     <globalProperty>
+        <property>coreapps.patientSearchHandler</property>
+        <defaultValue>patientByIdentifier</defaultValue>
+        <description>
+            Indicates which patient search handler implementation should be used by the patient search widget
+        </description>
+    </globalProperty>
+
+    <globalProperty>
         <property>coreapps.patientDashboardEncounterCount</property>
         <defaultValue>100</defaultValue>
         <description>

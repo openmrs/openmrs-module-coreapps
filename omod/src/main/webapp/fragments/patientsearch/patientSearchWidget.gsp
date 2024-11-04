@@ -71,6 +71,7 @@
             defaultLocale: '${ defaultLocale }',
             attributeTypes: listableAttributeTypes,
             columnConfig: ${columnConfig},
+            patientSearchHandler: ${"'" + patientSearchHandler + "'"},
             messages: {
                 info: '${ ui.message("coreapps.search.info") }',
                 first: '${ ui.message("coreapps.search.first") }',

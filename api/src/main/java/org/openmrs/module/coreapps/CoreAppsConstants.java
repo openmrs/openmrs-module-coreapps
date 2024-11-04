@@ -10,6 +10,7 @@ public class CoreAppsConstants {
 
    public static final String GP_SEARCH_DELAY_SHORT = "coreapps.searchDelayShort";
    public static final String GP_SEARCH_DELAY_LONG = "coreapps.searchDelayLong";
+   public static final String GP_PATIENT_SEARCH_HANDLER = "coreapps.patientSearchHandler";
 
    public static final String GP_PATIENTDASHBOARD_ENCOUNTER_COUNT = "coreapps.patientDashboardEncounterCount";
 

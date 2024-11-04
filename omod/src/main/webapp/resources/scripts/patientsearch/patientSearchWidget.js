@@ -7,7 +7,8 @@ function PatientSearchWidget(configuration){
         clearButtonId: 'patient-search-clear-button',
         dateFormat: 'DD MMM YYYY',
         locale: 'en',
-        defaultLocale: 'en'
+        defaultLocale: 'en',
+        patientSearchHandler: 'patientByIdentifier'
     };
 
     var config = jq.extend({}, defaults, configuration);
@@ -206,7 +207,7 @@ function PatientSearchWidget(configuration){
         var deferredList = [];
 
         jq.each(identifiers, function (idx, identifier) {
-            var deferred = emr.getJSON(searchUrl, {identifier: identifier, v: customRep})
+            var deferred = emr.getJSON(searchUrl, {identifier: identifier, v: customRep, s: config.patientSearchHandler})
                 .then(function (data) {
                     if (data && data.results && data.results.length > 0) {
                         updateSearchResults(data.results);
@@ -236,7 +237,7 @@ function PatientSearchWidget(configuration){
     }
 
     var searchOnExactIdentifierMatchThenIdentifierAndName = function(query, currRequestCount, autoSelectIfExactIdentifierMatch) {
-        emr.getJSON(searchUrl, {identifier: query, v: customRep })
+        emr.getJSON(searchUrl, {identifier: query, v: customRep, s: config.patientSearchHandler })
             .done(function (data) {
                 // update only if we've got results, and not late (late ajax responses should be ignored not to overwrite the latest)
                 if (data && data.results && data.results.length > 0 && (!currRequestCount || currRequestCount >= requestCount)) {
@@ -254,7 +255,7 @@ function PatientSearchWidget(configuration){
     }
 
     var searchOnIdentifierAndName = function(query, currRequestCount) {
-        emr.getJSON(searchUrl, {q: query, v: customRep })
+        emr.getJSON(searchUrl, {q: query, v: customRep, s: config.patientSearchHandler })
             .done(function(data) {
                 //late ajax responses should be ignored not to overwrite the latest
                 if(data && (!currRequestCount || currRequestCount >= requestCount)){
