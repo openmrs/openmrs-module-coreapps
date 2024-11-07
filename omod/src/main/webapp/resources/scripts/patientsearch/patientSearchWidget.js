@@ -205,9 +205,13 @@ function PatientSearchWidget(configuration){
         }
 
         var deferredList = [];
+        var searchArgs = { identifier: identifier, v: customRep };
+        if (config.patientSearchHandler) {
+            searchArgs.s = config.patientSearchHandler;
+        }
 
         jq.each(identifiers, function (idx, identifier) {
-            var deferred = emr.getJSON(searchUrl, {identifier: identifier, v: customRep, s: config.patientSearchHandler})
+            var deferred = emr.getJSON(searchUrl, searchArgs)
                 .then(function (data) {
                     if (data && data.results && data.results.length > 0) {
                         updateSearchResults(data.results);
@@ -237,7 +241,11 @@ function PatientSearchWidget(configuration){
     }
 
     var searchOnExactIdentifierMatchThenIdentifierAndName = function(query, currRequestCount, autoSelectIfExactIdentifierMatch) {
-        emr.getJSON(searchUrl, {identifier: query, v: customRep, s: config.patientSearchHandler })
+        var searchArgs = { identifier: query, v: customRep };
+        if (config.patientSearchHandler) {
+            searchArgs.s = config.patientSearchHandler;
+        }
+        emr.getJSON(searchUrl, searchArgs)
             .done(function (data) {
                 // update only if we've got results, and not late (late ajax responses should be ignored not to overwrite the latest)
                 if (data && data.results && data.results.length > 0 && (!currRequestCount || currRequestCount >= requestCount)) {
@@ -255,7 +263,11 @@ function PatientSearchWidget(configuration){
     }
 
     var searchOnIdentifierAndName = function(query, currRequestCount) {
-        emr.getJSON(searchUrl, {q: query, v: customRep, s: config.patientSearchHandler })
+        var searchArgs = { q: query, v: customRep };
+        if (config.patientSearchHandler) {
+            searchArgs.s = config.patientSearchHandler;
+        }
+        emr.getJSON(searchUrl, searchArgs)
             .done(function(data) {
                 //late ajax responses should be ignored not to overwrite the latest
                 if(data && (!currRequestCount || currRequestCount >= requestCount)){
