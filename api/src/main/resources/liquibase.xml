@@ -15,4 +15,11 @@
             <where>property ='coreapps.dashboardUrl' and property_value='/coreapps/clinicianfacing/patient.page?patientId={{patientId}}&amp;app=pih.app.clinicianDashboard'</where>
         </update>
     </changeSet>
+    <changeSet id="2024-11-07" author="mseaton">
+        <comment>Remove incorrect default value of coreapps.patientSearchHandler global property</comment>
+        <update tableName="global_property">
+            <column name="property_value" value=""></column>
+            <where>property ='coreapps.patientSearchHandler' and property_value='patientByIdentifier'</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>

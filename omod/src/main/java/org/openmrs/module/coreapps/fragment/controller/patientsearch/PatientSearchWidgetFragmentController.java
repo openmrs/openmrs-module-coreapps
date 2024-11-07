@@ -60,7 +60,7 @@ public class PatientSearchWidgetFragmentController {
         model.addAttribute("searchDelayLong",
                 administrationService.getGlobalProperty(CoreAppsConstants.GP_SEARCH_DELAY_LONG, "1000"));
 
-        String patientSearchHandler = administrationService.getGlobalProperty(CoreAppsConstants.GP_PATIENT_SEARCH_HANDLER, "patientByIdentifier");
+        String patientSearchHandler = administrationService.getGlobalProperty(CoreAppsConstants.GP_PATIENT_SEARCH_HANDLER, "");
         model.addAttribute("patientSearchHandler", patientSearchHandler);
 
         model.addAttribute("dateFormatJS", "DD MMM YYYY");  // TODO really should be driven by global property, but currently we only have a property for the java date format
