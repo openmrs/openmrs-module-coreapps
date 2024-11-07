@@ -205,7 +205,7 @@ function PatientSearchWidget(configuration){
         }
 
         var deferredList = [];
-        let searchArgs = { identifier: identifier, v: customRep };
+        var searchArgs = { identifier: identifier, v: customRep };
         if (config.patientSearchHandler) {
             searchArgs.s = config.patientSearchHandler;
         }
@@ -241,7 +241,7 @@ function PatientSearchWidget(configuration){
     }
 
     var searchOnExactIdentifierMatchThenIdentifierAndName = function(query, currRequestCount, autoSelectIfExactIdentifierMatch) {
-        let searchArgs = { identifier: query, v: customRep };
+        var searchArgs = { identifier: query, v: customRep };
         if (config.patientSearchHandler) {
             searchArgs.s = config.patientSearchHandler;
         }
@@ -263,7 +263,7 @@ function PatientSearchWidget(configuration){
     }
 
     var searchOnIdentifierAndName = function(query, currRequestCount) {
-        let searchArgs = { q: query, v: customRep };
+        var searchArgs = { q: query, v: customRep };
         if (config.patientSearchHandler) {
             searchArgs.s = config.patientSearchHandler;
         }
