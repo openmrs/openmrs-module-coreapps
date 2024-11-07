@@ -227,7 +227,7 @@
         <property>coreapps.patientSearchHandler</property>
         <defaultValue></defaultValue>
         <description>
-            Indicates which patient search handler implementation should be used by the patient search widget
+            Implementations can choose to set this to override the built-in patient search handlers with a custom search handler implementation
         </description>
     </globalProperty>
 
