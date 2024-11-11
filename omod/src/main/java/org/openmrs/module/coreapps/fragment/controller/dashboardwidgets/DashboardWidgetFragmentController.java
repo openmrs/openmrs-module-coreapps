@@ -42,6 +42,7 @@ public class DashboardWidgetFragmentController {
                 throw new IllegalArgumentException("Patient must be of type Patient or PatientDomainWrapper");
             }
             appConfig.put("patientUuid", patientWrapper.getPatient().getUuid());
+            appConfig.put("patientId", patientWrapper.getPatient().getId());
         }
 
         if (appConfig.get("dateFormat") == null) {

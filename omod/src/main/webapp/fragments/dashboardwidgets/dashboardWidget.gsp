@@ -11,7 +11,7 @@
         <h3>${ ui.message(config.label) }</h3>
         <% if (editIcon && config.detailsUrl) { %>
             <i class="${editIcon} edit-action right" title="${ ui.message("coreapps.edit") }"
-               onclick="location.href='${ ui.urlBind("/" + contextPath + "/" + config.detailsUrl, [ "patient.uuid": config.patientUuid ]) }';"></i>
+               onclick="location.href='${ ui.urlBind("/" + contextPath + "/" + config.detailsUrl, [ "patient.uuid": config.patientUuid, "patient.patientId": config.patientId ]) }';"></i>
         <% } %>
     </div>
     <div class="info-body">
