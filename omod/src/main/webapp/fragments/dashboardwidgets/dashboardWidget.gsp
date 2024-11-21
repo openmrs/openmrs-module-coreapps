@@ -5,7 +5,7 @@
 
     def editIcon = config.editIcon ?: "icon-share-alt"
 %>
-<div id="coreapps-${config.id}" class="info-section openmrs-contrib-dashboardwidgets">
+<div id="coreapps-${config.id}" class="info-section openmrs-contrib-dashboardwidgets ${app.id}">
     <div class="info-header">
         <i class="${config.icon}"></i>
         <h3>${ ui.message(config.label) }</h3>

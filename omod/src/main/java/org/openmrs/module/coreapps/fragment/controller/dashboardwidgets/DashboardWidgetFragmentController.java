@@ -12,6 +12,7 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
+import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.io.IOException;
 import java.util.Map;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class DashboardWidgetFragmentController {
 
     public void controller(FragmentConfiguration config, @FragmentParam("app") AppDescriptor app, @InjectBeans PatientDomainWrapper patientWrapper,
-                           @SpringBean("adminService") AdministrationService adminService) throws IOException {
+                           @SpringBean("adminService") AdministrationService adminService, FragmentModel model) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
         Object patient = null;
@@ -62,5 +63,6 @@ public class DashboardWidgetFragmentController {
         Map<String, Object> appConfigMap = mapper.convertValue(appConfig, Map.class);
         config.merge(appConfigMap);
         config.addAttribute("json", appConfig.toString().replace('\"', '\''));
+        model.put("app", app);
     }
 }

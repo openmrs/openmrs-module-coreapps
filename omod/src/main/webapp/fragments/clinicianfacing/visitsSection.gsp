@@ -1,7 +1,7 @@
 <%
     def patient = config.patient
 %>
-<div class="info-section">
+<div class="info-section visits-section">
     <div class="info-header">
         <i class="icon-calendar"></i>
         <h3>${ ui.message(config.label ? config.label : "coreapps.clinicianfacing.recentVisits").toUpperCase() }</h3>

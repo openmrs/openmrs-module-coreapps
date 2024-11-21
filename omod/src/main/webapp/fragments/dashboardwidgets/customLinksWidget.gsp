@@ -1,4 +1,4 @@
-<div id="coreapps-customLinks" class="info-section">
+<div id="coreapps-customLinks" class="info-section custom-links">
     <div class="info-header">
         <i class="${config.icon}"></i>
         <h3>${ ui.message(config.label).toUpperCase() }</h3>
