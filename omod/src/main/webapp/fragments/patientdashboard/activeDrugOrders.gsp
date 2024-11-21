@@ -13,7 +13,7 @@
     }
 </style>
 
-<div class="info-section">
+<div class="info-section active-drug-orders">
 
     <div class="info-header">
         <i class="icon-medicine"></i>
