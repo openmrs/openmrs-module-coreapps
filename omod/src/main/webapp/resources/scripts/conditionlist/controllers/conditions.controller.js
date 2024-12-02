@@ -76,7 +76,7 @@
             dialog.style.display = "none";
         };
 
-        function formatRestCondition(condition) {
+        function formatRestConditionForPost(condition) {
             let restCondition = null;
             if (condition) {
                 restCondition = structuredClone(condition);
@@ -102,7 +102,7 @@
             if ( condition.uuid ) {
                 resource += "/" + condition.uuid;
             }
-            let restObj = formatRestCondition(condition);
+            let restObj = formatRestConditionForPost(condition);
             RestfulService.post(resource, restObj, function (data) {
                 if (!condition.voided) {
                     emr.successAlert("coreapps.conditionui.updateCondition.success");
