@@ -10,7 +10,8 @@
         return {
             setBaseUrl: setBaseUrl,
             get: get,
-            post: post
+            post: post,
+            delete: remove
         };
 
         function setBaseUrl(restWsUrl) {
@@ -51,6 +52,22 @@
             }).then(function (response) {
                 if (typeof successCallback === 'function') {
                     successCallback(response.data);
+                }
+            }, function (error) {
+                if (typeof errorCallback === 'function') {
+                    errorCallback(error);
+                }
+            });
+        }
+
+        function remove(resource, successCallback, errorCallback) {
+            return $http({
+                method: 'DELETE',
+                headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+                url: baseUrl + '/' + resource
+            }).then(function (response) {
+                if (typeof successCallback === 'function') {
+                    successCallback(response);
                 }
             }, function (error) {
                 if (typeof errorCallback === 'function') {

@@ -34,10 +34,12 @@
         $scope.conditionUuid = null;
         $scope.title = '';
 
+
         const INACTIVE_STATUS = 'INACTIVE';
+        const CONDITION_CUSTOM_REP = "custom:(uuid,display,clinicalStatus,voided,onsetDate,endDate,patient:(uuid,display),condition)";
 
         // this is required inorder to initialize the Restangular service
-        RestfulService.setBaseUrl('/' + OPENMRS_CONTEXT_PATH + '/ws/rest/emrapi');
+        RestfulService.setBaseUrl('/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1');
 
         /**
          * Perform POST save
@@ -46,10 +48,14 @@
          * @type {Function}
          */
         self.saveCondition = self.saveCondition || function () {
-            if ($scope.condition.endDate && $scope.condition.onSetDate > $scope.condition.endDate) {
+            if ($scope.condition.endDate && $scope.condition.onsetDate > $scope.condition.endDate) {
                 emr.errorMessage("coreapps.conditionui.updateCondition.onSetDate.error");
             } else {
-                RestfulService.post('condition', [$scope.condition], function (data) {
+                let resource = "condition";
+                if ( $scope.condition?.uuid ) {
+                    resource += "/" + $scope.condition.uuid;
+                }
+                RestfulService.post(resource, $scope.condition, function (data) {
                     if ($scope.conditionUuid) {
                         emr.successAlert("coreapps.conditionui.updateCondition.edited");
                     } else {
@@ -68,7 +74,10 @@
         self.initCondition = self.initCondition || function () {
             var urlArguments = CommonFunctions.extractUrlArgs(window.location.search);
             $scope.patientUuid = urlArguments['patientId'];
-            $scope.condition = {patientUuid: $scope.patientUuid, voided: false};
+            $scope.condition = {
+                patient: $scope.patientUuid,
+                voided: false
+            };
             $scope.conditionUuid = urlArguments['conditionUuid'];
 
             // if we have a conditionUuid, we're editing an existing condition; otherwise, we're creating a new one
@@ -91,9 +100,13 @@
             }
 
             if ($scope.conditionUuid !== null && $scope.conditionUuid !== undefined) {
-                RestfulService.get('condition', {"conditionUuid": $scope.conditionUuid}, function (data) {
-                    if (data && Array.isArray(data)) {
-                        $scope.condition = data[0];
+                RestfulService.get('condition' + "/" + $scope.conditionUuid,
+                  {
+                      "v" : CONDITION_CUSTOM_REP
+                  },
+                  function (data) {
+                    if ( data ) {
+                        $scope.condition = data;
                         self.displayCondition();
                     }
                 }, function (error) {
@@ -103,26 +116,26 @@
         };
 
         self.displayCondition = self.displayCondition || function () {
-            if ($scope.condition.conditionNonCoded) {
+            if ($scope.condition?.condition?.nonCoded) {
                 $scope.concept = {
-                    word: $scope.condition.conditionNonCoded
+                    word: $scope.condition?.condition?.nonCoded
                 };
             }
             else {
                 $scope.concept = {
-                    display: $scope.condition.concept.name,
+                    display: $scope.condition.condition?.coded?.name?.name,
                     concept: {
-                        uuid: $scope.condition.concept.uuid,
-                        display: $scope.condition.concept.name,
+                        uuid: $scope.condition.condition?.coded?.uuid,
+                        display: $scope.condition.condition?.coded?.display,
                     },
                     conceptName: {
-                        display: $scope.condition.concept.name,
+                        display: $scope.condition.condition?.coded?.name?.name,
                     }
                 }
             };
 
-            if ($scope.condition.onSetDate) {
-                onsetDatePicker.datetimepicker('setUTCDate', new Date($scope.condition.onSetDate));
+            if ($scope.condition.onsetDate) {
+                onsetDatePicker.datetimepicker('setUTCDate', new Date($scope.condition.onsetDate));
             }
 
             if ($scope.condition.endDate) {
@@ -135,7 +148,7 @@
 
         self.showEndDate = self.showEndDate || function () {
             var groups = document.getElementsByClassName("group");
-            if ($scope.condition.status === INACTIVE_STATUS) {
+            if ($scope.condition.clinicalStatus === INACTIVE_STATUS) {
                 groups[2].style.visibility = "visible";
                 if ($scope.condition.endDate) {
                     endDatePicker.datetimepicker('setUTCDate', new Date($scope.condition.endDate));
@@ -147,21 +160,19 @@
         };
 
         self.validateCondition = self.validateCondition || function () {
-            var concept;
-            if ($scope.concept.concept && $scope.concept.concept.uuid) {
-                concept = $scope.concept.concept;
+
+            if ($scope.concept?.concept?.uuid) {
+                $scope.condition.condition = {
+                    coded: $scope.concept.concept.uuid
+                };
             } else {
-                concept = $scope.condition.concept;
+                $scope.condition.condition = {
+                    nonCoded: $scope.concept.word
+                };
             }
 
-            if (concept) {
-                $scope.condition.concept = {uuid: concept.uuid, name: concept.display};
-            } else {
-                $scope.condition.conditionNonCoded = $scope.concept.word;
-            }
-
-            $scope.condition.onSetDate = self.getSelectedDate();
-            if ($scope.condition.status === INACTIVE_STATUS) {
+            $scope.condition.onsetDate = self.getSelectedDate();
+            if ($scope.condition.clinicalStatus === INACTIVE_STATUS) {
                 $scope.condition.endDate = self.getEndDate();
             }
 

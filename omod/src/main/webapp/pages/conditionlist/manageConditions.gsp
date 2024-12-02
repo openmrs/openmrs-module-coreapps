@@ -57,7 +57,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
         </ul>
 
         <span ng-repeat="tab in tabs">
-            <div id="{{tab}}">
+            <div id="{{ tab }}">
                 <table class="conditions-table">
                     <thead>
                     <tr>
@@ -73,9 +73,9 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                             ${ui.message("coreapps.conditionui.noKnownConditions")}
                         </td>
                     </tr>
-                    <tr class="clickable-tr" ng-repeat="condition in conditions track by condition.uuid" ng-if="condition.status === tab">
+                    <tr class="clickable-tr" ng-repeat="condition in conditions track by condition.uuid" ng-if="condition.clinicalStatus === tab">
                         <td>{{formatCondition(condition)}}</td>
-                        <td>{{formatDate(condition.onSetDate)}}</td>
+                        <td>{{formatDate(condition.onsetDate)}}</td>
                         <td ng-if="tab === 'INACTIVE'">{{formatDate(condition.endDate)}}</td>
                         <td ng-if="'${hasModifyConditionsPrivilege}'">
                             <i class="icon-pencil edit-action" title="${ui.message("coreapps.conditionui.editCondition")}"
@@ -83,9 +83,9 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                             <i class="icon-remove delete-action" title="${ui.message("coreapps.delete")}"
                                ng-click="conditionConfirmation(condition)" ng-if="condition.voided === false"></i>
                             <button style="background-color: #cccccc;border: none; color: black; padding: 5px;font-size: 10px; margin: 2px 2px; border-radius: 4px;"
-                                  ng-click="activateCondition(condition)" ng-if="condition.status === 'INACTIVE'">${ ui.message("coreapps.conditionui.setActive") }</button>
+                                  ng-click="activateCondition(condition)" ng-if="condition.clinicalStatus === 'INACTIVE'">${ ui.message("coreapps.conditionui.setActive") }</button>
                             <button style="background-color: #cccccc;border: none; color: black; padding: 5px;font-size: 10px; margin: 2px 2px; border-radius: 4px;"
-                                 ng-click="deactivateCondition(condition)" ng-if="condition.status === 'ACTIVE'">${ ui.message("coreapps.conditionui.setInactive") }</button>
+                                 ng-click="deactivateCondition(condition)" ng-if="condition.clinicalStatus === 'ACTIVE'">${ ui.message("coreapps.conditionui.setInactive") }</button>
                         </td>
                     </tr>
                     </tbody>

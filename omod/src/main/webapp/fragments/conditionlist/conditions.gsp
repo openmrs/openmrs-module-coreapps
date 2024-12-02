@@ -27,7 +27,7 @@
     </div>
 
     <div class="info-body">
-        <ul ng-repeat="condition in conditions track by condition.uuid" ng-if="conditions.length > 0 && condition.status === 'ACTIVE' && condition.voided === false">
+        <ul ng-repeat="condition in conditions track by condition.uuid" ng-if="conditions.length > 0 && condition.clinicalStatus === 'ACTIVE' && condition.voided === false">
             <li class="conditionStatus">{{formatCondition(condition)}}</li>
         </ul>
        <p ng-if="conditions.length === 0">
