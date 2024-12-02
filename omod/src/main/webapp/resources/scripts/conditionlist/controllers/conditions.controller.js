@@ -6,14 +6,16 @@
         var self = this;
         var dialog = document.getElementById("remove-condition-dialog");
         var removeConditionMessage = document.getElementById("remove-condition-message");
+        let CONDITION_CUSTOM_REP = "custom:(uuid,display,clinicalStatus,voided,onsetDate,endDate,patient:(uuid,display),condition)";
 
         $scope.conditions = [];
         $scope.conditionToBeRemoved = null;
         $scope.tabs = ["ACTIVE", "INACTIVE"];
         $scope.config = {};
 
+
         // this is required inorder to initialize the RestfulService
-        RestfulService.setBaseUrl('/' + OPENMRS_CONTEXT_PATH + '/ws/rest/emrapi');
+        RestfulService.setBaseUrl('/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1');
 
         self.getConditions = self.getConditions || function (patientUuid) {
             if (typeof patientUuid === 'undefined' || patientUuid === null) {
@@ -23,20 +25,17 @@
             }
 
             if (typeof $scope.patientUuid !== 'undefined' &&  $scope.patientUuid !== null) {
-                RestfulService.get('conditionhistory', {"patientUuid": $scope.patientUuid}, function (data) {
-                    if (data && !Array.isArray(data)) {
+                RestfulService.get('condition', {
+                    "patientUuid": $scope.patientUuid,
+                    "includeInactive": "true",
+                     "v" : CONDITION_CUSTOM_REP
+                  },
+                  function (data) {
+                    if (data && !Array.isArray(data.results)) {
                         console.log("Data not in expected format", data);
                         return;
                     }
-
-                    $scope.conditions = data.flatMap(function (conditionHistory) {
-                        if (conditionHistory.conditions && Array.isArray(conditionHistory.conditions)) {
-                            return conditionHistory.conditions.filter(function (condition) {
-                                return condition.voided === false;
-                            });
-                        }
-                    });
-
+                    $scope.conditions = data?.results.filter((condition) => condition.voided === false);
                 }, function (error) {
                     console.log(emr.message("coreapps.conditionui.getCondition.failure"), error);
                 });
@@ -44,20 +43,20 @@
         };
 
         self.activateCondition = self.activateCondition || function (condition) {
-            condition.status = "ACTIVE";
+            condition.clinicalStatus = "ACTIVE";
             condition.endDate = null;
             self.saveCondition(condition);
         };
 
         self.deactivateCondition = self.deactivateCondition || function (condition) {
-            condition.status = "INACTIVE";
+            condition.clinicalStatus = "INACTIVE";
             self.saveCondition(condition);
         };
 
         self.removeCondition = self.removeCondition || function () {
             var condition = $scope.conditionToBeRemoved;
             condition.voided = true;
-            self.saveCondition(condition);
+            self.deleteCondition(condition);
             dialog.style.display = "none";
         };
 
@@ -68,7 +67,7 @@
         self.conditionConfirmation = self.conditionConfirmation || function (condition) {
             $scope.conditionToBeRemoved = condition;
             removeConditionMessage.innerHTML = emr.message("coreapps.conditionui.removeCondition.message").replace(
-                "\{0\}", "<b>" + condition.concept.name +  "</b>");
+                "\{0\}", "<b>" + condition.display +  "</b>");
             dialog.style.display = "block";
         };
 
@@ -77,21 +76,58 @@
             dialog.style.display = "none";
         };
 
+        function formatRestConditionForPost(condition) {
+            let restCondition = null;
+            if (condition) {
+                restCondition = structuredClone(condition);
+                delete restCondition.patient;
+                delete restCondition.condition;
+
+                if (condition?.patient?.uuid) {
+                    restCondition.patient = {
+                        uuid: condition.patient.uuid
+                    };
+                }
+                if (condition?.condition?.coded?.uuid) {
+                    restCondition.condition = {
+                        coded: condition.condition.coded.uuid
+                    };
+                }
+            }
+            return restCondition;
+        }
         self.saveCondition = self.saveCondition || function (condition) {
             var idx = $scope.conditions.indexOf(condition);
-            RestfulService.post('condition', [condition], function (data) {
+            let resource = "condition";
+            if ( condition.uuid ) {
+                resource += "/" + condition.uuid;
+            }
+            let restObj = formatRestConditionForPost(condition);
+            RestfulService.post(resource, restObj, function (data) {
                 if (!condition.voided) {
                     emr.successAlert("coreapps.conditionui.updateCondition.success");
                 } else {
                     emr.successAlert("coreapps.conditionui.removeCondition.success");
                 }
+                self.getConditions();
+            }, function (error) {
+                emr.errorAlert("coreapps.conditionui.updateCondition.failure");
+                console.log(emr.message("coreapps.conditionui.updateCondition.failure"), error);
+            });
+        };
 
-                // pull out the version returned from the API
-                if (data && Array.isArray(data) && !data[0].voided) {
-                    $scope.conditions.splice(idx, 1, data[0]);
+        self.deleteCondition = self.deleteCondition || function (condition) {
+            let resource = "condition";
+            if ( condition.uuid ) {
+                resource += "/" + condition.uuid;
+            }
+            RestfulService.delete(resource, function (response) {
+                if (response?.status === 204) {
+                    emr.successAlert("coreapps.conditionui.removeCondition.success");
                 } else {
-                    $scope.conditions.splice(idx, 1);
+                    emr.errorAlert("coreapps.conditionui.updateCondition.failure");
                 }
+                self.getConditions();
             }, function (error) {
                 emr.errorAlert("coreapps.conditionui.updateCondition.failure");
                 console.log(emr.message("coreapps.conditionui.updateCondition.failure"), error);
@@ -107,10 +143,10 @@
         };
 
         self.formatCondition = self.formatCondition || function(condition) {
-            if (condition.conditionNonCoded) {
-                return '"' + condition.conditionNonCoded + '"';
+            if (condition.condition?.nonCoded) {
+                return '"' + condition.condition.nonCoded + '"';
             }
-            return condition.concept.name;
+            return condition.condition?.coded?.name?.name;
         };
 
         // bind functions to scope

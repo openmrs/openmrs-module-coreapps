@@ -78,11 +78,11 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
             <br/><br/>
             <div id="status" class="horizontal">
                 <p>
-                    <input type="radio" id="status-1" class="condition-status" value="ACTIVE" name="status" ng-model="condition.status"  ng-change="showEndDate()"/>
+                    <input type="radio" id="status-1" class="condition-status" value="ACTIVE" name="status" ng-model="condition.clinicalStatus"  ng-change="showEndDate()"/>
                     <label for="status-1">${ui.message('coreapps.conditionui.active.label')}</label>
                 </p>
                 <p>
-                    <input type="radio" id="status-2" class="condition-status" value="INACTIVE" name="status" ng-model="condition.status"  ng-change="showEndDate()"/>
+                    <input type="radio" id="status-2" class="condition-status" value="INACTIVE" name="status" ng-model="condition.clinicalStatus"  ng-change="showEndDate()"/>
                     <label for="status-2">${ui.message('coreapps.conditionui.inactive.label')}</label>
                 </p>
             </div>
