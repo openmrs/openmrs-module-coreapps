@@ -51,8 +51,8 @@
             if ($scope.condition.endDate && $scope.condition.onsetDate > $scope.condition.endDate) {
                 emr.errorMessage("coreapps.conditionui.updateCondition.onSetDate.error");
             } else {
-                let resource = "condition";
-                if ( $scope.condition?.uuid ) {
+                var resource = "condition";
+                if ( $scope.condition && $scope.condition.uuid ) {
                     resource += "/" + $scope.condition.uuid;
                 }
                 RestfulService.post(resource, $scope.condition, function (data) {
@@ -116,20 +116,20 @@
         };
 
         self.displayCondition = self.displayCondition || function () {
-            if ($scope.condition?.condition?.nonCoded) {
+            if ($scope.condition && $scope.condition.condition && $scope.condition.condition.nonCoded) {
                 $scope.concept = {
-                    word: $scope.condition?.condition?.nonCoded
+                    word: $scope.condition.condition.nonCoded
                 };
             }
             else {
                 $scope.concept = {
-                    display: $scope.condition.condition?.coded?.name?.name,
+                    display: $scope.condition.condition.coded.name.name,
                     concept: {
-                        uuid: $scope.condition.condition?.coded?.uuid,
-                        display: $scope.condition.condition?.coded?.display,
+                        uuid: $scope.condition.condition.coded.uuid,
+                        display: $scope.condition.condition.coded.display,
                     },
                     conceptName: {
-                        display: $scope.condition.condition?.coded?.name?.name,
+                        display: $scope.condition.condition.coded.name.name,
                     }
                 }
             };
@@ -161,7 +161,7 @@
 
         self.validateCondition = self.validateCondition || function () {
 
-            if ($scope.concept?.concept?.uuid) {
+            if ($scope.concept && $scope.concept.concept && $scope.concept.concept.uuid) {
                 $scope.condition.condition = {
                     coded: $scope.concept.concept.uuid
                 };

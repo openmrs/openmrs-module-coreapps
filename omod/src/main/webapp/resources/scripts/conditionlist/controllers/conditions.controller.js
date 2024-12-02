@@ -6,7 +6,7 @@
         var self = this;
         var dialog = document.getElementById("remove-condition-dialog");
         var removeConditionMessage = document.getElementById("remove-condition-message");
-        let CONDITION_CUSTOM_REP = "custom:(uuid,display,clinicalStatus,voided,onsetDate,endDate,patient:(uuid,display),condition)";
+        var CONDITION_CUSTOM_REP = "custom:(uuid,display,clinicalStatus,voided,onsetDate,endDate,patient:(uuid,display),condition)";
 
         $scope.conditions = [];
         $scope.conditionToBeRemoved = null;
@@ -16,6 +16,10 @@
 
         // this is required inorder to initialize the RestfulService
         RestfulService.setBaseUrl('/' + OPENMRS_CONTEXT_PATH + '/ws/rest/v1');
+
+        function isNotVoided(condition) {
+            return condition.voided === false;
+        }
 
         self.getConditions = self.getConditions || function (patientUuid) {
             if (typeof patientUuid === 'undefined' || patientUuid === null) {
@@ -35,7 +39,7 @@
                         console.log("Data not in expected format", data);
                         return;
                     }
-                    $scope.conditions = data?.results.filter((condition) => condition.voided === false);
+                    $scope.conditions = data.results.filter(isNotVoided);
                 }, function (error) {
                     console.log(emr.message("coreapps.conditionui.getCondition.failure"), error);
                 });
@@ -77,18 +81,18 @@
         };
 
         function formatRestConditionForPost(condition) {
-            let restCondition = null;
+            var restCondition = null;
             if (condition) {
                 restCondition = structuredClone(condition);
                 delete restCondition.patient;
                 delete restCondition.condition;
 
-                if (condition?.patient?.uuid) {
+                if (condition && condition.patient && condition.patient.uuid) {
                     restCondition.patient = {
                         uuid: condition.patient.uuid
                     };
                 }
-                if (condition?.condition?.coded?.uuid) {
+                if (condition && condition.condition && condition.condition.coded && condition.condition.coded.uuid) {
                     restCondition.condition = {
                         coded: condition.condition.coded.uuid
                     };
@@ -98,11 +102,11 @@
         }
         self.saveCondition = self.saveCondition || function (condition) {
             var idx = $scope.conditions.indexOf(condition);
-            let resource = "condition";
+            var resource = "condition";
             if ( condition.uuid ) {
                 resource += "/" + condition.uuid;
             }
-            let restObj = formatRestConditionForPost(condition);
+            var restObj = formatRestConditionForPost(condition);
             RestfulService.post(resource, restObj, function (data) {
                 if (!condition.voided) {
                     emr.successAlert("coreapps.conditionui.updateCondition.success");
@@ -117,12 +121,12 @@
         };
 
         self.deleteCondition = self.deleteCondition || function (condition) {
-            let resource = "condition";
+            var resource = "condition";
             if ( condition.uuid ) {
                 resource += "/" + condition.uuid;
             }
             RestfulService.delete(resource, function (response) {
-                if (response?.status === 204) {
+                if (response.status === 204) {
                     emr.successAlert("coreapps.conditionui.removeCondition.success");
                 } else {
                     emr.errorAlert("coreapps.conditionui.updateCondition.failure");
@@ -143,10 +147,10 @@
         };
 
         self.formatCondition = self.formatCondition || function(condition) {
-            if (condition.condition?.nonCoded) {
+            if (condition.condition && condition.condition.nonCoded) {
                 return '"' + condition.condition.nonCoded + '"';
             }
-            return condition.condition?.coded?.name?.name;
+            return condition.condition.coded.name.name;
         };
 
         // bind functions to scope
