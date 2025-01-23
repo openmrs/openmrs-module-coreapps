@@ -62,6 +62,8 @@ public class CoreAppsConstants {
 
    public static final String GP_DECEASED_DATE_USING_TIME = "coreapps.deceasedDateUsingTime";
 
+   public static final String GP_DECEASED_DATE_TIME_WIDGET = "coreapps.deceasedDateTimeWidget";
+
    public static final String GP_DECEASED_DATE_USING_TIME_MINUTE_STEP = "coreapps.deceasedDateUsingTimeMinuteStep";
 
    public static final String GP_ALLOW_CHANGING_VISIT_TIME = "coreapps.allowChangingVisitTime";
