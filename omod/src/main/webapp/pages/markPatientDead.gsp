@@ -3,22 +3,37 @@
     ui.includeCss("coreapps", "markpatientdead/markPatientDead.css")
     ui.decorateWith("appui", "standardEmrPage", [title: ui.message("coreapps.markPatientDead.label")])
 
-    def htmlSafeId = { extension ->
-        "${extension.id.replace(".", "-")}-${extension.id.replace(".", "-")}-extension"
-    }
-
     Calendar cal = Calendar.getInstance()
     def maxAgeYear = cal.get(Calendar.YEAR)
     def minAgeYear = patient.getAge() ? maxAgeYear - patient.getAge() : null;
-    def breadcrumbMiddle = breadcrumbOverride ?: '';
 %>
+
+<style>
+
+    form fieldset {
+        min-width: 100%;
+    }
+
+    span.date input {
+        min-width: unset;
+    }
+
+    form input, form select {
+        display: inline;
+    }
+
+    select.time-selector {
+        width: 70px;
+        min-width: 70px;
+    }
+
+</style>
+
 <script type="text/javascript">
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
-        {
-            label: "${ ui.encodeJavaScript(ui.message("coreapps.markPatientDead.label")) }",
-            link: '${ ui.urlBind("/" + contextPath + "coreapps/clinicianfacing/patient.page?patientId="+patientId, [ patientId: patient ] ) }'
-        }
+        { label: "${ ui.escapeJs(ui.format(patient)) }" , link: '${ returnUrl }'},
+        { label: "${ ui.encodeJavaScript(ui.message("coreapps.markPatientDead.label")) }" }
     ];
 
 
@@ -66,11 +81,11 @@
             // check if the deceased checkbox is selected
             if (jq('#deceased').is(":checked")) {
                 // validate that the date of death and cause of death are not empty
-                if (jq('#death-date-display').val()=="") {
+                if (jq('#death-date-display').val() === "") {
                     jq("#death-date > .field-error").append("${ui.message("coreapps.markPatientDead.dateOfDeath.errorMessage")}").show();
                     hasError = true;
                 }
-                if (jq('#cause-of-death').val()=="") {
+                if (jq('#cause-of-death').val() === "") {
                     jq("#cause-of-death-container > .field-error").append("${ui.message("coreapps.markPatientDead.causeOfDeath.errorMessage")}").show();
                     hasError = true;
                 }
@@ -102,19 +117,11 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
 
 
 <form method="post" id="mark-patient-dead">
-    <fieldset style="min-width: 40%">
+
+    <fieldset>
 
         <span id="deceased-container">
-            <% if (patient?.getDead() == true || defaultDead == true) {
-
-            %>
-            <input checked="checked" id="deceased" name="dead" type="checkbox"/>
-            <% } else {
-            %>
-            <input id="deceased" name="dead" type="checkbox"/>
-            <%
-                }
-            %>
+            <input id="deceased" name="dead" type="checkbox"${ deadSelected ? ' checked="checked"' : '' } />
             <label for="deceased">
                 <span>${ui.message("coreapps.markPatientDead.label")}</span>
             </label>
@@ -126,8 +133,8 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                         label        : "coreapps.markPatientDead.dateOfDeath",
                         formFieldName: "deathDate",
                         left         : true,
-                        defaultDate  : patient?.getDeathDate() ?: defaultDeathDate ?: null,
-                        useTime      : includesTime,
+                        defaultDate  : deathDate,
+                        useTime      : includesTime && timeWidget == "",
                         showEstimated: false,
                         initialValue : lastVisitDate ?:new Date(),
                         startDate    : lastVisitDate?:birthDate,
@@ -137,6 +144,20 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                         minuteStep   : minuteStep,
                         id           : 'death-date'
                 ])}
+                <% if (includesTime && timeWidget == "select-lists") { %>
+                    <span id="death-date-time-container">
+                        <select id="death-date-hour" name="deathDateHour" class="time-selector hour-selector">
+                            <% for (def i=0; i<24; i++) { %>
+                            <option value="${i}"${deathDateHour == i ? " selected" : ""}>${i<10 ? "0" + i : i}</option>
+                            <% } %>
+                        </select> :
+                        <select id="death-date-minute" name="deathDateMinute" class="time-selector minute-selector">
+                            <% for (def i=0; i<60; i+=minuteStep) { %>
+                            <option value="${i}"${deathDateMinute == i ? " selected" : ""}>${i<10 ? "0" + i : i}</option>
+                            <% } %>
+                        </select>
+                    </span>
+                <% } %>
             </span>
         </p>
 
