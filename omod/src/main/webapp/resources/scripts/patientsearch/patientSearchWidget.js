@@ -205,12 +205,11 @@ function PatientSearchWidget(configuration){
         }
 
         var deferredList = [];
-        var searchArgs = { identifier: identifier, v: customRep };
-        if (config.patientSearchHandler) {
-            searchArgs.s = config.patientSearchHandler;
-        }
-
         jq.each(identifiers, function (idx, identifier) {
+            var searchArgs = { identifier: identifier, v: customRep };
+            if (config.patientSearchHandler) {
+                searchArgs.s = config.patientSearchHandler;
+            }
             var deferred = emr.getJSON(searchUrl, searchArgs)
                 .then(function (data) {
                     if (data && data.results && data.results.length > 0) {
