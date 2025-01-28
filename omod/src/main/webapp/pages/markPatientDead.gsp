@@ -101,6 +101,7 @@
             const v = jq(this).val();
             jq("#cause-of-death").val(v);
             jq(".cause-of-death-2-container").hide();
+            jq(".cause-of-death-2").val("");
             jq("#" + v + "-cause-of-death-2-container").show();
         });
 
