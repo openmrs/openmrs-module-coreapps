@@ -97,6 +97,23 @@
             return !hasError;
         });
 
+        jq("#cause-of-death-1").change(function() {
+            const v = jq(this).val();
+            jq("#cause-of-death").val(v);
+            jq(".cause-of-death-2-container").hide();
+            jq(".cause-of-death-2").val("");
+            jq("#" + v + "-cause-of-death-2-container").show();
+        });
+
+        jq(".cause-of-death-2").change(function() {
+            const v = jq(this).val();
+            if (v !== "") {
+                jq("#cause-of-death").val(v);
+            }
+            else {
+                jq("#cause-of-death").val(jq("#cause-of-death-1").val());
+            }
+        });
     });
 </script>
 
@@ -163,28 +180,53 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
 
         <p>
             <span id="cause-of-death-container">
-                <label for="cause-of-death">
+                <label for="cause-of-death-1">
                     <span>${ui.message("coreapps.markPatientDead.causeOfDeath")}</span>
                 </label>
-                <select name="causeOfDeath" id="cause-of-death">
-                    <option value="">${ui.message("coreapps.markPatientDead.causeOfDeath.selectTitle")}</option>
-                    <% if (conceptAnswers != null) {
-                        conceptAnswers.each {
-                    %>
-                    <% if (patient?.getCauseOfDeath()?.getUuid() == it.getAnswerConcept().getUuid()) { %>
-                    <option selected="selected"
-                            value="${it.getAnswerConcept().getUuid()}">${it.getAnswerConcept().getName()}</option>
-                    <% } else { %>
-                    <option value="${it.getAnswerConcept().getUuid()}">${it.getAnswerConcept().getName()}</option>
+                <% if (!causesOfDeath.isEmpty() && duplicateCausesOfDeath.isEmpty()) { %>
+
+                    <input type="hidden" id="cause-of-death" name="causeOfDeath" value="${causeOfDeath?.uuid ?: ""}"/>
+
+                    <select id="cause-of-death-1">
+                        <option value="">${ui.message("coreapps.markPatientDead.causeOfDeath.selectTitle")}</option>
+                        <% causesOfDeath.keySet().each { cause ->
+                            def subCauses = causesOfDeath.get(cause)
+                            def causeSelected = causeOfDeath == cause || subCauses.contains(causeOfDeath) %>
+                            <option value="${cause.uuid}"${ causeSelected ? " selected=\"selected\"" : "" }>
+                                ${ui.format(cause)}
+                            </option>
+                        <% } %>
+                    </select>
+
+                    <% causesOfDeath.keySet().each { cause ->
+                        def subCauses = causesOfDeath.get(cause)
+                        def causeSelected = causeOfDeath == cause || subCauses.contains(causeOfDeath)
+                        if (!subCauses.isEmpty()) { %>
+                            <p id="${cause.uuid}-cause-of-death-2-container" class="cause-of-death-2-container"${ causeSelected ? "" : " style=\"display:none;\"" }>
+                                <label for="${cause.uuid}-cause-of-death-2">
+                                    <span>${ui.message('coreapps.markPatientDead.causeOfDeath.reason', ui.format(cause))}</span>
+                                </label>
+                                <select id="${cause.uuid}-cause-of-death-2" class="cause-of-death-2">
+                                    <option value=""></option>
+                                    <% subCauses.each { subCause ->
+                                        def subCauseSelected = causeOfDeath == subCause
+                                    %>
+                                        <option value="${subCause.uuid}"${ subCauseSelected ? " selected=\"selected\"" : "" }>
+                                            ${ui.format(subCause)}
+                                        </option>
+                                    <% } %>
+                                </select>
+                            </p>
+                        <% } %>
                     <% } %>
-                    <%
-                            }
-                        }
-                    %>
-                </select>
-                <span class="field-error" style="display: none;"></span>
-                <% if (conceptAnswers == null) { %>
-                <div><${ui.message("coreapps.markPatientDead.causeOfDeath.missingConcepts")}</div>
+
+                    <span class="field-error" style="display: none;"></span>
+                <% } else { %>
+                    <% if (duplicateCausesOfDeath.isEmpty()) { %>
+                        <div><${ui.message("coreapps.markPatientDead.causeOfDeath.missingConcepts")}</div>
+                    <% } else { %>
+                        <div><${ui.message("coreapps.markPatientDead.causeOfDeath.duplicateConceptsInSets")}</div>
+                    <% } %>
                 <% } %>
             </span>
         </p>

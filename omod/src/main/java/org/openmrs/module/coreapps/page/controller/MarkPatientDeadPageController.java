@@ -23,10 +23,14 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -38,6 +42,7 @@ public class MarkPatientDeadPageController {
     public void get(@SpringBean PageModel pageModel,
                     @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
                     @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
+                    @SpringBean("conceptService") ConceptService conceptService,
                     @RequestParam("patientId") Patient patient,
                     @RequestParam(value = "defaultDead", required = false, defaultValue = "true") Boolean defaultDead,
                     @RequestParam(value = "defaultDeathDate", required = false) Date defaultDeathDate,
@@ -65,6 +70,9 @@ public class MarkPatientDeadPageController {
         pageModel.put("deathDateHour", deathDateHour);
         pageModel.put("deathDateMinute", deathDateMinute);
 
+        Concept causeOfDeath = patient.getCauseOfDeath();
+        pageModel.put("causeOfDeath", causeOfDeath);
+
         // if the getPatientDied property is configured, the ExitFromCare service will close/reopen patient programs when marking a patient dead/not dead
         pageModel.put("renderProgramWarning", emrApiProperties.getPatientDiedConcept() != null);
         pageModel.put("includesTime", Boolean.parseBoolean(getGlobalProperty(CoreAppsConstants.GP_DECEASED_DATE_USING_TIME, "false")));
@@ -72,11 +80,56 @@ public class MarkPatientDeadPageController {
         pageModel.put("minuteStep", Integer.parseInt(getGlobalProperty(CoreAppsConstants.GP_DECEASED_DATE_USING_TIME_MINUTE_STEP, "5")));
         String conceptId = Context.getAdministrationService().getGlobalProperty("concept.causeOfDeath");
 
-        Collection<ConceptAnswer> conceptAnswers = null; 
-        if (conceptId != null) {
-        	conceptAnswers = getConceptAnswers(conceptId);
+        Concept causeOfDeathConcept = conceptService.getConceptByUuid(conceptId);
+        if (causeOfDeathConcept == null) {
+            causeOfDeathConcept = conceptService.getConcept(conceptId);
         }
-        pageModel.put("conceptAnswers", conceptAnswers);
+
+        Map<Concept, List<Concept>> causesOfDeath = new LinkedHashMap<>();
+        Set<Concept> duplicateCausesOfDeath = new HashSet<>();
+
+        if (causeOfDeathConcept != null) {
+
+            // If the cause of death concept is a question with answers, add the answers as the causes of death
+            if (causeOfDeathConcept.getAnswers() != null && !causeOfDeathConcept.getAnswers().isEmpty()) {
+                for (ConceptAnswer conceptAnswer : causeOfDeathConcept.getAnswers()) {
+                    causesOfDeath.put(conceptAnswer.getAnswerConcept(), new ArrayList<>());
+                }
+            }
+            // Otherwise, if the cause of death concept is a set with members, support allowing a set
+            // This set can contain sub-sets at one level deep
+            else {
+                if (causeOfDeathConcept.getSetMembers() != null && !causeOfDeathConcept.getSetMembers().isEmpty()) {
+                    Set<Concept> allCausesFromSets = new HashSet<>();
+                    for (Concept setMember : causeOfDeathConcept.getSetMembers()) {
+                        List<Concept> subSetMembers = setMember.getSetMembers();
+                        if (subSetMembers == null || subSetMembers.isEmpty()) {
+                            if (allCausesFromSets.contains(setMember)) {
+                                duplicateCausesOfDeath.add(setMember);
+                            }
+                            else {
+                                allCausesFromSets.add(setMember);
+                                causesOfDeath.put(setMember, new ArrayList<>());
+                            }
+                        }
+                        else {
+                            for (Concept subSetMember : subSetMembers) {
+                                if (allCausesFromSets.contains(subSetMember)) {
+                                    duplicateCausesOfDeath.add(subSetMember);
+                                }
+                                else {
+                                    allCausesFromSets.add(subSetMember);
+                                }
+                            }
+                            causesOfDeath.put(setMember, subSetMembers);
+                        }
+                    }
+                }
+            }
+        }
+
+        pageModel.put("duplicateCausesOfDeath", duplicateCausesOfDeath);
+        pageModel.put("causesOfDeath", causesOfDeath);
         
         List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
 
@@ -134,19 +187,6 @@ public class MarkPatientDeadPageController {
                     messageSourceService.getMessage("Unable to mark patient as deceased: " + e.getMessage(), new Object[]{e.getMessage()}, Context.getLocale()));
         }
         return "redirect:" + getReturnUrl(ui, patient, returnDashboard);
-    }
-
-    private Collection<ConceptAnswer> getConceptAnswers(String conceptIdOrNameOrUuid) {
-        Collection<ConceptAnswer> conceptAnswers = null;
-        Concept concept;
-        concept = Context.getConceptService().getConcept(conceptIdOrNameOrUuid);
-        if (concept == null) {
-            concept = Context.getConceptService().getConceptByUuid(conceptIdOrNameOrUuid);
-        }
-        if (concept != null) {
-            conceptAnswers = concept.getAnswers();
-        }
-        return conceptAnswers;
     }
 
     private String getReturnUrl(UiUtils ui, Patient patient, String dashboard) {
