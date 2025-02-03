@@ -85,7 +85,8 @@ public class MarkPatientDeadPageController {
             causeOfDeathConcept = conceptService.getConcept(conceptId);
         }
 
-        Map<Concept, List<Concept>> causesOfDeath = new LinkedHashMap<>();
+        List<Concept> causeOfDeathAnswers = new ArrayList<>();
+        Map<Concept, List<Concept>> causeOfDeathSetMembers = new LinkedHashMap<>();
         Set<Concept> duplicateCausesOfDeath = new HashSet<>();
 
         if (causeOfDeathConcept != null) {
@@ -93,7 +94,7 @@ public class MarkPatientDeadPageController {
             // If the cause of death concept is a question with answers, add the answers as the causes of death
             if (causeOfDeathConcept.getAnswers() != null && !causeOfDeathConcept.getAnswers().isEmpty()) {
                 for (ConceptAnswer conceptAnswer : causeOfDeathConcept.getAnswers()) {
-                    causesOfDeath.put(conceptAnswer.getAnswerConcept(), new ArrayList<>());
+                    causeOfDeathAnswers.add(conceptAnswer.getAnswerConcept());
                 }
             }
             // Otherwise, if the cause of death concept is a set with members, support allowing a set
@@ -109,7 +110,7 @@ public class MarkPatientDeadPageController {
                             }
                             else {
                                 allCausesFromSets.add(setMember);
-                                causesOfDeath.put(setMember, new ArrayList<>());
+                                causeOfDeathSetMembers.put(setMember, new ArrayList<>());
                             }
                         }
                         else {
@@ -121,7 +122,7 @@ public class MarkPatientDeadPageController {
                                     allCausesFromSets.add(subSetMember);
                                 }
                             }
-                            causesOfDeath.put(setMember, subSetMembers);
+                            causeOfDeathSetMembers.put(setMember, subSetMembers);
                         }
                     }
                 }
@@ -129,7 +130,8 @@ public class MarkPatientDeadPageController {
         }
 
         pageModel.put("duplicateCausesOfDeath", duplicateCausesOfDeath);
-        pageModel.put("causesOfDeath", causesOfDeath);
+        pageModel.put("causeOfDeathAnswers", causeOfDeathAnswers);
+        pageModel.put("causeOfDeathSetMembers", causeOfDeathSetMembers);
         
         List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
 
