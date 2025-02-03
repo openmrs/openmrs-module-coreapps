@@ -96,7 +96,13 @@
                     jq("#death-date > .field-error").append("${ui.message("coreapps.markPatientDead.dateOfDeath.errorMessage")}").show();
                     hasError = true;
                 }
-                if (jq('#cause-of-death').val() === "") {
+                let selectedVal = jq('#cause-of-death').val();
+                console.log(selectedVal);
+                if (!selectedVal || selectedVal === "") {
+                    selectedVal = jq("input[name='causeOfDeath']:checked").val()
+                }
+                console.log(selectedVal);
+                if (!selectedVal || selectedVal === "") {
                     jq("#cause-of-death-container > .field-error").append("${ui.message("coreapps.markPatientDead.causeOfDeath.errorMessage")}").show();
                     hasError = true;
                 }
@@ -106,24 +112,6 @@
                 }
             }
             return !hasError;
-        });
-
-        jq("#cause-of-death-1").change(function() {
-            const v = jq(this).val();
-            jq("#cause-of-death").val(v);
-            jq(".cause-of-death-2-container").hide();
-            jq(".cause-of-death-2").val("");
-            jq("#" + v + "-cause-of-death-2-container").show();
-        });
-
-        jq(".cause-of-death-2").change(function() {
-            const v = jq(this).val();
-            if (v !== "") {
-                jq("#cause-of-death").val(v);
-            }
-            else {
-                jq("#cause-of-death").val(jq("#cause-of-death-1").val());
-            }
         });
     });
 </script>
@@ -207,7 +195,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                     <% if (!duplicateCausesOfDeath.isEmpty()) { %>
                         <div>${ui.message("coreapps.markPatientDead.causeOfDeath.duplicateConceptsInSets")}</div>
                     <% } else { %>
-
+                        <span class="field-error" style="display: none;"></span>
                         <% causeOfDeathSetMembers.keySet().each{ cause ->
                             def subCauses = causeOfDeathSetMembers.get(cause)
                             def causeSelected = causeOfDeath != null && causeOfDeath == cause
