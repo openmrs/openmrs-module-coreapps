@@ -196,7 +196,7 @@ ${ui.includeFragment("coreapps", "patientHeader", [patient: patient])}
                 <% if (!causeOfDeathAnswers.isEmpty()) { %>
                     <select name="causeOfDeath" id="cause-of-death">
                         <option value="">${ui.message("coreapps.markPatientDead.causeOfDeath.selectTitle")}</option>
-                        <% causeOfDeathAnswers.keySet().each { cause -> %>
+                        <% causeOfDeathAnswers.each { cause -> %>
                             <option value="${cause.uuid}"${ (causeOfDeath == cause) ? " selected=\"selected\"" : "" }>
                                 ${ui.format(cause)}
                             </option>
