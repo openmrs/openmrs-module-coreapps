@@ -97,11 +97,9 @@
                     hasError = true;
                 }
                 let selectedVal = jq('#cause-of-death').val();
-                console.log(selectedVal);
                 if (!selectedVal || selectedVal === "") {
                     selectedVal = jq("input[name='causeOfDeath']:checked").val()
                 }
-                console.log(selectedVal);
                 if (!selectedVal || selectedVal === "") {
                     jq("#cause-of-death-container > .field-error").append("${ui.message("coreapps.markPatientDead.causeOfDeath.errorMessage")}").show();
                     hasError = true;
