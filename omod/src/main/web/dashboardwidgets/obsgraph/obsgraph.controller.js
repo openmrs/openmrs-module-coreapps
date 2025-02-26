@@ -278,12 +278,13 @@ export default class ObsGraphController {
                     continue;
                   }
                   
-                  if (obs.concept.datatype.display == 'Numeric') {
+                  if (obs.concept.datatype.display === 'Numeric') {
                     // Don't add obs older than maxAge
-                    let xValue = self.widgetsCommons.daysSinceDate(obs.obsDatetime);
-                    if (angular.isUndefined(self.maxAgeInDays) || xValue <= self.maxAgeInDays) {
+                    let daysSinceObs = self.widgetsCommons.daysSinceDate(obs.obsDatetime);
+                    if (angular.isUndefined(self.maxAgeInDays) || daysSinceObs <= self.maxAgeInDays) {
                       // Add obs data for chart display
                       var obsDate = self.widgetsCommons.formatDate(obs.obsDatetime, self.config.JSDateFormat, self.config.language);
+                      let xValue = new Date().getTime() - new Date(obs.obsDatetime).getTime();
                       conceptObject.values[xValue] = obs.value;
                       self.xAxis[xValue] = obsDate;
                     }
