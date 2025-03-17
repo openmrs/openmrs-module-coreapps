@@ -60,7 +60,7 @@ export default class ObsAcrossEncountersController {
       patient: this.config.patientUuid,
       v: 'custom:(uuid,encounterDatetime,encounterProviders:(uuid,provider:(uuid,name)),encounterType:(name,description),obs:(id,uuid,value,concept:(id,uuid,name:(display),datatype:(uuid)),groupMembers:(id,uuid,display,value,concept:(id,uuid,name:(display),datatype:(uuid))))',
       limit: this.config.maxRecords || 4,
-      order: 'desc',
+      order: 'desc',  // we always want the most recent
       fromdate: this.widgetsCommons.maxAgeToDate(this.config.maxAge)
     };
     const encounterPromises = encounterTypes.length ? encounterTypes.map(e =>
