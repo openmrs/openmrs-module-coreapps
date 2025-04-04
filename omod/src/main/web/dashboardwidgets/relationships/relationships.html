@@ -67,7 +67,7 @@
     <li ng-show="$ctrl.edit">
         <p>
         <div>
-            <button class="tag" ng-show="$ctrl.showSaveButton" ng-click="$ctrl.save()">{{ 'coreapps.save' | translate }}</button>
+            <button class="tag" ng-disabled="$ctrl.saveInProgress" ng-show="$ctrl.showSaveButton" ng-click="$ctrl.save()">{{ 'coreapps.save' | translate }}</button>
             <button class="cancel-tag" ng-click="$ctrl.cancel()">{{ 'coreapps.cancel' | translate }}</button>
         </div>
         </p>
