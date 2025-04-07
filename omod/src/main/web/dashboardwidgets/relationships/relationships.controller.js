@@ -25,6 +25,7 @@ export default class RelationshipsController  {
         this.searchPerson = null;
         this.otherPerson = null;
         this.relatedPersons = [];
+        this.saveInProgress = false;
 
         this.activate();
 
@@ -255,6 +256,9 @@ export default class RelationshipsController  {
     }
 
     save() {
+
+        this.saveInProgress = true;
+
         if (angular.isDefined(this.relationshipType) &&
             angular.isDefined(this.otherPerson)) {
 
@@ -273,9 +277,12 @@ export default class RelationshipsController  {
                 personA: personA,
                 personB: personB
             }).then((response) => {
+                this.saveInProgress = false;
                 this.$onInit();
             });
         }
+
+        this.saveInProgress = false;
     }
 
     removeRelationship(relUuid) {
