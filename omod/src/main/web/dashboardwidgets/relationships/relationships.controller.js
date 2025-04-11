@@ -20,13 +20,14 @@ export default class RelationshipsController  {
         this.hasEditPrivileges = false;
         this.edit = false;
         this.removeFlag = false;
+        this.removeInProgress = false;
         this.showFindOtherPerson = false;
         this.showSaveButton = false;
         this.searchPerson = null;
         this.otherPerson = null;
         this.relatedPersons = [];
         this.saveInProgress = false;
-
+        this.loaded = false
         this.activate();
 
         let ctrl = this;
@@ -71,6 +72,7 @@ export default class RelationshipsController  {
                 // if a provider page has been configured then check if there are any providers listed as relationships
                 this.checkForProviders();
             }
+            this.loaded = true;
         });
 
         //fetchRelationshipTypes
@@ -257,10 +259,10 @@ export default class RelationshipsController  {
 
     save() {
 
-        this.saveInProgress = true;
-
         if (angular.isDefined(this.relationshipType) &&
             angular.isDefined(this.otherPerson)) {
+
+            this.saveInProgress = true;
 
             var personA = null;
             var personB = null;
@@ -277,12 +279,10 @@ export default class RelationshipsController  {
                 personA: personA,
                 personB: personB
             }).then((response) => {
-                this.saveInProgress = false;
                 this.$onInit();
-            });
+            }).error((error) => { this.saveInProgress = false; });
         }
 
-        this.saveInProgress = false;
     }
 
     removeRelationship(relUuid) {
@@ -302,6 +302,7 @@ export default class RelationshipsController  {
 
     remove() {
         if (angular.isDefined(this.relationships) && (this.relationships.length == 1) ){
+            this.removeInProgress = true;
             //we only allow to delete one relationship at the time
             this.openmrsRest.remove('relationship', {
                  uuid: this.relationships[0].uuid

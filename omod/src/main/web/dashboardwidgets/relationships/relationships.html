@@ -19,7 +19,7 @@
             </div>
         </div>
     </li>
-    <p ng-show="$ctrl.relationships.length == 0">
+    <p ng-show="$ctrl.loaded && $ctrl.relationships.length == 0">
         {{ 'coreapps.none' | translate }}
     </p>
 
@@ -76,7 +76,7 @@
     <li ng-show="$ctrl.removeFlag">
         <p>
         <div>
-            <button class="tag" ng-click="$ctrl.remove()">{{ 'coreapps.delete' | translate }}</button>
+            <button class="tag" ng-disabled="$ctrl.removeInProgress" ng-click="$ctrl.remove()">{{ 'coreapps.delete' | translate }}</button>
             <button class="cancel-tag" ng-click="$ctrl.cancel()">{{ 'coreapps.cancel' | translate }}</button>
         </div>
         </p>
