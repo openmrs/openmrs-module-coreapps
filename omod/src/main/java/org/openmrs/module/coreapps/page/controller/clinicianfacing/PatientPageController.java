@@ -15,17 +15,10 @@ package org.openmrs.module.coreapps.page.controller.clinicianfacing;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Patient;
-import org.openmrs.PatientProgram;
-import org.openmrs.PatientState;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
-import org.openmrs.Program;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
@@ -34,17 +27,11 @@ import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.CoreAppsProperties;
-import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
-import org.openmrs.module.coreapps.contextmodel.PatientEncounterContextModel;
-import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
-import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.coreapps.contextmodel.AppContextModelGenerator;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.event.ApplicationEventService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
-import org.openmrs.module.webservices.rest.web.ConversionUtil;
-import org.openmrs.module.webservices.rest.web.representation.Representation;
-import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -62,17 +49,13 @@ public class PatientPageController {
                              @RequestParam(required = false, value = "dashboard") String dashboard,
                              @InjectBeans PatientDomainWrapper patientDomainWrapper,
                              @SpringBean("adtService") AdtService adtService,
-                             @SpringBean("visitService") VisitService visitService,
-                             @SpringBean("encounterService") EncounterService encounterService,
-                             @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
+                             @SpringBean("appContextModelGenerator") AppContextModelGenerator appContextModelGenerator,
                              @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
                              @SpringBean("applicationEventService") ApplicationEventService applicationEventService,
                              @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
                              UiSessionContext sessionContext) {
 
-
-
-       try{
+       try {
            if (!Context.hasPrivilege(CoreAppsConstants.PRIVILEGE_PATIENT_DASHBOARD)) {
             return new Redirect("coreapps", "noAccess", "");
         }
@@ -103,46 +86,7 @@ public class PatientPageController {
         }
         model.addAttribute("activeVisit", activeVisit);
 
-        AppContextModel contextModel = sessionContext.generateAppContextModel();
-        contextModel.put("patient", new PatientContextModel(patient));
-		contextModel.put("patientId", patient != null ? patient.getUuid() : null);  // support legacy substitution methods that use "{{patientId}}" as a template and expect a uuid substitution
-        contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
-
-        List<EncounterType> encounterTypes = new ArrayList<EncounterType>();
-        ArrayList<PatientEncounterContextModel> encountersModel = new ArrayList<PatientEncounterContextModel>();
-        List<Encounter> encounters = encounterService.getEncountersByPatient(patient);
-        for (Encounter encounter : encounters) {
-            encounterTypes.add(encounter.getEncounterType());
-            encountersModel.add(new PatientEncounterContextModel(encounter));
-        }
-        contextModel.put("encounterTypes", ConversionUtil.convertToRepresentation(encounterTypes, Representation.DEFAULT));
-        contextModel.put("encounters", encountersModel);
-
-        List<Program> programs = new ArrayList<Program>();
-        List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(patient, null, null, null, null, null, false);
-        List<SimpleObject> activePrograms = new ArrayList<>();
-        List<SimpleObject> activeProgramStates = new ArrayList<>();
-        for (PatientProgram patientProgram : patientPrograms) {
-            programs.add(patientProgram.getProgram());
-            if (patientProgram.getActive()) {
-                SimpleObject activeProgram = new SimpleObject();
-                activeProgram.put("programUuid", patientProgram.getProgram().getUuid());
-                activeProgram.put("dateEnrolled", patientProgram.getDateEnrolled());
-                activePrograms.add(activeProgram);
-                for (PatientState ps : patientProgram.getCurrentStates()) {
-                    SimpleObject activeState = new SimpleObject();
-                    activeState.put("stateUuid", ps.getState().getUuid());
-                    activeState.put("workflowUuid", ps.getState().getProgramWorkflow().getUuid());
-                    activeState.put("programUuid", ps.getState().getProgramWorkflow().getProgram().getUuid());
-                    activeState.put("startDate", ps.getStartDate());
-                    activeProgramStates.add(activeState);
-                }
-            }
-        }
-        contextModel.put("patientPrograms", ConversionUtil.convertToRepresentation(programs, Representation.DEFAULT));
-        contextModel.put("activePrograms", ConversionUtil.convertToRepresentation(activePrograms, Representation.DEFAULT));
-        contextModel.put("activeProgramStates", ConversionUtil.convertToRepresentation(activeProgramStates, Representation.DEFAULT));
-
+        AppContextModel contextModel = appContextModelGenerator.generateAppContextModel(sessionContext, patient);
         model.addAttribute("appContextModel", contextModel);
 
         List<Extension> overallActions = appFrameworkService.getExtensionsForCurrentUser(dashboard + ".overallActions", contextModel);
