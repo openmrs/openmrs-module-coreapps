@@ -37,6 +37,7 @@ import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
+import org.openmrs.module.coreapps.contextmodel.AppContextModelGenerator;
 import org.openmrs.module.coreapps.page.controller.clinicianfacing.PatientPageController;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -83,10 +84,9 @@ public class PatientPageControllerTest extends BaseModuleWebContextSensitiveTest
     @Qualifier("visitService")
     @Autowired
     private VisitService visitService;
-    
-    @Qualifier("encounterService")
+
     @Autowired
-    private EncounterService encounterService;
+    private AppContextModelGenerator appContextModelGenerator;
     
     @Qualifier("applicationEventService")
     @Autowired 
@@ -134,10 +134,8 @@ public class PatientPageControllerTest extends BaseModuleWebContextSensitiveTest
     	Context.getAdministrationService().setGlobalProperty("breadCrumbs.formatters", "(;, ;)");
 
     	// Replay
-        controller.controller(patient, model, null, null, wrapper
-                             ,adtService, visitService, encounterService
-                             ,emrApiProperties, appFrameworkService, applicationEventService
-                             ,coreAppsProperties, context);
+        controller.controller(patient, model, null, null, wrapper ,adtService, appContextModelGenerator,
+                appFrameworkService, applicationEventService, coreAppsProperties, context);
         
         // Verify
         List<PersonAttribute> personNameAttrs = (List<PersonAttribute>) model.getAttribute("breadCrumbsDetails");
