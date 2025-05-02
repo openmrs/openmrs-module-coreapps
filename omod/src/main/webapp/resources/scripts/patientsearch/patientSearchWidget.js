@@ -315,7 +315,7 @@ function PatientSearchWidget(configuration){
     var updateSearchResults = function(results){
         var dataRows = [];
         if(results){
-            //first remove any null objects from the results
+            //first remove any null objects and then remove the duplicates from the results
             var results = removeDuplicates(results.filter( item => item !== null));
             searchResultsData = searchResultsData.concat(results);
             _.each(results, function(patient) {
