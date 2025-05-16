@@ -94,21 +94,21 @@ public class PatientHeaderFragmentController {
         List<PatientIdentifierTypeToDisplay> patientIdentifierTypesToDisplay = new ArrayList<>();
         Map<PatientIdentifierType, List<PatientIdentifier>> patientIdentifiersMappedByType = new HashMap<>();
 
+        // first, we always want to display the primary identifier first, so add that
         // TODO note that this may allow use to edit a identifier that should not be editable, or vice versa, in the rare case where there are multiple autogeneration
         // TODO options for a single identifier type (which is possible if you have multiple locations) and the manual entry boolean is different between those two generators
         List<AutoGenerationOption> primaryIdentifierOptions = identifierSourceService.getAutoGenerationOptions(emrApiProperties.getPrimaryIdentifierType());
         patientIdentifierTypesToDisplay.add(new PatientIdentifierTypeToDisplay(emrApiProperties.getPrimaryIdentifierType(),
                 primaryIdentifierOptions.isEmpty() || primaryIdentifierOptions.get(0).isManualEntryEnabled()));
-
         patientIdentifiersMappedByType.put(emrApiProperties.getPrimaryIdentifierType(), wrapper.getPrimaryIdentifiers());
 
+        // now add any additional identifier types that may have been configured
 		for (PatientIdentifierType type : emrApiProperties.getExtraPatientIdentifierTypes()) {
 			List<AutoGenerationOption> options = identifierSourceService.getAutoGenerationOptions(type);
             // TODO see note above
 			patientIdentifierTypesToDisplay.add(new PatientIdentifierTypeToDisplay(type,
                     options.isEmpty() || options.get(0).isManualEntryEnabled()));
 		}
-
         patientIdentifiersMappedByType.putAll(wrapper.getExtraIdentifiersMappedByType(sessionContext.getSessionLocation()));
 
         Map<PatientIdentifierType, Extension> identifierLinks = new HashMap<PatientIdentifierType, Extension>();
