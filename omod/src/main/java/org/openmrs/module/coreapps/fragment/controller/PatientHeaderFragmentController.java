@@ -17,6 +17,7 @@ package org.openmrs.module.coreapps.fragment.controller;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
@@ -90,29 +91,39 @@ public class PatientHeaderFragmentController {
         Collections.sort(secondLineFragments);
         model.addAttribute("secondLineFragments", secondLineFragments);
 
-        List<ExtraPatientIdentifierType> extraPatientIdentifierTypes = new ArrayList<ExtraPatientIdentifierType>();
+        List<PatientIdentifierTypeToDisplay> patientIdentifierTypesToDisplay = new ArrayList<>();
+        Map<PatientIdentifierType, List<PatientIdentifier>> patientIdentifiersMappedByType = new HashMap<>();
+
+        // TODO note that this may allow use to edit a identifier that should not be editable, or vice versa, in the rare case where there are multiple autogeneration
+        // TODO options for a single identifier type (which is possible if you have multiple locations) and the manual entry boolean is different between those two generators
+        List<AutoGenerationOption> primaryIdentifierOptions = identifierSourceService.getAutoGenerationOptions(emrApiProperties.getPrimaryIdentifierType());
+        patientIdentifierTypesToDisplay.add(new PatientIdentifierTypeToDisplay(emrApiProperties.getPrimaryIdentifierType(),
+                primaryIdentifierOptions.isEmpty() || primaryIdentifierOptions.get(0).isManualEntryEnabled()));
+
+        patientIdentifiersMappedByType.put(emrApiProperties.getPrimaryIdentifierType(), wrapper.getPrimaryIdentifiers());
 
 		for (PatientIdentifierType type : emrApiProperties.getExtraPatientIdentifierTypes()) {
 			List<AutoGenerationOption> options = identifierSourceService.getAutoGenerationOptions(type);
-            // TODO note that this may allow use to edit a identifier that should not be editable, or vice versa, in the rare case where there are multiple autogeneration
-            // TODO options for a single identifier type (which is possible if you have multiple locations) and the manual entry boolean is different between those two generators
-			extraPatientIdentifierTypes.add(new ExtraPatientIdentifierType(type,
-                    options.size() > 0 ? options.get(0).isManualEntryEnabled() : true));
+            // TODO see note above
+			patientIdentifierTypesToDisplay.add(new PatientIdentifierTypeToDisplay(type,
+                    options.isEmpty() || options.get(0).isManualEntryEnabled()));
 		}
 
-        Map<PatientIdentifierType, Extension> extraIdentifierLinks = new HashMap<PatientIdentifierType, Extension>();
+        patientIdentifiersMappedByType.putAll(wrapper.getExtraIdentifiersMappedByType(sessionContext.getSessionLocation()));
+
+        Map<PatientIdentifierType, Extension> identifierLinks = new HashMap<PatientIdentifierType, Extension>();
         for (Extension ext : appFrameworkService.getExtensionsForCurrentUser("patientHeader.extraIdentifierLinks")) {
             Map<String, Object> params = ext.getExtensionParams() == null ? new HashMap<String, Object>() : ext.getExtensionParams();
             Object identifierType = params == null ? null : params.get("identifierType");
             if (identifierType != null) {
                 PatientIdentifierType piType = patientService.getPatientIdentifierTypeByUuid(identifierType.toString());
-                extraIdentifierLinks.put(piType, ext);
+                identifierLinks.put(piType, ext);
             }
         }
 
-		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
-        config.addAttribute("extraPatientIdentifiersMappedByType", wrapper.getExtraIdentifiersMappedByType(sessionContext.getSessionLocation()));
-        config.addAttribute("extraIdentifierLinks", extraIdentifierLinks);
+		config.addAttribute("patientIdentifierTypesToDisplay", patientIdentifierTypesToDisplay);
+        config.addAttribute("patientIdentifiersMappedByType", patientIdentifiersMappedByType);
+        config.addAttribute("identifierLinks", identifierLinks);
         config.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
     }
 
@@ -173,13 +184,13 @@ public class PatientHeaderFragmentController {
     	return patientNames;
     }
 	
-	public class ExtraPatientIdentifierType {
+	public static class PatientIdentifierTypeToDisplay {
 		
 		private PatientIdentifierType patientIdentifierType;
 		
 		private boolean editable = false;
 		
-		public ExtraPatientIdentifierType(PatientIdentifierType type, boolean editable) {
+		public PatientIdentifierTypeToDisplay(PatientIdentifierType type, boolean editable) {
 			this.patientIdentifierType = type;
 			this.editable = editable;
 		}
