@@ -182,7 +182,7 @@
                         </span>
                     <% } %>
                     <% if (patientIdentifierType.editable) { %>
-                      <span>
+                      <span class="add-link">
                          <a class="editPatientIdentifier"
                            data-patient-identifier-id=""
                            data-identifier-type-id="${patientIdentifierType.patientIdentifierType.id}"

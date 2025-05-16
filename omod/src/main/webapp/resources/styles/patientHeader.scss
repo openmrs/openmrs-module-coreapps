@@ -96,7 +96,7 @@ $green: #51A351;
       border-bottom: 1px solid #DDD;
     }
 
-    span {
+    span:not(.add-link) {
       background: $darkGray;
       color: white;
       letter-spacing: 1px;
@@ -105,11 +105,12 @@ $green: #51A351;
       padding: 2px 8px;
       font-size: 0.8em;
       @include border-radius(50px);
+    }
 
-      a, a:link, a:visited {
-        color: #FFF;
+    .add-link {
+      i {
+        color: black;
       }
-
     }
 
   }

@@ -39,54 +39,51 @@ public class EditPatientIdentifierFragmentController {
 				return new SuccessResult(ui.message("emr.patientDashBoard.editPatientIdentifier.warningMessage"));
 			}
 
-			// if the value is blank, this is a delete
-			if (patientIdentifier != null && StringUtils.isBlank(identifierValue)) {
-				patient.removeIdentifier(patientIdentifier);
-
-			}
-			// otherwise, handle adding
-			else {
-				// create new identifier if necessary
-				if (patientIdentifier == null) {
-					patientIdentifier = new PatientIdentifier(identifierValue, identifierType, location);
+            // create new identifier if necessary
+			if (patientIdentifier == null) {
+				patientIdentifier = new PatientIdentifier(identifierValue, identifierType, location);
+			} else {
+                // otherwise update identifier value and location
+				if (StringUtils.isNotBlank(identifierValue)) {
+					patientIdentifier.setIdentifier(identifierValue);
 				} else {
-					// otherwise update identifier value and location
-					if (StringUtils.isNotBlank(identifierValue)) {
-						patientIdentifier.setIdentifier(identifierValue);
-					} else {
-						patientIdentifier.setVoided(true);
-					}
-					if (location != null) {
-						patientIdentifier.setLocation(location);
-					}
+					patientIdentifier.setVoided(true);
 				}
-
-				// assure that a location has been set if required
-				if (patientIdentifier.getLocation() == null
-						&& !PatientIdentifierType.LocationBehavior.NOT_USED.equals(patientIdentifier.getIdentifierType().getLocationBehavior())) {
-					patientIdentifier.setLocation(coreAppsProperties.getDefaultPatientIdentifierLocation());
-				}
-
-				// validate the identifier
-				try {
-					PatientIdentifierValidator.validateIdentifier(patientIdentifier);
-				} catch (IdentifierNotUniqueException e) {
-					return new FailureResult(ui.format(identifierType) + " "
-							+ ui.message("coreapps.patientDashBoard.editPatientIdentifier.duplicateMessage"));
-				} catch (InvalidCheckDigitException e) {
-					return new FailureResult(ui.format(identifierType) + " "
-							+ ui.message("coreapps.patientDashBoard.editPatientIdentifier.invalidMessage"));
-				} catch (InvalidIdentifierFormatException e) {
-					return new FailureResult(ui.format(identifierType) + " "
-							+ ui.message("coreapps.patientDashBoard.editPatientIdentifier.invalidFormatMessage")
-							+ " \"" + identifierType.getFormatDescription() + "\"");
-				} catch (Exception e) {
-					return new FailureResult(ui.message("coreapps.patientDashBoard.editPatientIdentifier.failureMessage") + " "
-							+ ui.format(identifierType));
-				}
-
-				patient.addIdentifier(patientIdentifier);
+                if (location != null) {
+                    patientIdentifier.setLocation(location);
+                }
 			}
+
+            // assure that a location has been set if required
+            if (patientIdentifier.getLocation() == null
+                    && !PatientIdentifierType.LocationBehavior.NOT_USED.equals(patientIdentifier.getIdentifierType().getLocationBehavior())) {
+                patientIdentifier.setLocation(coreAppsProperties.getDefaultPatientIdentifierLocation());
+            }
+
+            // validate the identifier
+            try {
+                PatientIdentifierValidator.validateIdentifier(patientIdentifier);
+            }
+            catch (IdentifierNotUniqueException e) {
+                return new FailureResult(ui.format(identifierType) + " "
+                        + ui.message("coreapps.patientDashBoard.editPatientIdentifier.duplicateMessage"));
+            }
+            catch (InvalidCheckDigitException e) {
+                return new FailureResult(ui.format(identifierType) + " "
+                        + ui.message("coreapps.patientDashBoard.editPatientIdentifier.invalidMessage"));
+            }
+            catch (InvalidIdentifierFormatException e) {
+                return new FailureResult(ui.format(identifierType) + " "
+                        + ui.message("coreapps.patientDashBoard.editPatientIdentifier.invalidFormatMessage")
+                        + " \"" + identifierType.getFormatDescription() + "\"");
+            }
+            catch (Exception e) {
+                return new FailureResult(ui.message("coreapps.patientDashBoard.editPatientIdentifier.failureMessage") + " "
+                        + ui.format(identifierType));
+            }
+
+            // now go ahead and save
+			patient.addIdentifier(patientIdentifier);
 			try {
                 patientService.savePatient(patient);
 			}

@@ -42,10 +42,13 @@ function createEditPatientIdentifierDialog(patientId) {
                         var identifierElement = patientIdentifierId ? jq(".editPatientIdentifier[data-patient-identifier-id="+ patientIdentifierId  +"]")
                             : jq(".editPatientIdentifier[data-identifier-type-id="+ identifierTypeId  +"]").last();  // we identify the element to update by patient identifier id if it exists (for edit) and otherwise the last of its type (for add)
                         if(newValue.length>0){
-                            if (!patientIdentifierId) { // add another "add" element if we are adding
+                            if (!patientIdentifierId) {
+                                // add another "add" element if we are adding
                                 identifierElement.closest("div").append(identifierElement.closest("span").clone(true));
+                                // HACK: if we are adding a new identifier, we don't currently have a way to edit it until page reload (because we don't have the id), so we just disable editing
+                                identifierElement.css("pointer-events", "none");
                             }
-                            identifierElement.parents("span:first").removeClass('add-id');
+                            identifierElement.parents("span:first").removeClass('add-link');
                             identifierElement.attr("data-patient-identifier-value", newValue);
                             identifierElement.text(newValue);
                         }else{
