@@ -9,7 +9,6 @@
 %>
 
 <script type="text/javascript">
-    var addMessage = "${ ui.message("coreapps.patient.identifier.add") }";
     jq(document).ready(function () {
         createEditPatientIdentifierDialog(${patient.id});
         jq("#patientIdentifierValue").keyup(function(event){
@@ -31,10 +30,10 @@
 
         jq(".editPatientIdentifier").click(function (event) {
 
-            var patientIdentifierId = jq(event.target).attr('data-patient-identifier-id');
-            var identifierTypeId = jq(event.target).attr("data-identifier-type-id");
-            var identifierTypeName = jq(event.target).attr("data-identifier-type-name");
-            var patientIdentifierValue = jq(event.target).attr("data-patient-identifier-value");
+            var patientIdentifierId = jq(event.target).closest('.editPatientIdentifier').attr('data-patient-identifier-id');
+            var identifierTypeId = jq(event.target).closest('.editPatientIdentifier').attr("data-identifier-type-id");
+            var identifierTypeName = jq(event.target).closest('.editPatientIdentifier').attr("data-identifier-type-name");
+            var patientIdentifierValue = jq(event.target).closest('.editPatientIdentifier').attr("data-patient-identifier-value");
 
             jq("#hiddenIdentifierTypeId").val(identifierTypeId);
             jq("#hiddenInitialIdentifierValue").val(patientIdentifierValue);
@@ -152,65 +151,53 @@
     </div>
 
     <div class="identifiers mt-2 col-12 col-sm-5 col-md-4">
-        <div class="float-sm-right">
-            <em>${ui.message("coreapps.patientHeader.patientId")}</em>
-            <% patient.primaryIdentifiers.each { %>
-                <span>${it.identifier}</span>
-            <% } %>
-        </div>
-        <% if (config.extraPatientIdentifierTypes) { %>
-            <br/>
+        <% if (config.patientIdentifierTypesToDisplay) { %>
+            <% config.patientIdentifierTypesToDisplay.each { patientIdentifierType -> %>
 
-            <% config.extraPatientIdentifierTypes.each { extraPatientIdentifierType -> %>
-
-                <% def extraPatientIdentifiers = config.extraPatientIdentifiersMappedByType.get(extraPatientIdentifierType.patientIdentifierType) %>
-
-                <% if (extraPatientIdentifiers) { %>
-
-                    <div class="float-sm-right">
-                        <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
-                        <% extraPatientIdentifiers.each { extraPatientIdentifier -> %>
-                        <%  def identifierLink = config.extraIdentifierLinks.get(extraPatientIdentifierType.patientIdentifierType)
-                            if (identifierLink) {
-                                def url = identifierLink.url.replace("{{identifier}}", extraPatientIdentifier.identifier) %>
-                                <a href="${url}" target="_blank">
-                                    <i class="${ identifierLink.icon ?: 'icon-external-link' }" title="${ ui.message(identifierLink.label) }"></i>
-                                </a>
-                            <% } %>
-                            <span>
-                                <% if (extraPatientIdentifierType.editable) { %>
-                                    <a class="editPatientIdentifier"
-                                       data-patient-identifier-id="${extraPatientIdentifier.id}"
-                                       data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
-                                       data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}"
-                                       data-patient-identifier-value="${extraPatientIdentifier}"
-                                       href="#${extraPatientIdentifierType.patientIdentifierType.id}"
-                                    >
-                                        ${extraPatientIdentifier}
-                                    </a>
-                                <% } else { %>
-                                    ${extraPatientIdentifier}
-                                <% } %>
-                            </span>
-                        <% } %>
-                    </div>
-                <% } else if (extraPatientIdentifierType.editable) { %>
-                    <div class="float-sm-right">
-                        <em>${ui.format(extraPatientIdentifierType.patientIdentifierType)}</em>
-                        <span class="add-id">
-                            <a class="editPatientIdentifier"
-                                data-patient-identifier-id=""
-                                data-identifier-type-id="${extraPatientIdentifierType.patientIdentifierType.id}"
-                                data-identifier-type-name="${ui.format(extraPatientIdentifierType.patientIdentifierType)}"
-                                data-patient-identifier-value=""
-                                href="#${extraPatientIdentifierType.patientIdentifierType.id}"
-                            >
-                                ${ui.message("coreapps.patient.identifier.add")}
+                <% def patientIdentifiers = config.patientIdentifiersMappedByType.get(patientIdentifierType.patientIdentifierType) %>
+                <div class="float-sm-right">
+                    <em>${ui.format(patientIdentifierType.patientIdentifierType)}</em>
+                    <% patientIdentifiers?.each { patientIdentifier -> %>
+                        <%  def identifierLink = config.identifierLinks.get(patientIdentifierType.patientIdentifierType)
+                        if (identifierLink) {
+                            def url = identifierLink.url.replace("{{identifier}}", patientIdentifier.identifier) %>
+                            <a href="${url}" target="_blank">
+                                <i class="${ identifierLink.icon ?: 'icon-external-link' }" title="${ ui.message(identifierLink.label) }"></i>
                             </a>
+                        <% } %>
+                        <span>
+                            <% if (patientIdentifierType.editable && !patientIdentifier.preferred) { %>
+                                <a class="editPatientIdentifier"
+                                   data-patient-identifier-id="${patientIdentifier.id}"
+                                   data-identifier-type-id="${patientIdentifierType.patientIdentifierType.id}"
+                                   data-identifier-type-name="${ui.format(patientIdentifierType.patientIdentifierType)}"
+                                   data-patient-identifier-value="${patientIdentifier}"
+                                   href="#${patientIdentifierType.patientIdentifierType.id}"
+                                >
+                                    ${patientIdentifier}
+                                </a>
+                            <% } else { %>
+                                ${patientIdentifier}
+                            <% } %>
                         </span>
-                    </div>
-                <% } %>
+                    <% } %>
+                    <% if (patientIdentifierType.editable) { %>
+                      <span class="add-link">
+                         <a class="editPatientIdentifier"
+                           data-patient-identifier-id=""
+                           data-identifier-type-id="${patientIdentifierType.patientIdentifierType.id}"
+                           data-identifier-type-name="${ui.format(patientIdentifierType.patientIdentifierType)}"
+                           data-patient-identifier-value=""
+                           href="#${patientIdentifierType.patientIdentifierType.id}"
 
+                         >
+                             <i class="icon-plus-sign"
+
+                             ></i>
+                         </a>
+                     </span>
+                    <% } %>
+                </div>
             <br/>
             <% } %>
         <% } %>
