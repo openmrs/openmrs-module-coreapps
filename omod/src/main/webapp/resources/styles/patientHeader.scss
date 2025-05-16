@@ -110,14 +110,6 @@ $green: #51A351;
         color: #FFF;
       }
 
-      &.add-id {
-        background: none;
-        min-width: 5.5em;  /* same width as a 6-character ID */
-
-        a, a:link, a:visited {
-          color: $link;
-        }
-      }
     }
 
   }

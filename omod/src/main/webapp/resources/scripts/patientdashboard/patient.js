@@ -40,14 +40,16 @@ function createEditPatientIdentifierDialog(patientId) {
                         var patientIdentifierId = jq("#hiddenPatientIdentifierId").val();
                         var identifierTypeId = jq("#hiddenIdentifierTypeId").val();
                         var identifierElement = patientIdentifierId ? jq(".editPatientIdentifier[data-patient-identifier-id="+ patientIdentifierId  +"]")
-                            : jq(".editPatientIdentifier[data-identifier-type-id="+ identifierTypeId  +"]");  // we identify the element to update by patient identifier id if it exists (for edit) and otherwise identifier type id (for add)
+                            : jq(".editPatientIdentifier[data-identifier-type-id="+ identifierTypeId  +"]").last();  // we identify the element to update by patient identifier id if it exists (for edit) and otherwise the last of its type (for add)
                         if(newValue.length>0){
+                            if (!patientIdentifierId) { // add another "add" element if we are adding
+                                identifierElement.closest("div").append(identifierElement.closest("span").clone(true));
+                            }
                             identifierElement.parents("span:first").removeClass('add-id');
                             identifierElement.attr("data-patient-identifier-value", newValue);
                             identifierElement.text(newValue);
                         }else{
-                            identifierElement.parents("span:first").addClass('add-id');
-                            identifierElement.text(addMessage);
+                            identifierElement.closest('span').hide();
                         }
                     },function(err){
                         emr.handleError(err);
