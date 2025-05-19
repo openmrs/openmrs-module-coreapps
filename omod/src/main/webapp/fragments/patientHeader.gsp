@@ -86,7 +86,7 @@
         </div>
     <% } %>
 
-    <div class="demographics col-12 col-sm-7 col-md-8">
+    <div class="demographics col-12 col-sm-7 col-md-7">
         <div class="row align-items-center">
             <div class="col-12 col-sm-auto">
                 <h1 class="mt-0 mb-2 name">
@@ -150,7 +150,7 @@
         </div>
     </div>
 
-    <div class="identifiers mt-2 col-12 col-sm-5 col-md-4">
+    <div class="identifiers mt-2 col-12 col-sm-5 col-md-5">
         <% if (config.patientIdentifierTypesToDisplay) { %>
             <% config.patientIdentifierTypesToDisplay.each { patientIdentifierType -> %>
 
