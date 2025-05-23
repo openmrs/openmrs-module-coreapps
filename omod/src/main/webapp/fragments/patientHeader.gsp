@@ -150,12 +150,12 @@
         </div>
     </div>
 
-    <div class="identifiers mt-2 col-12 col-sm-5 col-md-5">
+    <div class="identifiers mt-2 col-12 col-sm-5 col-md-5 d-flex flex-column align-items-sm-end">
         <% if (config.patientIdentifierTypesToDisplay) { %>
             <% config.patientIdentifierTypesToDisplay.each { patientIdentifierType -> %>
 
                 <% def patientIdentifiers = config.patientIdentifiersMappedByType.get(patientIdentifierType.patientIdentifierType) %>
-                <div class="float-sm-right">
+                <div>
                     <em>${ui.format(patientIdentifierType.patientIdentifierType)}</em>
                     <% patientIdentifiers?.each { patientIdentifier -> %>
                         <%  def identifierLink = config.identifierLinks.get(patientIdentifierType.patientIdentifierType)
@@ -198,7 +198,6 @@
                      </span>
                     <% } %>
                 </div>
-            <br/>
             <% } %>
         <% } %>
     </div>
