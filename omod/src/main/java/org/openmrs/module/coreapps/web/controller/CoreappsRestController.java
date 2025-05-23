@@ -15,9 +15,11 @@ package org.openmrs.module.coreapps.web.controller;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
+import org.openmrs.api.VisitService;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
@@ -60,6 +62,9 @@ public class CoreappsRestController extends MainResourceController {
     PatientService patientService;
 
     @Autowired
+    VisitService visitService;
+
+    @Autowired
     AppFrameworkService appFrameworkService;
 
     @Autowired
@@ -90,11 +95,17 @@ public class CoreappsRestController extends MainResourceController {
         ret.put("extensions", extensionReps);
 
         Patient patient = patientService.getPatientByUuid(requestContext.getParameter("patient"));
+        Visit visit = null;
+        String visitUuid = requestContext.getParameter("visit");
+        if (StringUtils.isNotBlank(visitUuid)) {
+            visit = visitService.getVisitByUuid(visitUuid);
+        }
+
         String extensionPoint = request.getParameter("extensionPoint");
 
         if (patient != null && StringUtils.isNotBlank(extensionPoint)) {
-            UiSessionContext uiSessionContext = new UiSessionContext(locationService, providerService, request);
-            AppContextModel contextModel = appContextModelGenerator.generateAppContextModel(uiSessionContext, patient);
+            UiSessionContext ctx = new UiSessionContext(locationService, providerService, request);
+            AppContextModel contextModel = appContextModelGenerator.generateAppContextModel(ctx, patient, visit);
             List<Extension> extensions = appFrameworkService.getExtensionsForCurrentUser(extensionPoint, contextModel);
             Collections.sort(extensions);
             for (Extension extension : extensions) {

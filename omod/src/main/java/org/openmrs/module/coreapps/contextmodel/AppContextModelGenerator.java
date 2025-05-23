@@ -20,6 +20,7 @@ import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
 import org.openmrs.PatientState;
 import org.openmrs.Program;
+import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.module.appframework.context.AppContextModel;
@@ -51,24 +52,40 @@ public class AppContextModelGenerator {
      * Generates an AppContextModel for the given patient
      */
     public AppContextModel generateAppContextModel(UiSessionContext sessionContext, Patient patient) {
+        return generateAppContextModel(sessionContext, patient, null);
+    }
+
+    /**
+     * Generates an AppContextModel for the given patient and visit
+     */
+    public AppContextModel generateAppContextModel(UiSessionContext sessionContext, Patient patient, Visit visit) {
+        if (patient != null && visit != null && !patient.equals(visit.getPatient())) {
+            throw new IllegalArgumentException("Patient must be the same as the visit patient");
+        }
+        VisitDomainWrapper visitDomainWrapper = null;
+        if (visit == null) {
+            Location visitLocation = null;
+            try {
+                visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+            }
+            catch (IllegalArgumentException ex) {
+                // location does not support visits
+            }
+
+            if (visitLocation != null) {
+                visitDomainWrapper = adtService.getActiveVisit(patient, visitLocation);
+            }
+
+        }
+        else {
+            visitDomainWrapper = adtService.wrap(visit);
+        }
+
+
         AppContextModel contextModel = sessionContext.generateAppContextModel();
-
-        Location visitLocation = null;
-        try {
-            visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
-        }
-        catch (IllegalArgumentException ex) {
-            // location does not support visits
-        }
-
-        VisitDomainWrapper activeVisit = null;
-        if (visitLocation != null) {
-            activeVisit = adtService.getActiveVisit(patient, visitLocation);
-        }
-
         contextModel.put("patient", new PatientContextModel(patient));
 		contextModel.put("patientId", patient != null ? patient.getUuid() : null);  // support legacy substitution methods that use "{{patientId}}" as a template and expect a uuid substitution
-        contextModel.put("visit", activeVisit == null ? null : new VisitContextModel(activeVisit));
+        contextModel.put("visit", visitDomainWrapper == null ? null : new VisitContextModel(visitDomainWrapper));
 
         List<EncounterType> encounterTypes = new ArrayList<>();
         ArrayList<PatientEncounterContextModel> encountersModel = new ArrayList<>();
