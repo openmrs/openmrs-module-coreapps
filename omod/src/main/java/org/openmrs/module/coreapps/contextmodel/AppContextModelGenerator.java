@@ -98,10 +98,16 @@ public class AppContextModelGenerator {
         contextModel.put("encounters", encountersModel);
 
         List<Program> programs = new ArrayList<>();
-        List<PatientProgram> patientPrograms = programWorkflowService.getPatientPrograms(patient, null, null, null, null, null, false);
+        List<PatientProgram> allPatientPrograms = programWorkflowService.getPatientPrograms(patient, null, null, null, null, null, false);
         List<SimpleObject> activePrograms = new ArrayList<>();
+        List<SimpleObject> patientPrograms = new ArrayList<>();
         List<SimpleObject> activeProgramStates = new ArrayList<>();
-        for (PatientProgram patientProgram : patientPrograms) {
+        for (PatientProgram patientProgram : allPatientPrograms) {
+            SimpleObject patientProgramSimpleObject = new SimpleObject();
+            patientProgramSimpleObject.put("programUuid", patientProgram.getProgram().getUuid());
+            patientProgramSimpleObject.put("dateEnrolled", patientProgram.getDateEnrolled());
+            patientProgramSimpleObject.put("dateCompleted", patientProgram.getDateCompleted());
+            patientPrograms.add(patientProgramSimpleObject);
             programs.add(patientProgram.getProgram());
             if (patientProgram.getActive()) {
                 SimpleObject activeProgram = new SimpleObject();
@@ -118,7 +124,8 @@ public class AppContextModelGenerator {
                 }
             }
         }
-        contextModel.put("patientPrograms", ConversionUtil.convertToRepresentation(programs, Representation.DEFAULT));
+        contextModel.put("patientPrograms", ConversionUtil.convertToRepresentation(patientPrograms, Representation.DEFAULT));
+        contextModel.put("programs", ConversionUtil.convertToRepresentation(programs, Representation.DEFAULT));
         contextModel.put("activePrograms", ConversionUtil.convertToRepresentation(activePrograms, Representation.DEFAULT));
         contextModel.put("activeProgramStates", ConversionUtil.convertToRepresentation(activeProgramStates, Representation.DEFAULT));
         return contextModel;
