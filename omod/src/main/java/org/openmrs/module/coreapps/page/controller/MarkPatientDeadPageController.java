@@ -167,7 +167,7 @@ public class MarkPatientDeadPageController {
                 if (deathDate.after(now)) {
                     throw new APIException("Death date cannot be in the future");
                 }
-                if (deathDate.before(patient.getBirthdate())) {
+                if (patient.getBirthdate() != null && deathDate.before(patient.getBirthdate())) {
                     throw new APIException("Death date cannot be prior to the patient's birthdate");
                 }
                 if (StringUtils.isBlank(causeOfDeath)) {
