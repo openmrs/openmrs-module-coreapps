@@ -20,7 +20,6 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
-import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
@@ -70,9 +69,6 @@ public class CoreappsRestController extends MainResourceController {
     @Autowired
     AppContextModelGenerator appContextModelGenerator;
 
-    @Autowired
-    MessageSourceService messageSourceService;
-
     /**
      * @see org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestController#getNamespace()
      */
@@ -109,9 +105,6 @@ public class CoreappsRestController extends MainResourceController {
             List<Extension> extensions = appFrameworkService.getExtensionsForCurrentUser(extensionPoint, contextModel);
             Collections.sort(extensions);
             for (Extension extension : extensions) {
-                if (StringUtils.isNotBlank(extension.getLabel())) {
-                    extension.setLabel(messageSourceService.getMessage(extension.getLabel()));
-                }
                 Object extensionRep = ConversionUtil.convertToRepresentation(extension, rep);
                 extensionReps.add(extensionRep);
             }
