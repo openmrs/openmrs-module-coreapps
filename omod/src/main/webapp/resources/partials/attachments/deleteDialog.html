@@ -1,0 +1,17 @@
+<div>
+  <div class="dialog-header">
+    <h3>{{msgs["coreapps.attachments.attachmentspage.delete.title"]}}</h3>
+  </div>
+  <div class="dialog-content">
+    <input type="hidden" id="encounterId" value=""/>
+    <ul>
+      <li class="info">
+        <span>{{msgs["coreapps.attachments.attachmentspage.delete.confirm"]}}</span>
+      </li>
+    </ul>
+    <button class="confirm right" ng-click="confirm()">{{msgs["coreapps.yes"]}}
+      <i ng-show="showSpinner" class="icon-spinner icon-spin icon-2x" style="margin-left: 10px;"></i>
+    </button>
+    <button class="cancel" ng-click="closeThisDialog()">{{msgs["coreapps.no"]}}</button>
+  </div>
+</div>
