@@ -1,0 +1,120 @@
+<style>
+
+  .att_file-upload-container {
+    padding-left: 20px;
+    height: 200px;
+  }
+
+  .att_caption-element textarea {
+    width: 100%;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+  }
+
+  .att_caption-element textarea::-webkit-input-placeholder{
+    font-size: 1.2em;
+    color: LightGrey;
+  }
+
+  .att_caption-element textarea::-moz-placeholder{
+    font-size: 1.2em;
+    color: LightGrey;
+  }
+
+  .att_upload-container {
+    height: 180px;
+  }
+
+  .att_upload-element {
+    float: left;
+  }
+
+  .att_upload-element.att_dropzone-element {
+    width: 30%;
+    height: 75%;
+  }
+
+  .att_upload-element.att_caption-element {
+    width: 55%;
+    margin-left: 2%;
+  }
+
+  .dropzone {
+    position: center;
+    border: 2px dotted #888;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    min-height: 0px;
+    height: 100%;
+    text-align: center;
+  }
+
+  .dropzone .dz-preview {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right:0;
+    bottom: 0;
+  }
+
+  .dropzone .dz-preview .dz-image {
+    z-index: 0;
+  }
+
+  .dropzone .dz-preview .dz-progress {
+    z-index: 0;
+  }
+
+  .att_past-visit, .att_no-active-visit {
+    text-align: left;
+    padding: 10px 0;
+    padding-left: 10px;
+    padding-bottom: 0;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -o-border-radius: 2px;
+    -ms-border-radius: 2px;
+    -khtml-border-radius: 2px;
+    border-radius: 2px;
+
+    color: #ffa000;
+    text-align: left;
+    padding-bottom: 5px;
+    font-size: 0.9em;
+  }
+
+</style>
+
+
+<att-modal-webcam visible="showWebcam" disabled="isWebcamDisabled()"></att-modal-webcam>
+
+<div ng-show="visitUuid && closedVisit" class="att_past-visit">
+  <p><i class="icon-warning-sign small"></i>{{msgs["coreapps.attachments.fileUpload.attentionPastVisit"]}}</p>
+</div>
+
+<div ng-show="!visitUuid && associateWithVisit" class="att_no-active-visit">
+    <p><i class="icon-warning-sign small"></i>{{msgs["coreapps.attachments.noActiveVisit"]}}</p>
+</div>
+
+<div ng-show="visitUuid || !associateWithVisit" class="att_file-upload-container" ng-init="init()">
+  <div class="att_upload-container">
+    <div class="att_upload-element att_dropzone-element">
+      <h3>{{msgs["coreapps.attachments.attachmentspage.fileTitle"]}}</h3>
+      <form action="" dropzone-directive="dropzoneConfig" class="dropzone" id="visit-documents-dropzone">
+        <div class="dz-error-message"><span data-dz-errormessage></span></div>
+        <div class="dz-default dz-message">{{msgs["coreapps.attachments.dropzone.innerlabel"]}}</div>
+      </form>
+    </div>
+    <div class="att_upload-element att_caption-element">
+      <h3>{{msgs["coreapps.attachments.attachmentspage.commentTitle"]}}</h3>
+      <textarea ng-model="typedText.fileCaption" placeholder="{{msgs['coreapps.attachments.misc.label.enterCaption']}}"></textarea>
+      <a class="button left" ng-hide="isWebcamDisabled()" ng-click="showWebcam = true" style="margin-top: 4%"><i class="icon-camera"></i></a>
+      <span class="right" style="margin-top: 4%">
+        <button class="confirm" ng-click="uploadFile()" ng-disabled="isUploadBtnDisabled()">{{msgs["coreapps.attachments.attachmentspage.uploadButton"]}}</button>
+        <button ng-click="clearForms()">{{msgs["coreapps.attachments.attachmentspage.clearFormsButton"]}}</button>
+      </span>
+    </div>
+  </div>
+</div>

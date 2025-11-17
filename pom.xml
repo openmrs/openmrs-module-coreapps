@@ -38,6 +38,7 @@
 		<openMRSVersion>2.2.1</openMRSVersion>
 		<appframeworkVersion>2.17.0</appframeworkVersion>
 		<appuiVersion>1.10.0</appuiVersion>
+		<attachmentsVersion>3.9.0</attachmentsVersion>
         <calculationVersion>1.3.0</calculationVersion>
 		<emrapiVersion>2.0.0</emrapiVersion>
 		<eventVersion>2.8.0</eventVersion>
@@ -87,6 +88,12 @@
 			<classifier>tests</classifier>
 			<version>${appuiVersion}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>attachments-api</artifactId>
+			<version>${attachmentsVersion}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.openmrs.module</groupId>

@@ -1,0 +1,30 @@
+<style>
+
+.att_thumbnails-container {
+  width: 100%;
+  overflow: hidden;
+  padding: 0 0 20px 0;
+}
+
+.att_load-more-button {
+  margin: 2% 0 0 2%;
+}
+
+</style>
+
+<div class="att_thumbnails-container">
+  <i ng-hide="obsArray && config" class="icon-spinner icon-spin icon-2x" style="margin-left: 10px;"></i>
+  <div ng-if="obsArray && config">
+    <div ng-show="obsArray.length">
+      <att-thumbnail ng-repeat="obs in obsArray | orderBy: '-obsDatetime'" obs="obs" config="config"></att-thumbnail>
+    </div>
+    <div style="clear:both;"></div>
+    <button ng-show="startIndex > 0" class="att_load-more-button" ng-click="load(config, startIndex)">
+      {{msgs["coreapps.attachments.gallery.loadMore"]}}
+      <i ng-show="showSpinner" class="icon-spinner icon-spin icon-1x" style="margin-left: 10px;"></i>
+    </button>
+    <div ng-hide="obsArray.length > 0">
+      {{msgs["general.none"]}}
+    </div>
+  </div>
+</div>
