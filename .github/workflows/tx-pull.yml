@@ -1,8 +1,9 @@
 on:
   workflow_dispatch:
   schedule:
+   # we are disabling this job until we can support "zh_Hans" without issue
     # every day at 8 PM UTC
-    - cron: "0 20 * * *"
+  #  - cron: "0 20 * * *"
 
 name: "🔄 Scheduled Transifex Update"
 
