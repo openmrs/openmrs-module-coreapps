@@ -9,6 +9,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
+import org.openmrs.annotation.OpenmrsProfile;
 import org.openmrs.module.attachments.AttachmentsConstants;
 import org.openmrs.module.attachments.AttachmentsContext;
 import org.openmrs.module.attachments.ComplexObsSaver;
@@ -41,7 +42,7 @@ import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily
  * and
  * {@link org.openmrs.module.attachments.rest.AttachmentResource1_10 AttachmentResource}
  */
-@Controller
+@OpenmrsProfile(modules = { "attachments:*" })
 public class AttachmentsController {
 
 	@Autowired
