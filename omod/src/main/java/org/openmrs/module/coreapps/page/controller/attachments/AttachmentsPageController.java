@@ -3,6 +3,7 @@ package org.openmrs.module.coreapps.page.controller.attachments;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.annotation.OpenmrsProfile;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.attachments.AttachmentsConstants;
@@ -25,7 +26,7 @@ import java.util.Map;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamilyMap;
 
-@Component
+@OpenmrsProfile(modules = { "attachments:*" })
 public class AttachmentsPageController {
 
 	public void controller(@RequestParam("patient") Patient patient,
