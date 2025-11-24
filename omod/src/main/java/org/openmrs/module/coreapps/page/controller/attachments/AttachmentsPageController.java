@@ -20,12 +20,14 @@ import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
 import static org.openmrs.module.attachments.AttachmentsContext.getContentFamilyMap;
 
+@Controller
 @OpenmrsProfile(modules = { "attachments:*" })
 public class AttachmentsPageController {
 

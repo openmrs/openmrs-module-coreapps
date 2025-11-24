@@ -42,6 +42,7 @@ import static org.openmrs.module.attachments.AttachmentsContext.getContentFamily
  * and
  * {@link org.openmrs.module.attachments.rest.AttachmentResource1_10 AttachmentResource}
  */
+@Controller
 @OpenmrsProfile(modules = { "attachments:*" })
 public class AttachmentsController {
 
