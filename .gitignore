@@ -19,6 +19,7 @@ target
 *.ear
 
 omod/src/main/webapp/resources/styles/**/*.css
+!omod/src/main/webapp/resources/styles/attachments/dropzone/
 omod/src/main/webapp/resources/styles/**/*.css.map
 omod/src/main/webapp/resources/styles/lib
 

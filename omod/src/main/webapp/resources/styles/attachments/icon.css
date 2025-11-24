@@ -1,0 +1,18 @@
+@font-face {
+	font-family: 'fontawesome-pdf';
+	src: url('../fonts/fontawesome-pdf.eot?q18nf2');
+	src: url('../fonts/fontawesome-pdf.eot?q18nf2#iefix')
+		format('embedded-opentype'),
+		url('../fonts/fontawesome-pdf.ttf?q18nf2') format('truetype'),
+		url('../fonts/fontawesome-pdf.woff?q18nf2') format('woff'),
+		url('../fonts/fontawesome-pdf.svg?q18nf2#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.icon-file-pdf-o:before {
+	font-family: 'fontawesome-pdf' !important;
+	content: "\e900";
+	color: #ec0000;
+	font-size: 84%;
+}
