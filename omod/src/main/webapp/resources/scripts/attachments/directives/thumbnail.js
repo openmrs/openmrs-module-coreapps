@@ -59,6 +59,12 @@ angular.module('att.widget.thumbnail')
       });
       moment.locale($scope.config.locale);
 
+      $scope.$watch('obs', function(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          $scope.init();
+        }
+      });
+
       $scope.canEdit = function() {
         if($scope.config.canEdit) {
           if($scope.config.canEdit === true) {
