@@ -106,12 +106,7 @@ angular
                                             'thumbnailHeight' : 100,
                                             'thumbnailWidth' : 100,
                                             'maxFiles' : 1,
-                                            'autoProcessQueue' : false,
-                                            'renameFilename' : function(name) {
-                                                return name.replace(/\.[^/.]+$/, "") + "_"
-                                                        + moment().format("YYYYMMDD_HHmmss") + "."
-                                                        + name.split(".").pop(); // Timestamping the file name
-                                            }
+                                            'autoProcessQueue' : false
                                         },
                                         'eventHandlers' : {
                                             'addedfile' : function(file) {
