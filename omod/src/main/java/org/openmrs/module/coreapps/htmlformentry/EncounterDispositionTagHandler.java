@@ -293,7 +293,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
 
     /**
      * Helper method to determine whether a particular disposition should be included
-     * This replaces (copies and modifies) the disposition service methods in EMR API to account for retrospective dates and existing saved data
+     * This replaces (copies and modifies) the disposition service methods in EMR API to account for retrospective dates
      */
     protected boolean includeDisposition(Disposition disposition, Form form, VisitDomainWrapper visitDomainWrapper, Encounter encounter) {
         // Only exclude dispositions for an active visit
