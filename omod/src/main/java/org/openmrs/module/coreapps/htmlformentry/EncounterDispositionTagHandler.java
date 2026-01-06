@@ -5,8 +5,11 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.CareSetting;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
+import org.openmrs.Form;
 import org.openmrs.Obs;
 import org.openmrs.Visit;
 import org.openmrs.module.emrapi.EmrApiConstants;
@@ -62,14 +65,15 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
                     HtmlFormEntryUtil.getConcept(EmrApiConstants.EMR_CONCEPT_SOURCE_NAME + ": " + EmrApiConstants.CONCEPT_CODE_DISPOSITION_CONCEPT_SET));
         }
 
-        List<Disposition> dispositions;
-
         VisitDomainWrapper visitDomainWrapper = session.getContext().getVisit() != null
                 ? domainWrapperFactory.newVisitDomainWrapper((Visit) session.getContext().getVisit()) : null;
 
-        EncounterType encounterType = session.getEncounter() != null ? session.getEncounter().getEncounterType() : session.getForm().getEncounterType();
-
-        dispositions = dispositionService.getValidDispositions(visitDomainWrapper, encounterType);
+        List<Disposition> dispositions = new ArrayList<>();
+        for (Disposition disposition : dispositionService.getDispositions()) {
+            if (includeDisposition(disposition, session.getForm(), visitDomainWrapper, session.getEncounter())) {
+                dispositions.add(disposition);
+            }
+        }
 
         Element dispositionObsGroup = node.getOwnerDocument().createElement("obsgroup");
         dispositionObsGroup.setAttribute("groupingConceptId", emrApiProperties.getEmrApiConceptSource().getName() + ":"
@@ -287,4 +291,54 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         }
     }
 
+    /**
+     * Helper method to determine whether a particular disposition should be included
+     * This replaces (copies and modifies) the disposition service methods in EMR API to account for retrospective dates and existing saved data
+     */
+    protected boolean includeDisposition(Disposition disposition, Form form, VisitDomainWrapper visitDomainWrapper, Encounter encounter) {
+        // Only exclude dispositions for an active visit
+        if (visitDomainWrapper == null || !visitDomainWrapper.isActive()) {
+            return true;
+        }
+
+        // In the disposition service, care setting is checked based on admission at any time during the visit.
+        // Here, we check care setting based on admission status as of the given encounter (if present) during the visit.
+        boolean isAdmitted = encounter == null ? visitDomainWrapper.isAdmitted() : visitDomainWrapper.isAdmitted(encounter.getEncounterDatetime());
+        List<CareSetting.CareSettingType> careSettingTypes = disposition.getCareSettingTypes();
+        if (careSettingTypes != null && !careSettingTypes.isEmpty()) {
+            if (isAdmitted && !careSettingTypes.contains(CareSetting.CareSettingType.INPATIENT)) {
+                return false;
+            }
+            if (!isAdmitted && !careSettingTypes.contains(CareSetting.CareSettingType.OUTPATIENT)) {
+                return false;
+            }
+        }
+
+        // Here, we implement the same logic as the disposition service to exclude dispositions based on encounter type
+        EncounterType encounterType = (encounter == null ? form.getEncounterType() : encounter.getEncounterType());
+        List<String> encounterTypes = disposition.getEncounterTypes();
+        List<String> excludedEncounterTypes = disposition.getExcludedEncounterTypes();
+        boolean included = encounterTypes == null || encounterTypes.isEmpty() || containsEncounterType(encounterTypes, encounterType);
+        boolean excluded = containsEncounterType(excludedEncounterTypes, encounterType);
+        return included && !excluded;
+    }
+
+    // Matches an encounter type reference in a list based on id, uuid, or name (case insensitive)
+    protected boolean containsEncounterType(List<String> encounterTypes, EncounterType encounterType) {
+        if (encounterTypes == null || encounterTypes.isEmpty()) {
+            return false;
+        }
+        for (String encounterTypeRef : encounterTypes) {
+            if (encounterType.getId().toString().equals(encounterTypeRef)) {
+                return true;
+            }
+            else if (encounterType.getUuid().equals(encounterTypeRef)) {
+                return true;
+            }
+            else if (encounterType.getName().equalsIgnoreCase(encounterTypeRef)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
