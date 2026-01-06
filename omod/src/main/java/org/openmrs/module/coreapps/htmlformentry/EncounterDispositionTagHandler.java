@@ -296,21 +296,19 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
      * This replaces (copies and modifies) the disposition service methods in EMR API to account for retrospective dates
      */
     protected boolean includeDisposition(Disposition disposition, Form form, VisitDomainWrapper visitDomainWrapper, Encounter encounter) {
-        // Only exclude dispositions for an active visit
-        if (visitDomainWrapper == null || !visitDomainWrapper.isActive()) {
-            return true;
-        }
-
         // In the disposition service, care setting is checked based on admission at any time during the visit.
         // Here, we check care setting based on admission status as of the given encounter (if present) during the visit.
-        boolean isAdmitted = encounter == null ? visitDomainWrapper.isAdmitted() : visitDomainWrapper.isAdmitted(encounter.getEncounterDatetime());
-        List<CareSetting.CareSettingType> careSettingTypes = disposition.getCareSettingTypes();
-        if (careSettingTypes != null && !careSettingTypes.isEmpty()) {
-            if (isAdmitted && !careSettingTypes.contains(CareSetting.CareSettingType.INPATIENT)) {
-                return false;
-            }
-            if (!isAdmitted && !careSettingTypes.contains(CareSetting.CareSettingType.OUTPATIENT)) {
-                return false;
+        // Only exclude dispositions based on care setting for an active visit
+        if (visitDomainWrapper != null && visitDomainWrapper.isActive()) {
+            boolean isAdmitted = encounter == null ? visitDomainWrapper.isAdmitted() : visitDomainWrapper.isAdmitted(encounter.getEncounterDatetime());
+            List<CareSetting.CareSettingType> careSettingTypes = disposition.getCareSettingTypes();
+            if (careSettingTypes != null && !careSettingTypes.isEmpty()) {
+                if (isAdmitted && !careSettingTypes.contains(CareSetting.CareSettingType.INPATIENT)) {
+                    return false;
+                }
+                if (!isAdmitted && !careSettingTypes.contains(CareSetting.CareSettingType.OUTPATIENT)) {
+                    return false;
+                }
             }
         }
 
