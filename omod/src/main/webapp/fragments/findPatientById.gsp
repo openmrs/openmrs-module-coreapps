@@ -1,6 +1,5 @@
 <%
     ui.includeJavascript("coreapps", "custom/findPatientById.js")
-
 %>
 
 <script type="text/javascript">
@@ -9,13 +8,8 @@ jq(function() {
 
     function evaluatePrimaryId() {
         var primaryId = jq("#${config.textFieldName}").val().trim();
-        if (primaryId.length > 0) {
-            getPatientById(primaryId,"${ config.hiddenFieldName}", "${config.fullNameField}", ${config.callBack},
-                "${ ui.message("coreapps.mergePatients.patientNotFound") }");
-        } else {
-        	//If the field is blank simply trigger callback.
-        	${config.callBack}();
-        }
+        getPatientById(primaryId,"${ config.hiddenFieldName}", "${config.fullNameField}", ${config.callBack},
+            "${ ui.message("coreapps.mergePatients.patientNotFound") }");
     };
 
     jq("#${config.textFieldName}").blur(function() {
