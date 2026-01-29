@@ -54,14 +54,14 @@
     <form>
         <input type="hidden" name="app" value="coreapps.mergePatients"/>
         <input type= "hidden" name= "isUnknownPatient" value= "${isUnknownPatient}"/>
-        
+
         <p>
             ${ ui.includeFragment("coreapps", "findPatientById",[
                     label: ui.message("coreapps.mergePatients.chooseFirstLabel"),
                     hiddenFieldName: "patient1",
                     textFieldName: "patient1-text",
                     callBack: "checkConfirmButton",
-                    fullNameField: "full-name-field"
+                    fullNameField: "patient-1-name"
             ] )}
         </p>
         
@@ -70,7 +70,8 @@
                     label: ui.message("coreapps.mergePatients.chooseSecondLabel"),
                     hiddenFieldName: "patient2",
                     textFieldName: "patient2-text",
-                    callBack: "checkConfirmButton"
+                    callBack: "checkConfirmButton",
+                    fullNameField: "patient-2-name"
             ] )}
         </p>
         
