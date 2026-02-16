@@ -10,9 +10,9 @@ module.exports = function(config) {
 	webpackConfig.plugins.splice(commonsChunkPluginIndex, 1);
 	
     var karmaConfig = {
-		browsers: ['ChromeHeadless'],
+		browsers: ['ChromeHeadlessNoSandbox'],
 		customLaunchers: {
-			ChromeHeadlessDocker: {
+			ChromeHeadlessNoSandbox: {
 				base: 'ChromeHeadless',
 				flags: [
 					"--disable-gpu",
