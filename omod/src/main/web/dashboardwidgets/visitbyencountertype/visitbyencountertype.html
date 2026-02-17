@@ -1,11 +1,19 @@
 <ul>
     <li ng-if="$ctrl.visits.length != 0" ng-repeat="visit in $ctrl.visits track by $index">
-        <a href="{{$ctrl.serverUrl}}/coreapps/patientdashboard/patientDashboard.page?patientId={{$ctrl.config.patientUuid}}&visitId={{visit.uuid}}">
+        <a href="{{$ctrl.serverUrl}}/coreapps/patientdashboard/patientDashboard.page?patientId={{$ctrl.config.patientUuid}}&visitId={{visit.uuid}}" >
             {{$ctrl.widgetsCommons.formatDate(visit.startDatetime,$ctrl.config.JSDateFormat,$ctrl.config.language)}}
         </a>
-        <div class="tag" ng-if="visit.encounterType !== ''">{{visit.encounterType | translate }}</div>
+        <div class="tag" ng-if="visit.encounterType !== '' && visit.encounterType !== 'Visit Note'">{{visit.encounterType | translate }}</div>
+        <div class="tag" ng-if="visit.encounterType !== '' && visit.encounterType === 'Visit Note'" data-toggle="tooltip" data-placement="right" title="{{$ctrl.widgetsCommons.formatDate(visit.startDatetime,$ctrl.config.JSDateFormat,$ctrl.config.language)}}">{{visit.encounterType | translate }}</div>
+   
     </li>
     <p ng-if="$ctrl.visits.length == 0">
         {{ 'coreapps.none' | translate }}
     </p>
 </ul>
+
+<script>
+$(document).ready(function(){
+  $('[data-toggle="tooltip"]').tooltip();   
+});
+</script>
