@@ -13,3 +13,4 @@ jobs:
     with:
       java_versions: '[8]'
       main_java_version: '8'
+      owasp_additional_args: '--enableRetired --disableNodeAudit'
