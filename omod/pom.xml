@@ -270,8 +270,8 @@
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>1.11.3</version>
 				<configuration>
-					<nodeVersion>v14.18.0</nodeVersion>
-					<npmVersion>7.6.2</npmVersion>
+					<nodeVersion>v22.20.0</nodeVersion>
+					<npmVersion>11.6.2</npmVersion>
 				</configuration>
 				<executions>
 					<execution>
