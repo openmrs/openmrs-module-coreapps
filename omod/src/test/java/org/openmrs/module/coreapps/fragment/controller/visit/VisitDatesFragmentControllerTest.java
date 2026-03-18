@@ -22,7 +22,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.co.it.modular.hamcrest.date.DateMatchers.sameInstant;
 
 public class VisitDatesFragmentControllerTest {
     private VisitDatesFragmentController controller;
@@ -113,7 +112,7 @@ public class VisitDatesFragmentControllerTest {
         Date today = new DateTime().toDate();
         controller.setDuration(visitService, administrationService, visit, startDate, today, request, mock(UiUtils.class));
 
-        assertThat(savedVisit().getStopDatetime(), sameInstant(today));
+        assertThat(savedVisit().getStopDatetime(), is(today));
     }
 
     @Test

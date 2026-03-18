@@ -1,6 +1,8 @@
 package org.openmrs.module.coreapps.fragment.controller;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -9,7 +11,9 @@ import org.openmrs.api.IdentifierNotUniqueException;
 import org.openmrs.api.InvalidCheckDigitException;
 import org.openmrs.api.InvalidIdentifierFormatException;
 import org.openmrs.api.PatientService;
+import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
+import org.openmrs.module.emrapi.utils.GeneralUtils;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
@@ -22,8 +26,11 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 public class EditPatientIdentifierFragmentController {
 
+    protected static final Log log = LogFactory.getLog(EditPatientIdentifierFragmentController.class);
+
     // if a patient identifier id is passed in, assume editing existing, otherwise assume creating new
 	public FragmentActionResult editPatientIdentifier(UiUtils ui,
+                                                      UiSessionContext sessionContext,
 	                                                  @RequestParam("patientId") Patient patient,
                                                       @RequestParam(value = "patientIdentifierId", required = false) PatientIdentifier patientIdentifier,
 	                                                  @RequestParam("identifierTypeId") PatientIdentifierType identifierType,
@@ -57,7 +64,18 @@ public class EditPatientIdentifierFragmentController {
             // assure that a location has been set if required
             if (patientIdentifier.getLocation() == null
                     && !PatientIdentifierType.LocationBehavior.NOT_USED.equals(patientIdentifier.getIdentifierType().getLocationBehavior())) {
-                patientIdentifier.setLocation(coreAppsProperties.getDefaultPatientIdentifierLocation());
+                if (coreAppsProperties.getDefaultPatientIdentifierLocation() != null) {
+                    patientIdentifier.setLocation(coreAppsProperties.getDefaultPatientIdentifierLocation());
+                }
+                else {
+                    Location medicalRecordLocation = GeneralUtils.getMedicalRecordLocationAssociatedWith(sessionContext.getSessionLocation());
+                    if (medicalRecordLocation != null) {
+                        patientIdentifier.setLocation(medicalRecordLocation);
+                    }
+                    else {
+                        log.warn("Unable to set patient identifier location");
+                    }
+                }
             }
 
             // validate the identifier

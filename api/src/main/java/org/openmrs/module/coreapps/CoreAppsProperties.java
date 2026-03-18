@@ -13,7 +13,12 @@ public class CoreAppsProperties extends ModuleProperties {
 
    // when adding a new patient identifier via the patient dashboard, the location to use if not specified (and the identifier type requires a location)
    public Location getDefaultPatientIdentifierLocation() {
-      return getLocationByGlobalProperty(CoreAppsConstants.GP_DEFAULT_PATIENT_IDENTIFIER_LOCATION);
+       String globalProperty = this.administrationService.getGlobalProperty(CoreAppsConstants.GP_DEFAULT_PATIENT_IDENTIFIER_LOCATION);
+       if (StringUtils.isEmpty(globalProperty)) {
+           return null;
+       } else {
+           return this.locationService.getLocationByUuid(globalProperty);
+       }
    }
 
    public int getRecentDiagnosisPeriodInDays() {
