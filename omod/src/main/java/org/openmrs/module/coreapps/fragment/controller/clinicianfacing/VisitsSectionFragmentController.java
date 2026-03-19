@@ -66,9 +66,12 @@ public class VisitsSectionFragmentController {
 		VisitType visitType = null;
 		JsonNode visitTypeNode = appDescriptor.getConfig().path("visitType");
 		if (visitTypeNode != null) {
-			visitType = Context.getVisitService().getVisitTypeByUuid(visitTypeNode.getTextValue());
-			if (visitType == null) {
-				log.warn("Visit type with uuid: " + visitTypeNode.getTextValue() + " not found.");
+			String visitTypeUuid = visitTypeNode.getTextValue();
+			if (StringUtils.isNotBlank(visitTypeUuid)) {
+				visitType = Context.getVisitService().getVisitTypeByUuid(visitTypeUuid);
+				if (visitType == null) {
+					log.warn("Visit type with uuid: " + visitTypeNode.getTextValue() + " not found.");
+				}
 			}
 		}
 
