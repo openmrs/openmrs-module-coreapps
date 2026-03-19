@@ -13,7 +13,6 @@ import org.openmrs.api.InvalidIdentifierFormatException;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
-import org.openmrs.module.emrapi.utils.GeneralUtils;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
@@ -21,6 +20,8 @@ import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.openmrs.validator.PatientIdentifierValidator;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.openmrs.module.coreapps.CoreAppsConstants.LOCATION_TAG_MEDICAL_RECORD_LOCATION;
 
 /**
  */
@@ -64,11 +65,14 @@ public class EditPatientIdentifierFragmentController {
             // assure that a location has been set if required
             if (patientIdentifier.getLocation() == null
                     && !PatientIdentifierType.LocationBehavior.NOT_USED.equals(patientIdentifier.getIdentifierType().getLocationBehavior())) {
-                if (coreAppsProperties.getDefaultPatientIdentifierLocation() != null) {
-                    patientIdentifier.setLocation(coreAppsProperties.getDefaultPatientIdentifierLocation());
+
+                Location patientIdentifierLocation = coreAppsProperties.getDefaultPatientIdentifierLocation();
+
+                if (patientIdentifierLocation != null) {
+                    patientIdentifier.setLocation(patientIdentifierLocation);
                 }
                 else {
-                    Location medicalRecordLocation = GeneralUtils.getMedicalRecordLocationAssociatedWith(sessionContext.getSessionLocation());
+                    Location medicalRecordLocation = getMedicalRecordLocationAssociatedWith(sessionContext.getSessionLocation());
                     if (medicalRecordLocation != null) {
                         patientIdentifier.setLocation(medicalRecordLocation);
                     }
@@ -113,4 +117,15 @@ public class EditPatientIdentifierFragmentController {
 		return new SuccessResult(ui.format(identifierType) + " "
                 + ui.message("coreapps.patientDashBoard.editPatientIdentifier.successMessage"));
 	}
+
+    // TODO: update this to use the utility method in the EMR API GeneralUtils once we upgrade Core Apps to run against the latest version of EMR API
+    public static Location getMedicalRecordLocationAssociatedWith(Location location) {
+        if (location == null) {
+            return null;
+        } else if (location.hasTag(LOCATION_TAG_MEDICAL_RECORD_LOCATION)) {
+            return location;
+        } else {
+            return getMedicalRecordLocationAssociatedWith(location.getParentLocation());
+        }
+    }
 }
