@@ -86,9 +86,9 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         label.appendChild(uimessageLabel);
         dispositionObsGroup.appendChild(label);
 
-        // TODO: allow the id to be passed in from the form?
         Element dispositionObs = node.getOwnerDocument().createElement("obs");
-        dispositionObs.setAttribute("id", "disposition-" + UUID.randomUUID().toString());
+        String obsId = ((Element) node).hasAttribute("id") ? ((Element) node).getAttribute("id") : "disposition-" + UUID.randomUUID().toString();
+        dispositionObs.setAttribute("id", obsId);
         dispositionObs.setAttribute("style", "dropdown");
         dispositionObs.setAttribute("conceptId",  emrApiProperties.getEmrApiConceptSource().getName() + ":"
                 + EmrApiConstants.CONCEPT_CODE_DISPOSITION);
@@ -159,7 +159,7 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
         control.setWhenValue(disposition.getConceptCode());
 
         for (DispositionObs obs : additionalObs) {
-            control.getThenDisplay().add(UUID.randomUUID().toString());
+            control.getThenDisplay().add(toKebabCase(obs.getLabel()));
             control.getLabel().add(obs.getLabel());
             control.getConceptId().add(obs.getConceptCode());
             control.getParams().add(obs.getParams());
@@ -227,6 +227,13 @@ public class EncounterDispositionTagHandler extends AbstractTagHandler {
             }
         }
         return false;
+    }
+
+    private String toKebabCase(String input) {
+        if (input == null) {
+            return UUID.randomUUID().toString();
+        }
+        return input.trim().toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("^-|-$", "");
     }
 
     private Set<Obs> getObsGroupByGroupingConcept(Map<Obs,Set<Obs>> existingObsInGroups, Concept groupingConcept) {
