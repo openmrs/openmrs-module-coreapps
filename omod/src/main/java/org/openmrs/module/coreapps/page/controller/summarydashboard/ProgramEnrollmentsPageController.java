@@ -3,6 +3,7 @@ package org.openmrs.module.coreapps.page.controller.summarydashboard;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
 import org.openmrs.PatientState;
@@ -17,6 +18,7 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -31,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ProgramEnrollmentsPageController {
 
@@ -38,6 +41,7 @@ public class ProgramEnrollmentsPageController {
                              @SpringBean EmrApiProperties emrApiProperties,
                              @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
                              @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
+                             @SpringBean("adtService") AdtService adtService,
                              PageModel model,
                              UiSessionContext sessionContext) {
 
@@ -49,6 +53,15 @@ public class ProgramEnrollmentsPageController {
 
         AppContextModel contextModel = sessionContext.generateAppContextModel();
         model.addAttribute("appContextModel", contextModel);
+
+        Location visitLocation = null;
+        if (sessionContext.getSessionLocation() != null) {
+            try {
+                visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+            }
+            catch (IllegalArgumentException ignored) {}
+        }
+        model.addAttribute("visitLocation", visitLocation);
 
         List<Extension> firstColumnFragments = appFrameworkService.getExtensionsForCurrentUser(app.getId() + ".firstColumnFragments", contextModel);
         Collections.sort(firstColumnFragments);
@@ -71,8 +84,15 @@ public class ProgramEnrollmentsPageController {
             workflows = program.getWorkflows();
             if (program != null ) {
                 Date today = Calendar.getInstance().getTime();
-                // retrieve all program enrollments still active as now
+                // retrieve all program enrollments still active as of now
                 List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(null, program, null, today, today, null, false);
+
+                // filter by visit location if available
+                Location l = visitLocation;
+                if (visitLocation != null) {
+                    patientPrograms = patientPrograms.stream().filter((p) -> p.getLocation() == l).collect(Collectors.toList());
+                }
+
                 for (PatientProgram patientProgram : patientPrograms) {
                     Patient patient = patientProgram.getPatient();
                     SimpleObject prgObject = SimpleObject.create(
