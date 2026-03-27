@@ -48,7 +48,7 @@
 </div>
 <br/>
 <div class="dashboard info-header clear">
-	<h3>${ ui.message("coreapps.currently.enrolled") }:</h3>
+	<h3>${ ui.message("coreapps.currently.enrolled") }${ visitLocation?.name ? ' - ' +  ui.message(visitLocation.name) : '' }:</h3>
 </div>
 <div>
 	<table id="enrollmentsTable" style="width: 100%">

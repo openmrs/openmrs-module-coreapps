@@ -2,10 +2,13 @@ package org.openmrs.module.coreapps.fragment.controller.dashboardwidgets;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.annotation.FragmentParam;
@@ -19,8 +22,12 @@ import java.util.Map;
 
 public class DashboardWidgetFragmentController {
 
-    public void controller(FragmentConfiguration config, @FragmentParam("app") AppDescriptor app, @InjectBeans PatientDomainWrapper patientWrapper,
-                           @SpringBean("adminService") AdministrationService adminService, FragmentModel model) throws IOException {
+    public void controller(FragmentConfiguration config,
+                           @FragmentParam("app") AppDescriptor app,
+                           @InjectBeans PatientDomainWrapper patientWrapper,
+                           @SpringBean("adminService") AdministrationService adminService,
+                           @SpringBean("adtService") AdtService adtService,
+                           FragmentModel model, UiSessionContext sessionContext) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
         Object patient = null;
@@ -59,6 +66,16 @@ public class DashboardWidgetFragmentController {
 
         appConfig.put("locale", Context.getLocale().toString());
         appConfig.put("language", Context.getLocale().getLanguage());
+
+        appConfig.put("sessionLocationUuid", sessionContext.getSessionLocation() != null ? sessionContext.getSessionLocation().getUuid() : null);
+        Location visitLocation = null;
+        if (sessionContext.getSessionLocation() != null) {
+            try {
+                visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+            }
+            catch (IllegalArgumentException ignored) {}
+        }
+        appConfig.put("visitLocationUuid", visitLocation != null ? visitLocation.getUuid() : null);
 
         Map<String, Object> appConfigMap = mapper.convertValue(appConfig, Map.class);
         config.merge(appConfigMap);
