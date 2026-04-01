@@ -90,7 +90,7 @@ public class ProgramEnrollmentsPageController {
                 // filter by visit location if available
                 Location l = visitLocation;
                 if (visitLocation != null) {
-                    patientPrograms = patientPrograms.stream().filter((p) -> p.getLocation() == l).collect(Collectors.toList());
+                    patientPrograms = patientPrograms.stream().filter((p) -> p.getLocation() != null && p.getLocation().equals(l)).collect(Collectors.toList());
                 }
 
                 for (PatientProgram patientProgram : patientPrograms) {
