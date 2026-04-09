@@ -18,17 +18,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonNode;
 import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.VisitType;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appframework.template.TemplateFactory;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.coreapps.CoreAppsProperties;
+import org.openmrs.module.coreapps.contextmodel.AppContextModelGenerator;
 import org.openmrs.module.coreapps.contextmodel.PatientContextModel;
 import org.openmrs.module.coreapps.contextmodel.VisitContextModel;
 import org.openmrs.module.coreapps.utils.VisitTypeHelper;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
@@ -59,8 +63,11 @@ public class VisitsSectionFragmentController {
 						   @FragmentParam("app") AppDescriptor appDescriptor, // this is the app descriptor of the Visits Sections fragment
 						   @SpringBean("appframeworkTemplateFactory") TemplateFactory templateFactory,
                            @SpringBean("coreAppsProperties") CoreAppsProperties coreAppsProperties,
-						   @InjectBeans PatientDomainWrapper patientWrapper, @SpringBean("adtService") AdtService adtService,
-			               @SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper) {
+						   @SpringBean("emrAPiProperties") EmrApiProperties emrApiProperties,
+						   @InjectBeans PatientDomainWrapper patientWrapper,
+						   @SpringBean("adtService") AdtService adtService,
+			               @SpringBean("locationService") LocationService locationService,
+						   @SpringBean("visitTypeHelper") VisitTypeHelper visitTypeHelper) {
 		config.require("patient");
 		Object patient = config.get("patient");
 		VisitType visitType = null;
@@ -154,6 +161,17 @@ public class VisitsSectionFragmentController {
 		Map<Integer, Map<String, Object>> recentVisitsWithAttr = visitTypeHelper.getVisitColorAndShortName(recentVisits);
 		model.addAttribute("recentVisitsWithAttr", recentVisitsWithAttr);
 		model.addAttribute("recentVisitsWithLinks", recentVisitsWithLinks);
+
+		// if this server supports more than one facility (ie visit location), then we show the visit location when we display the visit
+		boolean showVisitLocation = false;
+		LocationTag visitLocationTag = emrApiProperties.getSupportsAdmissionLocationTag();
+		if (visitLocationTag != null) {
+			List<Location> visitLocations = (locationService.getLocationsByTag(visitLocationTag));
+			if (visitLocations != null && visitLocations.size() > 1) {
+				showVisitLocation = true;
+			}
+		}
+		model.addAttribute("showVisitLocation", showVisitLocation);
 
 		// this allows to overwrite the default showVisitTypeOnPatientHeaderSection GP setting via the  Visits Section widget's config param
 		JsonNode showVisitType = appDescriptor.getConfig().path("showVisitTypeOnPatientHeaderSection");

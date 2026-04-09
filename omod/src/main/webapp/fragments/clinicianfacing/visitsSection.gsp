@@ -26,6 +26,7 @@
                     <div class="tag">
                         <% if (it.stopDatetime == null || new Date().before(it.stopDatetime)) { %> ${ ui.message("coreapps.clinicianfacing.active") } - <% } %>
                         ${ (it.admissionEncounter) ? ui.message("coreapps.clinicianfacing.inpatient") : ui.message("coreapps.clinicianfacing.outpatient") }
+                        <% if (showVisitLocation) { %> - ${ ui.format(it.visit.location) } <% } %>
                     </div>
                 </li>
                 <% } %>
@@ -52,7 +53,7 @@
                                     });
                                 </script>
                                 <span id="visittype-tag-${visitId}" class="tag" >
-                                    ${ ui.format(it.visit.visitType)}
+                                    ${ ui.format(it.visit.visitType)}<% if (showVisitLocation) { %> - ${ ui.format(it.visit.location) } <% } %>
                                 </span>
                             <% } %>
                         <% } %>
