@@ -136,12 +136,10 @@ export default class ProgramStatusController {
         else if (this.programLocations && this.programLocations.length == 1) {
             this.input.enrollmentLocation = this.programLocations[0].uuid;
         }
-        // if we have more than one location, set the current session's location as the default
+        // if we have more than one location, find the nearest ancestor of the session location tagged as a valid program location
         else if (this.programLocations) {
             if (this.sessionLocation) {
-                let defaultLoc = this.$filter('filter')(this.programLocations, (location) => {
-                    return (location.uuid == this.sessionLocation.uuid);
-                })[0];
+                let defaultLoc = this.findNearestProgramLocationInSessionLocationHierarchy(this.sessionLocation);
                 if (defaultLoc) {
                     this.input.enrollmentLocation = defaultLoc.uuid;
                 }
@@ -246,13 +244,24 @@ export default class ProgramStatusController {
             return e
         });
     }
-
     fetchSessionLocation() {
-        return this.openmrsRest.get('appui/session', {
-            v: 'custom:name,uuid',
-        }).then((response) => {
-            this.sessionLocation = response.sessionLocation;
+        return this.openmrsRest.get('appui/session').then((response) => {
+            if (response && response.sessionLocation) {
+                return this.openmrsRest.get('location/' + response.sessionLocation.uuid, {
+                    v: 'custom:uuid,parentLocation:(uuid,parentLocation:(uuid,parentLocation:(uuid,parentLocation:(uuid,parentLocation:(uuid)))))'
+                }).then((locationResponse) => {
+                    this.sessionLocation = locationResponse;
+                });
+            }
         });
+    }
+
+    // should go five levels deep, see fetchSessionLocation
+    findNearestProgramLocationInSessionLocationHierarchy(location) {
+        if (!location) return null;
+        let match = this.programLocations.find(l => l.uuid === location.uuid);
+        if (match) return match;
+        return this.findNearestProgramLocationInSessionLocationHierarchy(location.parentLocation);
     }
 
     fetchOutcomes() {

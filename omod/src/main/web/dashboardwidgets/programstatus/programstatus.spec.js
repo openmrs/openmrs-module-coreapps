@@ -208,7 +208,8 @@
 
 		$httpBackend.whenGET('/ws/rest/v1/session').respond(sessionResponse);
 		$httpBackend.whenGET('/ws/rest/v1/session?v=custom:(privileges:(name))').respond(sessionResponse);
-		$httpBackend.whenGET('/ws/rest/v1/appui/session?v=custom:name,uuid').respond(sessionResponse);
+		$httpBackend.whenGET('/ws/rest/v1/appui/session').respond(sessionResponse);
+		$httpBackend.whenGET('/ws/rest/v1/location/8fe901fb-4f09-466e-a7ea-dd95e0f3048d?v=custom:uuid,parentLocation:(uuid,parentLocation:(uuid,parentLocation:(uuid,parentLocation:(uuid,parentLocation:(uuid)))))').respond({"uuid":"8fe901fb-4f09-466e-a7ea-dd95e0f3048d"});
 
 		$httpBackend.whenGET('/ws/rest/v1/location?tag=fb6f5fe0-904b-4a85-9806-d72ec139f9de&v=custom:display,uuid').respond(locationResponse);
 		$httpBackend.whenGET('/ws/rest/v1/program/222e229b-f011-45c5-940e-e5599383c967?v=custom:display,uuid,outcomesConcept:(uuid),workflows:(uuid,concept:(display),states:(uuid,initial,terminal,concept:(display))').respond(programResponse);
@@ -1174,4 +1175,94 @@
 
 			$httpBackend.flush();
 		});
+
+	describe('setInputsToStartingValues default enrollment location', () => {
+		let ctrl;
+		const bindings = {
+			config: {
+				program: "222e229b-f011-45c5-940e-e5599383c967",
+				locationTag: "fb6f5fe0-904b-4a85-9806-d72ec139f9de",
+				patientUuid: "919caaf7-122d-4001-8b53-ecdce347c8a5"
+			}
+		};
+
+		beforeEach(() => {
+			ctrl = $componentController('programstatus', {$scope}, bindings);
+			ctrl.patientProgram = null;
+			ctrl.input = {
+				dateEnrolled: null,
+				enrollmentLocation: null,
+				dateCompleted: null,
+				outcome: null,
+				initialWorkflowStateByWorkflow: {},
+				changeToStateByWorkflow: {}
+			};
+		});
+
+		it('should default to the session location when it directly matches a program location', () => {
+			ctrl.programLocations = [
+				{ uuid: 'hospital-abc-uuid', display: 'Hospital ABC' },
+				{ uuid: 'hospital-xyz-uuid', display: 'Hospital XYZ' }
+			];
+			ctrl.sessionLocation = { uuid: 'hospital-xyz-uuid' };
+			ctrl.setInputsToStartingValues();
+			expect(ctrl.input.enrollmentLocation).toBe('hospital-xyz-uuid');
+		});
+
+		it('should default to the nearest ancestor when session location is a child of a program location', () => {
+			ctrl.programLocations = [
+				{ uuid: 'hospital-abc-uuid', display: 'Hospital ABC' },
+				{ uuid: 'hospital-xyz-uuid', display: 'Hospital XYZ' }
+			];
+			ctrl.sessionLocation = { uuid: 'ward-uuid', parentLocation: { uuid: 'hospital-xyz-uuid' } };
+			ctrl.setInputsToStartingValues();
+			expect(ctrl.input.enrollmentLocation).toBe('hospital-xyz-uuid');
+		});
+
+		it('should not set a default location when no ancestor of the session location matches a program location', () => {
+			ctrl.programLocations = [
+				{ uuid: 'hospital-abc-uuid', display: 'Hospital ABC' },
+				{ uuid: 'hospital-xyz-uuid', display: 'Hospital XYZ' }
+			];
+			ctrl.sessionLocation = { uuid: 'other-uuid', parentLocation: { uuid: 'also-other-uuid' } };
+			ctrl.setInputsToStartingValues();
+			expect(ctrl.input.enrollmentLocation).toBeNull();
+		});
+
+		it('should default to the nearest ancestor two levels up when session location is a grandchild of a program location', () => {
+			ctrl.programLocations = [
+				{ uuid: 'hospital-abc-uuid', display: 'Hospital ABC' },
+				{ uuid: 'hospital-xyz-uuid', display: 'Hospital XYZ' }
+			];
+			ctrl.sessionLocation = { uuid: 'bed-uuid', parentLocation: { uuid: 'ward-uuid', parentLocation: { uuid: 'hospital-xyz-uuid' } } };
+			ctrl.setInputsToStartingValues();
+			expect(ctrl.input.enrollmentLocation).toBe('hospital-xyz-uuid');
+		});
+
+		it('should not set a default location when there is no session location', () => {
+			ctrl.programLocations = [
+				{ uuid: 'hospital-abc-uuid', display: 'Hospital ABC' },
+				{ uuid: 'hospital-xyz-uuid', display: 'Hospital XYZ' }
+			];
+			ctrl.sessionLocation = null;
+			ctrl.setInputsToStartingValues();
+			expect(ctrl.input.enrollmentLocation).toBeNull();
+		});
+
+		it('should use the existing patient program location rather than the session location hierarchy', () => {
+			ctrl.programLocations = [
+				{ uuid: 'hospital-abc-uuid', display: 'Hospital ABC' },
+				{ uuid: 'hospital-xyz-uuid', display: 'Hospital XYZ' }
+			];
+			ctrl.sessionLocation = { uuid: 'ward-uuid', parentLocation: { uuid: 'hospital-xyz-uuid' } };
+			ctrl.patientProgram = {
+				location: { uuid: 'hospital-abc-uuid' },
+				dateEnrolled: '2020-01-01',
+				dateCompleted: null,
+				outcome: null
+			};
+			ctrl.setInputsToStartingValues();
+			expect(ctrl.input.enrollmentLocation).toBe('hospital-abc-uuid');
+		});
+	});
 });
