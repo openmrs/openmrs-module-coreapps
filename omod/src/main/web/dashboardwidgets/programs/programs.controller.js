@@ -3,10 +3,10 @@ import angular from 'angular';
 
 export default class ProgramsController {
 
-    constructor($filter, openmrsRest, openmrsTranslate, widgetsCommons) {
+    constructor($filter, $window, openmrsRest, openmrsTranslate, widgetsCommons) {
         'ngInject';
 
-        Object.assign(this, {$filter, openmrsRest, openmrsTranslate, widgetsCommons});
+        Object.assign(this, {$filter, $window, openmrsRest, openmrsTranslate, widgetsCommons});
     }
 
     $onInit() {
@@ -20,6 +20,8 @@ export default class ProgramsController {
         this.patientPrograms= [];
 
         this.showAddProgram = false;
+
+        this.multipleProgramLocations = false;
 
         this.canEnrollInProgram = false;
 
@@ -48,6 +50,7 @@ export default class ProgramsController {
         }
 
         this.fetchPrivileges();
+        this.fetchLocations();
 
         this.fetchPrograms()
             .then(this.fetchPatientPrograms.bind(this))
@@ -70,6 +73,20 @@ export default class ProgramsController {
         });
     }
 
+    fetchLocations() {
+        var locationsPromise = this.$window.sessionContext.locationsPromise;
+        if (!locationsPromise) {
+            locationsPromise = this.openmrsRest.get("location", {
+                v: "custom:display,uuid",
+                tag: this.config.locationTag
+            });
+            this.$window.sessionContext.locationsPromise = locationsPromise;
+        }
+        return locationsPromise.then((response) => {
+            this.multipleProgramLocations = response.results.length > 1;
+        });
+    }
+
     fetchPrograms() {
         return this.openmrsRest.get('program', {
             v: 'custom:display,uuid'
@@ -83,7 +100,7 @@ export default class ProgramsController {
             patient: this.config.patientUuid,
             voided: false,
             limit: this.getMaxRecords(),
-            v: 'custom:program:(uuid,display),dateEnrolled,dateCompleted'
+            v: 'custom:program:(uuid,display),dateEnrolled,dateCompleted,location:(display)'
         }).then((response) => {
             this.getPatientPrograms(response.results);
         });

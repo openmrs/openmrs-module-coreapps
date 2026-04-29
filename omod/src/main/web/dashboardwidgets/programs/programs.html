@@ -22,8 +22,8 @@
             {{ patientProgram.program.display | limitTo: 16 }}{{patientProgram.program.display.length > 16 ? '...' : ''}}
         </a>
 
-        <div ng-show="!patientProgram.dateCompleted" class="tag">{{ $ctrl.widgetsCommons.formatDate(patientProgram.dateEnrolled,$ctrl.config.JSDateFormat,$ctrl.config.language) }} - {{'coreapps.dashboardwidgets.programs.current' | translate }}</div>
-        <div ng-show="patientProgram.dateCompleted" class="tag">{{ $ctrl.widgetsCommons.formatDate(patientProgram.dateEnrolled,$ctrl.config.JSDateFormat,$ctrl.config.language) }} - {{ $ctrl.widgetsCommons.formatDate(patientProgram.dateCompleted,$ctrl.config.JSDateFormat,$ctrl.config.language) }}</div>
+        <div ng-show="!patientProgram.dateCompleted" class="tag">{{ $ctrl.widgetsCommons.formatDate(patientProgram.dateEnrolled,$ctrl.config.JSDateFormat,$ctrl.config.language) }} - {{'coreapps.dashboardwidgets.programs.current' | translate }}<span ng-show="patientProgram.location && $ctrl.multipleProgramLocations">&nbsp;- {{ patientProgram.location.display }}</span></div>
+        <div ng-show="patientProgram.dateCompleted" class="tag">{{ $ctrl.widgetsCommons.formatDate(patientProgram.dateEnrolled,$ctrl.config.JSDateFormat,$ctrl.config.language) }} - {{ $ctrl.widgetsCommons.formatDate(patientProgram.dateCompleted,$ctrl.config.JSDateFormat,$ctrl.config.language) }}<span ng-show="patientProgram.location && $ctrl.multipleProgramLocations">&nbsp;- {{ patientProgram.location.display }}</span></div>
     </li>
 
     <li ng-show="$ctrl.patientPrograms.length == 0">
