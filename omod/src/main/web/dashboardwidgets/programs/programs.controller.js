@@ -80,6 +80,8 @@ export default class ProgramsController {
                 v: "custom:display,uuid",
                 tag: this.config.locationTag
             });
+            // make the location promise available for other program widgets
+            // sessionContext is defined in appui - https://github.com/openmrs/openmrs-module-appui/blob/master/omod/src/main/webapp/fragments/decorator/standardEmrPage.gsp
             this.$window.sessionContext.locationsPromise = locationsPromise;
         }
         return locationsPromise.then((response) => {
