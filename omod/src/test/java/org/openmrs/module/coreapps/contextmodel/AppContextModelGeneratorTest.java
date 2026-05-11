@@ -24,6 +24,7 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ProgramWorkflowService;
+import org.openmrs.api.VisitService;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -58,6 +59,9 @@ public class AppContextModelGeneratorTest {
     @Mock
     private ProgramWorkflowService programWorkflowService;
 
+    @Mock
+    private VisitService visitService;
+
     private UiSessionContext sessionContext;
     private Patient patient;
     private Location sessionLocation;
@@ -78,6 +82,7 @@ public class AppContextModelGeneratorTest {
         when(programWorkflowService.getPatientPrograms(
                 any(Patient.class), any(), any(), any(), any(), any(), anyBoolean()
         )).thenReturn(Collections.emptyList());
+        when(visitService.getActiveVisitsByPatient(patient)).thenReturn(Collections.emptyList());
     }
 
     @Test
@@ -152,6 +157,40 @@ public class AppContextModelGeneratorTest {
 
         assertThat(contextModel.get("patient"), notNullValue());
         assertThat(contextModel.get("patientId"), is("patient-uuid"));
+    }
+
+    @Test
+    public void generateAppContextModel_shouldSetHasAnyActiveVisitTrueWithoutServiceCallWhenVisitDomainWrapperIsNotNull() {
+        VisitDomainWrapper activeVisit = mockVisitDomainWrapper("visit-uuid");
+        when(adtService.getLocationThatSupportsVisits(sessionLocation)).thenReturn(visitSupportingLocation);
+        when(adtService.getActiveVisit(patient, visitSupportingLocation)).thenReturn(activeVisit);
+
+        AppContextModel contextModel = generator.generateAppContextModel(sessionContext, patient);
+
+        assertThat(contextModel.get("hasAnyActiveVisit"), is(true));
+        verify(visitService, never()).getActiveVisitsByPatient(any(Patient.class));
+    }
+
+    @Test
+    public void generateAppContextModel_shouldSetHasAnyActiveVisitTrueViaServiceCallWhenActiveVisitExistsElsewhere() {
+        when(adtService.getLocationThatSupportsVisits(sessionLocation)).thenReturn(visitSupportingLocation);
+        when(adtService.getActiveVisit(patient, visitSupportingLocation)).thenReturn(null);
+        when(visitService.getActiveVisitsByPatient(patient)).thenReturn(Collections.singletonList(new Visit()));
+
+        AppContextModel contextModel = generator.generateAppContextModel(sessionContext, patient);
+
+        assertThat(contextModel.get("hasAnyActiveVisit"), is(true));
+    }
+
+    @Test
+    public void generateAppContextModel_shouldSetHasAnyActiveVisitFalseWhenPatientHasNoActiveVisits() {
+        when(adtService.getLocationThatSupportsVisits(sessionLocation)).thenReturn(visitSupportingLocation);
+        when(adtService.getActiveVisit(patient, visitSupportingLocation)).thenReturn(null);
+        when(visitService.getActiveVisitsByPatient(patient)).thenReturn(Collections.emptyList());
+
+        AppContextModel contextModel = generator.generateAppContextModel(sessionContext, patient);
+
+        assertThat(contextModel.get("hasAnyActiveVisit"), is(false));
     }
 
     private VisitDomainWrapper mockVisitDomainWrapper(String uuid) {

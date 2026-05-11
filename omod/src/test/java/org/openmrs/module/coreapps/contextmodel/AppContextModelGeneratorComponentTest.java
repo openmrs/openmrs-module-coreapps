@@ -125,6 +125,27 @@ public class AppContextModelGeneratorComponentTest extends BaseModuleWebContextS
     }
 
     @Test
+    public void generateAppContextModel_shouldSetHasAnyActiveVisitTrueWhenActiveVisitExistsAtAnyLocation() {
+        createActiveVisit(patient, locationService.getLocation(1)); // a location without the Supports Visits tag
+
+        UiSessionContext sessionContext = mockSessionContext(visitSupportingLocation);
+        AppContextModel contextModel = generator.generateAppContextModel(sessionContext, patient);
+
+        assertThat(contextModel.get("hasAnyActiveVisit"), is(true));
+    }
+
+    @Test
+    public void generateAppContextModel_shouldSetHasAnyActiveVisitFalseWhenNoActiveVisitsExist() {
+        // patient 8 has no visits at all in the standard dataset
+        Patient patientWithNoVisits = patientService.getPatient(8);
+
+        UiSessionContext sessionContext = mockSessionContext(visitSupportingLocation);
+        AppContextModel contextModel = generator.generateAppContextModel(sessionContext, patientWithNoVisits);
+
+        assertThat(contextModel.get("hasAnyActiveVisit"), is(false));
+    }
+
+    @Test
     public void generateAppContextModel_shouldPopulateEncountersAndProgramsOnContextModel() {
         UiSessionContext sessionContext = mockSessionContext(visitSupportingLocation);
         AppContextModel contextModel = generator.generateAppContextModel(sessionContext, patient);

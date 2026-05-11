@@ -23,6 +23,7 @@ import org.openmrs.Program;
 import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.ProgramWorkflowService;
+import org.openmrs.api.VisitService;
 import org.openmrs.module.appframework.context.AppContextModel;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -47,6 +48,9 @@ public class AppContextModelGenerator {
 
     @Autowired
     ProgramWorkflowService programWorkflowService;
+
+    @Autowired
+    VisitService visitService;
 
     /**
      * Generates an AppContextModel for the given patient
@@ -86,6 +90,9 @@ public class AppContextModelGenerator {
         contextModel.put("patient", new PatientContextModel(patient));
 		contextModel.put("patientId", patient != null ? patient.getUuid() : null);  // support legacy substitution methods that use "{{patientId}}" as a template and expect a uuid substitution
         contextModel.put("visit", visitDomainWrapper == null ? null : new VisitContextModel(visitDomainWrapper));
+        boolean hasAnyActiveVisit = visitDomainWrapper != null
+                || (patient != null && !visitService.getActiveVisitsByPatient(patient).isEmpty());
+        contextModel.put("hasAnyActiveVisit", hasAnyActiveVisit);
 
         List<EncounterType> encounterTypes = new ArrayList<>();
         ArrayList<PatientEncounterContextModel> encountersModel = new ArrayList<>();
