@@ -125,12 +125,37 @@ public class AppContextModelGeneratorComponentTest extends BaseModuleWebContextS
     }
 
     @Test
-    public void generateAppContextModel_shouldSetHasAnyActiveVisitTrueWhenActiveVisitExistsAtAnyLocation() {
-        createActiveVisit(patient, locationService.getLocation(1)); // a location without the Supports Visits tag
+    public void generateAppContextModel_shouldSetHasAnyActiveVisitTrueViaShortCircuitWhenActiveVisitFoundAtSessionLocation() {
+        // visitDomainWrapper is non-null from getActiveVisit — no service call needed
+        createActiveVisit(patient, visitSupportingLocation);
 
         UiSessionContext sessionContext = mockSessionContext(visitSupportingLocation);
         AppContextModel contextModel = generator.generateAppContextModel(sessionContext, patient);
 
+        assertThat(contextModel.get("visit"), notNullValue());
+        assertThat(contextModel.get("hasAnyActiveVisit"), is(true));
+    }
+
+    @Test
+    public void generateAppContextModel_shouldSetHasAnyActiveVisitTrueViaShortCircuitWhenExplicitVisitPassed() {
+        // visitDomainWrapper is non-null from wrap(visit) — no service call needed
+        Visit activeVisit = createActiveVisit(patient, visitSupportingLocation);
+
+        UiSessionContext sessionContext = mockSessionContext(visitSupportingLocation);
+        AppContextModel contextModel = generator.generateAppContextModel(sessionContext, patient, activeVisit);
+
+        assertThat(contextModel.get("hasAnyActiveVisit"), is(true));
+    }
+
+    @Test
+    public void generateAppContextModel_shouldSetHasAnyActiveVisitTrueWhenActiveVisitExistsAtNonSessionLocation() {
+        // visitDomainWrapper is null (no active visit at session location), falls back to service call
+        createActiveVisit(patient, locationService.getLocation(1)); // location without Visit Location tag
+
+        UiSessionContext sessionContext = mockSessionContext(visitSupportingLocation);
+        AppContextModel contextModel = generator.generateAppContextModel(sessionContext, patient);
+
+        assertThat(contextModel.get("visit"), nullValue());
         assertThat(contextModel.get("hasAnyActiveVisit"), is(true));
     }
 
