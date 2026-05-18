@@ -7,6 +7,7 @@ import org.mockito.ArgumentMatcher;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.adt.exception.ExistingVisitDuringTimePeriodException;
@@ -16,6 +17,7 @@ import org.openmrs.ui.framework.UiUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +40,8 @@ public class RetrospectiveVisitFragmentControllerTest {
 
     AdtService adtService;
 
+    AdministrationService administrationService;
+
     UiUtils ui;
 
     HttpServletRequest request;
@@ -48,11 +52,15 @@ public class RetrospectiveVisitFragmentControllerTest {
     public void setup() {
         controller = new RetrospectiveVisitFragmentController();
         adtService = mock(AdtService.class);
+        administrationService = mock(AdministrationService.class);
         ui = mock(UiUtils.class);
         request = mock(HttpServletRequest.class);
         session = mock(HttpSession.class);
 
         when(request.getSession()).thenReturn(session);
+        // default: property not set, so overlapping at another location is allowed
+        when(administrationService.getGlobalProperty(RetrospectiveVisitFragmentController.ALLOW_OVERLAPPING_VISIT_AT_ANOTHER_LOCATION_GP))
+                .thenReturn(null);
     }
 
     @Test
@@ -74,7 +82,7 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate)).thenReturn(new VisitDomainWrapper(visit));
 
-        SimpleObject result = (SimpleObject) controller.create(adtService, patient, location, startDate, stopDate, request, ui);
+        SimpleObject result = (SimpleObject) controller.create(adtService, administrationService, patient, location, startDate, stopDate, request, ui);
 
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                 ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
@@ -102,7 +110,7 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate)).thenReturn(new VisitDomainWrapper(visit));
 
-        SimpleObject result = (SimpleObject) controller.create(adtService, patient, location, startDate, null, request, ui);
+        SimpleObject result = (SimpleObject) controller.create(adtService, administrationService, patient, location, startDate, null, request, ui);
 
         verify(session).setAttribute(AppUiConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                 ui.message("coreapps.retrospectiveVisit.addedVisitMessage"));
@@ -136,7 +144,7 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         when(ui.format(any())).thenReturn("someDate");
 
-        List<SimpleObject> result = (List<SimpleObject>) controller.create(adtService, patient, location, startDate, null, request, ui);
+        List<SimpleObject> result = (List<SimpleObject>) controller.create(adtService, administrationService, patient, location, startDate, null, request, ui);
 
         assertThat(result.size(), is(1));
         assertThat(result.get(0).toJson(), is("{\"startDate\":\"someDate\",\"stopDate\":\"someDate\",\"id\":null,\"uuid\":\"" + conflictingVisit.getUuid() + "\"}"));
@@ -159,7 +167,7 @@ public class RetrospectiveVisitFragmentControllerTest {
         when(adtService.createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), any(Date.class))).thenReturn(new VisitDomainWrapper(mockVisit));  // to prevent against NPE when generating success message
 
         Date expectedMinDateValue = new Date();
-        controller.create(adtService, patient, location, startDate, endDate, request, ui);
+        controller.create(adtService, administrationService, patient, location, startDate, endDate, request, ui);
         Date expectedMaxDateValue = new Date();
 
         verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), argThat(new IsWithinDateRange(expectedMinDateValue, expectedMaxDateValue)));
@@ -184,7 +192,7 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         when(adtService.createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), any(Date.class))).thenReturn(new VisitDomainWrapper(mockVisit));  // to prevent against NPE when generating success message
 
-        controller.create(adtService, patient, location, startDate, endDate, request, ui);
+        controller.create(adtService, administrationService, patient, location, startDate, endDate, request, ui);
 
         verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), eq(endDate));
 
@@ -207,10 +215,70 @@ public class RetrospectiveVisitFragmentControllerTest {
 
         when(adtService.createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), any(Date.class))).thenReturn(new VisitDomainWrapper(mockVisit));  // to prevent against NPE when generating success message
 
-        controller.create(adtService, patient, location, startDate, endDate, request, ui);
+        controller.create(adtService, administrationService, patient, location, startDate, endDate, request, ui);
 
         verify(adtService).createRetrospectiveVisit(eq(patient), eq(location), eq(startDate), eq(endDate));
 
+    }
+
+    @Test
+    public void test_shouldReturnConflictingVisitsAtAnyLocationWhenPropertySetToFalse() throws Exception {
+
+        when(administrationService.getGlobalProperty(RetrospectiveVisitFragmentController.ALLOW_OVERLAPPING_VISIT_AT_ANOTHER_LOCATION_GP))
+                .thenReturn("false");
+
+        Patient patient = new Patient();
+        Location requestedLocation = new Location();
+        Location otherLocation = new Location();
+        Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
+
+        Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
+        Date expectedStopDate = null;
+
+        Visit conflictingVisit = new Visit();
+        conflictingVisit.setStartDatetime(new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate());
+        conflictingVisit.setStopDatetime(new DateTime(2012, 1, 3, 0, 0, 0, 999).toDate());
+
+        when(adtService.getAllLocationsThatSupportVisits()).thenReturn(Arrays.asList(requestedLocation, otherLocation));
+        when(adtService.getVisits(patient, requestedLocation, expectedStartDate, expectedStopDate)).thenReturn(Collections.emptyList());
+        when(adtService.getVisits(patient, otherLocation, expectedStartDate, expectedStopDate))
+                .thenReturn(Collections.singletonList(new VisitDomainWrapper(conflictingVisit)));
+
+        when(ui.format(any())).thenReturn("someDate");
+
+        List<SimpleObject> result = (List<SimpleObject>) controller.create(adtService, administrationService, patient, requestedLocation, startDate, null, request, ui);
+
+        assertThat(result.size(), is(1));
+        assertThat(result.get(0).toJson(), is("{\"startDate\":\"someDate\",\"stopDate\":\"someDate\",\"id\":null,\"uuid\":\"" + conflictingVisit.getUuid() + "\"}"));
+    }
+
+    @Test
+    public void test_shouldCreateVisitWhenPropertySetToFalseAndNoConflictAtAnyLocation() throws Exception {
+
+        when(administrationService.getGlobalProperty(RetrospectiveVisitFragmentController.ALLOW_OVERLAPPING_VISIT_AT_ANOTHER_LOCATION_GP))
+                .thenReturn("false");
+        when(ui.message("coreapps.retrospectiveVisit.addedVisitMessage")).thenReturn("success message");
+
+        Patient patient = createPatient();
+        Location location = new Location();
+        Location otherLocation = new Location();
+        Date startDate = new DateTime(2012, 1, 1, 12, 12, 12).toDate();
+        Date stopDate = new DateTime(2012, 1, 2, 13, 13, 13).toDate();
+
+        Date expectedStartDate = new DateTime(2012, 1, 1, 0, 0, 0, 0).toDate();
+        Date expectedStopDate = new DateTime(2012, 1, 2, 23, 59, 59, 999).toDate();
+
+        Visit visit = createVisit();
+
+        when(adtService.getAllLocationsThatSupportVisits()).thenReturn(Arrays.asList(location, otherLocation));
+        when(adtService.getVisits(patient, location, expectedStartDate, expectedStopDate)).thenReturn(Collections.emptyList());
+        when(adtService.getVisits(patient, otherLocation, expectedStartDate, expectedStopDate)).thenReturn(Collections.emptyList());
+        when(adtService.createRetrospectiveVisit(patient, location, expectedStartDate, expectedStopDate)).thenReturn(new VisitDomainWrapper(visit));
+
+        SimpleObject result = (SimpleObject) controller.create(adtService, administrationService, patient, location, startDate, stopDate, request, ui);
+
+        assertTrue((Boolean) result.get("success"));
+        assertThat((String) result.get("id"), is(visit.getId().toString()));
     }
 
     private Visit createVisit() {
