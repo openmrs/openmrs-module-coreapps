@@ -171,6 +171,16 @@
 
     <!-- Global Properties -->
     <globalProperty>
+        <property>coreapps.addPastVisitsAllowOverlappingVisitAtAnotherLocation</property>
+        <defaultValue>true</defaultValue>
+        <description>
+            When adding a past (retrospective) visit, controls whether a visit is allowed if the patient already has
+            a visit at a different location during that time period. When set to false, the patient must have no visits
+            at any location during the requested time period.
+        </description>
+    </globalProperty>
+
+    <globalProperty>
         <property>coreapps.defaultPatientIdentifierLocation</property>
         <defaultValue></defaultValue>
         <description>
