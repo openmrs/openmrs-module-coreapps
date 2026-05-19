@@ -3,6 +3,7 @@ package org.openmrs.module.coreapps.fragment.controller.visit;
 import org.joda.time.DateTime;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.module.appui.AppUiConstants;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.adt.exception.ExistingVisitDuringTimePeriodException;
@@ -22,9 +23,13 @@ import javax.servlet.http.HttpServletRequest;
 
 public class RetrospectiveVisitFragmentController {
 
+    static final String ALLOW_OVERLAPPING_VISIT_AT_ANOTHER_LOCATION_GP =
+            "coreapps.addPastVisitsAllowOverlappingVisitAtAnotherLocation";
+
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     public Object create(@SpringBean("adtService") AdtService adtService,
+                                       @SpringBean("adminService") AdministrationService administrationService,
                                        @RequestParam("patientId") Patient patient,
                                        @RequestParam("locationId") Location location,
                                        @RequestParam("startDate") Date startDate,
@@ -48,7 +53,15 @@ public class RetrospectiveVisitFragmentController {
             }
         }
 
+        String propValue = administrationService.getGlobalProperty(ALLOW_OVERLAPPING_VISIT_AT_ANOTHER_LOCATION_GP);
+        boolean allowOverlappingAtAnotherLocation = !"false".equalsIgnoreCase(propValue);
 
+        if (!allowOverlappingAtAnotherLocation) {
+            List<SimpleObject> conflictingVisits = getConflictsAcrossAllLocations(adtService, patient, startDate, stopDate, ui);
+            if (!conflictingVisits.isEmpty()) {
+                return conflictingVisits;
+            }
+        }
 
         try {
             VisitDomainWrapper createdVisit = adtService.createRetrospectiveVisit(patient, location, startDate, stopDate);
@@ -62,28 +75,51 @@ public class RetrospectiveVisitFragmentController {
         catch (ExistingVisitDuringTimePeriodException e) {
 
             // if there are existing visit(s), return these existing visits
-            List<SimpleObject> simpleVisits = new ArrayList<SimpleObject>();
+            List<SimpleObject> conflictingVisits = new ArrayList<SimpleObject>();
             List<VisitDomainWrapper> visits = adtService.getVisits(patient, location, startDate, stopDate);
 
             if (visits != null) {
                 for (VisitDomainWrapper visit : visits) {
-                    if(ui.convertTimezones()){
-                        simpleVisits.add(SimpleObject.create("startDate", ui.formatDateWithClientTimezone(new DateTime(visit.getVisit().getStartDatetime()).toDate()),
-                                "stopDate", ui.formatDateWithClientTimezone(new DateTime(visit.getVisit().getStopDatetime()).toDate()),
-                                "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));
-                    }else{
-                        simpleVisits.add(SimpleObject.create("startDate", ui.format(new DateTime(visit.getVisit().getStartDatetime()).toDateMidnight().toDate()),
-                                "stopDate", ui.format(new DateTime(visit.getVisit().getStopDatetime()).toDateMidnight().toDate()),
-                                "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid()));
-                    }
+                    conflictingVisits.add(formatVisit(visit, ui));
                 }
             }
 
-            return simpleVisits;
+            return conflictingVisits;
         }
         catch (Exception e) {
             log.error("Unable to add retrospective visit", e);
             return new FailureResult(ui.message(e.getMessage()));
+        }
+    }
+
+    private List<SimpleObject> getConflictsAcrossAllLocations(AdtService adtService, Patient patient,
+                                                               Date startDate, Date stopDate, UiUtils ui) {
+        List<SimpleObject> conflictingVisits = new ArrayList<SimpleObject>();
+        List<Location> allLocations = adtService.getAllLocationsThatSupportVisits();
+        if (allLocations != null) {
+            for (Location loc : allLocations) {
+                List<VisitDomainWrapper> visits = adtService.getVisits(patient, loc, startDate, stopDate);
+                if (visits != null) {
+                    for (VisitDomainWrapper visit : visits) {
+                        conflictingVisits.add(formatVisit(visit, ui));
+                    }
+                }
+            }
+        }
+        return conflictingVisits;
+    }
+
+    private SimpleObject formatVisit(VisitDomainWrapper visit, UiUtils ui) {
+        if (ui.convertTimezones()) {
+            return SimpleObject.create(
+                    "startDate", ui.formatDateWithClientTimezone(new DateTime(visit.getVisit().getStartDatetime()).toDate()),
+                    "stopDate", ui.formatDateWithClientTimezone(new DateTime(visit.getVisit().getStopDatetime()).toDate()),
+                    "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid());
+        } else {
+            return SimpleObject.create(
+                    "startDate", ui.format(new DateTime(visit.getVisit().getStartDatetime()).toDateMidnight().toDate()),
+                    "stopDate", ui.format(new DateTime(visit.getVisit().getStopDatetime()).toDateMidnight().toDate()),
+                    "id", visit.getVisit().getId(), "uuid", visit.getVisit().getUuid());
         }
     }
 
