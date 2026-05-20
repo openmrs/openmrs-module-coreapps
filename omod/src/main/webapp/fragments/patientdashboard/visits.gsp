@@ -77,18 +77,13 @@
             <span class="menu-date">
                 <i class="icon-time"></i>
                 <span class="visit-start-date">
-                    <% if(ui.convertTimezones()) { %>
-                ${ui.format(wrapper.visit.startDatetime)}
-                <% } else { %>
-                    ${ui.format(wrapper.startDate)}
-                <% } %>
+                    ${ui.formatDateWithClientTimezone(wrapper.visit.startDatetime)}
                 </span>
-                <% if(wrapper.stopDate != null) { %>
-                    <% if(ui.convertTimezones()) { %>
-                        - <span class="visit-stop-date">${ui.formatDateWithClientTimezone(wrapper.visit.stopDatetime)}</span>
-                    <% } else { %>
-                        - <span class="visit-stop-date">${ui.format(wrapper.stopDate)}</span>
-                    <% } %>
+               <% if(wrapper.stopDate != null) { %>
+                   - <span class="visit-stop-date">
+                       ${ui.formatDateWithClientTimezone(wrapper.visit.stopDatetime)}
+                   </span>
+               <% } %>
                 <% } else { %>
                     <% if(ui.convertTimezones()) { %>
                         (${ ui.message("coreapps.patientDashBoard.activeSince")}<span class="visit-start-datetime"> ${ui.formatTimeWithClientTimezone(wrapper.visit.startDatetime)}</span>)
