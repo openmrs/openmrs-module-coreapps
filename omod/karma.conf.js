@@ -2,13 +2,14 @@ process.env.CHROME_BIN = require('puppeteer').executablePath();
 
 module.exports = function(config) {
 	var pkg = require("./package.json");
-	var webpackConfig = require('./webpack.config');
+	var webpackConfig = require('./webpack.config')({});
 	webpackConfig.devtool = 'inline-source-map';
-	
-	//Disable CommonsChunkPlugin as it breaks tests.
-	var commonsChunkPluginIndex = webpackConfig.plugins.findIndex(function(plugin) { return plugin.chunkNames });
-	webpackConfig.plugins.splice(commonsChunkPluginIndex, 1);
-	
+
+	// Disable splitChunks as it breaks tests.
+	webpackConfig.optimization = webpackConfig.optimization || {};
+	webpackConfig.optimization.splitChunks = false;
+	webpackConfig.optimization.runtimeChunk = false;
+
     var karmaConfig = {
 		browsers: ['ChromeHeadlessNoSandbox'],
 		customLaunchers: {
@@ -23,7 +24,7 @@ module.exports = function(config) {
 			}
 		},
         files: [
-			{ pattern: 'node_modules/babel-polyfill/browser.js', instrument: false},
+			{ pattern: 'node_modules/@babel/polyfill/dist/polyfill.js', instrument: false},
             { pattern: pkg.config.sourceDir + '/karma.context.js' }
         ],
 		frameworks: ['jasmine'],
