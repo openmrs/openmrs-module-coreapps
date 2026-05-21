@@ -107,8 +107,8 @@
         <!-- VIEW sections -->
 
         <fieldset  class="programstatus-fieldset" ng-show="!$ctrl.edit.enrollment">
-            <i ng-show="$ctrl.canDeleteProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete()" ng-click="$ctrl.deletePatientProgram()" class="icon-remove right"/>
-            <i ng-show="$ctrl.canEditProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete()" ng-click="$ctrl.toggleEditEnrollment()" class="icon-pencil right"/>
+            <i ng-show="$ctrl.canDeleteProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete()" ng-click="$ctrl.deletePatientProgram()" class="icon-remove right"></i>
+            <i ng-show="$ctrl.canEditProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete()" ng-click="$ctrl.toggleEditEnrollment()" class="icon-pencil right"></i>
             <h3>{{'coreapps.dashboardwidgets.programstatus.enrolled' | translate }}</h3>
             <p class="programstatus-field">{{ $ctrl.widgetsCommons.formatDate($ctrl.patientProgram.dateEnrolled,$ctrl.config.JSDateFormat,$ctrl.config.language) }}</p>
         </fieldset>
@@ -188,7 +188,7 @@
         <div class="workflow-section" ng-repeat="workflow in $ctrl.program.workflows track by $index" ng-show="$ctrl.program.workflows.length != 0">
             <!-- TODO review the use of the "isToday" functionality -->
             <h3 class="workflow-header">{{ workflow.concept.display }}
-                <i ng-show="$ctrl.canEditProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete() && !$ctrl.isToday($ctrl.sortedStatesByWorkflow[workflow.uuid].startDate)" ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)" class="icon-pencil"/>
+                <i ng-show="$ctrl.canEditProgram && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete() && !$ctrl.isToday($ctrl.sortedStatesByWorkflow[workflow.uuid].startDate)" ng-click="$ctrl.toggleEditWorkflow(workflow.uuid)" class="icon-pencil"></i>
             </h3>
 
             <fieldset class="programstatus-fieldset" ng-show="$ctrl.edit.workflow[workflow.uuid]">
@@ -226,7 +226,7 @@
                         {{ row.state.concept.display }}
                     </td>
                     <td class="workflow-cell">
-                        <i ng-show="$first && $ctrl.canEditProgram  && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete()" class="icon-remove right" ng-click="$ctrl.deleteMostRecentPatientState(workflow.uuid)"/>
+                        <i ng-show="$first && $ctrl.canEditProgram  && !$ctrl.inEditMode() && !$ctrl.inConfirmDelete()" class="icon-remove right" ng-click="$ctrl.deleteMostRecentPatientState(workflow.uuid)"></i>
                     </td>
                 </tr>
                 <tr>
