@@ -6,7 +6,7 @@ import commons from './../dashboardwidgets.services';
 
 import { ObsGraphComponent } from './obsgraph.component';
 
-export default angular.module("openmrs-contrib-dashboardwidgets.obsgraph", [openmrsApi, openmrsTranslate, commons, chartjs])
+export default angular.module("openmrs-contrib-dashboardwidgets.obsgraph", [openmrsApi, openmrsTranslate, commons, chartjs.name])
 	.component(ObsGraphComponent.selector, ObsGraphComponent)
 	.config(['ChartJsProvider', function (ChartJsProvider) {
 		ChartJsProvider.setOptions({
