@@ -74,5 +74,8 @@
   "authors": [
     "rkorytkowski"
   ],
-  "license": "MPL-2.0"
+  "license": "MPL-2.0",
+  "overrides": {
+    "angular": "1.8.3"
+  }
 }

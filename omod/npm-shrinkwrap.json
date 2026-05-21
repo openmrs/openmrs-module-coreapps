@@ -2196,13 +2196,6 @@
         "node": "^6.10.0"
       }
     },
-    "node_modules/@openmrs/angularjs-openmrs-api/node_modules/angular": {
-      "version": "1.6.10",
-      "resolved": "https://registry.npmjs.org/angular/-/angular-1.6.10.tgz",
-      "integrity": "sha512-PCZ5/hVdvPQiYyH0VwsPjrErPHRcITnaXxhksceOXgtJeesKHLA7KDu4X/yvcAi+1zdGgGF+9pDxkJvghXI9Wg==",
-      "deprecated": "For the actively supported Angular, see https://www.npmjs.com/package/@angular/core. AngularJS support has officially ended. For extended AngularJS support options, see https://goo.gle/angularjs-path-forward.",
-      "license": "MIT"
-    },
     "node_modules/@openmrs/angularjs-openmrs-api/node_modules/angular-resource": {
       "version": "1.6.1",
       "integrity": "sha512-jflUweUcr+w0gxrBlCvzdh2OLQtF9tSoWSJvPf7IDfGHbTTUgHRaZPsSLz0KQeW/RJTL90FDcL1FElKJjpH0Uw==",
@@ -3046,13 +3039,6 @@
       "dependencies": {
         "angular-translate": "~2.15.2"
       }
-    },
-    "node_modules/angular-translate/node_modules/angular": {
-      "version": "1.6.10",
-      "resolved": "https://registry.npmjs.org/angular/-/angular-1.6.10.tgz",
-      "integrity": "sha512-PCZ5/hVdvPQiYyH0VwsPjrErPHRcITnaXxhksceOXgtJeesKHLA7KDu4X/yvcAi+1zdGgGF+9pDxkJvghXI9Wg==",
-      "deprecated": "For the actively supported Angular, see https://www.npmjs.com/package/@angular/core. AngularJS support has officially ended. For extended AngularJS support options, see https://goo.gle/angularjs-path-forward.",
-      "license": "MIT"
     },
     "node_modules/angular-ui-bootstrap": {
       "version": "2.5.0",
