@@ -1,5 +1,11 @@
 import angular from 'angular';
 
+// angular.lowercase/uppercase were removed in 1.8.x but are still used by angular-translate
+if (!angular.lowercase) {
+    angular.lowercase = s => s.toLowerCase();
+    angular.uppercase = s => s.toUpperCase();
+}
+
 import DataIntegrityViolations from './dataintegrityviolations';
 import LatestObsForConceptList from './latestobsforconceptlist';
 import ObsAcrossEncounters from './obsacrossencounters';

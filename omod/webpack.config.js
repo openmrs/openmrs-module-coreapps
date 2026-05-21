@@ -63,32 +63,12 @@ var config = {
 			},
 			{
 				test: /\.(png|jpg|jpeg|gif|svg)$/,
-				use: [
-					{
-						loader: 'url-loader',
-						options: {
-							limit: 10000
-						}
-					},
-					{
-						loader: 'image-webpack-loader',
-						options: {
-							mozjpeg: {
-							  progressive: true,
-							},
-							gifsicle: {
-								interlaced: false,
-							},
-							optipng: {
-								optimizationLevel: 4,
-							},
-							pngquant: {
-								quality: '75-90',
-								speed: 3,
-							}
-						}
+				use: {
+					loader: 'url-loader',
+					options: {
+						limit: 10000
 					}
-				]
+				}
 			},
 			{
 				test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
