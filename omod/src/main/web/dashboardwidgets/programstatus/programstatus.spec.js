@@ -213,6 +213,7 @@
 
 		$httpBackend.whenGET('/ws/rest/v1/location?tag=fb6f5fe0-904b-4a85-9806-d72ec139f9de&v=custom:display,uuid').respond(locationResponse);
 		$httpBackend.whenGET('/ws/rest/v1/program/222e229b-f011-45c5-940e-e5599383c967?v=custom:display,uuid,outcomesConcept:(uuid),workflows:(uuid,concept:(display),states:(uuid,initial,terminal,concept:(display))').respond(programResponse);
+		$httpBackend.whenGET(/messages\.json/).respond({});
 
 	});
 

@@ -1,14 +1,15 @@
 var webpack = require("webpack");
-var ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
 var path = require("path");
 var pkg = require("./package.json");
-var env = require('yargs').argv.env;
-var nodeModulesDir = path.join(__dirname, 'node_modules');
 
 var sourceDir = path.join(__dirname, pkg.config.sourceDir);
 var targetDir = path.join(__dirname, pkg.config.targetDir);
 
+module.exports = function(env) {
+env = env || {};
+
 var config = {
+	mode: env.prod ? 'production' : 'development',
 	entry: {
 		dashboardwidgets: path.join(sourceDir, "dashboardwidgets")
 	},
@@ -20,16 +21,23 @@ var config = {
 	},
 	plugins: [
 		new webpack.ProvidePlugin({
+			process: 'process/browser',
 			$: "jquery",
 			jQuery: "jquery",
 			"window.jQuery": "jquery"
-		}),
-		new webpack.optimize.CommonsChunkPlugin({
-			name: "vendor",
-			minChunks: function (module) { return /node_modules/.test(module.resource) }
-		}),
-		new ngAnnotatePlugin()
+		})
 	],
+	optimization: {
+		splitChunks: {
+			cacheGroups: {
+				vendor: {
+					test: /[\\/]node_modules[\\/]/,
+					name: "vendor",
+					chunks: "all"
+				}
+			}
+		}
+	},
 	module: {
 		rules: [
 			{
@@ -38,19 +46,14 @@ var config = {
 				use: {
 					loader: 'babel-loader?cacheDirectory',
 					options: {
-						presets: ['es2015']
+						presets: ['@babel/preset-env'],
+						plugins: ['angularjs-annotate']
 					}
 				}
 			},
 			{
 				test: /\.css$/,
 				use: ['style-loader', 'css-loader']
-			},
-			{
-				test: /\.json$/,
-				use: {
-					loader: 'json-loader'
-				}
 			},
 			{
 				test: /\.html$/,
@@ -60,38 +63,18 @@ var config = {
 			},
 			{
 				test: /\.(png|jpg|jpeg|gif|svg)$/,
-				use: [ 
-					{ 
-						loader: 'url-loader',
-						query: {
-							limit: 10000
-						}
-					}, 
-					{
-						loader: 'image-webpack-loader',
-						query: {
-							mozjpeg: {
-							  progressive: true,
-							},
-							gifsicle: {
-								interlaced: false,
-							},
-							optipng: {
-								optimizationLevel: 4,
-							},
-							pngquant: {
-								quality: '75-90',
-								speed: 3,
-							}
-						}
+				use: {
+					loader: 'url-loader',
+					options: {
+						limit: 10000
 					}
-				]
+				}
 			},
 			{
 				test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
 				use: {
 					loader: 'url-loader',
-					query: {
+					options: {
 						limit: 10000
 					}
 				}
@@ -100,7 +83,7 @@ var config = {
 				test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
 				use: {
 					loader: 'url-loader',
-					query: {
+					options: {
 						limit: 10000
 					}
 				}
@@ -109,7 +92,7 @@ var config = {
 				test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
 				use: {
 					loader: 'url-loader',
-					query: {
+					options: {
 						limit: 10000
 					}
 				}
@@ -118,7 +101,7 @@ var config = {
 				test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
 				use: {
 					loader: 'url-loader',
-					query: {
+					options: {
 						limit: 10000
 					}
 				}
@@ -126,23 +109,24 @@ var config = {
 		]
 	},
 	resolve: {
+		alias: {
+			'chart.js': path.resolve(__dirname, 'node_modules/chart.js/dist/Chart.js'),
+			'chart': path.resolve(__dirname, 'node_modules/chart.js/dist/Chart.js')
+		},
+		fallback: {
+			'assert': require.resolve('assert/')
+		},
 		modules: [path.resolve(__dirname, "node_modules")]
 	}
 };
 
-if (env === 'dev') {
+if (env.dev) {
 	config.plugins.push(new webpack.SourceMapDevToolPlugin({
       exclude: ["coreapps.vendor.js"]
     }));
-} else if (env === 'prod') {
+} else if (env.prod) {
 	config.devtool = 'source-map';
-	
-	config.plugins.push(new webpack.optimize.UglifyJsPlugin({
-		sourceMap: true,
-		compress: {
-			warnings: false
-		}
-	}));
 }
 
-module.exports = config;
+return config;
+};
