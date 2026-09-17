@@ -26,7 +26,7 @@ angular.module('att.service.complexObsCacheService')
 
         var uuid = obs.uuid;
         if (!isViewInCache(uuid, view)) {
-            var url = url + '?' + 'view=' + view + '&' + 'obs=' + uuid;
+            var url = url + '/' + uuid + '/bytes?view=' + view;
             $http.get(url, {
                 cache : true,
                 responseType : "arraybuffer"
