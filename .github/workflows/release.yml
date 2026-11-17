@@ -4,11 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       release_version:
-        description: 'Release version (e.g., 1.3.3)'
-        required: true
+        description: 'Release version (e.g., 1.3.3). If blank, the POM version without -SNAPSHOT.'
+        required: false
+        default: ''
       development_version:
-        description: 'Next development version (e.g., 1.4.0-SNAPSHOT)'
-        required: true
+        description: 'Next development version (e.g., 1.4.0-SNAPSHOT). If blank, an X.Y.0 release continues as X.(Y+1).0-SNAPSHOT.'
+        required: false
+        default: ''
       branch:
         description: 'Branch to release from (e.g., master)'
         required: false
