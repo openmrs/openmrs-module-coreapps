@@ -4,7 +4,7 @@
 
 <div class="contact-info-inline labeled">
     <span>
-        ${ ui.encodeHtmlContent(ui.format(config.patient.personAddress).replace("\n", ", "))}
+        ${ ui.encodeHtmlContent(ui.format(config.patient.personAddress).replaceAll(",", ", ")) }
         <em>${ ui.message("coreapps.person.address")}</em>
     </span>
     <span class="ml-2">
