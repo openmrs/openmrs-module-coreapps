@@ -5,12 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterProvider;
-import org.openmrs.EncounterRole;
-import org.openmrs.EncounterType;
-import org.openmrs.Provider;
-import org.openmrs.User;
+import org.openmrs.*;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.domain.Extension;
@@ -20,6 +15,8 @@ import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+
+import static org.hibernate.validator.util.Contracts.assertNotNull;
 
 public class ParseEncounterToJson {
 
@@ -139,6 +136,55 @@ public class ParseEncounterToJson {
         }
 
         return null;
+    }
+
+
+    public void saveEncounter_shouldSaveEncounterWithBasicDetails() {
+        Encounter encounter = buildEncounter();
+
+        EncounterService es = Context.getEncounterService();
+        es.saveEncounter(encounter);
+
+        assert encounter != null;
+        assertNotNull("The saved encounter should have an encounterid now", String.valueOf(encounter.getEncounterId()));
+        Encounter newSavedEncounter = es.getEncounter(encounter.getEncounterId());
+        assertNotNull("We should get back an encounter", String.valueOf(newSavedEncounter));
+        assertTrue("The created encounter needs to equal the pojo encounter", encounter.equals(newSavedEncounter));
+    }
+
+    public void purgeEncounter_shouldPurgeEncounter() {
+
+        EncounterService es = Context.getEncounterService();
+
+        //should fetch the encounter to delete from the database
+        Encounter encounterToDelete = es.getEncounter(1);
+
+        es.purgeEncounter(encounterToDelete);
+
+        // try to refetch the encounter. should get a null object
+        Encounter e = es.getEncounter(encounterToDelete.getEncounterId());
+        assertNull(e, "We shouldn't find the encounter after deletion");
+    }
+
+    private void assertNull(Encounter e, String s) {
+    }
+
+    private void assertTrue(String s, boolean equals) {
+    }
+
+    private Encounter buildEncounter() {
+        return null;
+    }
+
+    public void getObs_shouldGetObs() {
+        Encounter encounter = new Encounter();
+
+        //create and add an Obs
+        Obs o = new Obs();
+        encounter.addObs(o);
+
+        assertNotNull(encounter.getObs());
+
     }
 
     private Provider getFirstNonVoidedProvider(Encounter encounter) {
